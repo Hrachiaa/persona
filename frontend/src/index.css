@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    background-color: #f5f5f0;
+    color: #1a1a1a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 999px;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400;
+  }
+
+  .btn-primary {
+    @apply bg-persona-dark text-white font-semibold py-3.5 px-8 rounded-full 
+           transition-all duration-300 ease-out
+           hover:bg-gray-800 hover:shadow-xl hover:shadow-black/10
+           active:scale-95 transform;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-persona-dark font-semibold py-3.5 px-8 rounded-full 
+           border-2 border-persona-dark/10
+           transition-all duration-300 ease-out
+           hover:border-persona-dark/30 hover:shadow-lg
+           active:scale-95 transform;
+  }
+
+  .input-field {
+    @apply w-full bg-white border-2 border-gray-200 rounded-2xl py-3.5 px-5
+           text-persona-dark placeholder-gray-400
+           focus:outline-none focus:border-persona-dark/30 focus:shadow-lg focus:shadow-black/5
+           transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 ease-out
+           hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5;
+  }
+}
+
+/* Hide scrollbar for horizontal scroll */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
