@@ -3,11 +3,17 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { PrismaService } from 'src/prisma.service';
 import { UserPrismaRepository } from './user.prisma.repository';
-import { UserRepository } from './user.repository';
 
 @Module({
-    controllers: [],
-    providers: [],
-    exports: [],
+    controllers: [UsersController],
+    providers: [
+        PrismaService,
+        UsersService,
+        {
+            provide: 'USER_REPOSITORY',
+            useClass: UserPrismaRepository,
+        },
+    ],
+    exports: [UsersService],
 })
 export class UsersModule { }
