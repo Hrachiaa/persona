@@ -9,13 +9,13 @@ import { LoginDto } from 'src/users/dtos/login.dto';
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    @Post('register')
+    @Post('signup')
     @HttpCode(HttpStatus.CREATED)
     @ApiOperation({ summary: 'Register a new user' })
     @ApiResponse({ status: 201, description: 'User registered successfully' })
     @ApiResponse({ status: 400, description: 'Invalid request' })
-    async register(@Body() registerDto: CreateUserDto){
-        return this.authService.register(registerDto);
+    async signup(@Body() registerDto: CreateUserDto){
+        return this.authService.signup(registerDto);
     }
 
     @Post('login')
@@ -25,5 +25,23 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Invalid credentials' })
     async login(@Body() loginDto: LoginDto){
         return this.authService.login(loginDto);
+    }
+
+    @Post('refresh')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Refresh tokens' })
+    @ApiResponse({ status: 200, description: 'Tokens refreshed successfully' })
+    @ApiResponse({ status: 401, description: 'Invalid refresh token' })
+    async refreshTokens(@Body() refreshToken: {refreshToken: string}){
+        return this.authService.refreshTokens(refreshToken.refreshToken);
+    }
+
+    @Post('logout')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Logout' })
+    @ApiResponse({ status: 200, description: 'User logged out successfully' })
+    @ApiResponse({ status: 401, description: 'Invalid refresh token' })
+    async logout(@Body() refreshToken: {refreshToken: string}){
+        return this.authService.logout(refreshToken.refreshToken);
     }
 }

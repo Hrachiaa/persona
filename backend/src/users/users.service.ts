@@ -18,4 +18,8 @@ export class UsersService {
     async getUserByEmail(email: string): Promise<User | null> {
         return await this.userRepository.getUserByEmail(email);
     }
+
+    async getUserById(id: string): Promise<User | null> {
+        return await this.userRepository.getUserById(id);
+    }
 }

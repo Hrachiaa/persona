@@ -6,17 +6,21 @@ import { User } from "./models/user.enity";
 
 @Injectable()
 export class UserPrismaRepository implements UserRepository {
-    constructor(private readonly userRepository: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async create(data: CreateUserDto): Promise<User> {
-        return await this.userRepository.user.create({ data });
+        return await this.prisma.user.create({ data });
     }
 
     async getAllUsers(): Promise<User[]> {
-        return await this.userRepository.user.findMany();
+        return await this.prisma.user.findMany();
     }
 
     async getUserByEmail(email: string): Promise<User | null> {
-        return await this.userRepository.user.findUnique({ where: { email } });
+        return await this.prisma.user.findUnique({ where: { email } });
+    }
+
+    async getUserById(id: string): Promise<User | null> {
+        return await this.prisma.user.findUnique({ where: { id } });
     }
 }
