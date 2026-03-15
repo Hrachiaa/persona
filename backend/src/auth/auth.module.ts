@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
@@ -8,7 +8,7 @@ import { PrismaService } from 'src/prisma.service';
 
 @Module({
   imports: [
-    UsersModule,
+    forwardRef(() => UsersModule),
     JwtModule.register({}),
   ],
   controllers: [AuthController],
@@ -19,6 +19,10 @@ import { PrismaService } from 'src/prisma.service';
       provide: 'REFRESH_TOKEN_REPOSITORY',
       useClass: RefreshTokenPrismaRepository,
     }
+  ],
+  exports: [
+    AuthService,
+    JwtModule,
   ]
 })
 export class AuthModule {}
