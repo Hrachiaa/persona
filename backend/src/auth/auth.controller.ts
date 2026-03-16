@@ -3,6 +3,12 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { LoginDto } from 'src/users/dtos/login.dto';
+import { IsString } from 'class-validator';
+
+class RefreshTokenDto {
+    @IsString({message: 'Refresh token must be a string'})
+    readonly refreshToken: string;
+}
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -32,8 +38,8 @@ export class AuthController {
     @ApiOperation({ summary: 'Refresh tokens' })
     @ApiResponse({ status: 200, description: 'Tokens refreshed successfully' })
     @ApiResponse({ status: 401, description: 'Invalid refresh token' })
-    async refreshTokens(@Body() refreshToken: {refreshToken: string}){
-        return this.authService.refreshTokens(refreshToken.refreshToken);
+    async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto){
+        return this.authService.refreshTokens(refreshTokenDto.refreshToken);
     }
 
     @Post('logout')
@@ -41,7 +47,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Logout' })
     @ApiResponse({ status: 200, description: 'User logged out successfully' })
     @ApiResponse({ status: 401, description: 'Invalid refresh token' })
-    async logout(@Body() refreshToken: {refreshToken: string}){
+    async logout(@Body() refreshToken: RefreshTokenDto){
         return this.authService.logout(refreshToken.refreshToken);
     }
 }
