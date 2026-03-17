@@ -10,8 +10,10 @@ export class MailService {
           to: email,
           from: process.env.EMAIL_USER,
           subject: 'Confirm your email',
-        //   template: '',
-          text: 'Confirm your email',
+          template: 'reset-password',
+          context: {
+            code: '123456',
+          },
         });
       }
 }
