@@ -5,7 +5,7 @@ import { createHmac } from 'crypto'
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { LoginDto } from 'src/users/dtos/login.dto';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/models/user.enity';
+import { UserEntity } from 'src/users/models/user.enity';
 import type { RefreshTokenRepository } from './refresh-token.repository';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class AuthService {
         return this.generateTokens(user);
     }
 
-    private async generateTokens(user: User){
+    private async generateTokens(user: UserEntity){
         const payload = {
             id: user.id,
             email: user.email,
@@ -100,5 +100,41 @@ export class AuthService {
 
     async logout (refreshToken: string){
         await this.refreshTokenRepository.deleteByToken(refreshToken);
+    }
+
+    async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void>{
+        const user: UserEntity | null = await this.usersService.getUserById(userId);
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+        } 
+        if(!user.password){
+            throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
+        }
+        const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+        if(!isPasswordValid){
+            throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
+        }
+        const hashPassword = await bcrypt.hash(newPassword, 8);
+        await this.usersService.changePassword(userId, hashPassword);
+    }
+
+    async forgotPassword(email: string){
+
+    }
+
+    async forgotPasswordCode(userId: string, code: string){
+        
+    }
+
+    async changeForgottenPassword(userId: string, code: string, newPassword: string){
+        
+    }
+
+    async confirmEmail(userId: string){
+
+    }
+
+    async confirmEmailCode(userId: string, code: string){
+        
     }
 }

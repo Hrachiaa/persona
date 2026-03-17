@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -10,7 +11,8 @@ import { AuthModule } from './auth/auth.module';
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    MailModule
   ],
   controllers: [],
   providers: [],

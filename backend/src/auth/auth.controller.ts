@@ -1,14 +1,11 @@
-import { Controller, HttpCode, HttpStatus, Post, Body } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { LoginDto } from 'src/users/dtos/login.dto';
-import { IsString } from 'class-validator';
-
-class RefreshTokenDto {
-    @IsString({message: 'Refresh token must be a string'})
-    readonly refreshToken: string;
-}
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { ChangePasswordDto } from './dtos/change-password.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -21,7 +18,7 @@ export class AuthController {
     @ApiResponse({ status: 201, description: 'User registered successfully' })
     @ApiResponse({ status: 400, description: 'Invalid request' })
     async signup(@Body() registerDto: CreateUserDto){
-        return this.authService.signup(registerDto);
+        return await this.authService.signup(registerDto);
     }
 
     @Post('login')
@@ -30,7 +27,7 @@ export class AuthController {
     @ApiResponse({ status: 200, description: 'User logged in successfully' })
     @ApiResponse({ status: 401, description: 'Invalid credentials' })
     async login(@Body() loginDto: LoginDto){
-        return this.authService.login(loginDto);
+        return await this.authService.login(loginDto);
     }
 
     @Post('refresh')
@@ -39,7 +36,7 @@ export class AuthController {
     @ApiResponse({ status: 200, description: 'Tokens refreshed successfully' })
     @ApiResponse({ status: 401, description: 'Invalid refresh token' })
     async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto){
-        return this.authService.refreshTokens(refreshTokenDto.refreshToken);
+        return await this.authService.refreshTokens(refreshTokenDto.refreshToken);
     }
 
     @Post('logout')
@@ -48,6 +45,16 @@ export class AuthController {
     @ApiResponse({ status: 200, description: 'User logged out successfully' })
     @ApiResponse({ status: 401, description: 'Invalid refresh token' })
     async logout(@Body() refreshToken: RefreshTokenDto){
-        return this.authService.logout(refreshToken.refreshToken);
+        return await this.authService.logout(refreshToken.refreshToken);
+    }
+
+    @Post('change-password')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Change password' })
+    @ApiResponse({ status: 200, description: 'Password changed successfully' })
+    @ApiResponse({ status: 401, description: 'Invalid refresh token' })
+    @UseGuards(JwtAuthGuard)
+    async changePassword(@Req() req, @Body() changePasswordDto: ChangePasswordDto){
+        return await this.authService.changePassword(req.user.id, changePasswordDto.oldPassword, changePasswordDto.newPassword);
     }
 }
