@@ -3,9 +3,18 @@ import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PrismaService } from 'src/prisma.service';
+import { OtpCodePrismaRepository } from './otp-code.prisma.repository';
 
 @Module({
-  providers: [MailService],
+  providers: [
+    MailService,
+    PrismaService,
+    {
+      provide: 'OTP_CODE_REPOSITORY',
+      useClass: OtpCodePrismaRepository,
+    },
+  ],
   exports: [MailService],
   imports: [
     MailerModule.forRootAsync({

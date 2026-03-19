@@ -2,34 +2,45 @@ import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { createHmac } from 'crypto'
-import { CreateUserDto } from 'src/users/dtos/create-user.dto';
-import { LoginDto } from 'src/users/dtos/login.dto';
+import { AuthDto } from 'src/users/dtos/auth.dto';
 import { UsersService } from 'src/users/users.service';
 import { UserEntity } from 'src/users/models/user.enity';
 import type { RefreshTokenRepository } from './refresh-token.repository';
+import { MailService } from 'src/mail/mail.service';
+import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
 
 @Injectable()
 export class AuthService {
     constructor(
                 private readonly usersService: UsersService,
                 private readonly jwtService: JwtService,
+                private readonly mailService: MailService,
                 @Inject('REFRESH_TOKEN_REPOSITORY') private readonly refreshTokenRepository: RefreshTokenRepository,
     ) {}
 
-    async signup(registerDto: CreateUserDto){
-        const condidate = await this.usersService.getUserByEmail(registerDto.email);
+    async signup(authDto: AuthDto){
+        const condidate = await this.usersService.getUserByEmail(authDto.email);
         if(condidate){
             throw new HttpException('User with this email already exists', HttpStatus.BAD_REQUEST);
         }
-        const hashPassword = await bcrypt.hash(registerDto.password, 8);
+        const hashPassword = await bcrypt.hash(authDto.password, 8);
         const user = await this.usersService.create({
-            ...registerDto,
+            ...authDto,
             password: hashPassword,
         });
         return this.generateTokens(user);
     }
 
-    async login(loginDto: LoginDto){
+    async addProfileInfo(userId: string, profileInfoDto: AddProfileInfoDto){
+        const user = await this.usersService.getUserById(userId);
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        await this.usersService.addProfileInfo(userId, profileInfoDto);
+        return;
+    }
+
+    async login(loginDto: AuthDto){
         const user = await this.validateUser(loginDto);
         return this.generateTokens(user);
     }
@@ -56,7 +67,7 @@ export class AuthService {
         }
     }
 
-    private async validateUser(loginDto: LoginDto){
+    private async validateUser(loginDto: AuthDto){
         const user = await this.usersService.getUserByEmail(loginDto.email);
         if(!user){
             throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -102,39 +113,38 @@ export class AuthService {
         await this.refreshTokenRepository.deleteByToken(refreshToken);
     }
 
-    async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void>{
-        const user: UserEntity | null = await this.usersService.getUserById(userId);
-        if(!user){
-            throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
-        } 
-        if(!user.password){
-            throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
-        }
-        const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
-        if(!isPasswordValid){
-            throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
-        }
-        const hashPassword = await bcrypt.hash(newPassword, 8);
-        await this.usersService.changePassword(userId, hashPassword);
-    }
-
     async forgotPassword(email: string){
-
+        const user = await this.usersService.getUserByEmail(email);
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        await this.mailService.sendCode(email, user.id);
+        return
     }
 
-    async forgotPasswordCode(userId: string, code: string){
-        
+    async forgotPasswordCode(email: string, code: string): Promise<Boolean>{
+        const user = await this.usersService.getUserByEmail(email);
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        const checkCode = await this.mailService.checkCode(user.id, code);
+        if(!checkCode){
+            throw new HttpException('Invalid code', HttpStatus.BAD_REQUEST);
+        }
+        return checkCode;
     }
 
-    async changeForgottenPassword(userId: string, code: string, newPassword: string){
-        
-    }
-
-    async confirmEmail(userId: string){
-
-    }
-
-    async confirmEmailCode(userId: string, code: string){
-        
+    async changeForgottenPassword(email: string, code: string, newPassword: string){
+        const user = await this.usersService.getUserByEmail(email);
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        const checkCode = await this.mailService.checkCode(user.id, code);
+        if(!checkCode){
+            throw new HttpException('Invalid code', HttpStatus.BAD_REQUEST);
+        }
+        await this.mailService.deleteCode(user.id);
+        const hashPassword = await bcrypt.hash(newPassword, 8);
+        await this.usersService.resetPassword(user.id, hashPassword);
     }
 }

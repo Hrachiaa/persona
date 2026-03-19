@@ -1,10 +1,12 @@
-import { User } from "generated/prisma/client";
-import { CreateUserDto } from "./dtos/create-user.dto";
+import { AuthDto } from "./dtos/auth.dto";
+import { UserEntity } from "./models/user.enity";
+import { AddProfileInfoDto } from "src/auth/dtos/add-profile-info.dto";
 
 export interface UserRepository {
-    create(data: CreateUserDto): Promise<User>;
-    getAllUsers(): Promise<User[]>;
-    getUserByEmail(email: string): Promise<User | null>;
-    getUserById(id: string): Promise<User | null>;
+    create(data: AuthDto): Promise<UserEntity>;
+    getAllUsers(): Promise<UserEntity[]>;
+    getUserByEmail(email: string): Promise<UserEntity | null>;
+    getUserById(id: string): Promise<UserEntity | null>;
     changePassword(id: string, password: string): Promise<void>;
+    addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void>;
 }

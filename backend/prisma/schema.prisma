@@ -15,18 +15,29 @@ datasource db {
 }
 
 model User {
-  id            String  @id @default(cuid())
-  email         String  @unique
-  emailVerified Boolean @default(false)
+  id            String        @id @default(cuid())
+  email         String        @unique
+  emailVerified Boolean       @default(false)
   googleId      String?
   password      String?
-  name          String
-  gender        String
-  birthDate     Int
+  name          String?
+  gender        String?
+  birthDate     Int?
+  refreshToken  RefreshToken?
+  otpCode       OtpCode?
 }
 
 model RefreshToken {
   id     String @id @default(cuid())
   userId String @unique
   token  String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  code      String   @unique
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -1,14 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
 import { UserRepository } from "./user.repository";
-import { CreateUserDto } from "./dtos/create-user.dto";
+import { AuthDto } from "./dtos/auth.dto";
 import { UserEntity } from "./models/user.enity";
+import { AddProfileInfoDto } from "src/auth/dtos/add-profile-info.dto";
 
 @Injectable()
 export class UserPrismaRepository implements UserRepository {
     constructor(private readonly prisma: PrismaService) { }
 
-    async create(data: CreateUserDto): Promise<UserEntity> {
+    async create(data: AuthDto): Promise<UserEntity> {
         return await this.prisma.user.create({ data });
     }
 
@@ -26,5 +27,9 @@ export class UserPrismaRepository implements UserRepository {
 
     async changePassword(id: string, password: string): Promise<void> {
         await this.prisma.user.update({ where: { id }, data: { password } });
+    }
+
+    async addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void> {
+        await this.prisma.user.update({ where: { id }, data: profileInfoDto });
     }
 }

@@ -6,11 +6,11 @@ export class UserEntity {
     @ApiProperty({example: 'example@gmail.com', description: 'User Email'})
     email: string;
     @ApiProperty({example: 'John Doe', description: 'User Name'})
-    name: string;
+    name: string | null;
     @ApiProperty({example: 'Male', description: 'User Gender'})
-    gender: string;
+    gender: string | null;
     @ApiProperty({example: 1234567890, description: 'User Birth Date'})
-    birthDate: number;
+    birthDate: number | null;
     @ApiProperty({example: true, description: 'User Email Verified'})
     emailVerified: boolean;
     @ApiProperty({example: 'cmmoycsta0000s4v3jcmr451j', description: 'User Google ID'})
@@ -20,9 +20,9 @@ export class UserEntity {
     constructor(
         id: string,
         email: string,
-        name: string,
-        gender: string,
-        birthDate: number,
+        name: string | null,
+        gender: string | null,
+        birthDate: number | null,
         emailVerified: boolean,
         googleId: string | null,
         password: string | null,

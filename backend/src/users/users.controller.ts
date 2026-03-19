@@ -1,27 +1,22 @@
-import { Body, Controller, Get, Post, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dtos/create-user.dto';
 import { UserEntity } from './models/user.enity';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ChangePasswordDto } from './dtos/change-password.dto';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
-    @ApiOperation({ summary: 'Create a new user' })
-    @ApiResponse({ status: 201, type: UserEntity, description: 'The user has been successfully created.' })
-    @Post()
-    async create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
-        return await this.usersService.create(createUserDto);
-    }
-
-    @ApiOperation({ summary: 'Get all users' })
-    @ApiResponse({ status: 200, type: [UserEntity], description: 'The users has been successfully retrieved.' })
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Change password' })
+    @ApiResponse({ status: 200, description: 'Password changed successfully' })
+    @ApiResponse({ status: 401, description: 'Invalid refresh token' })
     @UseGuards(JwtAuthGuard)
-    @Get()
-    async getAllUsers(): Promise<UserEntity[]> {
-        return await this.usersService.getAllUsers();
+    @Post('change-password')
+    async changePassword(@Req() req, @Body() changePasswordDto: ChangePasswordDto){
+        return await this.usersService.changePassword(req.user.id, changePasswordDto.oldPassword, changePasswordDto.newPassword);
     }
 }
