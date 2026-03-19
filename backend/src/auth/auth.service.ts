@@ -104,7 +104,7 @@ export class AuthService {
     private async saveRefreshToken(userId: string, token: string): Promise<void>{
         const existingToken = await this.refreshTokenRepository.findByUserId(userId);
         if(existingToken){
-            await this.refreshTokenRepository.deleteByToken(existingToken.token);
+            await this.refreshTokenRepository.deleteByUserId(userId);
         }
 
         const hashToken = createHmac('sha256', process.env.JWT_REFRESH_DB_SECRET!)
@@ -129,7 +129,8 @@ export class AuthService {
     }
 
     async logout (refreshToken: string){
-        await this.refreshTokenRepository.deleteByToken(refreshToken);
+        const payload = this.jwtService.decode(refreshToken)
+        await this.refreshTokenRepository.deleteByUserId(payload.id);
     }
 
     async forgotPassword(email: string){

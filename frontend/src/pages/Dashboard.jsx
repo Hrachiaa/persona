@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiOutlineClipboardDocumentList, HiOutlineChartBar, HiOutlineHeart, HiOutlineBookOpen, HiOutlineStar } from 'react-icons/hi2';
+import {
+  HiOutlineClipboardDocumentList,
+  HiOutlineChartBar,
+  HiOutlineHeart,
+  HiOutlineBookOpen,
+  HiOutlineStar,
+  HiOutlineArrowRightOnRectangle,
+} from 'react-icons/hi2';
+import { useAuth } from '../context/AuthContext';
 import Tests from './tabs/Tests';
 import Analysis from './tabs/Analysis';
 import Compatibility from './tabs/Compatibility';
@@ -15,16 +23,19 @@ const tabs = [
   { id: 'advice', label: 'Advice', icon: HiOutlineStar },
 ];
 
-export default function Dashboard({ userData }) {
+export default function Dashboard({ onLogout }) {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('tests');
+
+  const userName = user?.name || 'User';
 
   const renderTab = () => {
     switch (activeTab) {
       case 'tests': return <Tests key="tests" />;
-      case 'analysis': return <Analysis key="analysis" userName={userData.name || 'Alex'} />;
+      case 'analysis': return <Analysis key="analysis" userName={userName} />;
       case 'match': return <Compatibility key="match" />;
       case 'reads': return <Recommendations key="reads" />;
-      case 'advice': return <DailyAdvice key="advice" userName={userData.name || 'Alex'} />;
+      case 'advice': return <DailyAdvice key="advice" userName={userName} />;
       default: return <Tests key="tests" />;
     }
   };
@@ -36,6 +47,21 @@ export default function Dashboard({ userData }) {
       exit={{ opacity: 0 }}
       className="min-h-screen bg-persona-bg pb-24"
     >
+      {/* Top Bar with Logout */}
+      <div className="sticky top-0 z-40 bg-persona-bg/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+        <h1 className="text-lg font-bold text-persona-dark flex items-center gap-2">
+          <span className="text-xl">λ</span> Persona
+        </h1>
+        <motion.button
+          onClick={onLogout}
+          className="flex items-center gap-2 text-persona-muted hover:text-red-500 transition-colors text-sm font-medium"
+          whileTap={{ scale: 0.95 }}
+        >
+          <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
+          Logout
+        </motion.button>
+      </div>
+
       {/* Tab Content */}
       <AnimatePresence mode="wait">
         {renderTab()}

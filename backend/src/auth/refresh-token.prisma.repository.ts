@@ -19,10 +19,6 @@ export class RefreshTokenPrismaRepository implements RefreshTokenRepository {
         return await this.prisma.refreshToken.findUnique({ where: { token } });
     }
 
-    async deleteByToken(token: string): Promise<void> {
-        await this.prisma.refreshToken.delete({ where: { token } });
-    }
-
     async deleteByUserId(userId: string): Promise<void> {
         await this.prisma.refreshToken.delete({ where: { userId } });
     }

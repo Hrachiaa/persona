@@ -4,8 +4,8 @@ import { HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeSlash
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/auth';
 
-export default function Register({ onComplete, onLogin }) {
-  const { signup, error, clearError } = useAuth();
+export default function Login({ onComplete, onRegister, onForgotPassword }) {
+  const { login, error, clearError } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +15,7 @@ export default function Register({ onComplete, onLogin }) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await signup(email, password);
+      await login(email, password);
       onComplete();
     } catch {
       // error is set in context
@@ -47,8 +47,8 @@ export default function Register({ onComplete, onLogin }) {
           <h1 className="text-2xl font-bold tracking-tight text-persona-dark flex items-center justify-center gap-2 mb-6">
             <span className="text-3xl">λ</span> Persona
           </h1>
-          <h2 className="text-3xl font-bold text-persona-dark mb-2">Create Account</h2>
-          <p className="text-persona-muted">Start your personality journey today</p>
+          <h2 className="text-3xl font-bold text-persona-dark mb-2">Welcome Back</h2>
+          <p className="text-persona-muted">Sign in to continue your journey</p>
         </motion.div>
 
         {/* Error Message */}
@@ -88,12 +88,10 @@ export default function Register({ onComplete, onLogin }) {
             <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type={showPassword ? 'text' : 'password'}
-              placeholder="Password (8-32 characters)"
+              placeholder="Password"
               value={password}
               onChange={(e) => { setPassword(e.target.value); clearError(); }}
               className="input-field pl-12 pr-12"
-              minLength={8}
-              maxLength={32}
               required
             />
             <button
@@ -105,7 +103,18 @@ export default function Register({ onComplete, onLogin }) {
             </button>
           </div>
 
-          {/* Sign Up Button */}
+          {/* Forgot Password Link */}
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={onForgotPassword}
+              className="text-sm text-persona-muted hover:text-persona-dark transition-colors font-medium"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          {/* Sign In Button */}
           <motion.button
             type="submit"
             disabled={isLoading}
@@ -119,9 +128,9 @@ export default function Register({ onComplete, onLogin }) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                Creating Account…
+                Signing In…
               </span>
-            ) : 'Sign Up'}
+            ) : 'Sign In'}
           </motion.button>
         </motion.form>
 
@@ -166,9 +175,9 @@ export default function Register({ onComplete, onLogin }) {
           transition={{ delay: 0.6 }}
           className="text-center text-sm text-persona-muted mt-8"
         >
-          Already have an account?{' '}
-          <button onClick={onLogin} className="text-persona-dark font-semibold hover:underline">
-            Sign In
+          Don&apos;t have an account?{' '}
+          <button onClick={onRegister} className="text-persona-dark font-semibold hover:underline">
+            Sign Up
           </button>
         </motion.p>
       </div>

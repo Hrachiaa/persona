@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Post, Get, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Get, Body, Req, UseGuards, Res } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthDto } from 'src/users/dtos/auth.dto';
@@ -93,7 +93,8 @@ export class AuthController {
 
     @UseGuards(GoogleAuthGuard)
     @Get('google/callback')
-    async googleCallback(@Req() req){
-        return await this.authService.googleLogin(req.user);
+    async googleCallback(@Req() req, @Res() res){
+        const tokens = await this.authService.googleLogin(req.user);
+        res.redirect('http://localhost:5173');
     }
 }

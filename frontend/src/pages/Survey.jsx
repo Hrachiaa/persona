@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineUser, HiOutlineCalendarDays } from 'react-icons/hi2';
+import { authApi } from '../api/auth';
+
+const genderOptions = [
+  { value: 'M', label: 'Male', emoji: '♂' },
+  { value: 'F', label: 'Female', emoji: '♀' },
+];
 
 const steps = [
   {
@@ -13,24 +19,49 @@ const steps = [
     field: 'name',
   },
   {
-    id: 'birthYear',
+    id: 'gender',
+    title: 'How do you identify?',
+    subtitle: 'This helps us personalize your experience',
+    icon: HiOutlineUser,
+    type: 'gender',
+    field: 'gender',
+  },
+  {
+    id: 'birthDate',
     title: 'When were you born?',
     subtitle: 'This helps personalize your experience',
     icon: HiOutlineCalendarDays,
     placeholder: 'Enter your birth year (e.g. 1995)',
     type: 'number',
-    field: 'birthYear',
+    field: 'birthDate',
   },
 ];
 
-export default function Survey({ userData, setUserData, onComplete }) {
+export default function Survey({ onComplete }) {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [profileData, setProfileData] = useState({ name: '', gender: '', birthDate: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const currentStep = steps[step];
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === steps.length - 1) {
-      onComplete();
+      // Submit profile info to backend
+      setIsLoading(true);
+      setError(null);
+      try {
+        await authApi.addProfileInfo({
+          name: profileData.name,
+          gender: profileData.gender,
+          birthDate: parseInt(profileData.birthDate, 10),
+        });
+        onComplete();
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to save profile. Please try again.');
+        setIsLoading(false);
+      }
     } else {
       setDirection(1);
       setStep((prev) => prev + 1);
@@ -45,7 +76,23 @@ export default function Survey({ userData, setUserData, onComplete }) {
   };
 
   const handleChange = (e) => {
-    setUserData((prev) => ({ ...prev, [currentStep.field]: e.target.value }));
+    setProfileData((prev) => ({ ...prev, [currentStep.field]: e.target.value }));
+    setError(null);
+  };
+
+  const handleGenderSelect = (value) => {
+    setProfileData((prev) => ({ ...prev, gender: value }));
+    setError(null);
+  };
+
+  const isStepValid = () => {
+    const val = profileData[currentStep.field];
+    if (!val) return false;
+    if (currentStep.field === 'birthDate') {
+      const yr = parseInt(val, 10);
+      return yr >= 1900 && yr <= 2026;
+    }
+    return true;
   };
 
   const progress = ((step + 1) / steps.length) * 100;
@@ -108,18 +155,55 @@ export default function Survey({ userData, setUserData, onComplete }) {
             <p className="text-persona-muted mb-8">{currentStep.subtitle}</p>
 
             {/* Input */}
-            <div className="relative">
-              <input
-                type={currentStep.type}
-                placeholder={currentStep.placeholder}
-                value={userData[currentStep.field]}
-                onChange={handleChange}
-                className="input-field text-center text-lg"
-                autoFocus
-              />
-            </div>
+            {currentStep.type === 'gender' ? (
+              <div className="flex gap-4 justify-center">
+                {genderOptions.map((opt) => (
+                  <motion.button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => handleGenderSelect(opt.value)}
+                    className={`flex-1 py-6 px-6 rounded-3xl border-2 transition-all duration-300 text-center ${
+                      profileData.gender === opt.value
+                        ? 'border-persona-dark bg-persona-dark/5 shadow-lg'
+                        : 'border-gray-200 bg-white hover:border-persona-dark/20 hover:shadow-md'
+                    }`}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <span className="text-4xl block mb-3">{opt.emoji}</span>
+                    <span className={`font-semibold text-lg ${
+                      profileData.gender === opt.value ? 'text-persona-dark' : 'text-persona-muted'
+                    }`}>
+                      {opt.label}
+                    </span>
+                  </motion.button>
+                ))}
+              </div>
+            ) : (
+              <div className="relative">
+                <input
+                  type={currentStep.type}
+                  placeholder={currentStep.placeholder}
+                  value={profileData[currentStep.field]}
+                  onChange={handleChange}
+                  className="input-field text-center text-lg"
+                  autoFocus
+                />
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
+
+        {/* Error */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-sm text-center"
+          >
+            {error}
+          </motion.div>
+        )}
 
         {/* Buttons */}
         <div className="flex gap-3 mt-10">
@@ -137,11 +221,12 @@ export default function Survey({ userData, setUserData, onComplete }) {
           )}
           <motion.button
             onClick={handleNext}
-            className="btn-primary flex-1 text-center text-lg"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
+            disabled={!isStepValid() || isLoading}
+            className="btn-primary flex-1 text-center text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={isStepValid() && !isLoading ? { scale: 1.02 } : {}}
+            whileTap={isStepValid() && !isLoading ? { scale: 0.97 } : {}}
           >
-            {step === steps.length - 1 ? "Let's Go!" : 'Continue'}
+            {isLoading ? 'Saving…' : step === steps.length - 1 ? "Let's Go!" : 'Continue'}
           </motion.button>
         </div>
       </div>
