@@ -18,8 +18,8 @@ model User {
   id            String        @id @default(cuid())
   email         String        @unique
   emailVerified Boolean       @default(false)
+  password      String
   googleId      String?
-  password      String?
   name          String?
   gender        String?
   birthDate     Int?

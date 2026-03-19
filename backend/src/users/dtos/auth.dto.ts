@@ -1,4 +1,4 @@
-import { IsEmail, IsString, Length } from "class-validator";
+import { IsBoolean, IsEmail, IsOptional, IsString, Length } from "class-validator";
 
 export class AuthDto {
     @IsString({message: 'Email must be a string'})
@@ -8,4 +8,12 @@ export class AuthDto {
     @IsString({message: 'Password must be a string'})
     @Length(8, 32, {message: 'Password must be between 8 and 32 characters long'})
     readonly password: string;
+
+    @IsString({message: 'Google ID must be a string'})
+    @IsOptional()
+    readonly googleId?: string;
+
+    @IsBoolean({message: 'Email verified must be a boolean'})
+    @IsOptional()
+    readonly emailVerified?: boolean;
 }

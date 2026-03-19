@@ -28,7 +28,12 @@ export class AuthService {
             ...authDto,
             password: hashPassword,
         });
-        return this.generateTokens(user);
+        const {accessToken, refreshToken} = await this.generateTokens(user);
+        return {
+            userId: user.id,
+            accessToken,
+            refreshToken,
+        }
     }
 
     async addProfileInfo(userId: string, profileInfoDto: AddProfileInfoDto){
@@ -42,7 +47,21 @@ export class AuthService {
 
     async login(loginDto: AuthDto){
         const user = await this.validateUser(loginDto);
-        return this.generateTokens(user);
+        const {accessToken, refreshToken} = await this.generateTokens(user);
+        return {
+            userId: user.id,
+            accessToken,
+            refreshToken,
+        }
+    }
+
+    async googleLogin(user: UserEntity){
+        const {accessToken, refreshToken} = await this.generateTokens(user);
+        return {
+            userId: user.id,
+            accessToken,
+            refreshToken,
+        }
     }
 
     private async generateTokens(user: UserEntity){
@@ -50,11 +69,11 @@ export class AuthService {
             id: user.id,
             email: user.email,
         }
-        const accessToken = this.jwtService.sign(payload, {
+        const accessToken = await this.jwtService.signAsync(payload, {
             expiresIn: '30m',
             secret: process.env.JWT_ACCESS_SECRET,
         });
-        const refreshToken = this.jwtService.sign(payload, {
+        const refreshToken = await this.jwtService.signAsync(payload, {
             expiresIn: '7d',
             secret: process.env.JWT_REFRESH_SECRET,
         });
@@ -72,7 +91,7 @@ export class AuthService {
         if(!user){
             throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
         }
-        if(!user.password){
+        if(user.password === '' || loginDto.password === ''){
             throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
         }
         const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
@@ -146,5 +165,19 @@ export class AuthService {
         await this.mailService.deleteCode(user.id);
         const hashPassword = await bcrypt.hash(newPassword, 8);
         await this.usersService.resetPassword(user.id, hashPassword);
+    }
+
+    async validateGoogleUser(googleUser: AuthDto): Promise<UserEntity>{
+        const user = await this.usersService.getUserByEmail(googleUser.email); 
+        if(user){
+            if(user.googleId && user.emailVerified){
+                return user;
+            }
+            const newUser = await this.usersService.addGoogleInfo(user.id, googleUser.googleId!);
+            return newUser;
+        } else {
+            const newUser = await this.usersService.create(googleUser);
+            return newUser;
+        }
     }
 }

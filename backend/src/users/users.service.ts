@@ -48,6 +48,10 @@ export class UsersService {
         return await this.userRepository.addProfileInfo(id, profileInfoDto);
     }
 
+    async addGoogleInfo(id: string, googleId: string): Promise<UserEntity> {
+        return await this.userRepository.addGoogleInfo(id, googleId);
+    }
+
     async resetPassword(id: string, password: string): Promise<void> {
         return await this.userRepository.changePassword(id, password);
     }

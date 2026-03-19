@@ -9,4 +9,5 @@ export interface UserRepository {
     getUserById(id: string): Promise<UserEntity | null>;
     changePassword(id: string, password: string): Promise<void>;
     addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void>;
+    addGoogleInfo(id: string, googleId: string): Promise<UserEntity>;
 }

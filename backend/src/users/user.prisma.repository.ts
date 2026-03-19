@@ -32,4 +32,8 @@ export class UserPrismaRepository implements UserRepository {
     async addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void> {
         await this.prisma.user.update({ where: { id }, data: profileInfoDto });
     }
+
+    async addGoogleInfo(id: string, googleId: string): Promise<UserEntity> {
+        return await this.prisma.user.update({ where: { id }, data: { googleId, emailVerified: true } });
+    }
 }

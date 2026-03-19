@@ -16,7 +16,7 @@ export class UserEntity {
     @ApiProperty({example: 'cmmoycsta0000s4v3jcmr451j', description: 'User Google ID'})
     googleId: string | null;
     @ApiProperty({example: 'password', description: 'User Password'})
-    password: string | null;
+    password: string;
     constructor(
         id: string,
         email: string,
@@ -25,7 +25,7 @@ export class UserEntity {
         birthDate: number | null,
         emailVerified: boolean,
         googleId: string | null,
-        password: string | null,
+        password: string,
     ) {
         this.id = id;
         this.email = email;
