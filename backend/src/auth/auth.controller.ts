@@ -29,7 +29,7 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Invalid refresh token' })
     @UseGuards(JwtAuthGuard)
     async addProfileInfo(@Body() profileInfoDto: AddProfileInfoDto, @Req() req){
-        return await this.authService.addProfileInfo(req.user.userId, profileInfoDto);
+        return await this.authService.addProfileInfo(req.user.id, profileInfoDto);
     }
 
     @Post('login')
