@@ -36,17 +36,6 @@ export class AuthService {
         }
     }
 
-    async checkExistingUserInfo(userId: string){
-        const user = await this.usersService.getUserById(userId);
-        if(!user){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-        }
-        if(!user.name || !user.birthDate || !user.gender) {
-            return {isProfileInfoAdded: false}
-        }
-        return {isProfileInfoAdded: true}
-    }
-
     async addProfileInfo(userId: string, profileInfoDto: AddProfileInfoDto){
         const user = await this.usersService.getUserById(userId);
         if(!user){
@@ -54,6 +43,22 @@ export class AuthService {
         }
         await this.usersService.addProfileInfo(userId, profileInfoDto);
         return;
+    }
+
+    async getUserInfo(userId: string){
+        const user = await this.usersService.getUserById(userId);
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        return {
+            id: user.id,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            googleId: user.googleId,
+            name: user.name,
+            birthDate: user.birthDate,
+            gender: user.gender,
+        };
     }
 
     async login(loginDto: AuthDto){

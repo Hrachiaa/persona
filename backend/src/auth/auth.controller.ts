@@ -7,6 +7,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ChangeForgottenPasswordDto, ForgotPasswordCodeDto, ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { UserDto } from './dtos/user.dto';
 
 class IsProfileInfoAdded {
     isProfileInfoAdded: boolean;
@@ -26,14 +27,14 @@ export class AuthController {
         return await this.authService.signup(authDto);
     }
 
-    @Get('check-existing-user-info')
+    @Get('me')
     @HttpCode(HttpStatus.OK)
-    @ApiOperation({ summary: 'Check existing user info' })
-    @ApiResponse({ status: 200, description: 'Existing user info checked successfully', type: IsProfileInfoAdded })
+    @ApiOperation({ summary: 'Get user profile info' })
+    @ApiResponse({ status: 200, description: 'User profile info', type: UserDto })
     @ApiResponse({ status: 401, description: 'Invalid refresh token' })
     @UseGuards(JwtAuthGuard)
-    async checkExistingUserInfo(@Req() req){
-        return await this.authService.checkExistingUserInfo(req.user.id);
+    async getMe(@Req() req){
+        return await this.authService.getUserInfo(req.user.id);
     }
 
     @Post('add-user-profile-info')
