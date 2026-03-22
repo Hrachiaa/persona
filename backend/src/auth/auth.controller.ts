@@ -110,6 +110,11 @@ export class AuthController {
     @Get('google/callback')
     async googleCallback(@Req() req, @Res() res){
         const tokens = await this.authService.googleLogin(req.user);
-        res.redirect('http://localhost:5173');
+        const params = new URLSearchParams({
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            userId: tokens.userId,
+        });
+        res.redirect(`http://localhost:5173?${params.toString()}`);
     }
 }

@@ -25,6 +25,10 @@ export const authApi = {
   addProfileInfo: ({ name, gender, birthDate }) =>
     client.post('/auth/add-user-profile-info', { name, gender, birthDate }).then((r) => r.data),
 
+  // Fetch current user profile (JWT-protected)
+  getMe: () =>
+    client.get('/auth/me').then((r) => r.data),
+
   // Returns the full URL for Google OAuth redirect
   getGoogleLoginUrl: () => '/api/auth/google/login',
 };

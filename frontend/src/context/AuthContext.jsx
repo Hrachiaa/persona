@@ -2,52 +2,76 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { authApi } from '../api/auth';
 const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);       // { userId }
+  const [user, setUser] = useState(null);       // full user object from /auth/me
   const [loading, setLoading] = useState(true);  // true while checking stored tokens
   const [error, setError] = useState(null);
-  // On mount, check if we have valid tokens in localStorage
+
+  // Fetch full user profile from /auth/me
+  const fetchMe = useCallback(async () => {
+    try {
+      const data = await authApi.getMe();
+      setUser(data);
+      return data;
+    } catch {
+      // Token invalid or expired — clear auth
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userId');
+      setUser(null);
+      return null;
+    }
+  }, []);
+
+  // On mount, check if we have valid tokens and fetch user profile
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
-    const userId = localStorage.getItem('userId');
-    if (accessToken && refreshToken && userId) {
-      setUser({ userId });
+    if (accessToken && refreshToken) {
+      fetchMe().finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
-  }, []);
+  }, [fetchMe]);
+
   const persistAuth = useCallback((data) => {
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
     if (data.userId) {
       localStorage.setItem('userId', data.userId);
     }
-    setUser({ userId: data.userId || localStorage.getItem('userId') });
     setError(null);
   }, []);
+
   const signup = useCallback(async (email, password) => {
     try {
       setError(null);
       const data = await authApi.signup(email, password);
       persistAuth(data);
-      return data;
+      // Fetch full profile after signup
+      const me = await fetchMe();
+      return me;
     } catch (err) {
       const message = err.response?.data?.message || 'Signup failed. Please try again.';
       setError(message);
       throw err;
     }
-  }, [persistAuth]);
+  }, [persistAuth, fetchMe]);
+
   const login = useCallback(async (email, password) => {
     try {
       setError(null);
       const data = await authApi.login(email, password);
       persistAuth(data);
-      return data;
+      // Fetch full profile after login
+      const me = await fetchMe();
+      return me;
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed. Please try again.';
       setError(message);
       throw err;
     }
-  }, [persistAuth]);
+  }, [persistAuth, fetchMe]);
+
   const logout = useCallback(async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken');
@@ -64,15 +88,20 @@ export function AuthProvider({ children }) {
       setError(null);
     }
   }, []);
-  const handleGoogleCallback = useCallback((params) => {
-    // The backend Google callback will return tokens somehow —
-    // either via query params or response body. We handle query params.
+
+  const handleGoogleCallback = useCallback(async (params) => {
     const { accessToken, refreshToken, userId } = params;
     if (accessToken && refreshToken && userId) {
       persistAuth({ accessToken, refreshToken, userId });
+      // Fetch full profile after Google auth
+      const me = await fetchMe();
+      return me;
     }
-  }, [persistAuth]);
+    return null;
+  }, [persistAuth, fetchMe]);
+
   const clearError = useCallback(() => setError(null), []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -83,6 +112,7 @@ export function AuthProvider({ children }) {
         login,
         logout,
         handleGoogleCallback,
+        fetchMe,
         persistAuth,
         clearError,
       }}
