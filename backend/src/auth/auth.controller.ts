@@ -115,6 +115,7 @@ export class AuthController {
             refreshToken: tokens.refreshToken,
             userId: tokens.userId,
         });
-        res.redirect(`http://localhost:5173?${params.toString()}`);
+        const frontendUrl = process.env.FRONTEND_URL
+        res.redirect(`${frontendUrl}?${params.toString()}`);
     }
 }
