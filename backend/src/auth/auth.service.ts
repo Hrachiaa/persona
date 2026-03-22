@@ -36,6 +36,17 @@ export class AuthService {
         }
     }
 
+    async checkExistingUserInfo(userId: string){
+        const user = await this.usersService.getUserById(userId);
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        if(!user.name || !user.birthDate || !user.gender) {
+            return {isProfileInfoAdded: false}
+        }
+        return {isProfileInfoAdded: true}
+    }
+
     async addProfileInfo(userId: string, profileInfoDto: AddProfileInfoDto){
         const user = await this.usersService.getUserById(userId);
         if(!user){
