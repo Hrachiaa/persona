@@ -94,11 +94,11 @@ export default function App() {
 
   const navigate = (to) => setScreen(to);
 
-  /** Called after successful signup or login */
-  const handleAuthComplete = () => {
+  /** Called after successful signup or login — me is the fresh /auth/me response */
+  const handleAuthComplete = (me) => {
     localStorage.setItem('hasVisitedBefore', 'true');
-    // Bug 2: check if profile data is already filled via the user from context
-    if (isProfileComplete(user)) {
+    // Use the fresh user data passed in, not the stale React state
+    if (isProfileComplete(me)) {
       navigate(SCREENS.DASHBOARD);
     } else {
       navigate(SCREENS.SURVEY);

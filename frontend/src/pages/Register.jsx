@@ -15,8 +15,8 @@ export default function Register({ onComplete, onLogin }) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await signup(email, password);
-      onComplete();
+      const me = await signup(email, password);
+      onComplete(me);
     } catch {
       // error is set in context
     } finally {

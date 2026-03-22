@@ -15,8 +15,8 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await login(email, password);
-      onComplete();
+      const me = await login(email, password);
+      onComplete(me);
     } catch {
       // error is set in context
     } finally {
