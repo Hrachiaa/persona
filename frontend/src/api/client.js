@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// In dev, Vite proxy rewrites /api → backend. In prod, we hit the backend directly.
+const API_URL = import.meta.env.VITE_API_URL || '/api';
+
 const client = axios.create({
-  baseURL: '/api',
+  baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -58,7 +61,7 @@ client.interceptors.response.use(
       }
 
       try {
-        const { data } = await axios.post('/api/auth/refresh', { refreshToken });
+        const { data } = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
         isRefreshing = false;

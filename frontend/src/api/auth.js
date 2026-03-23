@@ -30,5 +30,6 @@ export const authApi = {
     client.get('/auth/me').then((r) => r.data),
 
   // Returns the full URL for Google OAuth redirect
-  getGoogleLoginUrl: () => '/api/auth/google/login',
+  getGoogleLoginUrl: () =>
+    `${import.meta.env.VITE_API_URL || '/api'}/auth/google/login`,
 };
