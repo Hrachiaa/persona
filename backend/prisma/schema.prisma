@@ -25,6 +25,7 @@ model User {
   birthDate     Int?
   refreshToken  RefreshToken?
   otpCode       OtpCode?
+  testsResults  TestResult[]
 }
 
 model RefreshToken {
@@ -40,4 +41,34 @@ model OtpCode {
   code      String   @unique
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Test {
+  id             String        @id @default(cuid())
+  testName       String
+  testType       String        @unique
+  description    String
+  duration       Int
+  totalQuestions Int
+  questions      TestQuestion?
+  testResults    TestResult[]
+}
+
+model TestQuestion {
+  id        String @id @default(cuid())
+  testId    String @unique
+  questions Json
+  test      Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
+}
+
+model TestResult {
+  id       String @id @default(cuid())
+  userId   String
+  testId   String
+  testType String
+  result   Json
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  test     Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, testId])
 }

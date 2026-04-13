@@ -2,7 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { PrismaService } from 'src/prisma.service';
-import { UserPrismaRepository } from './user.prisma.repository';
+import { UserRepository } from './user.repository';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
@@ -13,10 +13,7 @@ import { AuthModule } from 'src/auth/auth.module';
     providers: [
         PrismaService,
         UsersService,
-        {
-            provide: 'USER_REPOSITORY',
-            useClass: UserPrismaRepository,
-        },
+        UserRepository
     ],
     exports: [
         UsersService,

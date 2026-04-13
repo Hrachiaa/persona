@@ -1,15 +1,15 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import type { UserRepository } from './user.repository';
 import { User } from 'generated/prisma/client';
 import { UserEntity } from './models/user.enity';
 import { AuthDto } from './dtos/auth.dto';
 import { AddProfileInfoDto } from 'src/auth/dtos/add-profile-info.dto';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UsersService {
     constructor(
-        @Inject('USER_REPOSITORY') private readonly userRepository: UserRepository,
+        private readonly userRepository: UserRepository,
     ) { }
 
     async create(authDto: AuthDto): Promise<User> {
