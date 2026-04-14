@@ -58,7 +58,8 @@ const LS = {
   set: (testId, suffix, val) => localStorage.setItem(LS.key(testId, suffix), JSON.stringify(val)),
   remove: (testId, suffix) => localStorage.removeItem(LS.key(testId, suffix)),
   clearAll: (testId) => {
-    ['startTime', 'answers', 'useTimer'].forEach((s) => LS.remove(testId, s));
+    ['startTime', 'answers', 'useTimer', 'activeTestId'].forEach((s) => localStorage.removeItem(`test_${testId}_${s}`));
+    localStorage.removeItem('activeTestId');
   },
 };
 
@@ -283,6 +284,16 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
   const [submitting, setSubmitting] = useState(false);
   const timerRef = useRef(null);
 
+  // Preload all question images
+  useEffect(() => {
+    questions.forEach((q) => {
+      if (q.image) {
+        const img = new Image();
+        img.src = q.image;
+      }
+    });
+  }, [questions]);
+
   // Timer setup
   useEffect(() => {
     if (!useTimer || test.duration <= 0) return;
@@ -419,14 +430,13 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
         >
           {/* Question text or image */}
           {currentQ.image ? (
-            <div className="mb-6">
+            <div className="mb-5">
               {currentQ.text && <h2 className="text-xl font-bold text-persona-dark mb-4">{currentQ.text}</h2>}
-              <div className="bg-white rounded-2xl p-3 shadow-sm flex items-center justify-center">
+              <div className="bg-white rounded-2xl p-2 shadow-sm flex items-center justify-center">
                 <img
                   src={currentQ.image}
                   alt={`Question ${questionIndex + 1}`}
-                  className="max-w-full max-h-56 object-contain rounded-xl"
-                  loading="eager"
+                  className="w-full max-h-[50vh] object-contain rounded-xl"
                 />
               </div>
             </div>
@@ -435,7 +445,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
           )}
 
           {/* Options */}
-          <div className={`${isIQ ? 'grid grid-cols-3 gap-3' : 'space-y-3'}`}>
+          <div className={`${isIQ ? 'flex items-center justify-center gap-2 flex-wrap' : 'space-y-3'}`}>
             {currentQ.options.map((opt, i) => {
               const isSelected = currentAnswer?.optionId === opt.id;
               return (
@@ -443,10 +453,10 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
                   key={opt.id}
                   onClick={() => handleAnswer(currentQ.id, opt.id)}
                   className={`${isIQ
-                    ? `w-full aspect-square rounded-2xl flex items-center justify-center text-lg font-bold border-2 transition-all duration-200 ${
+                    ? `w-12 h-12 rounded-xl flex items-center justify-center text-base font-bold border-2 transition-all duration-200 ${
                         isSelected
                           ? 'bg-persona-dark text-white border-persona-dark shadow-lg'
-                          : 'bg-white text-persona-dark border-gray-100 hover:border-persona-dark/20 hover:shadow-md'
+                          : 'bg-white text-persona-dark border-gray-200 hover:border-persona-dark/30 hover:shadow-md'
                       }`
                     : `w-full text-left p-4 rounded-2xl border-2 transition-all duration-200 font-medium ${
                         isSelected
@@ -485,11 +495,11 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
           ← Prev
         </motion.button>
 
-        {isLastQuestion && allAnswered ? (
+        {isLastQuestion ? (
           <motion.button
             onClick={() => handleSubmit(answers)}
-            disabled={submitting}
-            className="btn-primary flex-1 flex items-center justify-center gap-2"
+            disabled={submitting || !currentAnswer}
+            className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
             whileTap={{ scale: 0.97 }}
           >
             {submitting ? (
@@ -635,6 +645,7 @@ export default function Tests() {
   const [useTimer, setUseTimer] = useState(false);
   const [result, setResult] = useState(null);
   const [questionsLoading, setQuestionsLoading] = useState(false);
+  const [sessionRestored, setSessionRestored] = useState(false);
 
   // Fetch test list
   const fetchTests = useCallback(async () => {
@@ -643,15 +654,54 @@ export default function Tests() {
     try {
       const data = await testsApi.getAllTests();
       setTests(data);
+      return data;
     } catch (err) {
       console.error('Failed to fetch tests:', err);
       setError('Failed to load tests');
+      return [];
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { fetchTests(); }, [fetchTests]);
+  // On mount: fetch tests, then check for an active session to restore
+  useEffect(() => {
+    fetchTests().then(async (fetchedTests) => {
+      if (sessionRestored) return;
+      const activeTestId = localStorage.getItem('activeTestId');
+      if (!activeTestId || !fetchedTests.length) { setSessionRestored(true); return; }
+
+      const savedAnswers = LS.get(activeTestId, 'answers');
+      if (!savedAnswers || savedAnswers.length === 0) {
+        // No in-progress answers, clear stale session
+        localStorage.removeItem('activeTestId');
+        setSessionRestored(true);
+        return;
+      }
+
+      const test = fetchedTests.find((t) => t.id === activeTestId);
+      if (!test) { localStorage.removeItem('activeTestId'); setSessionRestored(true); return; }
+
+      // Restore session
+      setSelectedTest(test);
+      const savedTimer = LS.get(activeTestId, 'useTimer');
+      setUseTimer(!!savedTimer);
+
+      try {
+        if (test.testType === 'iq') {
+          const qs = await testsApi.getTestQuestions(test.id);
+          setQuestions(qs);
+        } else {
+          setQuestions(MOCK_DATA[test.testType]?.questions || []);
+        }
+        setScreen(SCREEN.QUESTIONS);
+      } catch (err) {
+        console.error('Failed to restore session:', err);
+        localStorage.removeItem('activeTestId');
+      }
+      setSessionRestored(true);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelectTest = (test) => {
     setSelectedTest(test);
@@ -676,6 +726,9 @@ export default function Tests() {
   const handleTimerChoice = async (withTimer) => {
     setUseTimer(withTimer);
     LS.set(selectedTest.id, 'useTimer', withTimer);
+
+    // Save active test session for refresh persistence
+    localStorage.setItem('activeTestId', selectedTest.id);
 
     // Fetch questions
     setQuestionsLoading(true);
@@ -711,6 +764,7 @@ export default function Tests() {
     setSelectedTest(null);
     setResult(null);
     setQuestions([]);
+    localStorage.removeItem('activeTestId');
   };
 
   const meta = selectedTest ? (TEST_META[selectedTest.testType] || TEST_META.iq) : null;
