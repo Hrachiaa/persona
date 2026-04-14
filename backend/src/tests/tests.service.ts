@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
-import { IqTestAnswer, SubmitTestDto } from './dtos/submit-test.dto';
+import { SubmitTestDto, AnswerDto } from './dtos/submit-test.dto';
 import { TestResultDto } from './dtos/test-result.dto';
 import { IqTestResult, MbtiTestResult, SzondiTestResult, ArchetypeTestResult, TestResultEntity } from './entities/test-result.entity';
 import { TestEntity } from './entities/test.entity';
@@ -52,16 +52,21 @@ export class TestsService implements OnModuleInit {
             iq: this.calculateIQ,
             szondi: this.calculateSzondi,
             archetype: this.calculateArchetype,
-            mbti: this.calculateMBTI,
+            mbti: this.calculateMBTI
         }
 
-        const result: IqTestResult | SzondiTestResult | ArchetypeTestResult | MbtiTestResult = await calculators[test.testType](userId, testId, answers)
+        const result: IqTestResult | SzondiTestResult | ArchetypeTestResult | MbtiTestResult = await calculators[test.testType](userId, testId, answers.answers)
 
+        const isExists = await this.testResultRepository.getTestResult(userId, testId)
+        if(isExists) {
+            const save = await this.testResultRepository.updateTestResult(userId, testId, result) as TestResultEntity
+            return testResultMapper.toDto(save)
+        }
         const save = await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType}) as TestResultEntity
         return testResultMapper.toDto(save)
     }
 
-    private async calculateIQ(userId: string, testId: string, answers: IqTestAnswer[]): Promise<IqTestResult>{
+    private calculateIQ = async (userId: string, testId: string, answers: AnswerDto[]): Promise<IqTestResult> => { 
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
         if (!questions || !('scoring' in questions.questions) || !('results' in questions.questions)) throw new InternalServerErrorException('Options for calculate results not found')
 
@@ -101,13 +106,13 @@ export class TestsService implements OnModuleInit {
         return res
     }
 
-    private async calculateSzondi(){
+    private calculateSzondi = async (userId: string, testId: string, answers: AnswerDto[]): Promise<SzondiTestResult> => {
         return {}
     }
-    private async calculateArchetype(){
+    private calculateArchetype = async (userId: string, testId: string, answers: AnswerDto[]): Promise<ArchetypeTestResult> => {
         return {}
     }
-    private async calculateMBTI(){
+    private calculateMBTI = async (userId: string, testId: string, answers: AnswerDto[]): Promise<MbtiTestResult> => {
         return {}
     }
 }

@@ -9,7 +9,15 @@ export class TestResultRepository {
         return await this.prisma.testResult.create({data})
     }
 
+    async updateTestResult(userId: string, testId: string, result: object) {
+        return await this.prisma.testResult.update({where: {userId_testId: {userId, testId}}, data: {result}})
+    }
+
     async getTestResults(userId: string) {
         return await this.prisma.testResult.findMany({where: {userId}})
+    }
+
+    async getTestResult(userId: string, testId: string) {
+        return await this.prisma.testResult.findUnique({where: {userId_testId: {userId, testId}}})
     }
 }

@@ -1,23 +1,17 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsArray, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export interface IqTestAnswer {
-    questionId: string;
-    optionId: string;
-}
+export class AnswerDto {
+  @IsString()
+  questionId: string;
 
-export interface SzondiTestAnswer {
-}
-
-export interface ArchetypeTestAnswer {
-}
-
-export interface MbtiTestAnswer {
+  @IsString()
+  optionId: string;
 }
 
 export class SubmitTestDto {
-    @ApiProperty({example: '123456', description: 'Code'})
-    @IsString({message: 'Invalid code'})
-    readonly answers: IqTestAnswer[] | SzondiTestAnswer[] | ArchetypeTestAnswer[] | MbtiTestAnswer[]
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AnswerDto)
+  readonly answers: AnswerDto[];
 }
-
