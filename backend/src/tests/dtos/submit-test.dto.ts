@@ -6,9 +6,18 @@ export interface IqTestAnswer {
     optionId: string;
 }
 
+export interface SzondiTestAnswer {
+}
+
+export interface ArchetypeTestAnswer {
+}
+
+export interface MbtiTestAnswer {
+}
+
 export class SubmitTestDto {
     @ApiProperty({example: '123456', description: 'Code'})
     @IsString({message: 'Invalid code'})
-    readonly answers: IqTestAnswer[]
+    readonly answers: IqTestAnswer[] | SzondiTestAnswer[] | ArchetypeTestAnswer[] | MbtiTestAnswer[]
 }
 

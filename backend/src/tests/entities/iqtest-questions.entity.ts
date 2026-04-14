@@ -83,7 +83,7 @@ export interface Scoring {
     
 }
 
-interface Result {a: number, b: number, c: number, d: number, e: number, iq: number}
+export interface Result {a: number, b: number, c: number, d: number, e: number, iq: number}
 
 export interface Results {
     15: Result;
@@ -132,16 +132,4 @@ export interface Results {
     58: Result;
     59: Result;
     60: Result;
-}
-
-export interface QuestionsEntity{
-    questions: [];
-    scoring: Scoring,
-    results: Results
-}
-
-export interface QuestionsDBTableEntity {
-    id: string;
-    questions: QuestionsEntity
-    testId: string;
 }
