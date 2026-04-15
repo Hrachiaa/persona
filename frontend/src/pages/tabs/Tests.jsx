@@ -8,7 +8,6 @@ import {
   HiOutlineCheckCircle,
   HiOutlineArrowLeft,
   HiOutlineClock,
-  HiOutlineExclamationTriangle,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
 } from 'react-icons/hi2';
@@ -465,9 +464,6 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
                       }`
                   }`}
                   whileTap={{ scale: 0.96 }}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
                 >
                   {isIQ ? (
                     opt.text
@@ -530,19 +526,49 @@ function IqResultScreen({ result, meta, onDone, onRetake }) {
 
   if (reliability === 'invalid') {
     return (
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 200 }} className="px-6 pt-8">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 180, damping: 20 }} className="px-6 pt-10">
         <div className="text-center">
-          <motion.div className="w-24 h-24 bg-gray-100 rounded-[2rem] flex items-center justify-center mx-auto mb-6" initial={{ rotate: -10 }} animate={{ rotate: 0 }}>
-            <HiOutlineExclamationTriangle className="w-12 h-12 text-gray-400" />
+          <motion.div
+            className={`w-24 h-24 ${meta.color}/60 rounded-[2rem] flex items-center justify-center mx-auto mb-8`}
+            initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
+          >
+            <Icon className={`w-12 h-12 ${meta.iconColor} opacity-70`} />
           </motion.div>
-          <h2 className="text-2xl font-bold text-persona-dark mb-3">Result Unavailable</h2>
-          <p className="text-persona-muted leading-relaxed mb-8 max-w-sm mx-auto">
-            Unfortunately, your result could not be calculated. This may happen if the response pattern was inconsistent. Please try taking the test again.
-          </p>
-          <motion.button onClick={onRetake} className="btn-primary w-full max-w-xs flex items-center justify-center gap-2 mx-auto" whileTap={{ scale: 0.97 }}>
-            <HiOutlineArrowPath className="w-5 h-5" /> Retake Test
+
+          <motion.h2
+            className="text-2xl font-bold text-persona-dark mb-3"
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          >
+            We couldn't calculate a score
+          </motion.h2>
+
+          <motion.p
+            className="text-persona-muted leading-relaxed mb-3 max-w-sm mx-auto"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}
+          >
+            The score was too low to produce a reliable result. This usually happens when answers are selected randomly or the test is taken without full focus.
+          </motion.p>
+          <motion.p
+            className="text-persona-muted leading-relaxed mb-10 max-w-sm mx-auto text-sm"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }}
+          >
+            No worries — it happens. When you're ready, you can give it another go.
+          </motion.p>
+
+          <motion.button
+            onClick={onRetake}
+            className="btn-primary w-full max-w-xs flex items-center justify-center gap-2 mx-auto"
+            whileTap={{ scale: 0.97 }}
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
+          >
+            <HiOutlineArrowPath className="w-5 h-5" /> Try again
           </motion.button>
-          <motion.button onClick={onDone} className="mt-3 text-sm text-persona-muted hover:text-persona-dark transition-colors" whileTap={{ scale: 0.97 }}>
+          <motion.button
+            onClick={onDone}
+            className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors"
+            whileTap={{ scale: 0.97 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}
+          >
             Back to tests
           </motion.button>
         </div>
