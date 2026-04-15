@@ -5,9 +5,9 @@ import { createHmac } from 'crypto'
 import { AuthDto } from 'src/users/dtos/auth.dto';
 import { UsersService } from 'src/users/users.service';
 import { UserEntity } from 'src/users/models/user.enity';
-import type { RefreshTokenRepository } from './refresh-token.repository';
 import { MailService } from 'src/mail/mail.service';
 import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
+import { RefreshTokenRepository } from './refresh-token.repository';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,7 @@ export class AuthService {
                 private readonly usersService: UsersService,
                 private readonly jwtService: JwtService,
                 private readonly mailService: MailService,
-                @Inject('REFRESH_TOKEN_REPOSITORY') private readonly refreshTokenRepository: RefreshTokenRepository,
+                private readonly refreshTokenRepository: RefreshTokenRepository,
     ) {}
 
     async signup(authDto: AuthDto){

@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
-import { RefreshTokenPrismaRepository } from './refresh-token.prisma.repository';
+import { RefreshTokenRepository } from './refresh-token.repository';
 import { PrismaService } from 'src/prisma.service';
 import { MailModule } from 'src/mail/mail.module';
 import { ConfigModule } from '@nestjs/config';
@@ -22,10 +22,7 @@ import { GoogleStrategy } from './google.strategy';
     AuthService,
     PrismaService,
     GoogleStrategy,
-    {
-      provide: 'REFRESH_TOKEN_REPOSITORY',
-      useClass: RefreshTokenPrismaRepository,
-    }
+    RefreshTokenRepository,
   ],
   exports: [
     AuthService,
