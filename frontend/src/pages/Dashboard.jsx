@@ -45,30 +45,32 @@ export default function Dashboard({ onLogout }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-persona-bg pb-24"
+      className="min-h-dvh bg-persona-bg pb-24"
     >
       {/* Top Bar with Logout */}
-      <div className="sticky top-0 z-40 bg-persona-bg/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-persona-dark flex items-center gap-2">
-          <span className="text-xl">λ</span> Persona
-        </h1>
+      <header className="sticky top-0 z-40 bg-persona-bg/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+        <p className="text-lg font-medium text-persona-dark flex items-center gap-2">
+          <span className="font-display text-xl">λ</span> Persona
+        </p>
         <motion.button
           onClick={onLogout}
-          className="flex items-center gap-2 text-persona-muted hover:text-red-500 transition-colors text-sm font-medium"
+          className="flex items-center gap-2 text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded-full px-2 py-1"
           whileTap={{ scale: 0.95 }}
         >
           <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-          Logout
+          Sign out
         </motion.button>
-      </div>
+      </header>
 
       {/* Tab Content */}
-      <AnimatePresence mode="wait">
-        {renderTab()}
-      </AnimatePresence>
+      <section role="region" aria-label="Dashboard content">
+        <AnimatePresence mode="wait">
+          {renderTab()}
+        </AnimatePresence>
+      </section>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-gray-200/50 z-50">
+      <nav aria-label="Primary" className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-persona-line/70 z-50">
         <div className="max-w-lg mx-auto flex items-center justify-around py-2 px-2">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -76,8 +78,10 @@ export default function Dashboard({ onLogout }) {
               <motion.button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex flex-col items-center gap-0.5 py-2 px-3 rounded-2xl transition-colors duration-200 ${
-                  isActive ? 'text-persona-dark' : 'text-gray-400'
+                aria-current={isActive ? 'page' : undefined}
+                aria-label={tab.label}
+                className={`flex flex-col items-center gap-0.5 py-2 px-3 rounded-2xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
+                  isActive ? 'text-persona-dark' : 'text-persona-muted'
                 }`}
                 whileTap={{ scale: 0.9 }}
               >
@@ -100,7 +104,7 @@ export default function Dashboard({ onLogout }) {
         </div>
         {/* iPhone safe area */}
         <div className="h-[env(safe-area-inset-bottom)]" />
-      </div>
+      </nav>
     </motion.div>
   );
 }

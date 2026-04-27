@@ -98,12 +98,13 @@ export default function Survey({ onComplete }) {
   const progress = ((step + 1) / steps.length) * 100;
 
   return (
-    <motion.div
+    <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4 }}
-      className="min-h-screen bg-persona-bg flex flex-col items-center justify-center px-6 py-12"
+      aria-label="Profile survey"
+      className="min-h-dvh bg-persona-bg flex flex-col items-center justify-center px-6 py-12"
     >
       <div className="w-full max-w-md">
         {/* Progress Bar */}
@@ -113,14 +114,14 @@ export default function Survey({ onComplete }) {
           className="mb-12"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-persona-muted">
+            <span className="text-xs font-medium tracking-wide text-persona-muted">
               Step {step + 1} of {steps.length}
             </span>
-            <span className="text-sm font-medium text-persona-dark">
+            <span className="text-sm font-medium text-persona-dark tabular">
               {Math.round(progress)}%
             </span>
           </div>
-          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-persona-line rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-persona-dark rounded-full"
               initial={{ width: 0 }}
@@ -143,35 +144,37 @@ export default function Survey({ onComplete }) {
           >
             {/* Icon */}
             <motion.div
-              className="w-20 h-20 bg-persona-accent-lavender/50 rounded-3xl flex items-center justify-center mx-auto mb-8"
+              className="w-20 h-20 bg-persona-accent-peach/40 rounded-3xl flex items-center justify-center mx-auto mb-8"
               whileHover={{ scale: 1.05, rotate: 3 }}
             >
-              <currentStep.icon className="w-10 h-10 text-purple-600" />
+              <currentStep.icon className="w-10 h-10 text-persona-dark" />
             </motion.div>
 
-            <h2 className="text-3xl font-bold text-persona-dark mb-2">
+            <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">
               {currentStep.title}
             </h2>
             <p className="text-persona-muted mb-8">{currentStep.subtitle}</p>
 
             {/* Input */}
             {currentStep.type === 'gender' ? (
-              <div className="flex gap-4 justify-center">
+              <div role="radiogroup" aria-label="Gender" className="flex gap-4 justify-center">
                 {genderOptions.map((opt) => (
                   <motion.button
                     key={opt.value}
                     type="button"
+                    role="radio"
+                    aria-checked={profileData.gender === opt.value}
                     onClick={() => handleGenderSelect(opt.value)}
-                    className={`flex-1 py-6 px-6 rounded-3xl border-2 transition-all duration-300 text-center ${
+                    className={`flex-1 py-6 px-6 rounded-3xl border-2 transition-all duration-300 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
                       profileData.gender === opt.value
-                        ? 'border-persona-dark bg-persona-dark/5 shadow-lg'
-                        : 'border-gray-200 bg-white hover:border-persona-dark/20 hover:shadow-md'
+                        ? 'border-persona-dark bg-persona-dark/5 shadow-warm'
+                        : 'border-persona-line bg-white hover:border-persona-dark/20 hover:shadow-warm'
                     }`}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
-                    <span className="text-4xl block mb-3">{opt.emoji}</span>
-                    <span className={`font-semibold text-lg ${
+                    <span className="text-4xl block mb-3" aria-hidden="true">{opt.emoji}</span>
+                    <span className={`font-medium text-lg ${
                       profileData.gender === opt.value ? 'text-persona-dark' : 'text-persona-muted'
                     }`}>
                       {opt.label}
@@ -180,13 +183,19 @@ export default function Survey({ onComplete }) {
                 ))}
               </div>
             ) : (
-              <div className="relative">
+              <div className="text-left">
+                <label htmlFor={`survey-${currentStep.field}`} className="field-label sr-only">
+                  {currentStep.title}
+                </label>
                 <input
+                  id={`survey-${currentStep.field}`}
+                  name={currentStep.field}
                   type={currentStep.type}
+                  inputMode={currentStep.type === 'number' ? 'numeric' : 'text'}
                   placeholder={currentStep.placeholder}
                   value={profileData[currentStep.field]}
                   onChange={handleChange}
-                  className="input-field text-center text-lg"
+                  className={`input-field text-center text-lg ${currentStep.type === 'number' ? 'tabular' : ''}`}
                   autoFocus
                 />
               </div>
@@ -222,14 +231,14 @@ export default function Survey({ onComplete }) {
           <motion.button
             onClick={handleNext}
             disabled={!isStepValid() || isLoading}
-            className="btn-primary flex-1 text-center text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary flex-1 text-center disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={isStepValid() && !isLoading ? { scale: 1.02 } : {}}
             whileTap={isStepValid() && !isLoading ? { scale: 0.97 } : {}}
           >
-            {isLoading ? 'Saving…' : step === steps.length - 1 ? "Let's Go!" : 'Continue'}
+            {isLoading ? 'Saving…' : step === steps.length - 1 ? "Let's go" : 'Continue'}
           </motion.button>
         </div>
       </div>
-    </motion.div>
+    </motion.section>
   );
 }

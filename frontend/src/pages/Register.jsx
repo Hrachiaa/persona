@@ -29,27 +29,27 @@ export default function Register({ onComplete, onLogin }) {
   };
 
   return (
-    <motion.div
+    <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4 }}
-      className="min-h-screen bg-persona-bg flex flex-col items-center justify-center px-6 py-12"
+      className="min-h-dvh bg-persona-bg flex flex-col items-center justify-center px-6 py-12"
     >
       <div className="w-full max-w-md">
         {/* Header */}
-        <motion.div
+        <motion.header
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
           className="text-center mb-10"
         >
-          <h1 className="text-2xl font-bold tracking-tight text-persona-dark flex items-center justify-center gap-2 mb-6">
-            <span className="text-3xl">λ</span> Persona
-          </h1>
-          <h2 className="text-3xl font-bold text-persona-dark mb-2">Create Account</h2>
-          <p className="text-persona-muted">Start your personality journey today</p>
-        </motion.div>
+          <p className="text-2xl font-medium tracking-tight text-persona-dark flex items-center justify-center gap-2 mb-6">
+            <span className="font-display text-3xl">λ</span> Persona
+          </p>
+          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">Create your account</h1>
+          <p className="text-persona-muted">Start your personality journey today.</p>
+        </motion.header>
 
         {/* Error Message */}
         {error && (
@@ -71,45 +71,58 @@ export default function Register({ onComplete, onLogin }) {
           className="space-y-4"
         >
           {/* Email */}
-          <div className="relative">
-            <HiOutlineEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="email"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); clearError(); }}
-              className="input-field pl-12"
-              required
-            />
+          <div>
+            <label htmlFor="register-email" className="field-label">Email</label>
+            <div className="relative">
+              <HiOutlineEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                id="register-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); clearError(); }}
+                className="input-field pl-12"
+                required
+              />
+            </div>
           </div>
 
           {/* Password */}
-          <div className="relative">
-            <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password (8-32 characters)"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); clearError(); }}
-              className="input-field pl-12 pr-12"
-              minLength={8}
-              maxLength={32}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              {showPassword ? <HiOutlineEyeSlash className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
-            </button>
+          <div>
+            <label htmlFor="register-password" className="field-label">Password</label>
+            <div className="relative">
+              <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                id="register-password"
+                name="new-password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                placeholder="8 to 32 characters"
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); clearError(); }}
+                className="input-field pl-12 pr-12"
+                minLength={8}
+                maxLength={32}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach rounded-full p-0.5"
+              >
+                {showPassword ? <HiOutlineEyeSlash className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           {/* Sign Up Button */}
           <motion.button
             type="submit"
             disabled={isLoading}
-            className="btn-primary w-full text-center text-lg mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full text-center mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={!isLoading ? { scale: 1.02 } : {}}
             whileTap={!isLoading ? { scale: 0.97 } : {}}
           >
@@ -119,9 +132,9 @@ export default function Register({ onComplete, onLogin }) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                Creating Account…
+                Creating account…
               </span>
-            ) : 'Sign Up'}
+            ) : 'Create account'}
           </motion.button>
         </motion.form>
 
@@ -132,9 +145,9 @@ export default function Register({ onComplete, onLogin }) {
           transition={{ delay: 0.4 }}
           className="flex items-center gap-4 my-8"
         >
-          <div className="flex-1 h-px bg-gray-300" />
+          <div className="flex-1 h-px bg-persona-line" />
           <span className="text-sm text-persona-muted">or continue with</span>
-          <div className="flex-1 h-px bg-gray-300" />
+          <div className="flex-1 h-px bg-persona-line" />
         </motion.div>
 
         {/* Google Button */}
@@ -167,11 +180,14 @@ export default function Register({ onComplete, onLogin }) {
           className="text-center text-sm text-persona-muted mt-8"
         >
           Already have an account?{' '}
-          <button onClick={onLogin} className="text-persona-dark font-semibold hover:underline">
-            Sign In
+          <button
+            onClick={onLogin}
+            className="text-persona-dark font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1"
+          >
+            Sign in
           </button>
         </motion.p>
       </div>
-    </motion.div>
+    </motion.section>
   );
 }

@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,11 +10,22 @@
   }
 
   body {
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: 'Geist', 'Inter', system-ui, sans-serif;
     background-color: #f5f5f0;
     color: #1a1a1a;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   ::-webkit-scrollbar {
@@ -29,46 +38,77 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #d1d5db;
+    background: #d6d2c4;
     border-radius: 999px;
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
-  }
-
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400;
-  }
-
   .btn-primary {
-    @apply bg-persona-dark text-white font-semibold py-3.5 px-8 rounded-full 
+    @apply bg-persona-dark text-white font-medium py-3.5 px-8 rounded-full
            transition-all duration-300 ease-out
-           hover:bg-gray-800 hover:shadow-xl hover:shadow-black/10
-           active:scale-95 transform;
+           hover:bg-gray-800 hover:shadow-warm-lg
+           active:scale-95 transform
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2
+           focus-visible:ring-offset-persona-bg;
   }
 
   .btn-secondary {
-    @apply bg-white text-persona-dark font-semibold py-3.5 px-8 rounded-full 
+    @apply bg-white text-persona-dark font-medium py-3.5 px-8 rounded-full
            border-2 border-persona-dark/10
            transition-all duration-300 ease-out
-           hover:border-persona-dark/30 hover:shadow-lg
-           active:scale-95 transform;
+           hover:border-persona-dark/30 hover:shadow-warm
+           active:scale-95 transform
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2
+           focus-visible:ring-offset-persona-bg;
+  }
+
+  .btn-ghost {
+    @apply text-persona-dark/70 font-medium py-2 px-3 rounded-full
+           transition-colors hover:text-persona-dark hover:bg-persona-dark/5
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-persona-accent-peach;
   }
 
   .input-field {
-    @apply w-full bg-white border-2 border-gray-200 rounded-2xl py-3.5 px-5
+    @apply w-full bg-white border-2 border-persona-line rounded-2xl py-3.5 px-5
            text-persona-dark placeholder-gray-400
-           focus:outline-none focus:border-persona-dark/30 focus:shadow-lg focus:shadow-black/5
+           focus:outline-none focus:border-persona-dark/30 focus:shadow-warm
+           focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2
+           focus-visible:ring-offset-persona-bg
            transition-all duration-300;
   }
 
   .card-hover {
     @apply transition-all duration-300 ease-out
-           hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5;
+           hover:-translate-y-1 hover:shadow-warm-lg;
   }
+
+  .surface-warm {
+    @apply bg-persona-card shadow-warm;
+  }
+
+  .field-label {
+    @apply block text-xs font-medium text-persona-muted mb-2 ml-1 tracking-wide;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Grain overlay — fixed full-viewport noise for warmth/texture */
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.4  0 0 0 0 0.3  0 0 0 0 0.2  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
 }
 
 /* Hide scrollbar for horizontal scroll */

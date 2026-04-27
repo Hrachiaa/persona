@@ -15,10 +15,10 @@ import { testsApi } from '../../api/tests';
 
 // ─── Static metadata the API doesn't provide ────────────────────────────────
 const TEST_META = {
-  iq:        { icon: HiOutlineBolt,        color: 'bg-persona-accent-yellow',   iconColor: 'text-amber-600' },
-  szondi:    { icon: HiOutlineEye,         color: 'bg-persona-accent-lavender', iconColor: 'text-purple-600' },
-  archetype: { icon: HiOutlineCpuChip,     color: 'bg-persona-accent-lime',     iconColor: 'text-green-600' },
-  mbti:      { icon: HiOutlineFingerPrint, color: 'bg-persona-accent-pink',     iconColor: 'text-pink-600' },
+  iq:        { icon: HiOutlineBolt,        color: 'bg-persona-accent-yellow',   iconColor: 'text-persona-dark' },
+  szondi:    { icon: HiOutlineEye,         color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
+  archetype: { icon: HiOutlineCpuChip,     color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
+  mbti:      { icon: HiOutlineFingerPrint, color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
 };
 
 // ─── Mocked questions / results for non-IQ tests ────────────────────────────
@@ -113,8 +113,8 @@ function BellCurve({ score }) {
     <svg viewBox={`0 0 ${w} ${h}`} className="w-full max-w-sm mx-auto" preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#6366f1" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#6366f1" stopOpacity="0.05" />
+          <stop offset="0%" stopColor="#FDBA74" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#FDBA74" stopOpacity="0.06" />
         </linearGradient>
       </defs>
 
@@ -122,7 +122,7 @@ function BellCurve({ score }) {
       {shadePath && <path d={shadePath} fill="url(#curveGrad)" />}
 
       {/* curve line */}
-      <path d={curvePath} fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d={curvePath} fill="none" stroke="#FDBA74" strokeWidth="2.5" strokeLinejoin="round" />
 
       {/* baseline */}
       <line x1={pad.left} y1={pad.top + innerH} x2={pad.left + innerW} y2={pad.top + innerH} stroke="#d1d5db" strokeWidth="1" />
@@ -162,19 +162,19 @@ function TestCard({ test, meta, onStart, completed }) {
           <Icon className={`w-7 h-7 ${meta.iconColor}`} />
         </div>
         {completed ? (
-          <span className="flex items-center gap-1 text-sm font-medium text-green-600 bg-green-100 px-3 py-1 rounded-full">
+          <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-dark bg-persona-accent-lime/50 px-2.5 py-1 rounded-md">
             <HiOutlineCheckCircle className="w-4 h-4" /> Done
           </span>
         ) : (
-          <span className="text-sm font-medium text-persona-muted bg-gray-100 px-3 py-1 rounded-full">
+          <span className="text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md">
             Not started
           </span>
         )}
       </div>
-      <h3 className="text-xl font-bold text-persona-dark mb-2">{test.testName}</h3>
-      <p className="text-persona-muted text-sm leading-relaxed mb-4">{test.description}</p>
-      <div className="flex items-center gap-2 text-persona-dark font-semibold text-sm">
-        {completed ? 'View Results' : 'Take Test'} →
+      <h3 className="font-display text-xl font-semibold text-persona-dark mb-2">{test.testName}</h3>
+      <p className="text-persona-muted text-sm leading-relaxed mb-4 max-w-prose">{test.description}</p>
+      <div className="flex items-center gap-2 text-persona-dark font-medium text-sm">
+        {completed ? 'View results' : 'Take test'} →
       </div>
     </motion.div>
   );
@@ -186,7 +186,7 @@ function PreviewScreen({ test, meta, onStart, onViewResult, onBack, hasResult })
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-6 pt-6 pb-8">
       <div className="flex items-center gap-4 mb-8">
-        <motion.button onClick={onBack} className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm" whileTap={{ scale: 0.9 }}>
+        <motion.button onClick={onBack} className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg" whileTap={{ scale: 0.9 }}>
           <HiOutlineArrowLeft className="w-5 h-5" />
         </motion.button>
         <h3 className="font-semibold text-persona-dark text-lg">Test Details</h3>
@@ -199,32 +199,36 @@ function PreviewScreen({ test, meta, onStart, onViewResult, onBack, hasResult })
         >
           <Icon className={`w-12 h-12 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="text-2xl font-bold text-persona-dark mb-2">{test.testName}</h2>
-        <p className="text-persona-muted leading-relaxed max-w-sm mx-auto">{test.description}</p>
+        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{test.testName}</h2>
+        <p className="text-persona-muted leading-relaxed max-w-prose mx-auto">{test.description}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-8">
-        <div className="bg-white rounded-2xl p-4 text-center shadow-sm">
-          <p className="text-2xl font-bold text-persona-dark">{test.totalQuestions}</p>
-          <p className="text-xs text-persona-muted mt-1">Questions</p>
-        </div>
-        <div className="bg-white rounded-2xl p-4 text-center shadow-sm">
-          <p className="text-2xl font-bold text-persona-dark flex items-center justify-center gap-1">
-            <HiOutlineClock className="w-5 h-5 text-persona-muted" />
-            {test.duration > 0 ? `${test.duration}m` : '—'}
+      {/* Asymmetric metrics block */}
+      <div className="surface-warm rounded-3xl p-5 mb-8 flex items-end justify-between gap-4">
+        <div>
+          <p className="font-display text-5xl font-semibold text-persona-dark tabular leading-none">
+            {test.totalQuestions}
           </p>
-          <p className="text-xs text-persona-muted mt-1">{test.duration > 0 ? 'Duration' : 'No limit'}</p>
+          <p className="text-xs text-persona-muted mt-2 tracking-wide">
+            Question{test.totalQuestions === 1 ? '' : 's'}
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 text-sm text-persona-muted pb-1">
+          <HiOutlineClock className="w-4 h-4" />
+          <span className="tabular">
+            {test.duration > 0 ? `${test.duration} min` : 'No time limit'}
+          </span>
         </div>
       </div>
 
       <div className="space-y-3">
         {hasResult && (
           <motion.button onClick={onViewResult} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
-            View Result
+            View result
           </motion.button>
         )}
         <motion.button onClick={onStart} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
-          {hasResult ? 'Retake Test' : 'Start Test'}
+          {hasResult ? 'Retake test' : 'Start test'}
         </motion.button>
       </div>
     </motion.div>
@@ -237,10 +241,10 @@ function TimerPromptScreen({ test, meta, onChoice, onBack }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-6 pt-6 pb-8">
       <div className="flex items-center gap-4 mb-8">
-        <motion.button onClick={onBack} className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm" whileTap={{ scale: 0.9 }}>
+        <motion.button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg" whileTap={{ scale: 0.9 }}>
           <HiOutlineArrowLeft className="w-5 h-5" />
         </motion.button>
-        <h3 className="font-semibold text-persona-dark text-lg">{test.testName}</h3>
+        <h3 className="font-display font-semibold text-persona-dark text-lg">{test.testName}</h3>
       </div>
 
       <div className="text-center mb-10">
@@ -250,9 +254,9 @@ function TimerPromptScreen({ test, meta, onChoice, onBack }) {
         >
           <HiOutlineClock className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="text-xl font-bold text-persona-dark mb-2">Use a timer?</h2>
-        <p className="text-persona-muted text-sm leading-relaxed max-w-xs mx-auto">
-          This test is designed to be completed in <span className="font-semibold text-persona-dark">{test.duration} minutes</span>. Would you like to enable the countdown timer?
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Use a timer?</h2>
+        <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
+          This test is designed to be completed in <span className="font-medium text-persona-dark tabular">{test.duration} minutes</span>. Would you like to enable the countdown timer?
         </p>
       </div>
 
@@ -394,7 +398,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
             if (answers.length > 0 && !window.confirm('Your progress will be saved. Leave this test?')) return;
             onBack();
           }}
-          className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm"
+          className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
           whileTap={{ scale: 0.9 }}
         >
           <HiOutlineArrowLeft className="w-5 h-5" />
@@ -404,8 +408,12 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
           <p className="text-sm text-persona-muted">Question {questionIndex + 1} of {questions.length}</p>
         </div>
         {useTimer && timeLeft !== null && (
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${
-            timeLeft < 60000 ? 'bg-red-100 text-red-600' : timeLeft < 300000 ? 'bg-amber-100 text-amber-600' : 'bg-gray-100 text-persona-dark'
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium tabular ${
+            timeLeft < 60000
+              ? 'bg-persona-danger/10 text-persona-danger'
+              : timeLeft < 300000
+                ? 'bg-persona-warn/10 text-persona-warn'
+                : 'bg-persona-line text-persona-dark'
           }`}>
             <HiOutlineClock className="w-4 h-4" />
             {formatTime(timeLeft)}
@@ -414,7 +422,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
       </div>
 
       {/* Progress */}
-      <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-8">
+      <div className="w-full h-1.5 bg-persona-line rounded-full overflow-hidden mb-8">
         <motion.div className="h-full bg-persona-dark rounded-full" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
       </div>
 
@@ -430,8 +438,8 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
           {/* Question text or image */}
           {currentQ.image ? (
             <div className="mb-5">
-              {currentQ.text && <h2 className="text-xl font-bold text-persona-dark mb-4">{currentQ.text}</h2>}
-              <div className="bg-white rounded-2xl p-2 shadow-sm flex items-center justify-center">
+              {currentQ.text && <h2 className="font-display text-xl font-semibold text-persona-dark mb-4">{currentQ.text}</h2>}
+              <div className="bg-white rounded-2xl p-2 shadow-warm flex items-center justify-center">
                 <img
                   src={currentQ.image}
                   alt={`Question ${questionIndex + 1}`}
@@ -440,7 +448,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
               </div>
             </div>
           ) : (
-            <h2 className="text-2xl font-bold text-persona-dark mb-8">{currentQ.text}</h2>
+            <h2 className="font-display text-2xl font-semibold text-persona-dark mb-8 max-w-prose">{currentQ.text}</h2>
           )}
 
           {/* Options */}
@@ -451,16 +459,17 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
                 <motion.button
                   key={opt.id}
                   onClick={() => handleAnswer(currentQ.id, opt.id)}
+                  aria-pressed={isSelected}
                   className={`${isIQ
-                    ? `w-12 h-12 rounded-xl flex items-center justify-center text-base font-bold border-2 transition-all duration-200 ${
+                    ? `w-12 h-12 rounded-xl flex items-center justify-center text-base font-medium tabular border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
                         isSelected
-                          ? 'bg-persona-dark text-white border-persona-dark shadow-lg'
-                          : 'bg-white text-persona-dark border-gray-200 hover:border-persona-dark/30 hover:shadow-md'
+                          ? 'bg-persona-dark text-white border-persona-dark shadow-warm'
+                          : 'bg-white text-persona-dark border-persona-line hover:border-persona-dark/30 hover:shadow-warm'
                       }`
-                    : `w-full text-left p-4 rounded-2xl border-2 transition-all duration-200 font-medium ${
+                    : `w-full text-left p-4 rounded-2xl border-2 transition-all duration-200 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
                         isSelected
-                          ? 'bg-persona-dark/5 border-persona-dark/30 shadow-md'
-                          : 'bg-white border-gray-100 hover:border-persona-dark/20 hover:shadow-md'
+                          ? 'bg-persona-dark/5 border-persona-dark/30 shadow-warm'
+                          : 'bg-white border-persona-line hover:border-persona-dark/20 hover:shadow-warm'
                       }`
                   }`}
                   whileTap={{ scale: 0.96 }}
@@ -469,7 +478,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
                     opt.text
                   ) : (
                     <>
-                      <span className="text-persona-muted mr-3">{String.fromCharCode(65 + i)}.</span>
+                      <span className="text-persona-muted mr-3 tabular">{String.fromCharCode(65 + i)}.</span>
                       {opt.text}
                     </>
                   )}
@@ -485,7 +494,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
         <motion.button
           onClick={() => setQuestionIndex((p) => Math.max(0, p - 1))}
           disabled={questionIndex === 0}
-          className="px-5 py-2.5 rounded-full text-sm font-semibold bg-white border border-gray-200 text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed"
+          className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
           whileTap={{ scale: 0.95 }}
         >
           ← Prev
@@ -501,14 +510,14 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
             {submitting ? (
               <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting…</span>
             ) : (
-              'Submit Test'
+              'Submit test'
             )}
           </motion.button>
         ) : (
           <motion.button
             onClick={() => setQuestionIndex((p) => Math.min(questions.length - 1, p + 1))}
             disabled={questionIndex === questions.length - 1}
-            className="px-5 py-2.5 rounded-full text-sm font-semibold bg-white border border-gray-200 text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
             whileTap={{ scale: 0.95 }}
           >
             Next →
@@ -536,23 +545,23 @@ function IqResultScreen({ result, meta, onDone, onRetake }) {
           </motion.div>
 
           <motion.h2
-            className="text-2xl font-bold text-persona-dark mb-3"
+            className="font-display text-3xl font-semibold text-persona-dark mb-3"
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           >
-            We couldn't calculate a score
+            We couldn&apos;t calculate a score
           </motion.h2>
 
           <motion.p
-            className="text-persona-muted leading-relaxed mb-3 max-w-sm mx-auto"
+            className="text-persona-muted leading-relaxed mb-3 max-w-prose mx-auto"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}
           >
             The score was too low to produce a reliable result. This usually happens when answers are selected randomly or the test is taken without full focus.
           </motion.p>
           <motion.p
-            className="text-persona-muted leading-relaxed mb-10 max-w-sm mx-auto text-sm"
+            className="text-persona-muted leading-relaxed mb-10 max-w-prose mx-auto text-sm"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }}
           >
-            No worries — it happens. When you're ready, you can give it another go.
+            No worries — it happens. When you&apos;re ready, you can give it another go.
           </motion.p>
 
           <motion.button
@@ -565,7 +574,7 @@ function IqResultScreen({ result, meta, onDone, onRetake }) {
           </motion.button>
           <motion.button
             onClick={onDone}
-            className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors"
+            className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5"
             whileTap={{ scale: 0.97 }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}
           >
@@ -586,10 +595,10 @@ function IqResultScreen({ result, meta, onDone, onRetake }) {
           <Icon className={`w-14 h-14 ${meta.iconColor}`} />
         </motion.div>
 
-        <h2 className="text-2xl font-bold text-persona-dark mb-2">Your IQ Score</h2>
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Your IQ score</h2>
 
         <motion.div
-          className="text-7xl font-black text-persona-dark mb-4"
+          className="font-display text-7xl font-semibold text-persona-dark mb-4 tabular leading-none"
           initial={{ scale: 0 }} animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
         >
@@ -599,17 +608,17 @@ function IqResultScreen({ result, meta, onDone, onRetake }) {
         {/* Bell curve */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mb-6">
           <BellCurve score={iq} />
-          <p className="text-xs text-persona-muted mt-2">Normal distribution · μ=100 · σ=15</p>
+          <p className="text-xs text-persona-muted mt-2 tabular">Normal distribution · μ=100 · σ=15</p>
         </motion.div>
 
         {/* Suspicious notice */}
         {reliability === 'suspicious' && (
           <motion.div
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-            className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 text-left mb-6 max-w-sm mx-auto"
+            className="flex items-start gap-3 bg-persona-warn/10 rounded-2xl p-4 text-left mb-6 max-w-prose mx-auto"
           >
-            <HiOutlineInformationCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-amber-700 leading-relaxed">
+            <HiOutlineInformationCircle className="w-5 h-5 text-persona-warn flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-persona-warn leading-relaxed">
               Your results show some unusual patterns. You may want to retake the test for more accurate results.
             </p>
           </motion.div>
@@ -620,7 +629,7 @@ function IqResultScreen({ result, meta, onDone, onRetake }) {
         </motion.button>
 
         {reliability === 'suspicious' && (
-          <motion.button onClick={onRetake} className="mt-3 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 mx-auto" whileTap={{ scale: 0.97 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+          <motion.button onClick={onRetake} className="mt-3 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5" whileTap={{ scale: 0.97 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
             <HiOutlineArrowPath className="w-4 h-4" /> Retake test
           </motion.button>
         )}
@@ -642,14 +651,14 @@ function GenericResultScreen({ result, meta, onDone }) {
         >
           <Icon className={`w-14 h-14 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="text-2xl font-bold text-persona-dark mb-2">Your Result</h2>
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Your result</h2>
         <motion.div
-          className={`inline-block ${meta.color} px-6 py-2 rounded-full text-lg font-bold text-persona-dark mb-4`}
+          className={`inline-block ${meta.color} px-6 py-2 rounded-full text-lg font-medium text-persona-dark mb-4`}
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
         >
           {r.label || 'Completed'}
         </motion.div>
-        <motion.p className="text-persona-muted leading-relaxed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+        <motion.p className="text-persona-muted leading-relaxed max-w-prose mx-auto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           {r.detail || ''}
         </motion.p>
         <motion.button onClick={onDone} className="btn-primary mt-8 w-full max-w-xs mx-auto" whileTap={{ scale: 0.97 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
@@ -801,19 +810,19 @@ export default function Tests() {
       return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-14 pb-6">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-persona-dark mb-1">Personality Tests</h1>
-            <p className="text-persona-muted">Discover what makes you unique</p>
+            <h1 className="font-display text-4xl font-semibold text-persona-dark mb-1">Personality tests</h1>
+            <p className="text-persona-muted">Discover what makes you unique.</p>
           </div>
           <div className="grid gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-gray-100/50 rounded-3xl p-6 animate-pulse">
+              <div key={i} className="bg-persona-line/40 rounded-3xl p-6 animate-pulse">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-14 h-14 bg-gray-200 rounded-2xl" />
-                  <div className="w-20 h-6 bg-gray-200 rounded-full" />
+                  <div className="w-14 h-14 bg-persona-line rounded-2xl" />
+                  <div className="w-20 h-6 bg-persona-line rounded-md" />
                 </div>
-                <div className="h-6 bg-gray-200 rounded-lg w-2/3 mb-2" />
-                <div className="h-4 bg-gray-200 rounded-lg w-full mb-1" />
-                <div className="h-4 bg-gray-200 rounded-lg w-4/5" />
+                <div className="h-6 bg-persona-line rounded-lg w-2/3 mb-2" />
+                <div className="h-4 bg-persona-line rounded-lg w-full mb-1" />
+                <div className="h-4 bg-persona-line rounded-lg w-4/5" />
               </div>
             ))}
           </div>
@@ -824,18 +833,31 @@ export default function Tests() {
     if (error) {
       return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-14 pb-6 text-center">
-          <p className="text-red-500 mb-4">{error}</p>
+          <p className="text-persona-danger mb-4">{error}</p>
           <button onClick={fetchTests} className="btn-primary">Retry</button>
         </motion.div>
       );
     }
 
-    return (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-14 pb-6">
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <h1 className="text-3xl font-bold text-persona-dark mb-1">Personality Tests</h1>
-          <p className="text-persona-muted">Discover what makes you unique</p>
+    const completedCount = tests.filter((t) => !!t.result).length;
+
+    if (tests.length === 0) {
+      return (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-6 pt-14 pb-6 text-center">
+          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">Nothing taken yet</h1>
+          <p className="text-persona-muted max-w-prose mx-auto">No tests are available right now. Check back soon.</p>
         </motion.div>
+      );
+    }
+
+    return (
+      <motion.section aria-label="Personality tests" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-14 pb-6">
+        <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-1">Personality tests</h1>
+          <p className="text-persona-muted">
+            <span className="tabular">{completedCount}</span> of <span className="tabular">{tests.length}</span> completed.
+          </p>
+        </motion.header>
         <div className="grid gap-4">
           {tests.map((test, i) => {
             const m = TEST_META[test.testType] || TEST_META.iq;
@@ -846,7 +868,7 @@ export default function Tests() {
             );
           })}
         </div>
-      </motion.div>
+      </motion.section>
     );
   }
 
@@ -868,7 +890,7 @@ export default function Tests() {
       return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-14 flex items-center justify-center min-h-[50vh]">
           <div className="text-center">
-            <div className="w-10 h-10 border-3 border-gray-200 border-t-persona-dark rounded-full animate-spin mx-auto mb-4" />
+            <div className="w-10 h-10 border-3 border-persona-line border-t-persona-dark rounded-full animate-spin mx-auto mb-4" />
             <p className="text-persona-muted">Loading questions…</p>
           </div>
         </motion.div>
