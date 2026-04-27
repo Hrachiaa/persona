@@ -1,6 +1,6 @@
 import { InternalServerErrorException } from "@nestjs/common";
 import { TestsDto } from "../dtos/get-tests.dto";
-import { TestEntity } from "../entities/test.entity";
+import { TestEntity } from "../models/test.entity";
 
 class TestMapper {
     toDto(testEntity: TestEntity[]): TestsDto[]{

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IqTestResult, MbtiTestResult, SzondiTestResult, ArchetypeTestResult } from "../entities/test-result.entity";
+import { IqTestResult, MbtiTestResult, SzondiTestResult, ArchetypeTestResult } from "../models/test-result.entity";
 
 export class TestResultDto {
     constructor(

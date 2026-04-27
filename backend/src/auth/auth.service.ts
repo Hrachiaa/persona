@@ -4,7 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { createHmac } from 'crypto'
 import { AuthDto } from 'src/users/dtos/auth.dto';
 import { UsersService } from 'src/users/users.service';
-import { UserEntity } from 'src/users/models/user.enity';
+import { UserEntity } from 'src/users/models/user.entity';
 import { MailService } from 'src/mail/mail.service';
 import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
 import { RefreshTokenRepository } from './refresh-token.repository';

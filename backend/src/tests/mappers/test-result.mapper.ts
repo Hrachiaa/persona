@@ -1,6 +1,6 @@
 import { NotFoundException } from "@nestjs/common";
 import { TestResultDto } from "../dtos/test-result.dto";
-import { TestResultEntity } from "../entities/test-result.entity";
+import { TestResultEntity } from "../models/test-result.entity";
 
 class TestResultMapper {
     toDto(testResult: TestResultEntity): TestResultDto {

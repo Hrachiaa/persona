@@ -1,7 +1,7 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { User } from 'generated/prisma/client';
-import { UserEntity } from './models/user.enity';
+import { UserEntity } from './models/user.entity';
 import { AuthDto } from './dtos/auth.dto';
 import { AddProfileInfoDto } from 'src/auth/dtos/add-profile-info.dto';
 import { UserRepository } from './user.repository';
