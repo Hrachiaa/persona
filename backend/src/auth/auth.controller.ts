@@ -1,7 +1,7 @@
 import { Controller, HttpCode, HttpStatus, Post, Get, Body, Req, UseGuards, Res } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { AuthDto } from 'src/users/dtos/auth.dto';
+import { AuthDto } from '../users/dtos/auth.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ChangeForgottenPasswordDto, ForgotPasswordCodeDto, ForgotPasswordDto } from './dtos/forgot-password.dto';

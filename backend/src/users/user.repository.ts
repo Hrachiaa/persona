@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma.service";
+import { PrismaService } from "../prisma.service";
 import { AuthDto } from "./dtos/auth.dto";
 import { UserEntity } from "./models/user.entity";
-import { AddProfileInfoDto } from "src/auth/dtos/add-profile-info.dto";
+import { AddProfileInfoDto } from "../auth/dtos/add-profile-info.dto";
 
 export interface UserRepositoryInterface {
     create(data: AuthDto): Promise<UserEntity>;

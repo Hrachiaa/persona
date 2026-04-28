@@ -2,10 +2,10 @@ import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { createHmac } from 'crypto'
-import { AuthDto } from 'src/users/dtos/auth.dto';
-import { UsersService } from 'src/users/users.service';
-import { UserEntity } from 'src/users/models/user.entity';
-import { MailService } from 'src/mail/mail.service';
+import { AuthDto } from '../users/dtos/auth.dto';
+import { UsersService } from '../users/users.service';
+import { UserEntity } from '../users/models/user.entity';
+import { MailService } from '../mail/mail.service';
 import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
 import { RefreshTokenRepository } from './refresh-token.repository';
 
