@@ -1,4 +1,4 @@
-import { PrismaService } from "src/prisma.service";
+import { PrismaService } from "../prisma.service";
 import type { OtpCodeRepository } from "./otp-code.repository";
 import { OtpCodeEntity } from "./models/otp-code.entity";
 import { Injectable } from "@nestjs/common";

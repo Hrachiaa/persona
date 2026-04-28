@@ -23,7 +23,7 @@ function CircleProgress({ percentage }) {
   return (
     <div className="relative w-48 h-48">
       <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
-        <circle cx="80" cy="80" r={radius} fill="none" stroke="#E5E7EB" strokeWidth="8" />
+        <circle cx="80" cy="80" r={radius} fill="none" stroke="#E8E5DC" strokeWidth="8" />
         <motion.circle
           cx="80" cy="80" r={radius}
           fill="none" stroke="#1A1A1A" strokeWidth="8"
@@ -36,7 +36,7 @@ function CircleProgress({ percentage }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <motion.span
-          className="text-5xl font-black text-persona-dark"
+          className="font-display text-5xl font-semibold text-persona-dark tabular"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, delay: 0.8 }}
@@ -58,43 +58,51 @@ export default function Compatibility() {
   };
 
   return (
-    <motion.div
+    <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
+      aria-label="Compatibility"
       className="px-6 pt-14 pb-6"
     >
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-3xl font-bold text-persona-dark mb-1">Compatibility</h1>
-        <p className="text-persona-muted mb-6">See how well you match with someone</p>
+        <h1 className="font-display text-4xl font-semibold text-persona-dark mb-1">Compatibility</h1>
+        <p className="text-persona-muted mb-6">See how you align with someone you know.</p>
       </motion.div>
 
       {/* Input */}
-      <motion.div
+      <motion.form
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="flex gap-3 mb-8"
+        onSubmit={(e) => { e.preventDefault(); handleCheck(); }}
+        className="mb-8"
       >
-        <input
-          type="email"
-          placeholder="Enter friend's email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="input-field flex-1"
-        />
-        <motion.button
-          onClick={handleCheck}
-          className="btn-primary px-6 whitespace-nowrap"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          Check
-        </motion.button>
-      </motion.div>
+        <label htmlFor="compat-email" className="field-label">Their email</label>
+        <div className="flex gap-3">
+          <input
+            id="compat-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="friend@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="input-field flex-1"
+          />
+          <motion.button
+            type="submit"
+            className="btn-primary px-6 whitespace-nowrap"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            Check
+          </motion.button>
+        </div>
+      </motion.form>
 
       {/* Result */}
       <AnimatePresence>
@@ -112,9 +120,9 @@ export default function Compatibility() {
 
             {/* Alignments */}
             <div className="mb-6">
-              <h2 className="text-lg font-bold text-persona-dark mb-3 flex items-center gap-2">
-                <span className="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center text-sm">💚</span>
-                Where You Align
+              <h2 className="text-lg font-semibold text-persona-dark mb-3 flex items-center gap-2">
+                <span className="w-7 h-7 bg-persona-accent-lime/40 rounded-lg flex items-center justify-center text-sm">💚</span>
+                Where you align
               </h2>
               <div className="space-y-3">
                 {mockResult.alignments.map((item, i) => (
@@ -123,10 +131,10 @@ export default function Compatibility() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 1 + i * 0.15 }}
-                    className="bg-green-50 rounded-2xl p-4 flex items-start gap-3 border border-green-100"
+                    className="bg-persona-accent-lime/20 rounded-2xl p-4 flex items-start gap-3"
                   >
-                    <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
-                      <item.icon className="w-5 h-5 text-green-600" />
+                    <div className="w-10 h-10 bg-persona-accent-lime/50 rounded-xl flex items-center justify-center shrink-0">
+                      <item.icon className="w-5 h-5 text-persona-dark" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-persona-dark text-sm">{item.title}</h3>
@@ -139,9 +147,9 @@ export default function Compatibility() {
 
             {/* Frictions */}
             <div>
-              <h2 className="text-lg font-bold text-persona-dark mb-3 flex items-center gap-2">
-                <span className="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center text-sm">🔥</span>
-                Where Friction May Arise
+              <h2 className="text-lg font-semibold text-persona-dark mb-3 flex items-center gap-2">
+                <span className="w-7 h-7 bg-persona-accent-peach/40 rounded-lg flex items-center justify-center text-sm">🔥</span>
+                Where friction may arise
               </h2>
               <div className="space-y-3">
                 {mockResult.frictions.map((item, i) => (
@@ -150,10 +158,10 @@ export default function Compatibility() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 1.5 + i * 0.15 }}
-                    className="bg-orange-50 rounded-2xl p-4 flex items-start gap-3 border border-orange-100"
+                    className="bg-persona-accent-peach/20 rounded-2xl p-4 flex items-start gap-3"
                   >
-                    <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
-                      <item.icon className="w-5 h-5 text-orange-500" />
+                    <div className="w-10 h-10 bg-persona-accent-peach/50 rounded-xl flex items-center justify-center shrink-0">
+                      <item.icon className="w-5 h-5 text-persona-dark" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-persona-dark text-sm">{item.title}</h3>
@@ -166,6 +174,6 @@ export default function Compatibility() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </motion.section>
   );
 }

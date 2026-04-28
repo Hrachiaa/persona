@@ -84,9 +84,9 @@ export default function App() {
   // Show loading spinner while auth is being resolved
   if (loading || !googleHandled || screen === null) {
     return (
-      <div className="min-h-screen bg-persona-bg flex items-center justify-center">
-        <div className="animate-pulse-soft text-2xl font-bold text-persona-dark flex items-center gap-2">
-          <span className="text-3xl">λ</span> Persona
+      <div className="min-h-dvh bg-persona-bg grain flex items-center justify-center">
+        <div className="animate-pulse-soft text-2xl font-medium text-persona-dark flex items-center gap-2 relative">
+          <span className="font-display text-3xl">λ</span> Persona
         </div>
       </div>
     );
@@ -113,8 +113,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-persona-bg">
-      <AnimatePresence mode="wait">
+    <div className="min-h-dvh bg-persona-bg grain">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:btn-primary"
+      >
+        Skip to content
+      </a>
+      <main id="main" className="relative">
+        <AnimatePresence mode="wait">
         {screen === SCREENS.ONBOARDING && (
           <Onboarding
             key="onboarding"
@@ -164,7 +171,8 @@ export default function App() {
             }}
           />
         )}
-      </AnimatePresence>
+        </AnimatePresence>
+      </main>
     </div>
   );
 }

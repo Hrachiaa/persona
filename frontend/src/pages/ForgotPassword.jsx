@@ -75,23 +75,23 @@ export default function ForgotPassword({ onBack }) {
 
   const stepConfig = [
     {
-      title: 'Reset Password',
-      subtitle: 'Enter your email and we\'ll send you a verification code',
+      title: 'Reset your password',
+      subtitle: 'Enter your email and we\'ll send a verification code.',
       icon: HiOutlineEnvelope,
     },
     {
-      title: 'Enter Verification Code',
-      subtitle: `We've sent a 6-digit code to ${email}`,
+      title: 'Enter the verification code',
+      subtitle: `We sent a 6-digit code to ${email}.`,
       icon: HiOutlineShieldCheck,
     },
     {
-      title: 'New Password',
-      subtitle: 'Choose a strong password for your account',
+      title: 'Choose a new password',
+      subtitle: 'Pick something strong you can remember.',
       icon: HiOutlineLockClosed,
     },
     {
-      title: 'Password Changed!',
-      subtitle: 'Your password has been reset successfully',
+      title: 'Password changed',
+      subtitle: 'You can now sign in with your new password.',
       icon: HiOutlineCheckCircle,
     },
   ];
@@ -100,12 +100,12 @@ export default function ForgotPassword({ onBack }) {
   const progress = ((step + 1) / stepConfig.length) * 100;
 
   return (
-    <motion.div
+    <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4 }}
-      className="min-h-screen bg-persona-bg flex flex-col items-center justify-center px-6 py-12"
+      className="min-h-dvh bg-persona-bg flex flex-col items-center justify-center px-6 py-12"
     >
       <div className="w-full max-w-md">
         {/* Back Button */}
@@ -113,10 +113,10 @@ export default function ForgotPassword({ onBack }) {
           onClick={onBack}
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-2 text-persona-muted hover:text-persona-dark transition-colors mb-8"
+          className="flex items-center gap-2 text-persona-muted hover:text-persona-dark transition-colors mb-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded-full px-2 py-1 -ml-2"
         >
           <HiOutlineArrowLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">Back to login</span>
+          <span className="text-sm font-medium">Back to sign in</span>
         </motion.button>
 
         {/* Progress Bar */}
@@ -127,7 +127,7 @@ export default function ForgotPassword({ onBack }) {
                 Step {step + 1} of 3
               </span>
             </div>
-            <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-persona-line rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-persona-dark rounded-full"
                 animate={{ width: `${progress}%` }}
@@ -148,12 +148,12 @@ export default function ForgotPassword({ onBack }) {
             className="text-center mb-8"
           >
             <motion.div
-              className="w-20 h-20 bg-persona-accent-lavender/50 rounded-3xl flex items-center justify-center mx-auto mb-6"
+              className="w-20 h-20 bg-persona-accent-peach/40 rounded-3xl flex items-center justify-center mx-auto mb-6"
               whileHover={{ scale: 1.05, rotate: 3 }}
             >
-              <current.icon className="w-10 h-10 text-purple-600" />
+              <current.icon className="w-10 h-10 text-persona-dark" />
             </motion.div>
-            <h2 className="text-3xl font-bold text-persona-dark mb-2">{current.title}</h2>
+            <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{current.title}</h2>
             <p className="text-persona-muted">{current.subtitle}</p>
           </motion.div>
         </AnimatePresence>
@@ -180,26 +180,32 @@ export default function ForgotPassword({ onBack }) {
               exit={{ opacity: 0, x: -50 }}
               className="space-y-4"
             >
-              <div className="relative">
-                <HiOutlineEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="email"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setError(null); }}
-                  className="input-field pl-12"
-                  required
-                  autoFocus
-                />
+              <div>
+                <label htmlFor="reset-email" className="field-label">Email</label>
+                <div className="relative">
+                  <HiOutlineEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    id="reset-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setError(null); }}
+                    className="input-field pl-12"
+                    required
+                    autoFocus
+                  />
+                </div>
               </div>
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="btn-primary w-full text-center text-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary w-full text-center mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                 whileHover={!isLoading ? { scale: 1.02 } : {}}
                 whileTap={!isLoading ? { scale: 0.97 } : {}}
               >
-                {isLoading ? 'Sending…' : 'Send Code'}
+                {isLoading ? 'Sending…' : 'Send code'}
               </motion.button>
             </motion.form>
           )}
@@ -213,36 +219,43 @@ export default function ForgotPassword({ onBack }) {
               exit={{ opacity: 0, x: -50 }}
               className="space-y-4"
             >
-              <div className="relative">
-                <HiOutlineShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="6-digit code"
-                  value={code}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-                    setCode(val);
-                    setError(null);
-                  }}
-                  className="input-field pl-12 text-center text-2xl tracking-[0.5em] font-mono"
-                  maxLength={6}
-                  required
-                  autoFocus
-                />
+              <div>
+                <label htmlFor="reset-code" className="field-label">Verification code</label>
+                <div className="relative">
+                  <HiOutlineShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    id="reset-code"
+                    name="code"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    type="text"
+                    placeholder="6-digit code"
+                    value={code}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                      setCode(val);
+                      setError(null);
+                    }}
+                    className="input-field pl-12 text-center text-2xl tracking-[0.5em] tabular"
+                    maxLength={6}
+                    required
+                    autoFocus
+                  />
+                </div>
               </div>
               <motion.button
                 type="submit"
                 disabled={isLoading || code.length !== 6}
-                className="btn-primary w-full text-center text-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary w-full text-center mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                 whileHover={!isLoading ? { scale: 1.02 } : {}}
                 whileTap={!isLoading ? { scale: 0.97 } : {}}
               >
-                {isLoading ? 'Verifying…' : 'Verify Code'}
+                {isLoading ? 'Verifying…' : 'Verify code'}
               </motion.button>
               <button
                 type="button"
                 onClick={() => { setStep(STEPS.EMAIL); setError(null); }}
-                className="w-full text-center text-sm text-persona-muted hover:text-persona-dark transition-colors mt-2"
+                className="w-full text-center text-sm text-persona-muted hover:text-persona-dark transition-colors mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5"
               >
                 Didn&apos;t receive a code? Try again
               </button>
@@ -258,39 +271,45 @@ export default function ForgotPassword({ onBack }) {
               exit={{ opacity: 0, x: -50 }}
               className="space-y-4"
             >
-              <div className="relative">
-                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="New password (8-32 characters)"
-                  value={newPassword}
-                  onChange={(e) => { setNewPassword(e.target.value); setError(null); }}
-                  className="input-field pl-12 pr-12"
-                  minLength={8}
-                  maxLength={32}
-                  required
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  {showPassword ? <HiOutlineEyeSlash className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
-                </button>
+              <div>
+                <label htmlFor="reset-new-password" className="field-label">New password</label>
+                <div className="relative">
+                  <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    id="reset-new-password"
+                    name="new-password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
+                    placeholder="8 to 32 characters"
+                    value={newPassword}
+                    onChange={(e) => { setNewPassword(e.target.value); setError(null); }}
+                    className="input-field pl-12 pr-12"
+                    minLength={8}
+                    maxLength={32}
+                    required
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach rounded-full p-0.5"
+                  >
+                    {showPassword ? <HiOutlineEyeSlash className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
+                  </button>
+                </div>
+                <p className="text-xs text-persona-muted px-1 mt-2">
+                  Must be between 8 and 32 characters.
+                </p>
               </div>
-              {/* Password strength hint */}
-              <p className="text-xs text-persona-muted px-1">
-                Must be between 8 and 32 characters long
-              </p>
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="btn-primary w-full text-center text-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary w-full text-center mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                 whileHover={!isLoading ? { scale: 1.02 } : {}}
                 whileTap={!isLoading ? { scale: 0.97 } : {}}
               >
-                {isLoading ? 'Changing…' : 'Change Password'}
+                {isLoading ? 'Saving…' : 'Save new password'}
               </motion.button>
             </motion.form>
           )}
@@ -304,16 +323,16 @@ export default function ForgotPassword({ onBack }) {
             >
               <motion.button
                 onClick={onBack}
-                className="btn-primary w-full text-center text-lg mt-4"
+                className="btn-primary w-full text-center mt-4"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
               >
-                Back to Sign In
+                Back to sign in
               </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </motion.section>
   );
 }

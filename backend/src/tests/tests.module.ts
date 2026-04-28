@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TestsController } from './tests.controller';
 import { TestsService } from './tests.service';
-import { PrismaService } from 'src/prisma.service';
-import { AuthModule } from 'src/auth/auth.module';
+import { PrismaService } from '../prisma.service';
+import { AuthModule } from '../auth/auth.module';
 import { TestResultRepository } from './test-result.repository';
 import { TestRepository } from './test.repository';
 

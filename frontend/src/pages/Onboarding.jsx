@@ -69,7 +69,7 @@ export default function Onboarding({ onComplete }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-persona-bg flex flex-col items-center justify-center px-6 py-12"
+      className="min-h-dvh bg-persona-bg flex flex-col items-center justify-center px-6 py-12"
     >
       <div className="w-full max-w-md flex flex-col items-center">
         {/* Logo */}
@@ -79,9 +79,9 @@ export default function Onboarding({ onComplete }) {
           transition={{ delay: 0.1 }}
           className="mb-8"
         >
-          <h1 className="text-2xl font-bold tracking-tight text-persona-dark flex items-center gap-2">
-            <span className="text-3xl">λ</span> Persona
-          </h1>
+          <p className="text-2xl font-medium tracking-tight text-persona-dark flex items-center gap-2">
+            <span className="font-display text-3xl">λ</span> Persona
+          </p>
         </motion.div>
 
         {/* Slide Content */}
@@ -99,7 +99,7 @@ export default function Onboarding({ onComplete }) {
             >
               {/* Icon Circle */}
               <motion.div
-                className={`w-40 h-40 ${slide.color} rounded-[2.5rem] flex items-center justify-center mb-10 shadow-lg`}
+                className={`w-40 h-40 ${slide.color} rounded-[2.5rem] flex items-center justify-center mb-10 shadow-warm-lg`}
                 whileHover={{ scale: 1.05, rotate: 2 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >
@@ -107,10 +107,10 @@ export default function Onboarding({ onComplete }) {
               </motion.div>
 
               {/* Text */}
-              <h2 className="text-3xl font-bold text-persona-dark mb-4 leading-tight">
+              <h2 className="font-display text-4xl font-semibold text-persona-dark mb-4 leading-tight">
                 {slide.title}
               </h2>
-              <p className="text-persona-muted text-lg leading-relaxed max-w-sm">
+              <p className="text-persona-muted text-lg leading-relaxed max-w-prose">
                 {slide.description}
               </p>
             </motion.div>
@@ -123,10 +123,11 @@ export default function Onboarding({ onComplete }) {
             <motion.button
               key={i}
               onClick={() => goTo(i)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-2.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
                 i === current
                   ? 'bg-persona-dark w-8'
-                  : 'bg-gray-300 w-2.5 hover:bg-gray-400'
+                  : 'bg-persona-line w-2.5 hover:bg-persona-muted/40'
               }`}
               whileTap={{ scale: 0.9 }}
             />
@@ -136,18 +137,18 @@ export default function Onboarding({ onComplete }) {
         {/* Button */}
         <motion.button
           onClick={goNext}
-          className="btn-primary w-full max-w-xs text-center text-lg"
+          className="btn-primary w-full max-w-xs text-center"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
         >
-          {current === slides.length - 1 ? 'Get Started' : 'Next'}
+          {current === slides.length - 1 ? 'Get started' : 'Next'}
         </motion.button>
 
         {/* Skip */}
         {current < slides.length - 1 && (
           <motion.button
             onClick={onComplete}
-            className="mt-4 text-persona-muted text-sm hover:text-persona-dark transition-colors"
+            className="mt-4 text-persona-muted text-sm hover:text-persona-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
