@@ -4,7 +4,7 @@ export interface IqTestResult {
     reliability: "valid" | "suspicious" | "invalid"
 }
 
-export interface SzondiTestResult {
+export interface BigFiveResult {
     
 }
 
@@ -16,7 +16,7 @@ export interface MbtiTestResult {
     
 }
 
-export type TestResultType = IqTestResult | SzondiTestResult | ArchetypeTestResult | MbtiTestResult;
+export type TestResultType = IqTestResult | BigFiveResult | ArchetypeTestResult | MbtiTestResult;
 
 export class TestResultEntity {
     constructor(

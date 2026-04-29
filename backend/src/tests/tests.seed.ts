@@ -6,12 +6,12 @@ export const tests = {
         duration: 20,
         totalQuestions: 60,
     },
-    szondi: {
-        testName: 'Szondi Test',
-        testType: 'szondi',
-        description: 'A projective personality test based on portrait selection. Reveals hidden drives and personal tendencies.',
-        duration: 15,
-        totalQuestions: 30,
+    bigFive: {
+        testName: 'BigFive Test',
+        testType: 'bigFive',
+        description: 'A psychological test measuring five core personality traits (openness, conscientiousness, extroversion, agreeableness, neuroticism). The most scientifically validated way to assess personality.',
+        duration: 0,
+        totalQuestions: 120,
     },
     archetype: {
         testName: 'Archetype Test',
@@ -3473,9 +3473,43 @@ export const testQuestions = {
             // ]
         }
     },
-    szondi: {
+    bigFive: {
         questions: {
-
+            questions: 
+            [
+                {
+                    id: '', 
+                    text: 'Worry about things',
+                    image: '',
+                    options: [
+                        {
+                            id: '',
+                            text: '',
+                            icon: ''
+                        },
+                        {
+                            id: '',
+                            text: '',
+                            icon: ''
+                        },
+                        {
+                            id: '',
+                            text: '',
+                            icon: ''
+                        },
+                        {
+                            id: '',
+                            text: '',
+                            icon: ''
+                        },
+                        {
+                            id: '',
+                            text: '',
+                            icon: ''
+                        },
+                    ]
+                },
+            ]
         }            
     },
     archetype: {

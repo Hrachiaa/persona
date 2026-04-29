@@ -3,7 +3,7 @@ import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { SubmitTestDto, AnswerDto } from './dtos/submit-test.dto';
 import { TestResultDto } from './dtos/test-result.dto';
-import { IqTestResult, MbtiTestResult, SzondiTestResult, ArchetypeTestResult, TestResultEntity } from './models/test-result.entity';
+import { IqTestResult, MbtiTestResult, BigFiveResult, ArchetypeTestResult, TestResultEntity } from './models/test-result.entity';
 import { TestEntity } from './models/test.entity';
 import { GetTestsDto } from './dtos/get-tests.dto';
 import { Result, Results, Scoring } from './models/iqtest-questions.entity';
@@ -50,12 +50,12 @@ export class TestsService implements OnModuleInit {
         if(!test) throw new InternalServerErrorException('Test not found')
         const calculators = {
             iq: this.calculateIQ,
-            szondi: this.calculateSzondi,
+            bigFive: this.calculateBigFive,
             archetype: this.calculateArchetype,
             mbti: this.calculateMBTI
         }
 
-        const result: IqTestResult | SzondiTestResult | ArchetypeTestResult | MbtiTestResult = await calculators[test.testType](userId, testId, answers.answers)
+        const result: IqTestResult | BigFiveResult | ArchetypeTestResult | MbtiTestResult = await calculators[test.testType](userId, testId, answers.answers)
 
         const isExists = await this.testResultRepository.getTestResult(userId, testId)
         if(isExists) {
@@ -106,7 +106,7 @@ export class TestsService implements OnModuleInit {
         return res
     }
 
-    private calculateSzondi = async (userId: string, testId: string, answers: AnswerDto[]): Promise<SzondiTestResult> => {
+    private calculateBigFive = async (userId: string, testId: string, answers: AnswerDto[]): Promise<BigFiveResult> => {
         return {}
     }
     private calculateArchetype = async (userId: string, testId: string, answers: AnswerDto[]): Promise<ArchetypeTestResult> => {
