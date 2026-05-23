@@ -3475,42 +3475,3939 @@ export const testQuestions = {
     },
     bigFive: {
         questions: {
-            questions: 
+            questions:
             [
                 {
-                    id: '', 
+                    id: 'N1', 
                     text: 'Worry about things',
                     image: '',
                     options: [
                         {
-                            id: '',
-                            text: '',
+                            id: '1',
+                            text: 'Very Inaccurate',
                             icon: ''
                         },
                         {
-                            id: '',
-                            text: '',
+                            id: '2',
+                            text: 'Moderately Inaccurate',
                             icon: ''
                         },
                         {
-                            id: '',
-                            text: '',
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
                             icon: ''
                         },
                         {
-                            id: '',
-                            text: '',
+                            id: '4',
+                            text: 'Moderately Accurate',
                             icon: ''
                         },
                         {
-                            id: '',
-                            text: '',
+                            id: '5',
+                            text: 'Very Accurate',
                             icon: ''
                         },
                     ]
                 },
-            ]
-        }            
+                {
+                    id: 'E1', 
+                    text: 'Make friends easily',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O1', 
+                    text: 'Have a vivid imagination',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A1', 
+                    text: 'Trust others',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C1', 
+                    text: 'Complete tasks successfully',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N2', 
+                    text: 'Get angry easily',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E2', 
+                    text: 'Love large parties',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O2', 
+                    text: 'Believe in the importance of art',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A2', 
+                    text: 'Use others for my own ends',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C2', 
+                    text: 'Like to tidy up',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N3', 
+                    text: 'Often feel blue',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E3', 
+                    text: 'Take charge',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O3', 
+                    text: 'Experience my emotions intensely',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A3', 
+                    text: 'Love to help others',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C3', 
+                    text: 'Keep my promises',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N4', 
+                    text: 'Find it difficult to approach others',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E4', 
+                    text: 'Am always busy',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O4', 
+                    text: 'Prefer variety to routine',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A4', 
+                    text: 'Love a good fight',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C4', 
+                    text: 'Work hard',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N5', 
+                    text: 'Go on binges',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E5', 
+                    text: 'Love excitement',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O5', 
+                    text: 'Love to read challenging material',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A5', 
+                    text: 'Believe that I am better than others',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C5', 
+                    text: 'Am always prepared',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N6', 
+                    text: 'Panic easily',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E6', 
+                    text: 'Radiate joy',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O6', 
+                    text: 'Tend to vote for liberal political candidates',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A6', 
+                    text: 'Sympathize with the homeless',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C6', 
+                    text: 'Jump into things without thinking',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N1', 
+                    text: 'Fear for the worst',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E1', 
+                    text: 'Feel comfortable around other people',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O1', 
+                    text: 'Enjoy wild flights of fancy',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A1', 
+                    text: 'Believe that others have good intentions',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C1', 
+                    text: 'Excel in what I do',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N2', 
+                    text: 'Get irritated easily',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E2', 
+                    text: 'Talk to a lot of different people at parties',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O2', 
+                    text: 'See beauty in things that others might not notice',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A2', 
+                    text: 'Cheat to get ahead',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C2', 
+                    text: 'Often forget to put things back in their proper place',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N3', 
+                    text: 'Dislike myself',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E3', 
+                    text: 'Try to lead others',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O3', 
+                    text: `Feel others' emotions`,
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A3', 
+                    text: 'Am concerned about others',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C3', 
+                    text: 'Tell the truth',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N4', 
+                    text: 'Am afraid to draw attention to myself',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E4', 
+                    text: 'Am always on the go',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O4', 
+                    text: 'Prefer to stick with things that I know',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A4', 
+                    text: 'Yell at people',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C4', 
+                    text: `Do more than what's expected of me`,
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N5', 
+                    text: 'Rarely overindulge',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E5', 
+                    text: 'Seek adventure',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O5', 
+                    text: 'Avoid philosophical discussions',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A5', 
+                    text: 'Think highly of myself',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C5', 
+                    text: 'Carry out my plans',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N6', 
+                    text: 'Become overwhelmed by events',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E6', 
+                    text: 'Have a lot of fun',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O6', 
+                    text: 'Believe that there is no absolute right or wrong',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A6', 
+                    text: 'Feel sympathy for those who are worse off than myself',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C6', 
+                    text: 'Make rash decisions',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                 {
+                    id: 'N1', 
+                    text: 'Am afraid of many things',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E1', 
+                    text: 'Avoid contacts with others',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O1', 
+                    text: 'Love to daydream',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A1', 
+                    text: 'Trust what people say',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C1', 
+                    text: 'Handle tasks smoothly',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N2', 
+                    text: 'Lose my temper',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E2', 
+                    text: 'Prefer to be alone',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O2', 
+                    text: 'Do not like poetry',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A2', 
+                    text: 'Take advantage of others',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C2', 
+                    text: 'Leave a mess in my room',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N3', 
+                    text: 'Am often down in the dumps',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E3', 
+                    text: 'Take control of things',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O3', 
+                    text: 'Rarely notice my emotional reactions',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A3', 
+                    text: 'Am indifferent to the feelings of others',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C3', 
+                    text: 'Break rules',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N4', 
+                    text: 'Only feel comfortable with friends',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E4', 
+                    text: 'Do a lot in my spare time',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O4', 
+                    text: 'Dislike changes',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A4', 
+                    text: 'Insult people',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C4', 
+                    text: 'Do just enough work to get by',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N5', 
+                    text: 'Easily resist temptations',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E5', 
+                    text: 'Enjoy being reckless',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O5', 
+                    text: 'Have difficulty understanding abstract ideas',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A5', 
+                    text: 'Have a high opinion of myself',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C5', 
+                    text: 'Waste my time',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N6', 
+                    text: `Feel that I'm unable to deal with things`,
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E6', 
+                    text: 'Love life',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O6', 
+                    text: 'Tend to vote for conservative political candidates',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A6', 
+                    text: `Am not interested in other people's problems`,
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C6', 
+                    text: 'Rush into things',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N1', 
+                    text: 'Get stressed out easily',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E1', 
+                    text: 'Keep others at a distance',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O1', 
+                    text: 'Like to get lost in thought',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A1', 
+                    text: 'Distrust people',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C1', 
+                    text: 'Know how to get things done',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N2', 
+                    text: 'Am not easily annoyed',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E2', 
+                    text: 'Avoid crowds',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O2', 
+                    text: 'Do not enjoy going to art museums',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A2', 
+                    text: `Obstruct others' plans`,
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C2', 
+                    text: 'Leave my belongings around',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N3', 
+                    text: 'Feel comfortable with myself',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E3', 
+                    text: 'Wait for others to lead the way',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O3', 
+                    text: `Don't understand people who get emotional`,
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A3', 
+                    text: 'Take no time for others',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C3', 
+                    text: 'Break my promises',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N4', 
+                    text: 'Am not bothered by difficult social situations',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E4', 
+                    text: 'Like to take it easy',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O4', 
+                    text: 'Am attached to conventional ways',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A4', 
+                    text: 'Get back at others',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C4', 
+                    text: `Put little time and effort into my work`,
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N5', 
+                    text: 'Am able to control my cravings',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E5', 
+                    text: 'Act wild and crazy',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O5', 
+                    text: 'Am not interested in theoretical discussions',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A5', 
+                    text: 'Boast about my virtues',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C5', 
+                    text: 'Have difficulty starting tasks',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'N6', 
+                    text: 'Remain calm under pressure',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'E6', 
+                    text: 'Look at the bright side of life',
+                    image: '',
+                    options: [
+                        {
+                            id: '1',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '5',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'O6', 
+                    text: 'Believe that we should be tough on crime',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'A6', 
+                    text: 'Try not to think about the needy',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+                {
+                    id: 'C6', 
+                    text: 'Act without thinking',
+                    image: '',
+                    options: [
+                        {
+                            id: '5',
+                            text: 'Very Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '4',
+                            text: 'Moderately Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '3',
+                            text: 'Neither Accurate, Nor Inaccurate',
+                            icon: ''
+                        },
+                        {
+                            id: '2',
+                            text: 'Moderately Accurate',
+                            icon: ''
+                        },
+                        {
+                            id: '1',
+                            text: 'Very Accurate',
+                            icon: ''
+                        },
+                    ]
+                },
+            ],
+            scoring: {
+                M: {
+                    // Фасеты
+                    E1: { mean: 13.38, sd: 3.85 },
+                    E2: { mean: 11.40, sd: 4.05 },
+                    E3: { mean: 14.71, sd: 3.59 },
+                    E4: { mean: 12.15, sd: 3.25 },
+                    E5: { mean: 13.38, sd: 3.48 },
+                    E6: { mean: 14.28, sd: 3.58 },
+
+                    A1: { mean: 12.76, sd: 3.74 },
+                    A2: { mean: 16.00, sd: 3.22 },
+                    A3: { mean: 15.42, sd: 2.98 },
+                    A4: { mean: 14.62, sd: 3.74 },
+                    A5: { mean: 11.40, sd: 3.61 },
+                    A6: { mean: 13.81, sd: 3.38 },
+
+                    C1: { mean: 15.84, sd: 2.41 },
+                    C2: { mean: 12.07, sd: 4.28 },
+                    C3: { mean: 15.67, sd: 2.81 },
+                    C4: { mean: 15.45, sd: 3.41 },
+                    C5: { mean: 13.24, sd: 3.33 },
+                    C6: { mean: 13.39, sd: 4.04 },
+
+                    N1: { mean: 11.38, sd: 3.79 },
+                    N2: { mean: 11.70, sd: 4.33 },
+                    N3: { mean: 10.36, sd: 4.12 },
+                    N4: { mean: 12.03, sd: 3.83 },
+                    N5: { mean: 12.18, sd: 3.53 },
+                    N6: { mean: 9.02, sd: 3.53 },
+
+                    O1: { mean: 15.99, sd: 3.16 },
+                    O2: { mean: 15.03, sd: 3.61 },
+                    O3: { mean: 14.64, sd: 3.25 },
+                    O4: { mean: 13.22, sd: 3.44 },
+                    O5: { mean: 16.27, sd: 3.26 },
+                    O6: { mean: 11.62, sd: 3.74 },
+
+                    // Домены (сумма 24 пунктов)
+                    E: { mean: 79.20, sd: 15.55 },
+                    A: { mean: 84.21, sd: 13.56 },
+                    C: { mean: 85.76, sd: 14.28 },
+                    N: { mean: 66.67, sd: 16.59 },
+                    O: { mean: 86.89, sd: 12.75 },
+                },
+                F: {
+                    // Фасеты
+                    E1: { mean: 14.03, sd: 3.69 },
+                    E2: { mean: 11.90, sd: 4.09 },
+                    E3: { mean: 14.20, sd: 3.64 },
+                    E4: { mean: 12.83, sd: 3.27 },
+                    E5: { mean: 12.87, sd: 3.53 },
+                    E6: { mean: 14.98, sd: 3.31 },
+
+                    A1: { mean: 13.12, sd: 3.75 },
+                    A2: { mean: 17.36, sd: 2.65 },
+                    A3: { mean: 16.85, sd: 2.56 },
+                    A4: { mean: 15.56, sd: 3.55 },
+                    A5: { mean: 12.94, sd: 3.61 },
+                    A6: { mean: 15.55, sd: 2.91 },
+
+                    C1: { mean: 16.03, sd: 2.36 },
+                    C2: { mean: 12.63, sd: 4.54 },
+                    C3: { mean: 16.34, sd: 2.54 },
+                    C4: { mean: 16.17, sd: 3.04 },
+                    C5: { mean: 13.53, sd: 3.27 },
+                    C6: { mean: 12.85, sd: 4.19 },
+
+                    N1: { mean: 13.17, sd: 3.71 },
+                    N2: { mean: 12.77, sd: 4.14 },
+                    N3: { mean: 10.82, sd: 4.08 },
+                    N4: { mean: 12.24, sd: 3.81 },
+                    N5: { mean: 12.76, sd: 3.60 },
+                    N6: { mean: 10.75, sd: 3.67 },
+
+                    O1: { mean: 15.69, sd: 3.35 },
+                    O2: { mean: 16.03, sd: 3.30 },
+                    O3: { mean: 16.45, sd: 2.71 },
+                    O4: { mean: 12.80, sd: 3.46 },
+                    O5: { mean: 15.30, sd: 3.51 },
+                    O6: { mean: 12.04, sd: 3.47 },
+
+                    // Домены (сумма 24 пунктов)
+                    E: { mean: 80.81, sd: 14.73 },
+                    A: { mean: 91.81, sd: 11.70 },
+                    C: { mean: 87.50, sd: 13.94 },
+                    N: { mean: 72.47, sd: 16.20 },
+                    O: { mean: 88.35, sd: 12.25 },
+                },            }
+        }
     },
     archetype: {
         questions: {

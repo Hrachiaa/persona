@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma.service';
 import { AuthModule } from '../auth/auth.module';
 import { TestResultRepository } from './test-result.repository';
 import { TestRepository } from './test.repository';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   controllers: [TestsController],
@@ -14,6 +15,6 @@ import { TestRepository } from './test.repository';
     TestRepository,
     TestResultRepository,
   ],
-  imports: [AuthModule]
+  imports: [AuthModule, UsersModule]
 })
 export class TestsModule {}

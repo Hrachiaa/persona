@@ -10,7 +10,7 @@ class TestMapper {
     }
 
     private toSingleDto(testEntity: TestEntity): TestsDto{
-        if(testEntity.testType === 'iq' || testEntity.testType === 'szondi' || testEntity.testType === 'archetype' || testEntity.testType === 'mbti'){
+        if(testEntity.testType === 'iq' || testEntity.testType === 'bigFive' || testEntity.testType === 'archetype' || testEntity.testType === 'mbti'){
             return new TestsDto(
                 testEntity.id,
                 testEntity.testType,
