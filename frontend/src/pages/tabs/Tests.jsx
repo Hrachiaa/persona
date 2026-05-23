@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   HiOutlineBolt,
   HiOutlineEye,
@@ -341,29 +341,31 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
     LS.set(test.id, 'answers', answers);
   }, [answers, test.id]);
 
-  const handleAnswer = (questionId, optionId) => {
-    const existing = answers.findIndex((a) => a.questionId === questionId);
-    let newAnswers;
-    if (existing >= 0) {
-      newAnswers = [...answers];
-      newAnswers[existing] = { questionId, optionId };
-    } else {
-      newAnswers = [...answers, { questionId, optionId }];
-    }
-    setAnswers(newAnswers);
-
-    // Auto-advance after short delay
-    if (questionIndex < questions.length - 1) {
-      setTimeout(() => setQuestionIndex((prev) => prev + 1), 250);
-    }
+  // Answers are indexed by question POSITION (not by questionId), so that two
+  // questions sharing the same backend questionId remain distinct entries.
+  // Functional updaters keep rapid clicks from clobbering each other under
+  // React's batching — every click writes to its own slot from a fresh `prev`.
+  const handleAnswer = (qIdx, questionId, optionId) => {
+    setAnswers((prev) => {
+      const next = prev.slice();
+      next[qIdx] = { questionId, optionId };
+      return next;
+    });
+    // Only advance when the user answered the question they're currently on —
+    // a re-pick via Prev should stay on that earlier question.
+    setQuestionIndex((prev) =>
+      qIdx === prev ? Math.min(prev + 1, questions.length - 1) : prev,
+    );
   };
 
   const handleSubmit = async (finalAnswers) => {
     if (submitting) return;
     setSubmitting(true);
     try {
+      // Drop any skipped (sparse) slots while preserving order and duplicates.
+      const payload = finalAnswers.filter(Boolean);
       if (REAL_API_TESTS.has(test.testType)) {
-        const result = await testsApi.submitTest(test.id, finalAnswers);
+        const result = await testsApi.submitTest(test.id, payload);
         LS.clearAll(test.id);
         onComplete(result);
       } else {
@@ -383,7 +385,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
 
   const currentQ = questions[questionIndex];
   const progress = ((questionIndex + 1) / questions.length) * 100;
-  const currentAnswer = answers.find((a) => a.questionId === currentQ?.id);
+  const currentAnswer = answers[questionIndex];
 
   const formatTime = (ms) => {
     const totalSec = Math.ceil(ms / 1000);
@@ -432,15 +434,14 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
         <motion.div className="h-full bg-persona-dark rounded-full" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
       </div>
 
-      {/* Question */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={questionIndex}
-          initial={{ x: 80, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -80, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        >
+      {/* Question — fade-only enter, no AnimatePresence so the swap never
+          gates the answer-commit logic above. */}
+      <motion.div
+        key={questionIndex}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.08 }}
+      >
           {/* Question text or image */}
           {currentQ.image ? (
             <div className="mb-5">
@@ -464,7 +465,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
               return (
                 <motion.button
                   key={opt.id}
-                  onClick={() => handleAnswer(currentQ.id, opt.id)}
+                  onClick={() => handleAnswer(questionIndex, currentQ.id, opt.id)}
                   aria-pressed={isSelected}
                   className={`${isIQ
                     ? `w-12 h-12 rounded-xl flex items-center justify-center text-base font-medium tabular border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
@@ -492,8 +493,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
               );
             })}
           </div>
-        </motion.div>
-      </AnimatePresence>
+      </motion.div>
 
       {/* Navigation */}
       <div className="flex items-center justify-between mt-8 gap-3">
