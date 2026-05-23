@@ -10,16 +10,22 @@ import {
   HiOutlineClock,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
+  HiOutlineSparkles,
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
+import BigFiveResultScreen from './BigFiveResult';
 
 // ─── Static metadata the API doesn't provide ────────────────────────────────
 const TEST_META = {
   iq:        { icon: HiOutlineBolt,        color: 'bg-persona-accent-yellow',   iconColor: 'text-persona-dark' },
+  bigFive:   { icon: HiOutlineSparkles,    color: 'bg-persona-accent-peach',    iconColor: 'text-persona-dark' },
   szondi:    { icon: HiOutlineEye,         color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
   archetype: { icon: HiOutlineCpuChip,     color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
   mbti:      { icon: HiOutlineFingerPrint, color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
 };
+
+// Tests served by the real backend (real questions, real submit).
+const REAL_API_TESTS = new Set(['iq', 'bigFive']);
 
 // ─── Mocked questions / results for non-IQ tests ────────────────────────────
 const MOCK_DATA = {
@@ -356,12 +362,12 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
     if (submitting) return;
     setSubmitting(true);
     try {
-      if (isIQ) {
+      if (REAL_API_TESTS.has(test.testType)) {
         const result = await testsApi.submitTest(test.id, finalAnswers);
         LS.clearAll(test.id);
         onComplete(result);
       } else {
-        // Mock submit for non-IQ
+        // Mock submit for tests not yet wired to the backend
         LS.clearAll(test.id);
         onComplete({
           testId: test.id,
@@ -723,7 +729,7 @@ export default function Tests() {
       setUseTimer(!!savedTimer);
 
       try {
-        if (test.testType === 'iq') {
+        if (REAL_API_TESTS.has(test.testType)) {
           const qs = await testsApi.getTestQuestions(test.id);
           setQuestions(qs);
         } else {
@@ -768,7 +774,7 @@ export default function Tests() {
     // Fetch questions
     setQuestionsLoading(true);
     try {
-      if (selectedTest.testType === 'iq') {
+      if (REAL_API_TESTS.has(selectedTest.testType)) {
         const qs = await testsApi.getTestQuestions(selectedTest.id);
         setQuestions(qs);
       } else {
@@ -916,6 +922,16 @@ export default function Tests() {
     if (selectedTest.testType === 'iq') {
       return (
         <IqResultScreen
+          result={result}
+          meta={meta}
+          onDone={handleBackToList}
+          onRetake={handleRetake}
+        />
+      );
+    }
+    if (selectedTest.testType === 'bigFive') {
+      return (
+        <BigFiveResultScreen
           result={result}
           meta={meta}
           onDone={handleBackToList}
