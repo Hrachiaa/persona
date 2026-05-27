@@ -1,0 +1,5 @@
+# Claude Code config (may contain local MCP credentials, personal settings)
+.claude/
+
+# Playwright test artifacts
+.playwright-mcp/

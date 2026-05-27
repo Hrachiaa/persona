@@ -1,9 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { SubmitTestDto, AnswerDto } from './dtos/submit-test.dto';
 import { TestResultDto } from './dtos/test-result.dto';
-import { IqTestResult, MbtiTestResult, SzondiTestResult, ArchetypeTestResult, TestResultEntity } from './models/test-result.entity';
+import { IqTestResult, MbtiTestResult, BigFiveResults, ArchetypeTestResult, TestResultEntity } from './models/test-result.entity';
 import { TestEntity } from './models/test.entity';
 import { GetTestsDto } from './dtos/get-tests.dto';
 import { Result, Results, Scoring } from './models/iqtest-questions.entity';
@@ -11,10 +11,13 @@ import { TestQuestionsEntity } from './models/test-questions.entity';
 import testResultMapper from './mappers/test-result.mapper';
 import testMapper from './mappers/test.mapper';
 import { QuestionsDto } from './dtos/test-questions.dto';
+import { UsersService } from '../users/users.service';
+import { testQuestions } from './tests.seed';
 
 @Injectable()
 export class TestsService implements OnModuleInit {
     constructor(
+        private readonly usersService: UsersService,
         private readonly testRepository: TestRepository,
         private readonly testResultRepository: TestResultRepository,
     ) {}
@@ -24,7 +27,7 @@ export class TestsService implements OnModuleInit {
         if(isExists.length === 4) return
         
         const tests = await this.testRepository.createTests()
-        await this.testRepository.createQuestions(tests.iq.id, tests.szondi.id, tests.archetype.id, tests.mbti.id)
+        await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.archetype.id, tests.mbti.id)
         return
     }
 
@@ -50,12 +53,12 @@ export class TestsService implements OnModuleInit {
         if(!test) throw new InternalServerErrorException('Test not found')
         const calculators = {
             iq: this.calculateIQ,
-            szondi: this.calculateSzondi,
+            bigFive: this.calculateBigFive,
             archetype: this.calculateArchetype,
             mbti: this.calculateMBTI
         }
 
-        const result: IqTestResult | SzondiTestResult | ArchetypeTestResult | MbtiTestResult = await calculators[test.testType](userId, testId, answers.answers)
+        const result: IqTestResult | BigFiveResults | ArchetypeTestResult | MbtiTestResult = await calculators[test.testType](userId, testId, answers.answers)
 
         const isExists = await this.testResultRepository.getTestResult(userId, testId)
         if(isExists) {
@@ -106,8 +109,65 @@ export class TestsService implements OnModuleInit {
         return res
     }
 
-    private calculateSzondi = async (userId: string, testId: string, answers: AnswerDto[]): Promise<SzondiTestResult> => {
-        return {}
+    private calculateBigFive = async (userId: string, testId: string, answers: AnswerDto[]): Promise<BigFiveResults> => {
+        const user = await this.usersService.getUserById(userId)
+        if(!user || !user.gender) throw new BadRequestException('Confirm gender of user')
+        const scores = testQuestions.bigFive.questions.scoring[user.gender]
+
+        const res: BigFiveResults = {
+            E1: {name: 'Friendliness', score: 0},
+            E2: {name: 'Gregariousness', score: 0},
+            E3: {name: 'Assertiveness', score: 0},
+            E4: {name: 'Activity Level', score: 0},
+            E5: {name: 'Excitement-seeking', score: 0},
+            E6: {name: 'Cheerfulness', score: 0},
+
+            A1: {name: 'Trust', score: 0},
+            A2: {name: 'Morality', score: 0},
+            A3: {name: 'Altruism', score: 0},
+            A4: {name: 'Cooperation', score: 0},
+            A5: {name: 'Modesty', score: 0},
+            A6: {name: 'Sympathy', score: 0},
+
+            C1: {name: 'Self-efficacy', score: 0},
+            C2: {name: 'Orderliness', score: 0},
+            C3: {name: 'Dutifulness', score: 0},
+            C4: {name: 'Achievement-striving', score: 0},
+            C5: {name: 'Self-discipline', score: 0},
+            C6: {name: 'Cautiousness', score: 0},
+
+            N1: {name: 'Anxiety', score: 0},
+            N2: {name: 'Anger', score: 0},
+            N3: {name: 'Depression', score: 0},
+            N4: {name: 'Self-consciousness', score: 0},
+            N5: {name: 'Immoderation', score: 0},
+            N6: {name: 'Vulnerability', score: 0},
+
+            O1: {name: 'Imagination', score: 0},
+            O2: {name: 'Artistic Interests', score: 0},
+            O3: {name: 'Emotionality', score: 0},
+            O4: {name: 'Adventurousness', score: 0},
+            O5: {name: 'Intellect', score: 0},
+            O6: {name: 'Liberalism', score: 0},
+
+            E: {name: 'Extraversion', score: 0},
+            A: {name: 'Agreeableness', score: 0},
+            C: {name: 'Conscientiousness', score: 0},
+            N: {name: 'Neuroticism', score: 0},
+            O: {name: 'Openness', score: 0}
+        }
+
+        answers.forEach((a)=> {
+            res[a.questionId].score += Number(a.optionId)
+            res[a.questionId[0]].score += Number(a.optionId)
+        })
+
+        Object.keys(res).forEach(key => {
+            res[key].score = (50 + 10 * (res[key].score - scores[key].mean) / scores[key].sd)
+        })
+        console.log(res)
+        return res
+
     }
     private calculateArchetype = async (userId: string, testId: string, answers: AnswerDto[]): Promise<ArchetypeTestResult> => {
         return {}
