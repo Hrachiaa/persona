@@ -13,12 +13,12 @@ export const tests = {
         duration: 0,
         totalQuestions: 120,
     },
-    archetype: {
-        testName: 'Archetype Test',
-        testType: 'archetype',
-        description: `Identifies your dominant personality archetype based on Carl Jung's theory — Hero, Shadow, Anima, Sage and others.`,
-        duration: 20,
-        totalQuestions: 40,
+    shcwartz: {
+        testName: 'Shcwartz PVQ-RR Test',
+        testType: 'shcwartz',
+        description: 'The Schwartz PVQ-RR measures your basic personal values through 57 short portraits of different people. Rate how similar each one is to you, and discover your priorities across 19 core values and four broad dimensions.',
+        duration: 0,
+        totalQuestions: 57,
     },
     mbti: {
         testName: '16 Personality Types (MBTI)',
