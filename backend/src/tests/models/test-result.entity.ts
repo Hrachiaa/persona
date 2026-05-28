@@ -48,15 +48,42 @@ export interface BigFiveResults {
     
 }
 
-export interface ArchetypeTestResult {
+export interface ShcwartzTestResult {
+    values: {
+        1: {name: 'Self-Direction: Autonomy of Thought', description: `Freedom to cultivate one's own ideas`, score: number},
+        2: {name: 'Self-Direction: Autonomy of Action', description: `Freedom to determine one's own actions`, score: number},
+        3: {name: 'Stimulation', description: 'Excitement, novelty, and change', score: number},
+        4: {name: 'Hedonism', description: 'Pleasure or sensuous gratification', score: number},
+        5: {name: 'Achievement', description: 'Success according to social standards', score: number},
+        6: {name: 'Power: Dominance over people', description: '', score: number},
+        7: {name: 'Power: Resources', description: 'Wealth and material resources', score: number},
+        8: {name: 'Face', description: 'Maintaining public image', score: number},
+        9: {name: 'Security: Societal', description: 'Security in the wider society', score: number},
+        10: {name: 'Security: Personal', description: `Security of self and one's immediate environment`, score: number},
+        11: {name: 'Tradition', description: 'Maintaining and preserving cultural, family and/or religious traditions', score: number},
+        12: {name: 'Conformity: Rules', description: 'Compliance with rules, laws and formal obligations', score: number},
+        13: {name: 'Conformity: Interpersonal', description: 'Avoidance of upsetting or harming others', score: number},
+        14: {name: 'Humility', description: `Recognizing one's insignificance in the larger scheme of things`, score: number},
+        15: {name: 'Benevolence: Dependability', description: 'Trustworthy and reliable', score: number},
+        16: {name: 'Benevolence: Caring', description: 'Devotion to the needs of the in-group', score: number},
+        17: {name: 'Universalism: Concern', description: 'Equality, justice and protection for the weak in society', score: number},
+        18: {name: 'Universalism: Nature', description: 'Preservation of the natural environment', score: number},
+        19: {name: 'Universalism: Tolerance', description: 'Acceptance and understanding of those who differ from oneself', score: number},
     
+    },
+    higherOrderValues: {
+        1: {name: 'Self-Transcendence', description: 'Combine means for universalism-nature, universalism-concern, universalism-tolerance, benevolence-care, and benevolence-dependability', score: number},
+        2: {name: 'Self-Enhancement', description: 'Combine means for achievement, power dominance and power resources', score: number},
+        3: {name: 'Openness to change', description: 'Combine means for self-direction thought, self-direction action, stimulation and hedonism', score: number},
+        4: {name: 'Conservation', description: 'Combine means for security-personal, security-societal, tradition, conformity-rules, conformity-interpersonal', score: number},
+    }
 }
 
 export interface MbtiTestResult {
     
 }
 
-export type TestResultType = IqTestResult | BigFiveResults | ArchetypeTestResult | MbtiTestResult;
+export type TestResultType = IqTestResult | BigFiveResults | ShcwartzTestResult | MbtiTestResult;
 
 export class TestResultEntity {
     constructor(

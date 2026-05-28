@@ -3,7 +3,7 @@ import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { SubmitTestDto, AnswerDto } from './dtos/submit-test.dto';
 import { TestResultDto } from './dtos/test-result.dto';
-import { IqTestResult, MbtiTestResult, BigFiveResults, ArchetypeTestResult, TestResultEntity } from './models/test-result.entity';
+import { IqTestResult, MbtiTestResult, BigFiveResults, ShcwartzTestResult, TestResultEntity } from './models/test-result.entity';
 import { TestEntity } from './models/test.entity';
 import { GetTestsDto } from './dtos/get-tests.dto';
 import { Result, Results, Scoring } from './models/iqtest-questions.entity';
@@ -27,7 +27,7 @@ export class TestsService implements OnModuleInit {
         if(isExists.length === 4) return
         
         const tests = await this.testRepository.createTests()
-        await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.archetype.id, tests.mbti.id)
+        await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.mbti.id)
         return
     }
 
@@ -54,11 +54,11 @@ export class TestsService implements OnModuleInit {
         const calculators = {
             iq: this.calculateIQ,
             bigFive: this.calculateBigFive,
-            archetype: this.calculateArchetype,
+            shcwartz: this.calculateSchwartz,
             mbti: this.calculateMBTI
         }
 
-        const result: IqTestResult | BigFiveResults | ArchetypeTestResult | MbtiTestResult = await calculators[test.testType](userId, testId, answers.answers)
+        const result: IqTestResult | BigFiveResults | ShcwartzTestResult | MbtiTestResult = await calculators[test.testType](userId, testId, answers.answers)
 
         const isExists = await this.testResultRepository.getTestResult(userId, testId)
         if(isExists) {
@@ -110,6 +110,7 @@ export class TestsService implements OnModuleInit {
     }
 
     private calculateBigFive = async (userId: string, testId: string, answers: AnswerDto[]): Promise<BigFiveResults> => {
+        if(answers.length !== 120){throw new BadRequestException('Count of answers has to be 120')}
         const user = await this.usersService.getUserById(userId)
         if(!user || !user.gender) throw new BadRequestException('Confirm gender of user')
         const scores = testQuestions.bigFive.questions.scoring[user.gender]
@@ -169,9 +170,66 @@ export class TestsService implements OnModuleInit {
         return res
 
     }
-    private calculateArchetype = async (userId: string, testId: string, answers: AnswerDto[]): Promise<ArchetypeTestResult> => {
-        return {}
+    private calculateSchwartz = async (userId: string, testId: string, answers: AnswerDto[]): Promise<ShcwartzTestResult> => {
+        if(answers.length !== 57){throw new BadRequestException('Count of answers has to be 57')}
+
+        const res: ShcwartzTestResult = {
+            values: {
+                1: {name: 'Self-Direction: Autonomy of Thought', description: `Freedom to cultivate one's own ideas`, score: 0},
+                2: {name: 'Self-Direction: Autonomy of Action', description: `Freedom to determine one's own actions`, score: 0},
+                3: {name: 'Stimulation', description: 'Excitement, novelty, and change', score: 0},
+                4: {name: 'Hedonism', description: 'Pleasure or sensuous gratification', score: 0},
+                5: {name: 'Achievement', description: 'Success according to social standards', score: 0},
+                6: {name: 'Power: Dominance over people', description: '', score: 0},
+                7: {name: 'Power: Resources', description: 'Wealth and material resources', score: 0},
+                8: {name: 'Face', description: 'Maintaining public image', score: 0},
+                9: {name: 'Security: Societal', description: 'Security in the wider society', score: 0},
+                10: {name: 'Security: Personal', description: `Security of self and one's immediate environment`, score: 0},
+                11: {name: 'Tradition', description: 'Maintaining and preserving cultural, family and/or religious traditions', score: 0},
+                12: {name: 'Conformity: Rules', description: 'Compliance with rules, laws and formal obligations', score: 0},
+                13: {name: 'Conformity: Interpersonal', description: 'Avoidance of upsetting or harming others', score: 0},
+                14: {name: 'Humility', description: `Recognizing one's insignificance in the larger scheme of things`, score: 0},
+                15: {name: 'Benevolence: Dependability', description: 'Trustworthy and reliable', score: 0},
+                16: {name: 'Benevolence: Caring', description: 'Devotion to the needs of the in-group', score: 0},
+                17: {name: 'Universalism: Concern', description: 'Equality, justice and protection for the weak in society', score: 0},
+                18: {name: 'Universalism: Nature', description: 'Preservation of the natural environment', score: 0},
+                19: {name: 'Universalism: Tolerance', description: 'Acceptance and understanding of those who differ from oneself', score: 0},
+            
+            },
+
+            higherOrderValues: {
+                1: {name: 'Self-Transcendence', description: 'Combine means for universalism-nature, universalism-concern, universalism-tolerance, benevolence-care, and benevolence-dependability', score: 0},
+                2: {name: 'Self-Enhancement', description: 'Combine means for achievement, power dominance and power resources', score: 0},
+                3: {name: 'Openness to change', description: 'Combine means for self-direction thought, self-direction action, stimulation and hedonism', score: 0},
+                4: {name: 'Conservation', description: 'Combine means for security-personal, security-societal, tradition, conformity-rules, conformity-interpersonal', score: 0},
+            }
+        }
+ 
+        answers.forEach(a => {
+            res.values[a.questionId].score += Number(a.optionId)
+        })
+        
+        let mediumScore = 0
+
+        Object.keys(res.values).forEach(a => {
+            const realScore = res.values[a].score / 3
+            res.values[a].score = realScore
+            mediumScore += realScore
+        })
+
+        Object.keys(res.values).forEach(a => {
+            const centreScore = Math.round((res.values[a].score - mediumScore/19) * 100) / 100
+            res.values[a].score = centreScore
+        })
+
+        res.higherOrderValues[1].score = Math.round(((res.values[15].score + res.values[16].score + res.values[17].score + res.values[18].score + res.values[19].score) / 5) * 100) / 100
+        res.higherOrderValues[2].score = Math.round(((res.values[5].score + res.values[6].score + res.values[7].score) / 3) * 100) / 100
+        res.higherOrderValues[3].score = Math.round(((res.values[1].score + res.values[2].score + res.values[3].score + res.values[4].score) / 4) * 100) / 100
+        res.higherOrderValues[4].score = Math.round(((res.values[9].score + res.values[10].score + res.values[11].score + res.values[12].score + res.values[13].score) / 5) * 100) / 100
+
+        return res
     }
+
     private calculateMBTI = async (userId: string, testId: string, answers: AnswerDto[]): Promise<MbtiTestResult> => {
         return {}
     }

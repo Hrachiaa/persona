@@ -4,7 +4,7 @@ export class TestQuestionsEntity {
     constructor(
         readonly id: string,
         readonly testId: string,
-        readonly questions: IqQuestions | BigFiveQuestions | ArchetypeQuestions | MbtiQuestions
+        readonly questions: IqQuestions | BigFiveQuestions | ShcwartzQuestions | MbtiQuestions
     ){}
 }
 
@@ -29,7 +29,7 @@ interface BigFiveQuestions {
     questions: Question[]
 }
 
-interface ArchetypeQuestions {
+interface ShcwartzQuestions {
     questions: Question[]
 }
 
