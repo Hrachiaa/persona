@@ -3,7 +3,7 @@ import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { SubmitTestDto, AnswerDto } from './dtos/submit-test.dto';
 import { TestResultDto } from './dtos/test-result.dto';
-import { IqTestResult, MbtiTestResult, BigFiveResults, ShcwartzTestResult, TestResultEntity } from './models/test-result.entity';
+import { IqTestResult, EcrResult, BigFiveResults, ShcwartzTestResult, TestResultEntity } from './models/test-result.entity';
 import { TestEntity } from './models/test.entity';
 import { GetTestsDto } from './dtos/get-tests.dto';
 import { Result, Results, Scoring } from './models/iqtest-questions.entity';
@@ -27,7 +27,7 @@ export class TestsService implements OnModuleInit {
         if(isExists.length === 4) return
         
         const tests = await this.testRepository.createTests()
-        await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.mbti.id)
+        await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.ecr.id)
         return
     }
 
@@ -55,10 +55,10 @@ export class TestsService implements OnModuleInit {
             iq: this.calculateIQ,
             bigFive: this.calculateBigFive,
             shcwartz: this.calculateSchwartz,
-            mbti: this.calculateMBTI
+            ecr: this.calculateEcr
         }
 
-        const result: IqTestResult | BigFiveResults | ShcwartzTestResult | MbtiTestResult = await calculators[test.testType](userId, testId, answers.answers)
+        const result: IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult = await calculators[test.testType](userId, testId, answers.answers)
 
         const isExists = await this.testResultRepository.getTestResult(userId, testId)
         if(isExists) {
@@ -230,7 +230,11 @@ export class TestsService implements OnModuleInit {
         return res
     }
 
-    private calculateMBTI = async (userId: string, testId: string, answers: AnswerDto[]): Promise<MbtiTestResult> => {
-        return {}
+    private calculateEcr = async (userId: string, testId: string, answers: AnswerDto[]): Promise<EcrResult> => {
+        const res: EcrResult = {
+            anxiety: 0,
+            avoidance: 0
+        }
+        return res
     }
 }

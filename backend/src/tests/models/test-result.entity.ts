@@ -79,11 +79,12 @@ export interface ShcwartzTestResult {
     }
 }
 
-export interface MbtiTestResult {
-    
+export interface EcrResult {
+    anxiety: number;
+    avoidance: number
 }
 
-export type TestResultType = IqTestResult | BigFiveResults | ShcwartzTestResult | MbtiTestResult;
+export type TestResultType = IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult;
 
 export class TestResultEntity {
     constructor(

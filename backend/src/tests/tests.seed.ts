@@ -20,12 +20,12 @@ export const tests = {
         duration: 0,
         totalQuestions: 57,
     },
-    mbti: {
-        testName: '16 Personality Types (MBTI)',
-        testType: 'mbti',
-        description: 'Determines your personality type across four scales: extraversion/introversion, sensing/intuition, thinking/feeling, judging/perceiving.',
-        duration: 15,
-        totalQuestions: 60,
+    ecr: {
+        testName: 'Experiences in Close Relationships–Revised',
+        testType: 'ecr',
+        description: `The ECR-R measures individuals on two subscales of attachment: Avoidance and Anxiety.`,
+        duration: 0,
+        totalQuestions: 36,
     }
 }
 
@@ -8901,9 +8901,514 @@ export const testQuestions = {
         //    }
         }
     },
-    mbti: {
+    ecr: {
         questions: {
-
+            questions: [
+                {
+                    id: '1',
+                    text: `I'm afraid that I will lose my partner's love.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: `I often worry that my partner will not want to stay with me.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: `I often worry that my partner doesn't really love me.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: `I worry that romantic partners won't care about me as much as I care about them.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: `I often wish that my partner's feelings for me were as strong as my feelings for him or her.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `I worry a lot about my relationships.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: `When my partner is out of sight, I worry that he or she might become interested in someone else.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: `When I show my feelings for romantic partners, I'm afraid they will not feel the same about me.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `I rarely worry about my partner leaving me.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: `My romantic partner makes me doubt myself.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: `I do not often worry about being abandoned.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: `I find that my partner(s) don't want to get as close as I would like.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: `Sometimes romantic partners change their feelings about me for no apparent reason.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: `My desire to be very close sometimes scares people away.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: `I'm afraid that once a romantic partner gets to know me, he or she won't like who I really am.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '16',
+                    text: `It makes me mad that I don't get the affection and support I need from my partner.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '17',
+                    text: `I worry that I won't measure up to other people.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '18',
+                    text: `My partner only seems to notice me when I'm angry.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '19',
+                    text: `I prefer not to show a partner how I feel deep down.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '20',
+                    text: `I feel comfortable sharing my private thoughts and feelings with my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '21',
+                    text: `I find it difficult to allow myself to depend on romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '22',
+                    text: `I am very comfortable being close to romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '23',
+                    text: `I don't feel comfortable opening up to romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '24',
+                    text: `I prefer not to be too close to romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '25',
+                    text: `I get uncomfortable when a romantic partner wants to be very close.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '26',
+                    text: `I find it relatively easy to get close to my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '27',
+                    text: `It's not difficult for me to get close to my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '28',
+                    text: `I usually discuss my problems and concerns with my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '29',
+                    text: `It helps to turn to my romantic partner in times of need.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '30',
+                    text: `I tell my partner just about everything.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '31',
+                    text: `I talk things over with my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '32',
+                    text: `I am nervous when partners get too close to me.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '33',
+                    text: `I feel comfortable depending on romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '34',
+                    text: `I find it easy to depend on romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '35',
+                    text: `It's easy for me to be affectionate with my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '36',
+                    text: `My partner really understands me and my needs.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+            ]
         }
     }
 }

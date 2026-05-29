@@ -16,19 +16,19 @@ export class TestRepository {
         const schwartz = await this.prisma.test.create({
             data: tests.shcwartz
         })
-        const mbti = await this.prisma.test.create({
-            data: tests.mbti
+        const ecr = await this.prisma.test.create({
+            data: tests.ecr
         })
-        return { iq, bigFive, schwartz, mbti }
+        return { iq, bigFive, schwartz, ecr }
     }
     
-    async createQuestions(iqId, bigFiveId, archetypeId, mbtiId) {
+    async createQuestions(iqId, bigFiveId, archetypeId, ecrId) {
         const iqQuestions = await this.prisma.testQuestion.createMany({
             data: [
                 {testId: iqId, questions: testQuestions.iq.questions},
                 {testId: bigFiveId, questions: testQuestions.bigFive.questions},
                 {testId: archetypeId, questions: testQuestions.shcwartz.questions},
-                {testId: mbtiId, questions: testQuestions.mbti.questions},
+                {testId: ecrId, questions: testQuestions.ecr.questions},
             ]
         })
         return
