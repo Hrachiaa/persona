@@ -13,12 +13,12 @@ export const tests = {
         duration: 0,
         totalQuestions: 120,
     },
-    archetype: {
-        testName: 'Archetype Test',
-        testType: 'archetype',
-        description: `Identifies your dominant personality archetype based on Carl Jung's theory — Hero, Shadow, Anima, Sage and others.`,
-        duration: 20,
-        totalQuestions: 40,
+    shcwartz: {
+        testName: 'Shcwartz PVQ-RR Test',
+        testType: 'shcwartz',
+        description: 'The Schwartz PVQ-RR measures your basic personal values through 57 short portraits of different people. Rate how similar each one is to you, and discover your priorities across 19 core values and four broad dimensions.',
+        duration: 0,
+        totalQuestions: 57,
     },
     mbti: {
         testName: '16 Personality Types (MBTI)',
@@ -7409,9 +7409,1496 @@ export const testQuestions = {
                 },            }
         }
     },
-    archetype: {
+    shcwartz: {
         questions: {
-
+            questions: 
+                [
+                    {
+                        id: '1',
+                        text: 'It is important to him to form his views independently.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '9',
+                        text: 'It is important to him that his country is secure and stable.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '4',
+                        text: 'It is important to him to have a good time.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '13',
+                        text: 'It is important to him to avoid upsetting other people.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '17',
+                        text: 'It is important to him that the weak and vulnerable in society be protected.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '6',
+                        text: 'It is important to him that people do whatever he says they should.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '14',
+                        text: 'It is important to him never to think he deserves more than other people.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '18',
+                        text: 'It is important to him to care for nature.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '8',
+                        text: 'It is important to him that no one should ever shame him.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '3',
+                        text: 'It is important to him always to look for different things to do.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '16',
+                        text: 'It is important to him to take care of people he is close to.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '7',
+                        text: 'It is important to him to have the power that money can bring.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '10',
+                        text: 'It is very important to him to avoid disease and protect his health.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '19',
+                        text: 'It is important to him to be tolerant toward all kinds of people and groups.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '12',
+                        text: 'It is important to him never to violate rules or regulations.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '2',
+                        text: 'It is important to him to make his own decisions about his life.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '5',
+                        text: 'It is important to him to have ambitions in life.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '11',
+                        text: 'It is important to him to maintain traditional values and ways of thinking.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '15',
+                        text: 'It is important to him that people he knows have full confidence in him.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '7',
+                        text: 'It is important to him to be wealthy.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '18',
+                        text: 'It is important to him to take part in activities to defend nature.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '13',
+                        text: 'It is important to him never to annoy anyone.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '1',
+                        text: 'It is important to him to develop his own opinions.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '8',
+                        text: 'It is important to him to protect his public image.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '16',
+                        text: 'It is very important to him to help the people dear to him.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '10',
+                        text: 'It is important to him to be personally safe and secure.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '15',
+                        text: 'It is important to him to be a dependable and trustworthy friend.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '3',
+                        text: 'It is important to him to take risks that make life exciting.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '6',
+                        text: 'It is important to him to have the power to make people do what he wants.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '2',
+                        text: 'It is important to him to plan his activities independently.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '12',
+                        text: 'It is important to him to follow rules even when no-one is watching.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '5',
+                        text: 'It is important to him to be very successful.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '11',
+                        text: "It is important to him to follow his family's customs or the customs of a religion.",
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '19',
+                        text: 'It is important to him to listen to and understand people who are different from him.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '9',
+                        text: 'It is important to him that the state is strong and can defend its citizens.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '4',
+                        text: "It is important to him to enjoy life's pleasures.",
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '17',
+                        text: 'It is important to him to that every person in the world have equal opportunities in life.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '14',
+                        text: 'It is important to him to be humble.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '1',
+                        text: 'It is important to him to figure things out himself.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '11',
+                        text: 'It is important to him to honor the traditional practices of his culture.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '6',
+                        text: 'It is important to him to be the one who tells others what to do.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '12',
+                        text: 'It is important to him to obey all the laws.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '3',
+                        text: 'It is important to him to have all sorts of new experiences.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '7',
+                        text: 'It is important to him to own expensive things that show his wealth.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '18',
+                        text: 'It is important to him to protect the natural environment from destruction or pollution.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '4',
+                        text: 'It is important to him to take advantage of every opportunity to have fun.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '16',
+                        text: 'It is important to him to concern himself with every need of his dear ones.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '5',
+                        text: 'It is important to him that people recognize what he achieves.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '8',
+                        text: 'It is important to him never to be humiliated.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '9',
+                        text: 'It is important to him that his country protect itself against all threats.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '13',
+                        text: 'It is important to him never to make other people angry.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '17',
+                        text: "It is important to him that everyone be treated justly, even people he doesn't know.",
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '10',
+                        text: 'It is important to him to avoid anything dangerous.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '14',
+                        text: 'It is important to him to be satisfied with what he has and not ask for more.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '15',
+                        text: 'It is important to him that all his friends and family can rely on him completely.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '2',
+                        text: 'It is important to him to be free to choose by himself what he does.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '19',
+                        text: 'It is important to him to accept people even when he disagrees with them.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                ],
+                F: [
+                    {
+                        id: '1',
+                        text: 'It is important to her to form her views independently.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '9',
+                        text: 'It is important to her that her country is secure and stable.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '4',
+                        text: 'It is important to her to have a good time.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '13',
+                        text: 'It is important to her to avoid upsetting other people.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '17',
+                        text: 'It is important to her that the weak and vulnerable in society be protected.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '6',
+                        text: 'It is important to her that people do whatever she says they should.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '14',
+                        text: 'It is important to her never to think she deserves more than other people.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '18',
+                        text: 'It is important to her to care for nature.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '8',
+                        text: 'It is important to her that no one should ever shame her.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '3',
+                        text: 'It is important to her always to look for different things to do.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '16',
+                        text: 'It is important to her to take care of people she is close to.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '7',
+                        text: 'It is important to her to have the power that money can bring.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '10',
+                        text: 'It is very important to her to avoid disease and protect her health.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '19',
+                        text: 'It is important to her to be tolerant toward all kinds of people and groups.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '12',
+                        text: 'It is important to her never to violate rules or regulations.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '2',
+                        text: 'It is important to her to make her own decisions about her life.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '5',
+                        text: 'It is important to her to have ambitions in life.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '11',
+                        text: 'It is important to her to maintain traditional values and ways of thinking.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '15',
+                        text: 'It is important to her that people she knows have full confidence in her.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '7',
+                        text: 'It is important to her to be wealthy.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '18',
+                        text: 'It is important to her to take part in activities to defend nature.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '13',
+                        text: 'It is important to her never to annoy anyone.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '1',
+                        text: 'It is important to her to develop her own opinions.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '8',
+                        text: 'It is important to her to protect her public image.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '16',
+                        text: 'It is very important to her to help the people dear to her.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '10',
+                        text: 'It is important to her to be personally safe and secure.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '15',
+                        text: 'It is important to her to be a dependable and trustworthy friend.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '3',
+                        text: 'It is important to her to take risks that make life exciting.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '6',
+                        text: 'It is important to her to have the power to make people do what she wants.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '2',
+                        text: 'It is important to her to plan her activities independently.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '12',
+                        text: 'It is important to her to follow rules even when no-one is watching.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '5',
+                        text: 'It is important to her to be very successful.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '11',
+                        text: "It is important to her to follow her family's customs or the customs of a religion.",
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '19',
+                        text: 'It is important to her to listen to and understand people who are different from her.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '9',
+                        text: 'It is important to her that the state is strong and can defend its citizens.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '4',
+                        text: "It is important to her to enjoy life's pleasures.",
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '17',
+                        text: 'It is important to her that every person in the world have equal opportunities in life.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '14',
+                        text: 'It is important to her to be humble.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '1',
+                        text: 'It is important to her to figure things out herself.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '11',
+                        text: 'It is important to her to honor the traditional practices of her culture.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '6',
+                        text: 'It is important to her to be the one who tells others what to do.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '12',
+                        text: 'It is important to her to obey all the laws.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '3',
+                        text: 'It is important to her to have all sorts of new experiences.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '7',
+                        text: 'It is important to her to own expensive things that show her wealth.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '18',
+                        text: 'It is important to her to protect the natural environment from destruction or pollution.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '4',
+                        text: 'It is important to her to take advantage of every opportunity to have fun.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '16',
+                        text: 'It is important to her to concern herself with every need of her dear ones.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '5',
+                        text: 'It is important to her that people recognize what she achieves.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '8',
+                        text: 'It is important to her never to be humiliated.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '9',
+                        text: 'It is important to her that her country protect itself against all threats.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '13',
+                        text: 'It is important to her never to make other people angry.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '17',
+                        text: "It is important to her that everyone be treated justly, even people she doesn't know.",
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '10',
+                        text: 'It is important to her to avoid anything dangerous.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '14',
+                        text: 'It is important to her to be satisfied with what she has and not ask for more.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '15',
+                        text: 'It is important to her that all her friends and family can rely on her completely.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '2',
+                        text: 'It is important to her to be free to choose by herself what she does.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                    {
+                        id: '19',
+                        text: 'It is important to her to accept people even when she disagrees with them.',
+                        image: '',
+                        options: [
+                            {id: '1', text: 'Not like me at all', icon: '' },
+                            {id: '2', text: 'Not like me', icon: '' },
+                            {id: '3', text: 'A little like me', icon: '' },
+                            {id: '4', text: 'Moderately like me', icon: '' },
+                            {id: '5', text: 'Like me', icon: '' },
+                            {id: '6', text: 'Very much like me', icon: '' },
+                        ]
+                    },
+                ],
+        //    }
         }
     },
     mbti: {
