@@ -84,7 +84,11 @@ export interface EcrResult {
     avoidance: number
 }
 
-export type TestResultType = IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult;
+interface Test {
+
+}
+
+export type TestResultType = IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult | Test;
 
 export class TestResultEntity {
     constructor(

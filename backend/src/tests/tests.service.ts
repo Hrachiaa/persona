@@ -235,6 +235,12 @@ export class TestsService implements OnModuleInit {
             anxiety: 0,
             avoidance: 0
         }
+
+        answers.forEach(a => {
+            if(Number(a.questionId) < 19) {res.anxiety += Number(a.optionId)} else {res.avoidance += Number(a.optionId)}
+        })
+
+        Object.keys(res).forEach(a => res[a] /= 18)
         return res
     }
 }
