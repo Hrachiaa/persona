@@ -3,7 +3,7 @@ import { TestResultDto } from "./test-result.dto";
 export class TestsDto {
     constructor(
         public readonly id: string,
-        public readonly testType: 'iq' | 'bigFive' | 'shcwartz' | 'ecr',
+        public readonly testType: 'iq' | 'bigFive' | 'shcwartz' | 'ecr' | 'cope' | 'pid',
         public readonly description: string,
         public readonly testName: string,
         public readonly duration: number | null,

@@ -84,11 +84,33 @@ export interface EcrResult {
     avoidance: number
 }
 
+export interface CopeTestResult {
+    1: { name: 'Positive reinterpretation and growth'; description: 'Making the best of the situation by growing from it, or viewing it in a more favorable light.'; score: number };
+    2: { name: 'Mental disengagement'; description: 'Psychological disengagement from the goal with which the stressor is interfering, through daydreaming, sleep, or distraction.'; score: number };
+    3: { name: 'Focus on and venting of emotions'; description: `An increased awareness of one's emotional distress, and a concomitant tendency to ventilate or discharge those feelings.`; score: number };
+    4: { name: 'Use of instrumental social support'; description: 'Seeking assistance, information, or advice about what to do.'; score: number };
+    5: { name: 'Active coping'; description: 'Taking action or exerting efforts to remove or circumvent the stressor.'; score: number };
+    6: { name: 'Denial'; description: 'An attempt to reject the reality of the stressful event.'; score: number };
+    7: { name: 'Religious coping'; description: 'Increased engagement in religious activities.'; score: number };
+    8: { name: 'Humor'; description: ''; score: number };
+    9: { name: 'Behavioral disengagement'; description: 'Giving up, or withdrawing effort from, the attempt to attain the goal with which the stressor is interfering.'; score: number };
+    10: { name: 'Restraint'; description: `Coping passively by holding back one's coping attempts until they can be of use.`; score: number };
+    11: { name: 'Use of emotional social support'; description: 'Getting sympathy or emotional support from someone.'; score: number };
+    12: { name: 'Substance use'; description: ''; score: number };
+    13: { name: 'Acceptance'; description: 'Accepting the fact that the stressful event has occurred and is real.'; score: number };
+    14: { name: 'Suppression of competing activities'; description: 'Suppressing attention to other activities in which one might engage, in order to concentrate more completely on dealing with the stressor.'; score: number };
+    15: { name: 'Planning'; description: `Thinking about how to confront the stressor, planning one's active coping efforts.`; score: number };
+}
+
+export interface PidTestResult {
+    
+}
+
 interface Test {
 
 }
 
-export type TestResultType = IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult | Test;
+export type TestResultType = IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult | CopeTestResult | Test;
 
 export class TestResultEntity {
     constructor(

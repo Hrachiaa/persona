@@ -26,7 +26,14 @@ export const tests = {
         description: `The ECR-R measures individuals on two subscales of attachment: Avoidance and Anxiety.`,
         duration: 0,
         totalQuestions: 36,
-    }
+    },
+    cope: {
+        testName: 'Coping Orientation to Problems Experienced Inventory',
+        testType: 'cope',
+        description: `COPE is a self-report questionnaire developed by Charles S. Carver to assess a broad range of coping strategies.`,
+        duration: 0,
+        totalQuestions: 60,
+    },
 }
 
 export const testQuestions = {
@@ -9406,6 +9413,672 @@ export const testQuestions = {
                         {id: '3', text: 'Slightly agree', icon: ''},
                         {id: '2', text: 'Agree', icon: ''},
                         {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+            ]
+        }
+    },
+    cope: {
+        questions: {
+            questions: [
+                {
+                    id: '1',
+                    text: 'I try to grow as a person as a result of the experience.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: 'I turn to work or other substitute activities to take my mind off things.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: 'I get upset and let my emotions out.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: 'I try to get advice from someone about what to do.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: 'I concentrate my efforts on doing something about it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `I say to myself "this isn't real."`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: 'I put my trust in God.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: 'I laugh about the situation.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `I admit to myself that I can't deal with it, and quit trying.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: 'I restrain myself from doing anything too quickly.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: 'I discuss my feelings with someone.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: 'I use alcohol or drugs to make myself feel better.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: 'I get used to the idea that it happened.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: 'I talk to someone to find out more about the situation.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: 'I keep myself from getting distracted by other thoughts or activities.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: 'I daydream about things other than this.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: 'I get upset, and am really aware of it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: `I seek God's help.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: 'I make a plan of action.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: 'I make jokes about it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: `I accept that this has happened and that it can't be changed.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: 'I hold off doing anything about it until the situation permits.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: 'I try to get emotional support from friends or relatives.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: 'I just give up trying to reach my goal.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: 'I take additional action to try to get rid of the problem.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: 'I try to lose myself for a while by drinking alcohol or taking drugs.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: 'I refuse to believe that it has happened.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: 'I let my feelings out.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: 'I try to see it in a different light, to make it seem more positive.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: 'I talk to someone who could do something concrete about the problem.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: 'I sleep more than usual.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: 'I try to come up with a strategy about what to do.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: 'I focus on dealing with this problem, and if necessary let other things slide a little.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: 'I get sympathy and understanding from someone.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: 'I drink alcohol or take drugs, in order to think about it less.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: 'I kid around about it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: 'I give up the attempt to get what I want.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: 'I look for something good in what is happening.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: 'I think about how I might best handle the problem.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `I pretend that it hasn't really happened.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: 'I make sure not to make matters worse by acting too soon.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: 'I try hard to prevent other things from interfering with my efforts at dealing with this.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: 'I go to movies or watch TV, to think about it less.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: 'I accept the reality of the fact that it happened.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: 'I ask people who have had similar experiences what they did.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: 'I feel a lot of emotional distress and I find myself expressing those feelings a lot.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: 'I take direct action to get around the problem.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: 'I try to find comfort in my religion.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: 'I force myself to wait for the right time to do something.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: 'I make fun of the situation.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `I reduce the amount of effort I'm putting into solving the problem.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: 'I talk to someone about how I feel.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: 'I use alcohol or drugs to help me get through it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: 'I learn to live with it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: 'I put aside other activities in order to concentrate on this.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: 'I think hard about what steps to take.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `I act as though it hasn't even happened.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: 'I do what has to be done, one step at a time.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: 'I learn something from the experience.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: 'I pray more than usual.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
                     ]
                 },
             ]

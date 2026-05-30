@@ -3,7 +3,7 @@ import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { SubmitTestDto, AnswerDto } from './dtos/submit-test.dto';
 import { TestResultDto } from './dtos/test-result.dto';
-import { IqTestResult, EcrResult, BigFiveResults, ShcwartzTestResult, TestResultEntity } from './models/test-result.entity';
+import { IqTestResult, EcrResult, BigFiveResults, ShcwartzTestResult, TestResultEntity, CopeTestResult, PidTestResult } from './models/test-result.entity';
 import { TestEntity } from './models/test.entity';
 import { GetTestsDto } from './dtos/get-tests.dto';
 import { Result, Results, Scoring } from './models/iqtest-questions.entity';
@@ -55,7 +55,9 @@ export class TestsService implements OnModuleInit {
             iq: this.calculateIQ,
             bigFive: this.calculateBigFive,
             shcwartz: this.calculateSchwartz,
-            ecr: this.calculateEcr
+            ecr: this.calculateEcr,
+            cope: this.calculateCope,
+            pid: this.calculatePid
         }
 
         const result: IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult = await calculators[test.testType](userId, testId, answers.answers)
@@ -242,5 +244,35 @@ export class TestsService implements OnModuleInit {
 
         Object.keys(res).forEach(a => res[a] /= 18)
         return res
+    }
+
+    private calculateCope = async (userId: string, testId: string, answers: AnswerDto[]): Promise<CopeTestResult> => {
+        const res: CopeTestResult = {
+            1: { name: 'Positive reinterpretation and growth', description: 'Making the best of the situation by growing from it, or viewing it in a more favorable light.', score: 0 },
+            2: { name: 'Mental disengagement', description: 'Psychological disengagement from the goal with which the stressor is interfering, through daydreaming, sleep, or distraction.', score: 0 },
+            3: { name: 'Focus on and venting of emotions', description: `An increased awareness of one's emotional distress, and a concomitant tendency to ventilate or discharge those feelings.`, score: 0 },
+            4: { name: 'Use of instrumental social support', description: 'Seeking assistance, information, or advice about what to do.', score: 0 },
+            5: { name: 'Active coping', description: 'Taking action or exerting efforts to remove or circumvent the stressor.', score: 0 },
+            6: { name: 'Denial', description: 'An attempt to reject the reality of the stressful event.', score: 0 },
+            7: { name: 'Religious coping', description: 'Increased engagement in religious activities.', score: 0 },
+            8: { name: 'Humor', description: '', score: 0 },
+            9: { name: 'Behavioral disengagement', description: 'Giving up, or withdrawing effort from, the attempt to attain the goal with which the stressor is interfering.', score: 0 },
+            10: { name: 'Restraint', description: `Coping passively by holding back one's coping attempts until they can be of use.`, score: 0 },
+            11: { name: 'Use of emotional social support', description: 'Getting sympathy or emotional support from someone.', score: 0 },
+            12: { name: 'Substance use', description: '', score: 0 },
+            13: { name: 'Acceptance', description: 'Accepting the fact that the stressful event has occurred and is real.', score: 0 },
+            14: { name: 'Suppression of competing activities', description: 'Suppressing attention to other activities in which one might engage, in order to concentrate more completely on dealing with the stressor.', score: 0 },
+            15: { name: 'Planning', description: `Thinking about how to confront the stressor, planning one's active coping efforts.`, score: 0 },
+        }
+
+        answers.forEach(a => {
+            res[a.questionId].score += Number(a.optionId)
+        })
+
+        return res
+    }
+
+    private calculatePid = async (userId: string, testId: string, answers: AnswerDto[]): Promise<PidTestResult> => {
+        return {}
     }
 }
