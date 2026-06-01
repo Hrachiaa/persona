@@ -11,9 +11,17 @@ import {
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
   HiOutlineSparkles,
+  HiOutlineScale,
+  HiOutlineHeart,
+  HiOutlineLifebuoy,
+  HiOutlinePuzzlePiece,
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
 import BigFiveResultScreen from './BigFiveResult';
+import SchwartzResultScreen from './SchwartzResult';
+import EcrResultScreen from './EcrResult';
+import CopeResultScreen from './CopeResult';
+import PidResultScreen from './PidResult';
 
 // ─── Static metadata the API doesn't provide ────────────────────────────────
 const TEST_META = {
@@ -22,10 +30,14 @@ const TEST_META = {
   szondi:    { icon: HiOutlineEye,         color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
   archetype: { icon: HiOutlineCpuChip,     color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
   mbti:      { icon: HiOutlineFingerPrint, color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
+  shcwartz:  { icon: HiOutlineScale,       color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
+  ecr:       { icon: HiOutlineHeart,       color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
+  cope:      { icon: HiOutlineLifebuoy,    color: 'bg-persona-accent-blue',     iconColor: 'text-persona-dark' },
+  pid:       { icon: HiOutlinePuzzlePiece, color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
 };
 
 // Tests served by the real backend (real questions, real submit).
-const REAL_API_TESTS = new Set(['iq', 'bigFive']);
+const REAL_API_TESTS = new Set(['iq', 'bigFive', 'shcwartz', 'ecr', 'cope', 'pid']);
 
 // ─── Mocked questions / results for non-IQ tests ────────────────────────────
 const MOCK_DATA = {
@@ -919,27 +931,23 @@ export default function Tests() {
   }
 
   if (screen === SCREEN.RESULT && result && meta) {
-    if (selectedTest.testType === 'iq') {
-      return (
-        <IqResultScreen
-          result={result}
-          meta={meta}
-          onDone={handleBackToList}
-          onRetake={handleRetake}
-        />
-      );
-    }
-    if (selectedTest.testType === 'bigFive') {
-      return (
-        <BigFiveResultScreen
-          result={result}
-          meta={meta}
-          onDone={handleBackToList}
-          onRetake={handleRetake}
-        />
-      );
-    }
-    return <GenericResultScreen result={result} meta={meta} onDone={handleBackToList} />;
+    const RESULT_SCREENS = {
+      iq: IqResultScreen,
+      bigFive: BigFiveResultScreen,
+      shcwartz: SchwartzResultScreen,
+      ecr: EcrResultScreen,
+      cope: CopeResultScreen,
+      pid: PidResultScreen,
+    };
+    const ResultScreen = RESULT_SCREENS[selectedTest.testType] || GenericResultScreen;
+    return (
+      <ResultScreen
+        result={result}
+        meta={meta}
+        onDone={handleBackToList}
+        onRetake={handleRetake}
+      />
+    );
   }
 
   // Fallback

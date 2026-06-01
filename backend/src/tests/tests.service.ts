@@ -315,7 +315,7 @@ export class TestsService implements OnModuleInit {
         }
         
         answers.forEach(a => {
-            res.values[a.questionId].score += Number(a.questionId)
+            res.values[a.questionId].score += Number(a.optionId)
         })
 
         Object.keys(res.values).forEach(a=> {
