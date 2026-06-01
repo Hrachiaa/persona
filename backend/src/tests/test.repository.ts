@@ -7,20 +7,20 @@ export class TestRepository {
     constructor(private readonly prisma: PrismaService) {}
 
     async createTests() {
-        const iq = await this.prisma.test.create({
-            data: tests.iq
-        })
         const bigFive = await this.prisma.test.create({
             data: tests.bigFive
         })
         const schwartz = await this.prisma.test.create({
             data: tests.shcwartz
         })
-        const ecr = await this.prisma.test.create({
-            data: tests.ecr
-        })
         const cope = await this.prisma.test.create({
             data: tests.cope
+        })
+        const iq = await this.prisma.test.create({
+            data: tests.iq
+        })
+        const ecr = await this.prisma.test.create({
+            data: tests.ecr
         })
         const pid = await this.prisma.test.create({
             data: tests.pid
