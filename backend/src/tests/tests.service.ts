@@ -33,7 +33,7 @@ export class TestsService implements OnModuleInit {
 
     async getAllTests(userId: string): Promise<GetTestsDto[]> {
         const testsDB: TestEntity[] = await this.testRepository.getAllTests()
-        const resultsDB: TestResultEntity[] = await this.testResultRepository.getTestResults(userId) as TestResultEntity[]
+        const resultsDB: TestResultEntity[] = await this.testResultRepository.getTestResults(userId) as unknown as TestResultEntity[]
         const tests = testMapper.toDto(testsDB)
         const results = testResultMapper.toArrayDto(resultsDB)
         return tests.map((test) => {
@@ -64,10 +64,10 @@ export class TestsService implements OnModuleInit {
 
         const isExists = await this.testResultRepository.getTestResult(userId, testId)
         if(isExists) {
-            const save = await this.testResultRepository.updateTestResult(userId, testId, result) as TestResultEntity
+            const save = await this.testResultRepository.updateTestResult(userId, testId, result) as unknown as TestResultEntity
             return testResultMapper.toDto(save)
         }
-        const save = await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType}) as TestResultEntity
+        const save = await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType}) as unknown as TestResultEntity
         return testResultMapper.toDto(save)
     }
 
@@ -269,10 +269,65 @@ export class TestsService implements OnModuleInit {
             res[a.questionId].score += Number(a.optionId)
         })
 
+        Object.keys(res).forEach(a=> {
+            res[a].score = res[a].score / 4
+        })
+
         return res
     }
 
     private calculatePid = async (userId: string, testId: string, answers: AnswerDto[]): Promise<PidTestResult> => {
-        return {}
+        const res: PidTestResult = {
+            values: {    
+                1: { name: 'Anhedonia', description: 'Lack of interest or pleasure in activities, diminished capacity to experience joy.', score: 0 },
+                2: { name: 'Anxiousness', description: 'Frequent feelings of tension, worry, and apprehension.', score: 0 },
+                3: { name: 'Attention Seeking', description: 'Actively seeking attention and validation from others, often at the expense of others\' needs.', score: 0 },
+                4: { name: 'Callousness', description: `Lack of empathy or concern for others' feelings, showing indifference to their suffering.`, score: 0 },
+                5: { name: 'Deceitfulness', description: 'Dishonesty, tendency to deceive or manipulate others for personal gain.', score: 0 },
+                6: { name: 'Depressivity', description: 'Frequent feelings of sadness, hopelessness, and low mood.', score: 0 },
+                7: { name: 'Distractibility', description: 'Difficulty in maintaining focus and easily getting distracted by external stimuli.', score: 0 },
+                8: { name: 'Eccentricity', description: 'Unconventional and idiosyncratic behaviours or beliefs.', score: 0 },
+                9: { name: 'Emotional Lability', description: 'Rapid shifts in emotions, with intense mood swings.', score: 0 },
+                10: { name: 'Grandiosity', description: `Exaggerated sense of self-importance, arrogance, and a belief in one's superiority.`, score: 0 },
+                11: { name: 'Hostility', description: 'Frequent feelings of anger, resentment, and a tendency to be hostile towards others.', score: 0 },
+                12: { name: 'Impulsivity', description: 'Acting on urges and desires without considering potential consequences.', score: 0 },
+                13: { name: 'Intimacy Avoidance', description: 'Avoiding or feeling uncomfortable in close relationships, maintaining emotional distance.', score: 0 },
+                14: { name: 'Irresponsibility', description: 'Lack of reliability and failure to fulfil obligations and commitments.', score: 0 },
+                15: { name: 'Manipulativeness', description: 'Using others for personal gain, manipulating or exploiting their emotions.', score: 0 },
+                16: { name: 'Perceptual Dysregulation', description: 'Distorted perception of reality, experiencing unusual sensory experiences or hallucinations.', score: 0 },
+                17: { name: 'Perseveration', description: 'Repeating thoughts, behaviours, or actions excessively and having difficulty changing focus.', score: 0 },
+                18: { name: 'Restricted Affectivity', description: 'Limited range of emotional expression, appearing emotionally distant or cold.', score: 0 },
+                19: { name: 'Rigid Perfectionism', description: 'Setting high standards for oneself and others, with a tendency towards inflexibility.', score: 0 },
+                20: { name: 'Risk Taking', description: 'Seeking out or engaging in potentially dangerous or risky activities.', score: 0 },
+                21: { name: 'Separation Insecurity', description: 'Fear of abandonment or rejection, often leading to clingy behaviours in relationships.', score: 0 },
+                22: { name: 'Submissiveness', description: `Tendency to submit to others' demands or authority, often at the expense of one's own needs.`, score: 0 },
+                23: { name: 'Suspiciousness', description: `Mistrust and suspicion of others' intentions, feeling easily threatened.`, score: 0 },
+                24: { name: 'Unusual Beliefs and Experiences', description: 'Holding beliefs or experiences that are unconventional or at odds with societal norms.', score: 0 },
+                25: { name: 'Withdrawal', description: 'Avoiding social interactions, preferring to be alone or isolated from others.', score: 0 },
+            },
+            higherOrderValues: {
+                1: { name: 'Negative Affectivity', description: 'The tendency to experience a range of negative emotions, such as anxiety, sadness, and irritability, with difficulty regulating them.', score: 0 },
+                2: { name: 'Detachment', description: 'Emotional and social withdrawal, difficulty connecting with others, and a preference for solitude.', score: 0 },
+                3: { name: 'Antagonism', description: 'Interpersonal hostility, manipulation, and callousness, with a lack of empathy or concern for others.', score: 0 },
+                4: { name: 'Disinhibition', description: 'Impulsivity and lack of self-control, with reckless behaviour and difficulty resisting temptations.', score: 0 },
+                5: { name: 'Psychoticism', description: 'Unusual or eccentric patterns of thinking and perceiving reality.', score: 0 },
+            }
+        }
+        
+        answers.forEach(a => {
+            res.values[a.questionId].score += Number(a.questionId)
+        })
+
+        Object.keys(res.values).forEach(a=> {
+            res.values[a].score = res.values[a].score / 4
+        })
+
+        res.higherOrderValues[1].score = Math.round(((res.values[2].score + res.values[9].score + res.values[21].score) / 3) * 100) / 100
+        res.higherOrderValues[2].score = Math.round(((res.values[1].score + res.values[13].score + res.values[25].score) / 3) * 100) / 100
+        res.higherOrderValues[3].score = Math.round(((res.values[5].score + res.values[10].score + res.values[15].score) / 3) * 100) / 100
+        res.higherOrderValues[4].score = Math.round(((res.values[12].score + res.values[14].score + res.values[7].score) / 3) * 100) / 100
+        res.higherOrderValues[5].score = Math.round(((res.values[8].score + res.values[16].score + res.values[24].score) / 3) * 100) / 100
+
+        return res
     }
 }
