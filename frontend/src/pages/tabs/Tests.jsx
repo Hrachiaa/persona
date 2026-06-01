@@ -267,18 +267,33 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
   );
 }
 
+// ─── Immersive top bar (mobile "pushed screen" chrome) ───────────────────────
+function ImmersiveTopBar({ onBack }) {
+  return (
+    <div className="sticky top-0 z-40 px-6 pt-4 pb-6 flex items-center justify-between bg-gradient-to-b from-persona-bg via-persona-bg/95 to-transparent">
+      <motion.button
+        onClick={onBack}
+        aria-label="Back"
+        className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+        whileTap={{ scale: 0.9 }}
+      >
+        <HiOutlineArrowLeft className="w-5 h-5" />
+      </motion.button>
+      <p className="text-lg font-medium text-persona-dark flex items-center gap-2">
+        <span className="font-display text-xl">λ</span> Persona
+      </p>
+    </div>
+  );
+}
+
 // ─── Resume Prompt Screen ────────────────────────────────────────────────────
-function ResumePromptScreen({ test, meta, onContinue, onRestart, onBack }) {
+function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
   const Icon = meta.icon;
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-6 pt-6 pb-8">
-      <div className="flex items-center gap-4 mb-8">
-        <motion.button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg" whileTap={{ scale: 0.9 }}>
-          <HiOutlineArrowLeft className="w-5 h-5" />
-        </motion.button>
-        <h3 className="font-display font-semibold text-persona-dark text-lg">{test.testName}</h3>
-      </div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-8">
+      <ImmersiveTopBar onBack={onBack} />
 
+      <div className="px-6 pt-2">
       <div className="text-center mb-10">
         <motion.div
           className={`w-20 h-20 ${meta.color} rounded-[1.5rem] flex items-center justify-center mx-auto mb-6`}
@@ -299,6 +314,7 @@ function ResumePromptScreen({ test, meta, onContinue, onRestart, onBack }) {
         <motion.button onClick={onRestart} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
           Start over
         </motion.button>
+      </div>
       </div>
     </motion.div>
   );
@@ -384,23 +400,19 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
   const maxReachedIndex = Math.min(answers.filter(Boolean).length, questions.length - 1);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-6 pb-24">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-4">
-        <motion.button
-          onClick={() => {
-            if (answers.length > 0 && !window.confirm('Your progress will be saved. Leave this test?')) return;
-            onBack();
-          }}
-          className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
-          whileTap={{ scale: 0.9 }}
-        >
-          <HiOutlineArrowLeft className="w-5 h-5" />
-        </motion.button>
-        <div className="flex-1">
-          <h3 className="font-semibold text-persona-dark">{test.testName}</h3>
-          <p className="text-sm text-persona-muted">Question {questionIndex + 1} of {questions.length}</p>
-        </div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
+      <ImmersiveTopBar
+        onBack={() => {
+          if (answers.length > 0 && !window.confirm('Your progress will be saved. Leave this test?')) return;
+          onBack();
+        }}
+      />
+
+      <div className="px-6 pt-2">
+      {/* Title */}
+      <div className="mb-4">
+        <h3 className="font-semibold text-persona-dark">{test.testName}</h3>
+        <p className="text-sm text-persona-muted">Question {questionIndex + 1} of {questions.length}</p>
       </div>
 
       {/* Progress */}
@@ -503,6 +515,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
             Next →
           </motion.button>
         )}
+      </div>
       </div>
     </motion.div>
   );
@@ -650,7 +663,7 @@ function GenericResultScreen({ result, meta, onDone }) {
 }
 
 // ─── Main Tests Component ────────────────────────────────────────────────────
-export default function Tests() {
+export default function Tests({ onImmersiveChange }) {
   const [screen, setScreen] = useState(SCREEN.LIST);
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -661,6 +674,13 @@ export default function Tests() {
   const [result, setResult] = useState(null);
   const [questionsLoading, setQuestionsLoading] = useState(false);
   const [sessionRestored, setSessionRestored] = useState(false);
+
+  // Tell the dashboard when we're on an immersive ("pushed over the app") screen
+  // — taking a test, the resume prompt, or a result — so it can hide its chrome.
+  useEffect(() => {
+    onImmersiveChange?.(screen !== SCREEN.LIST);
+  }, [screen, onImmersiveChange]);
+  useEffect(() => () => onImmersiveChange?.(false), [onImmersiveChange]);
 
   // Fetch test list
   const fetchTests = useCallback(async () => {
@@ -856,7 +876,6 @@ export default function Tests() {
   if (screen === SCREEN.RESUME && selectedTest && meta) {
     return (
       <ResumePromptScreen
-        test={selectedTest}
         meta={meta}
         onContinue={handleResumeContinue}
         onRestart={handleResumeRestart}
@@ -888,12 +907,15 @@ export default function Tests() {
     };
     const ResultScreen = RESULT_SCREENS[selectedTest.testType] || GenericResultScreen;
     return (
-      <ResultScreen
-        result={result}
-        meta={meta}
-        onDone={handleBackToList}
-        onRetake={handleRetake}
-      />
+      <>
+        <ImmersiveTopBar onBack={handleBackToList} />
+        <ResultScreen
+          result={result}
+          meta={meta}
+          onDone={handleBackToList}
+          onRetake={handleRetake}
+        />
+      </>
     );
   }
 

@@ -26,17 +26,18 @@ const tabs = [
 export default function Dashboard({ onLogout }) {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('tests');
+  const [immersive, setImmersive] = useState(false);
 
   const userName = user?.name || 'User';
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'tests': return <Tests key="tests" />;
+      case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} />;
       case 'analysis': return <Analysis key="analysis" userName={userName} />;
       case 'match': return <Compatibility key="match" />;
       case 'reads': return <Recommendations key="reads" />;
       case 'advice': return <DailyAdvice key="advice" userName={userName} />;
-      default: return <Tests key="tests" />;
+      default: return <Tests key="tests" onImmersiveChange={setImmersive} />;
     }
   };
 
@@ -45,22 +46,24 @@ export default function Dashboard({ onLogout }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-dvh bg-persona-bg pb-24"
+      className={`min-h-dvh bg-persona-bg ${immersive ? '' : 'pb-24'}`}
     >
-      {/* Top Bar with Logout */}
-      <header className="sticky top-0 z-40 bg-persona-bg/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
-        <p className="text-lg font-medium text-persona-dark flex items-center gap-2">
-          <span className="font-display text-xl">λ</span> Persona
-        </p>
-        <motion.button
-          onClick={onLogout}
-          className="flex items-center gap-2 text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded-full px-2 py-1"
-          whileTap={{ scale: 0.95 }}
-        >
-          <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-          Sign out
-        </motion.button>
-      </header>
+      {/* Top Bar with Logout — hidden on immersive (test / result) screens */}
+      {!immersive && (
+        <header className="sticky top-0 z-40 px-6 pt-4 pb-6 flex items-center justify-between bg-gradient-to-b from-persona-bg via-persona-bg/95 to-transparent">
+          <p className="text-lg font-medium text-persona-dark flex items-center gap-2">
+            <span className="font-display text-xl">λ</span> Persona
+          </p>
+          <motion.button
+            onClick={onLogout}
+            className="flex items-center gap-2 text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded-full px-2 py-1"
+            whileTap={{ scale: 0.95 }}
+          >
+            <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
+            Sign out
+          </motion.button>
+        </header>
+      )}
 
       {/* Tab Content */}
       <section role="region" aria-label="Dashboard content">
@@ -69,8 +72,13 @@ export default function Dashboard({ onLogout }) {
         </AnimatePresence>
       </section>
 
-      {/* Bottom Navigation */}
-      <nav aria-label="Primary" className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-persona-line/70 z-50">
+      {/* Bottom Navigation — slides away on immersive (test / result) screens */}
+      <motion.nav
+        aria-label="Primary"
+        animate={{ y: immersive ? '120%' : '0%' }}
+        transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+        className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-persona-line/70 z-50"
+      >
         <div className="max-w-lg mx-auto flex items-center justify-around py-2 px-2">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -104,7 +112,7 @@ export default function Dashboard({ onLogout }) {
         </div>
         {/* iPhone safe area */}
         <div className="h-[env(safe-area-inset-bottom)]" />
-      </nav>
+      </motion.nav>
     </motion.div>
   );
 }
