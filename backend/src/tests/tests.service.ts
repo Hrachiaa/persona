@@ -20,14 +20,14 @@ export class TestsService implements OnModuleInit {
         private readonly usersService: UsersService,
         private readonly testRepository: TestRepository,
         private readonly testResultRepository: TestResultRepository,
-    ) {}
+    ) {} 
 
     async onModuleInit() {
         const isExists = await this.testRepository.getAllTests()
-        if(isExists.length === 4) return
+        if(isExists.length === 6) return
         
         const tests = await this.testRepository.createTests()
-        await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.ecr.id)
+        await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.ecr.id, tests.cope.id, tests.pid.id)
         return
     }
 
