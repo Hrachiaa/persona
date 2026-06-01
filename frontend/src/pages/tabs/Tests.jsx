@@ -85,7 +85,7 @@ const LS = {
 };
 
 // ─── Screens ─────────────────────────────────────────────────────────────────
-const SCREEN = { LIST: 'list', QUESTIONS: 'questions', RESULT: 'result' };
+const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', RESULT: 'result' };
 
 // ─── Bell Curve component ────────────────────────────────────────────────────
 function BellCurve({ score }) {
@@ -224,12 +224,12 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
                 <>
                   <p className="text-persona-muted text-sm leading-relaxed mb-4">{test.description}</p>
                   <div className="flex flex-wrap items-center gap-2 mb-5">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
-                      {test.totalQuestions} questions
-                    </span>
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
                       <HiOutlineClock className="w-3.5 h-3.5" />
                       {test.duration > 0 ? `~${test.duration} min` : 'No time limit'}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
+                      {test.totalQuestions} questions
                     </span>
                   </div>
                   {completed ? (
@@ -263,6 +263,43 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
           </motion.div>
         )}
       </AnimatePresence>
+    </motion.div>
+  );
+}
+
+// ─── Resume Prompt Screen ────────────────────────────────────────────────────
+function ResumePromptScreen({ test, meta, onContinue, onRestart, onBack }) {
+  const Icon = meta.icon;
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-6 pt-6 pb-8">
+      <div className="flex items-center gap-4 mb-8">
+        <motion.button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg" whileTap={{ scale: 0.9 }}>
+          <HiOutlineArrowLeft className="w-5 h-5" />
+        </motion.button>
+        <h3 className="font-display font-semibold text-persona-dark text-lg">{test.testName}</h3>
+      </div>
+
+      <div className="text-center mb-10">
+        <motion.div
+          className={`w-20 h-20 ${meta.color} rounded-[1.5rem] flex items-center justify-center mx-auto mb-6`}
+          initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200 }}
+        >
+          <Icon className={`w-10 h-10 ${meta.iconColor}`} />
+        </motion.div>
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Continue where you left off?</h2>
+        <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
+          You have unfinished progress on this test. Continue, or start over from the first question?
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        <motion.button onClick={onContinue} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
+          Continue
+        </motion.button>
+        <motion.button onClick={onRestart} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
+          Start over
+        </motion.button>
+      </div>
     </motion.div>
   );
 }
@@ -342,6 +379,9 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
   const currentAnswer = answers[questionIndex];
 
   const isLastQuestion = questionIndex === questions.length - 1;
+  // Furthest question reached (the unanswered "frontier"). You can navigate back
+  // and forward freely up to here, but Next can't skip past an unanswered one.
+  const maxReachedIndex = Math.min(answers.filter(Boolean).length, questions.length - 1);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-6 pb-24">
@@ -443,7 +483,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
         {isLastQuestion ? (
           <motion.button
             onClick={() => handleSubmit(answers)}
-            disabled={submitting || !currentAnswer}
+            disabled={submitting || answers.filter(Boolean).length !== questions.length}
             className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
             whileTap={{ scale: 0.97 }}
           >
@@ -455,8 +495,8 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
           </motion.button>
         ) : (
           <motion.button
-            onClick={() => setQuestionIndex((p) => Math.min(questions.length - 1, p + 1))}
-            disabled={questionIndex === questions.length - 1}
+            onClick={() => setQuestionIndex((p) => Math.min(maxReachedIndex, p + 1))}
+            disabled={questionIndex >= maxReachedIndex}
             className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
             whileTap={{ scale: 0.95 }}
           >
@@ -667,7 +707,7 @@ export default function Tests() {
         } else {
           setQuestions(MOCK_DATA[test.testType]?.questions || []);
         }
-        setScreen(SCREEN.QUESTIONS);
+        setScreen(SCREEN.RESUME);
       } catch (err) {
         console.error('Failed to restore session:', err);
         localStorage.removeItem('activeTestId');
@@ -700,13 +740,21 @@ export default function Tests() {
       } else {
         setQuestions(MOCK_DATA[test.testType]?.questions || []);
       }
-      setScreen(SCREEN.QUESTIONS);
+      const saved = LS.get(test.id, 'answers');
+      setScreen(saved && saved.length > 0 ? SCREEN.RESUME : SCREEN.QUESTIONS);
     } catch (err) {
       console.error('Failed to fetch questions:', err);
       setError('Failed to load questions');
     } finally {
       setQuestionsLoading(false);
     }
+  };
+
+  const handleResumeContinue = () => setScreen(SCREEN.QUESTIONS);
+
+  const handleResumeRestart = () => {
+    LS.remove(selectedTest.id, 'answers');
+    setScreen(SCREEN.QUESTIONS);
   };
 
   const handleComplete = (res) => {
@@ -802,6 +850,18 @@ export default function Tests() {
           })}
         </div>
       </motion.section>
+    );
+  }
+
+  if (screen === SCREEN.RESUME && selectedTest && meta) {
+    return (
+      <ResumePromptScreen
+        test={selectedTest}
+        meta={meta}
+        onContinue={handleResumeContinue}
+        onRestart={handleResumeRestart}
+        onBack={handleBackToList}
+      />
     );
   }
 
