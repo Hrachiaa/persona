@@ -7,28 +7,36 @@ export class TestRepository {
     constructor(private readonly prisma: PrismaService) {}
 
     async createTests() {
-        const iq = await this.prisma.test.create({
-            data: tests.iq
-        })
         const bigFive = await this.prisma.test.create({
             data: tests.bigFive
         })
         const schwartz = await this.prisma.test.create({
             data: tests.shcwartz
         })
-        const mbti = await this.prisma.test.create({
-            data: tests.mbti
+        const cope = await this.prisma.test.create({
+            data: tests.cope
         })
-        return { iq, bigFive, schwartz, mbti }
+        const iq = await this.prisma.test.create({
+            data: tests.iq
+        })
+        const ecr = await this.prisma.test.create({
+            data: tests.ecr
+        })
+        const pid = await this.prisma.test.create({
+            data: tests.pid
+        })
+        return { iq, bigFive, schwartz, ecr, cope, pid }
     }
     
-    async createQuestions(iqId, bigFiveId, archetypeId, mbtiId) {
+    async createQuestions(iqId, bigFiveId, archetypeId, ecrId, copeId, pidId) {
         const iqQuestions = await this.prisma.testQuestion.createMany({
             data: [
                 {testId: iqId, questions: testQuestions.iq.questions},
                 {testId: bigFiveId, questions: testQuestions.bigFive.questions},
                 {testId: archetypeId, questions: testQuestions.shcwartz.questions},
-                {testId: mbtiId, questions: testQuestions.mbti.questions},
+                {testId: ecrId, questions: testQuestions.ecr.questions},
+                {testId: copeId, questions: testQuestions.cope.questions},
+                {testId: pidId, questions: testQuestions.pid.questions},
             ]
         })
         return

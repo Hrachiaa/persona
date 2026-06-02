@@ -1,32 +1,46 @@
 export const tests = {
     iq: {
-        testName: 'IQ Test',
+        testName: 'Logic',
         testType: 'iq',
-        description: 'A classic intelligence test measuring logical reasoning, spatial thinking, and numerical pattern recognition.',
+        description: 'How quickly you find patterns and a way out of new situations',
         duration: 20,
         totalQuestions: 60,
     },
     bigFive: {
-        testName: 'BigFive Test',
+        testName: 'Personality',
         testType: 'bigFive',
-        description: 'A psychological test measuring five core personality traits (openness, conscientiousness, extroversion, agreeableness, neuroticism). The most scientifically validated way to assess personality.',
-        duration: 0,
+        description: 'Discover the core traits that shape how you think, feel, and act',
+        duration: 20,
         totalQuestions: 120,
     },
     shcwartz: {
-        testName: 'Shcwartz PVQ-RR Test',
+        testName: 'Values',
         testType: 'shcwartz',
-        description: 'The Schwartz PVQ-RR measures your basic personal values through 57 short portraits of different people. Rate how similar each one is to you, and discover your priorities across 19 core values and four broad dimensions.',
-        duration: 0,
+        description: 'What truly matters to you in life and what drives your big decisions',
+        duration: 10,
         totalQuestions: 57,
     },
-    mbti: {
-        testName: '16 Personality Types (MBTI)',
-        testType: 'mbti',
-        description: 'Determines your personality type across four scales: extraversion/introversion, sensing/intuition, thinking/feeling, judging/perceiving.',
-        duration: 15,
+    ecr: {
+        testName: 'Attachment',
+        testType: 'ecr',
+        description: `How you love and let people get close`,
+        duration: 5,
+        totalQuestions: 36,
+    },
+    cope: {
+        testName: 'Stress',
+        testType: 'cope',
+        description: `How you cope when everything goes wrong`,
+        duration: 10,
         totalQuestions: 60,
-    }
+    },
+    pid: {
+        testName: 'Shadows',
+        testType: 'pid',
+        description: `The darker side you usually keep hidden`,
+        duration: 20,
+        totalQuestions: 100,
+    },
 }
 
 export const testQuestions = {
@@ -8901,9 +8915,2286 @@ export const testQuestions = {
         //    }
         }
     },
-    mbti: {
+    ecr: {
         questions: {
-
+            questions: [
+                {
+                    id: '1',
+                    text: `I'm afraid that I will lose my partner's love.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: `I often worry that my partner will not want to stay with me.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: `I often worry that my partner doesn't really love me.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: `I worry that romantic partners won't care about me as much as I care about them.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: `I often wish that my partner's feelings for me were as strong as my feelings for him or her.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `I worry a lot about my relationships.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: `When my partner is out of sight, I worry that he or she might become interested in someone else.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: `When I show my feelings for romantic partners, I'm afraid they will not feel the same about me.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `I rarely worry about my partner leaving me.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: `My romantic partner makes me doubt myself.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: `I do not often worry about being abandoned.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: `I find that my partner(s) don't want to get as close as I would like.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: `Sometimes romantic partners change their feelings about me for no apparent reason.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: `My desire to be very close sometimes scares people away.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: `I'm afraid that once a romantic partner gets to know me, he or she won't like who I really am.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '16',
+                    text: `It makes me mad that I don't get the affection and support I need from my partner.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '17',
+                    text: `I worry that I won't measure up to other people.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '18',
+                    text: `My partner only seems to notice me when I'm angry.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '19',
+                    text: `I prefer not to show a partner how I feel deep down.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '20',
+                    text: `I feel comfortable sharing my private thoughts and feelings with my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '21',
+                    text: `I find it difficult to allow myself to depend on romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '22',
+                    text: `I am very comfortable being close to romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '23',
+                    text: `I don't feel comfortable opening up to romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '24',
+                    text: `I prefer not to be too close to romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '25',
+                    text: `I get uncomfortable when a romantic partner wants to be very close.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '26',
+                    text: `I find it relatively easy to get close to my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '27',
+                    text: `It's not difficult for me to get close to my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '28',
+                    text: `I usually discuss my problems and concerns with my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '29',
+                    text: `It helps to turn to my romantic partner in times of need.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '30',
+                    text: `I tell my partner just about everything.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '31',
+                    text: `I talk things over with my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '32',
+                    text: `I am nervous when partners get too close to me.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: 'I strongly disagree', icon: ''},
+                        {id: '2', text: 'Disagree', icon: ''},
+                        {id: '3', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '5', text: 'Slightly agree', icon: ''},
+                        {id: '6', text: 'Agree', icon: ''},
+                        {id: '7', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '33',
+                    text: `I feel comfortable depending on romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '34',
+                    text: `I find it easy to depend on romantic partners.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '35',
+                    text: `It's easy for me to be affectionate with my partner.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+                {
+                    id: '36',
+                    text: `My partner really understands me and my needs.`,
+                    image: '',
+                    options: [
+                        {id: '7', text: 'I strongly disagree', icon: ''},
+                        {id: '6', text: 'Disagree', icon: ''},
+                        {id: '5', text: 'Slightly disagree', icon: ''},
+                        {id: '4', text: 'Neutral', icon: ''},
+                        {id: '3', text: 'Slightly agree', icon: ''},
+                        {id: '2', text: 'Agree', icon: ''},
+                        {id: '1', text: 'I strongly agree', icon: ''},
+                    ]
+                },
+            ]
+        }
+    },
+    cope: {
+        questions: {
+            questions: [
+                {
+                    id: '1',
+                    text: 'I try to grow as a person as a result of the experience.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: 'I turn to work or other substitute activities to take my mind off things.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: 'I get upset and let my emotions out.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: 'I try to get advice from someone about what to do.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: 'I concentrate my efforts on doing something about it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `I say to myself "this isn't real."`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: 'I put my trust in God.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: 'I laugh about the situation.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `I admit to myself that I can't deal with it, and quit trying.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: 'I restrain myself from doing anything too quickly.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: 'I discuss my feelings with someone.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: 'I use alcohol or drugs to make myself feel better.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: 'I get used to the idea that it happened.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: 'I talk to someone to find out more about the situation.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: 'I keep myself from getting distracted by other thoughts or activities.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: 'I daydream about things other than this.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: 'I get upset, and am really aware of it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: `I seek God's help.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: 'I make a plan of action.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: 'I make jokes about it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: `I accept that this has happened and that it can't be changed.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: 'I hold off doing anything about it until the situation permits.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: 'I try to get emotional support from friends or relatives.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: 'I just give up trying to reach my goal.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: 'I take additional action to try to get rid of the problem.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: 'I try to lose myself for a while by drinking alcohol or taking drugs.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: 'I refuse to believe that it has happened.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: 'I let my feelings out.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: 'I try to see it in a different light, to make it seem more positive.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: 'I talk to someone who could do something concrete about the problem.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: 'I sleep more than usual.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: 'I try to come up with a strategy about what to do.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: 'I focus on dealing with this problem, and if necessary let other things slide a little.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: 'I get sympathy and understanding from someone.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: 'I drink alcohol or take drugs, in order to think about it less.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: 'I kid around about it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: 'I give up the attempt to get what I want.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: 'I look for something good in what is happening.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: 'I think about how I might best handle the problem.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `I pretend that it hasn't really happened.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: 'I make sure not to make matters worse by acting too soon.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: 'I try hard to prevent other things from interfering with my efforts at dealing with this.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: 'I go to movies or watch TV, to think about it less.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: 'I accept the reality of the fact that it happened.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: 'I ask people who have had similar experiences what they did.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: 'I feel a lot of emotional distress and I find myself expressing those feelings a lot.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: 'I take direct action to get around the problem.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: 'I try to find comfort in my religion.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: 'I force myself to wait for the right time to do something.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: 'I make fun of the situation.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `I reduce the amount of effort I'm putting into solving the problem.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: 'I talk to someone about how I feel.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: 'I use alcohol or drugs to help me get through it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: 'I learn to live with it.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: 'I put aside other activities in order to concentrate on this.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: 'I think hard about what steps to take.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `I act as though it hasn't even happened.`,
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: 'I do what has to be done, one step at a time.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: 'I learn something from the experience.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: 'I pray more than usual.',
+                    image: '',
+                    options: [
+                        {id: '1', text: `I usually don't do this at all`, icon: ''},
+                        {id: '2', text: 'I usually do this a little bit', icon: ''},
+                        {id: '3', text: 'I usually do this a medium amount', icon: ''},
+                        {id: '4', text: 'I usually do this a lot', icon: ''},
+                    ]
+                },
+            ]
+        }
+    },
+    pid: {
+        questions: {
+            questions: [
+                {
+                    id: '23',
+                    text: `Plenty of people are out to get me.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: `I feel like I act totally on impulse.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '22',
+                    text: `I change what I do depending on what others want.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '22',
+                    text: `I usually do what others think I should do.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: `I usually do things on impulse without thinking about what might happen as a result.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: `Even though I know better, I can't stop making rash decisions.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: `I really don't care if I make other people suffer.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '12',
+                    text: `I always do things on the spur of the moment.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: `Nothing seems to interest me very much.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: `People have told me that I think about things in a really strange way.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: `I almost never enjoy life.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: `I am easily angered.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '20',
+                    text: `I have no limits when it comes to doing dangerous things.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: `To be honest, I'm just more important than other people.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '16',
+                    text: `It's weird, but sometimes ordinary objects seem to be a different shape than usual.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '20',
+                    text: `I do a lot of things that others consider risky.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '21',
+                    text: `I worry a lot about being alone.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: `I often make up things about myself to help me get what I want.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '17',
+                    text: `I keep approaching things the same way, even when it isn't working.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '22',
+                    text: `I do what other people tell me to do.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '20',
+                    text: `I like to take risks.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: `Others seem to think I'm quite odd or unusual.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: `I love getting the attention of other people.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: `I worry a lot about terrible things that might happen.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '17',
+                    text: `I have trouble changing how I'm doing something even if what I'm doing isn't going well.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `The world would be better off if I were dead.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '25',
+                    text: `I keep my distance from people.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '18',
+                    text: `I don't get emotional.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: `I prefer to keep romance out of my life.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '18',
+                    text: `I don't show emotions strongly.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: `I have a very short temper.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '17',
+                    text: `I get fixated on certain things and can't stop.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '19',
+                    text: `If something I do isn't absolutely perfect, it's simply not acceptable.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '24',
+                    text: `I often have unusual experiences, such as sensing the presence of someone who isn't actually there.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: `I'm good at making people do what I want them to do.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: `I'm always worrying about something.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: `I'm better than almost everyone else.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '23',
+                    text: `I'm always on my guard for someone trying to trick or harm me.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: `I have trouble keeping my mind focused on what needs to be done.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: `I'm just not very interested in having sexual relationships.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `I get emotional easily, often for very little reason.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '19',
+                    text: `Even though it drives other people crazy, I insist on absolute perfection in everything I do.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: `I almost never feel happy about my day-to-day activities.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: `Sweet-talking others helps me get what I want.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '21',
+                    text: `I fear being alone in life more than anything else.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '17',
+                    text: `I get stuck on one way of doing things, even when it's clear it won't work.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: `I'm often pretty careless with my own and others' things.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: `I am a very anxious person.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: `I am easily distracted.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '23',
+                    text: `It seems like I'm always getting a “raw deal” from others.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: `I don't hesitate to cheat if it gets me ahead.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '25',
+                    text: `I don't like spending time with others.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `I never know where my emotions will go from moment to moment.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '24',
+                    text: `I have seen things that weren't really there.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: `I can't focus on things for very long.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: `I steer clear of romantic relationships.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '25',
+                    text: `I'm not interested in making friends.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '21',
+                    text: `I'll do just about anything to keep someone from abandoning me.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '24',
+                    text: `Sometimes I can influence other people just by sending my thoughts to them.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `Life looks pretty bleak to me.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: `I think about things in odd ways that don't make sense to most people.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: `I don't care if my actions hurt others.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '16',
+                    text: `Sometimes I feel "controlled" by thoughts that belong to someone else.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: `I make promises that I don't really intend to keep.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '1',
+                    text: `Nothing seems to make me feel good.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: `I get irritated easily by all sorts of things.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '20',
+                    text: `I do what I want regardless of how unsafe it might be.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: `I often forget to pay my bills.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: `I'm good at conning people.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `Everything seems pointless to me.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `I get emotional over every little thing.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: `It's no big deal if I hurt other peoples' feelings.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '18',
+                    text: `I never show emotions to others.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '6',
+                    text: `I have no worth as a person.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '11',
+                    text: `I am usually pretty hostile.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '14',
+                    text: `I've skipped town to avoid responsibilities.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: `I like being a person who gets noticed.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '2',
+                    text: `I'm always fearful or on edge about bad things that might happen.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '21',
+                    text: `I never want to be alone.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '19',
+                    text: `I keep trying to make things perfect, even when I've gotten them as good as they're likely to get.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '9',
+                    text: `My emotions are unpredictable.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '4',
+                    text: `I don't care about other peoples' problems.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '18',
+                    text: `I don't react much to things that seem to make others emotional.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '25',
+                    text: `I avoid social events.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: `I deserve special treatment.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '23',
+                    text: `I suspect that even my so-called “friends” betray me a lot.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: `I crave attention.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '16',
+                    text: `Sometimes I think someone else is removing thoughts from my head.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '19',
+                    text: `I simply won't put up with things being out of their proper places.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '10',
+                    text: `I often have to deal with people who are less important than me.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '7',
+                    text: `I get pulled off-task by even minor distractions.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '22',
+                    text: `I try to do what others want me to do.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '13',
+                    text: `I prefer being alone to having a close romantic partner.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '8',
+                    text: `I often have thoughts that make sense to me but that other people say are strange.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: `I use people to get what I want.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '24',
+                    text: `I've had some really weird experiences that are very difficult to explain.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '3',
+                    text: `I like to draw attention to myself.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '16',
+                    text: `Things around me often feel unreal, or more real than usual.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '5',
+                    text: `I'll stretch the truth if it's to my advantage.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+                {
+                    id: '15',
+                    text: `It is easy for me to take advantage of others.`,
+                    image: '',
+                    options: [
+                        {id: '0', text: `Very false or often false`, icon: ''},
+                        {id: '1', text: `Sometimes false or somewhat false`, icon: ''},
+                        {id: '2', text: `Sometimes true or somewhat true`, icon: ''},
+                        {id: '3', text: `Very true or often true`, icon: ''},
+                    ]
+                },
+            ]
         }
     }
 }

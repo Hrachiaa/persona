@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineBolt,
   HiOutlineEye,
@@ -11,9 +11,18 @@ import {
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
   HiOutlineSparkles,
+  HiOutlineScale,
+  HiOutlineHeart,
+  HiOutlineLifebuoy,
+  HiOutlinePuzzlePiece,
+  HiOutlineLockClosed,
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
 import BigFiveResultScreen from './BigFiveResult';
+import SchwartzResultScreen from './SchwartzResult';
+import EcrResultScreen from './EcrResult';
+import CopeResultScreen from './CopeResult';
+import PidResultScreen from './PidResult';
 
 // ─── Static metadata the API doesn't provide ────────────────────────────────
 const TEST_META = {
@@ -22,10 +31,17 @@ const TEST_META = {
   szondi:    { icon: HiOutlineEye,         color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
   archetype: { icon: HiOutlineCpuChip,     color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
   mbti:      { icon: HiOutlineFingerPrint, color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
+  shcwartz:  { icon: HiOutlineScale,       color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
+  ecr:       { icon: HiOutlineHeart,       color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
+  cope:      { icon: HiOutlineLifebuoy,    color: 'bg-persona-accent-blue',     iconColor: 'text-persona-dark' },
+  pid:       { icon: HiOutlinePuzzlePiece, color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
 };
 
 // Tests served by the real backend (real questions, real submit).
-const REAL_API_TESTS = new Set(['iq', 'bigFive']);
+const REAL_API_TESTS = new Set(['iq', 'bigFive', 'shcwartz', 'ecr', 'cope', 'pid']);
+
+// Order in which tests must be taken — each completed test unlocks the next.
+const TEST_ORDER = ['bigFive', 'shcwartz', 'cope', 'iq', 'ecr', 'pid'];
 
 // ─── Mocked questions / results for non-IQ tests ────────────────────────────
 const MOCK_DATA = {
@@ -63,13 +79,13 @@ const LS = {
   set: (testId, suffix, val) => localStorage.setItem(LS.key(testId, suffix), JSON.stringify(val)),
   remove: (testId, suffix) => localStorage.removeItem(LS.key(testId, suffix)),
   clearAll: (testId) => {
-    ['startTime', 'answers', 'useTimer', 'activeTestId'].forEach((s) => localStorage.removeItem(`test_${testId}_${s}`));
+    ['answers'].forEach((s) => localStorage.removeItem(`test_${testId}_${s}`));
     localStorage.removeItem('activeTestId');
   },
 };
 
 // ─── Screens ─────────────────────────────────────────────────────────────────
-const SCREEN = { LIST: 'list', PREVIEW: 'preview', TIMER_PROMPT: 'timer_prompt', QUESTIONS: 'questions', RESULT: 'result' };
+const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', RESULT: 'result' };
 
 // ─── Bell Curve component ────────────────────────────────────────────────────
 function BellCurve({ score }) {
@@ -152,134 +168,167 @@ function BellCurve({ score }) {
 }
 
 // ─── Test Card ───────────────────────────────────────────────────────────────
-function TestCard({ test, meta, onStart, completed }) {
+function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, onStart, onView }) {
   const Icon = meta.icon;
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`${meta.color}/30 rounded-3xl p-6 card-hover cursor-pointer border border-white/50`}
-      onClick={onStart}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      onClick={onToggle}
+      whileTap={{ scale: 0.99 }}
+      className={`surface-warm rounded-3xl p-6 border border-white/50 cursor-pointer ${expanded ? '' : 'card-hover'}`}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-14 h-14 ${meta.color} rounded-2xl flex items-center justify-center`}>
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className={`w-14 h-14 ${meta.color} rounded-2xl flex items-center justify-center flex-shrink-0`}>
           <Icon className={`w-7 h-7 ${meta.iconColor}`} />
         </div>
+        <h3 className="flex-1 min-w-0 font-display text-xl font-semibold text-persona-dark">{test.testName}</h3>
         {completed ? (
-          <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-dark bg-persona-accent-lime/50 px-2.5 py-1 rounded-md">
+          <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-dark bg-persona-accent-lime/50 px-2.5 py-1 rounded-md flex-shrink-0">
             <HiOutlineCheckCircle className="w-4 h-4" /> Done
           </span>
+        ) : locked ? (
+          <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md flex-shrink-0">
+            <HiOutlineLockClosed className="w-3.5 h-3.5" /> Locked
+          </span>
         ) : (
-          <span className="text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md">
+          <span className="text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md flex-shrink-0">
             Not started
           </span>
         )}
       </div>
-      <h3 className="font-display text-xl font-semibold text-persona-dark mb-2">{test.testName}</h3>
-      <p className="text-persona-muted text-sm leading-relaxed mb-4 max-w-prose">{test.description}</p>
-      <div className="flex items-center gap-2 text-persona-dark font-medium text-sm">
-        {completed ? 'View results' : 'Take test'} →
-      </div>
-    </motion.div>
-  );
-}
 
-// ─── Preview Screen ──────────────────────────────────────────────────────────
-function PreviewScreen({ test, meta, onStart, onViewResult, onBack, hasResult }) {
-  const Icon = meta.icon;
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-6 pt-6 pb-8">
-      <div className="flex items-center gap-4 mb-8">
-        <motion.button onClick={onBack} className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg" whileTap={{ scale: 0.9 }}>
-          <HiOutlineArrowLeft className="w-5 h-5" />
-        </motion.button>
-        <h3 className="font-semibold text-persona-dark text-lg">Test Details</h3>
-      </div>
-
-      <div className="text-center mb-8">
-        <motion.div
-          className={`w-24 h-24 ${meta.color} rounded-[2rem] flex items-center justify-center mx-auto mb-6`}
-          initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200 }}
-        >
-          <Icon className={`w-12 h-12 ${meta.iconColor}`} />
-        </motion.div>
-        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{test.testName}</h2>
-        <p className="text-persona-muted leading-relaxed max-w-prose mx-auto">{test.description}</p>
-      </div>
-
-      {/* Asymmetric metrics block */}
-      <div className="surface-warm rounded-3xl p-5 mb-8 flex items-end justify-between gap-4">
-        <div>
-          <p className="font-display text-5xl font-semibold text-persona-dark tabular leading-none">
-            {test.totalQuestions}
-          </p>
-          <p className="text-xs text-persona-muted mt-2 tracking-wide">
-            Question{test.totalQuestions === 1 ? '' : 's'}
-          </p>
-        </div>
-        <div className="flex items-center gap-1.5 text-sm text-persona-muted pb-1">
-          <HiOutlineClock className="w-4 h-4" />
-          <span className="tabular">
-            {test.duration > 0 ? `${test.duration} min` : 'No time limit'}
-          </span>
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        {hasResult && (
-          <motion.button onClick={onViewResult} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
-            View result
-          </motion.button>
+      {/* Expanded detail */}
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            key="detail"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="overflow-hidden"
+          >
+            <div className="pt-4">
+              {locked ? (
+                <>
+                  <p className="text-persona-muted text-sm leading-relaxed mb-4">
+                    Complete the earlier tests first to unlock this one.
+                  </p>
+                  <div className="w-full py-3.5 px-8 rounded-full font-medium text-center bg-persona-line text-persona-muted">
+                    Unavailable
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-persona-muted text-sm leading-relaxed mb-4">{test.description}</p>
+                  <div className="flex flex-wrap items-center gap-2 mb-5">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
+                      <HiOutlineClock className="w-3.5 h-3.5" />
+                      {test.duration > 0 ? `~${test.duration} min` : 'No time limit'}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
+                      {test.totalQuestions} questions
+                    </span>
+                  </div>
+                  {completed ? (
+                    <motion.button
+                      onClick={(e) => { e.stopPropagation(); onView(); }}
+                      className="btn-secondary w-full"
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      View result
+                    </motion.button>
+                  ) : (
+                    <motion.button
+                      onClick={(e) => { e.stopPropagation(); onStart(); }}
+                      disabled={loading}
+                      className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      {loading ? (
+                        <span className="flex items-center gap-2">
+                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Loading…
+                        </span>
+                      ) : (
+                        'Start test'
+                      )}
+                    </motion.button>
+                  )}
+                </>
+              )}
+            </div>
+          </motion.div>
         )}
-        <motion.button onClick={onStart} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
-          {hasResult ? 'Retake test' : 'Start test'}
-        </motion.button>
-      </div>
+      </AnimatePresence>
     </motion.div>
   );
 }
 
-// ─── Timer Prompt Screen ─────────────────────────────────────────────────────
-function TimerPromptScreen({ test, meta, onChoice, onBack }) {
-  const Icon = meta.icon;
+// ─── Immersive top bar (mobile "pushed screen" chrome) ───────────────────────
+function ImmersiveTopBar({ onBack }) {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-6 pt-6 pb-8">
-      <div className="flex items-center gap-4 mb-8">
-        <motion.button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg" whileTap={{ scale: 0.9 }}>
+    <div className="sticky top-0 z-40">
+      {/* Progressive blur — content under the edge stays visible, just blurred */}
+      <div
+        aria-hidden
+        className="absolute inset-0 backdrop-blur-sm [mask-image:linear-gradient(to_bottom,black,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,black,transparent)]"
+      />
+      <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
+        <motion.button
+          onClick={onBack}
+          aria-label="Back"
+          className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+          whileTap={{ scale: 0.9 }}
+        >
           <HiOutlineArrowLeft className="w-5 h-5" />
         </motion.button>
-        <h3 className="font-display font-semibold text-persona-dark text-lg">{test.testName}</h3>
+        <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark">
+          <span className="font-display text-xl">λ</span> Persona
+        </p>
       </div>
+    </div>
+  );
+}
 
+// ─── Resume Prompt Screen ────────────────────────────────────────────────────
+function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
+  const Icon = meta.icon;
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-8">
+      <ImmersiveTopBar onBack={onBack} />
+
+      <div className="px-6 pt-2">
       <div className="text-center mb-10">
         <motion.div
           className={`w-20 h-20 ${meta.color} rounded-[1.5rem] flex items-center justify-center mx-auto mb-6`}
-          initial={{ rotate: -5 }} animate={{ rotate: 0 }} transition={{ type: 'spring' }}
+          initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200 }}
         >
-          <HiOutlineClock className={`w-10 h-10 ${meta.iconColor}`} />
+          <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Use a timer?</h2>
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Continue where you left off?</h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          This test is designed to be completed in <span className="font-medium text-persona-dark tabular">{test.duration} minutes</span>. Would you like to enable the countdown timer?
+          You have unfinished progress on this test. Continue, or start over from the first question?
         </p>
       </div>
 
       <div className="space-y-3">
-        <motion.button onClick={() => onChoice(true)} className="btn-primary w-full flex items-center justify-center gap-2" whileTap={{ scale: 0.97 }}>
-          <HiOutlineClock className="w-5 h-5" /> Yes, use timer
+        <motion.button onClick={onContinue} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
+          Continue
         </motion.button>
-        <motion.button onClick={() => onChoice(false)} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
-          No, continue without timer
+        <motion.button onClick={onRestart} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
+          Start over
         </motion.button>
+      </div>
       </div>
     </motion.div>
   );
 }
 
 // ─── Questions Screen ────────────────────────────────────────────────────────
-function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }) {
+function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
   const Icon = meta.icon;
   const isIQ = test.testType === 'iq';
 
@@ -289,9 +338,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
     const saved = LS.get(test.id, 'answers') || [];
     return Math.min(saved.length, questions.length - 1);
   });
-  const [timeLeft, setTimeLeft] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const timerRef = useRef(null);
 
   // Preload all question images
   useEffect(() => {
@@ -302,39 +349,6 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
       }
     });
   }, [questions]);
-
-  // Timer setup
-  useEffect(() => {
-    if (!useTimer || test.duration <= 0) return;
-
-    let startTime = LS.get(test.id, 'startTime');
-    if (!startTime) {
-      startTime = Date.now();
-      LS.set(test.id, 'startTime', startTime);
-    }
-
-    const totalMs = test.duration * 60 * 1000;
-
-    const tick = () => {
-      const elapsed = Date.now() - startTime;
-      const remaining = Math.max(0, totalMs - elapsed);
-      setTimeLeft(remaining);
-      if (remaining <= 0) {
-        clearInterval(timerRef.current);
-      }
-    };
-
-    tick();
-    timerRef.current = setInterval(tick, 1000);
-    return () => clearInterval(timerRef.current);
-  }, [useTimer, test.duration, test.id]);
-
-  // Auto-submit when timer runs out
-  useEffect(() => {
-    if (timeLeft !== null && timeLeft <= 0 && !submitting) {
-      handleSubmit(answers);
-    }
-  }, [timeLeft]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Persist answers
   useEffect(() => {
@@ -387,46 +401,25 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
   const progress = ((questionIndex + 1) / questions.length) * 100;
   const currentAnswer = answers[questionIndex];
 
-  const formatTime = (ms) => {
-    const totalSec = Math.ceil(ms / 1000);
-    const min = Math.floor(totalSec / 60);
-    const sec = totalSec % 60;
-    return `${min}:${sec.toString().padStart(2, '0')}`;
-  };
-
   const isLastQuestion = questionIndex === questions.length - 1;
-  const allAnswered = answers.length === questions.length;
+  // Furthest question reached (the unanswered "frontier"). You can navigate back
+  // and forward freely up to here, but Next can't skip past an unanswered one.
+  const maxReachedIndex = Math.min(answers.filter(Boolean).length, questions.length - 1);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-6 pb-24">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-4">
-        <motion.button
-          onClick={() => {
-            if (answers.length > 0 && !window.confirm('Your progress will be saved. Leave this test?')) return;
-            onBack();
-          }}
-          className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
-          whileTap={{ scale: 0.9 }}
-        >
-          <HiOutlineArrowLeft className="w-5 h-5" />
-        </motion.button>
-        <div className="flex-1">
-          <h3 className="font-semibold text-persona-dark">{test.testName}</h3>
-          <p className="text-sm text-persona-muted">Question {questionIndex + 1} of {questions.length}</p>
-        </div>
-        {useTimer && timeLeft !== null && (
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium tabular ${
-            timeLeft < 60000
-              ? 'bg-persona-danger/10 text-persona-danger'
-              : timeLeft < 300000
-                ? 'bg-persona-warn/10 text-persona-warn'
-                : 'bg-persona-line text-persona-dark'
-          }`}>
-            <HiOutlineClock className="w-4 h-4" />
-            {formatTime(timeLeft)}
-          </div>
-        )}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
+      <ImmersiveTopBar
+        onBack={() => {
+          if (answers.length > 0 && !window.confirm('Your progress will be saved. Leave this test?')) return;
+          onBack();
+        }}
+      />
+
+      <div className="px-6 pt-2">
+      {/* Title */}
+      <div className="mb-4">
+        <h3 className="font-semibold text-persona-dark">{test.testName}</h3>
+        <p className="text-sm text-persona-muted">Question {questionIndex + 1} of {questions.length}</p>
       </div>
 
       {/* Progress */}
@@ -509,7 +502,7 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
         {isLastQuestion ? (
           <motion.button
             onClick={() => handleSubmit(answers)}
-            disabled={submitting || !currentAnswer}
+            disabled={submitting || answers.filter(Boolean).length !== questions.length}
             className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
             whileTap={{ scale: 0.97 }}
           >
@@ -521,14 +514,15 @@ function QuestionsScreen({ test, meta, questions, useTimer, onComplete, onBack }
           </motion.button>
         ) : (
           <motion.button
-            onClick={() => setQuestionIndex((p) => Math.min(questions.length - 1, p + 1))}
-            disabled={questionIndex === questions.length - 1}
+            onClick={() => setQuestionIndex((p) => Math.min(maxReachedIndex, p + 1))}
+            disabled={questionIndex >= maxReachedIndex}
             className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
             whileTap={{ scale: 0.95 }}
           >
             Next →
           </motion.button>
         )}
+      </div>
       </div>
     </motion.div>
   );
@@ -676,17 +670,24 @@ function GenericResultScreen({ result, meta, onDone }) {
 }
 
 // ─── Main Tests Component ────────────────────────────────────────────────────
-export default function Tests() {
+export default function Tests({ onImmersiveChange }) {
   const [screen, setScreen] = useState(SCREEN.LIST);
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTest, setSelectedTest] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const [useTimer, setUseTimer] = useState(false);
+  const [expandedId, setExpandedId] = useState(null);
   const [result, setResult] = useState(null);
   const [questionsLoading, setQuestionsLoading] = useState(false);
   const [sessionRestored, setSessionRestored] = useState(false);
+
+  // Tell the dashboard when we're on an immersive ("pushed over the app") screen
+  // — taking a test, the resume prompt, or a result — so it can hide its chrome.
+  useEffect(() => {
+    onImmersiveChange?.(screen !== SCREEN.LIST);
+  }, [screen, onImmersiveChange]);
+  useEffect(() => () => onImmersiveChange?.(false), [onImmersiveChange]);
 
   // Fetch test list
   const fetchTests = useCallback(async () => {
@@ -725,8 +726,6 @@ export default function Tests() {
 
       // Restore session
       setSelectedTest(test);
-      const savedTimer = LS.get(activeTestId, 'useTimer');
-      setUseTimer(!!savedTimer);
 
       try {
         if (REAL_API_TESTS.has(test.testType)) {
@@ -735,7 +734,7 @@ export default function Tests() {
         } else {
           setQuestions(MOCK_DATA[test.testType]?.questions || []);
         }
-        setScreen(SCREEN.QUESTIONS);
+        setScreen(SCREEN.RESUME);
       } catch (err) {
         console.error('Failed to restore session:', err);
         localStorage.removeItem('activeTestId');
@@ -744,49 +743,45 @@ export default function Tests() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSelectTest = (test) => {
+  const toggleExpand = (testId) => {
+    setExpandedId((prev) => (prev === testId ? null : testId));
+  };
+
+  const viewResult = (test) => {
+    if (!test?.result) return;
     setSelectedTest(test);
-    setScreen(SCREEN.PREVIEW);
+    setResult(test.result);
+    setScreen(SCREEN.RESULT);
   };
 
-  const handleViewResult = () => {
-    if (selectedTest?.result) {
-      setResult(selectedTest.result);
-      setScreen(SCREEN.RESULT);
-    }
-  };
+  // Begin a test: persist the session, fetch its questions, and open the runner.
+  const beginTest = async (test) => {
+    setSelectedTest(test);
+    localStorage.setItem('activeTestId', test.id);
 
-  const handleStartTest = () => {
-    if (selectedTest.duration > 0) {
-      setScreen(SCREEN.TIMER_PROMPT);
-    } else {
-      handleTimerChoice(false);
-    }
-  };
-
-  const handleTimerChoice = async (withTimer) => {
-    setUseTimer(withTimer);
-    LS.set(selectedTest.id, 'useTimer', withTimer);
-
-    // Save active test session for refresh persistence
-    localStorage.setItem('activeTestId', selectedTest.id);
-
-    // Fetch questions
     setQuestionsLoading(true);
     try {
-      if (REAL_API_TESTS.has(selectedTest.testType)) {
-        const qs = await testsApi.getTestQuestions(selectedTest.id);
+      if (REAL_API_TESTS.has(test.testType)) {
+        const qs = await testsApi.getTestQuestions(test.id);
         setQuestions(qs);
       } else {
-        setQuestions(MOCK_DATA[selectedTest.testType]?.questions || []);
+        setQuestions(MOCK_DATA[test.testType]?.questions || []);
       }
-      setScreen(SCREEN.QUESTIONS);
+      const saved = LS.get(test.id, 'answers');
+      setScreen(saved && saved.length > 0 ? SCREEN.RESUME : SCREEN.QUESTIONS);
     } catch (err) {
       console.error('Failed to fetch questions:', err);
       setError('Failed to load questions');
     } finally {
       setQuestionsLoading(false);
     }
+  };
+
+  const handleResumeContinue = () => setScreen(SCREEN.QUESTIONS);
+
+  const handleResumeRestart = () => {
+    LS.remove(selectedTest.id, 'answers');
+    setScreen(SCREEN.QUESTIONS);
   };
 
   const handleComplete = (res) => {
@@ -797,7 +792,7 @@ export default function Tests() {
 
   const handleRetake = () => {
     LS.clearAll(selectedTest.id);
-    handleStartTest();
+    beginTest(selectedTest);
   };
 
   const handleBackToList = () => {
@@ -814,11 +809,7 @@ export default function Tests() {
   if (screen === SCREEN.LIST) {
     if (loading) {
       return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-14 pb-6">
-          <div className="mb-8">
-            <h1 className="font-display text-4xl font-semibold text-persona-dark mb-1">Personality tests</h1>
-            <p className="text-persona-muted">Discover what makes you unique.</p>
-          </div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6">
           <div className="grid gap-4">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-persona-line/40 rounded-3xl p-6 animate-pulse">
@@ -838,38 +829,49 @@ export default function Tests() {
 
     if (error) {
       return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-14 pb-6 text-center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6 text-center">
           <p className="text-persona-danger mb-4">{error}</p>
           <button onClick={fetchTests} className="btn-primary">Retry</button>
         </motion.div>
       );
     }
 
-    const completedCount = tests.filter((t) => !!t.result).length;
-
     if (tests.length === 0) {
       return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-6 pt-14 pb-6 text-center">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-6 pt-2 pb-6 text-center">
           <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">Nothing taken yet</h1>
           <p className="text-persona-muted max-w-prose mx-auto">No tests are available right now. Check back soon.</p>
         </motion.div>
       );
     }
 
+    const completedTypes = new Set(tests.filter((t) => t.result).map((t) => t.testType));
+    const orderedTests = [...tests].sort(
+      (a, b) => TEST_ORDER.indexOf(a.testType) - TEST_ORDER.indexOf(b.testType),
+    );
+
     return (
-      <motion.section aria-label="Personality tests" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-14 pb-6">
-        <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-1">Personality tests</h1>
-          <p className="text-persona-muted">
-            <span className="tabular">{completedCount}</span> of <span className="tabular">{tests.length}</span> completed.
-          </p>
-        </motion.header>
+      <motion.section aria-label="Personality tests" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-2 pb-6">
         <div className="grid gap-4">
-          {tests.map((test, i) => {
+          {orderedTests.map((test, i) => {
             const m = TEST_META[test.testType] || TEST_META.iq;
+            const completed = !!test.result;
+            const idx = TEST_ORDER.indexOf(test.testType);
+            const unlocked = idx <= 0 || TEST_ORDER.slice(0, idx).every((t) => completedTypes.has(t));
+            const locked = !completed && !unlocked;
             return (
               <motion.div key={test.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                <TestCard test={test} meta={m} completed={!!test.result} onStart={() => handleSelectTest(test)} />
+                <TestCard
+                  test={test}
+                  meta={m}
+                  completed={completed}
+                  locked={locked}
+                  expanded={expandedId === test.id}
+                  loading={questionsLoading && expandedId === test.id}
+                  onToggle={() => toggleExpand(test.id)}
+                  onStart={() => beginTest(test)}
+                  onView={() => viewResult(test)}
+                />
               </motion.div>
             );
           })}
@@ -878,31 +880,15 @@ export default function Tests() {
     );
   }
 
-  if (screen === SCREEN.PREVIEW && selectedTest && meta) {
+  if (screen === SCREEN.RESUME && selectedTest && meta) {
     return (
-      <PreviewScreen
-        test={selectedTest}
+      <ResumePromptScreen
         meta={meta}
-        hasResult={!!selectedTest.result}
-        onStart={handleStartTest}
-        onViewResult={handleViewResult}
+        onContinue={handleResumeContinue}
+        onRestart={handleResumeRestart}
         onBack={handleBackToList}
       />
     );
-  }
-
-  if (screen === SCREEN.TIMER_PROMPT && selectedTest && meta) {
-    if (questionsLoading) {
-      return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-14 flex items-center justify-center min-h-[50vh]">
-          <div className="text-center">
-            <div className="w-10 h-10 border-3 border-persona-line border-t-persona-dark rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-persona-muted">Loading questions…</p>
-          </div>
-        </motion.div>
-      );
-    }
-    return <TimerPromptScreen test={selectedTest} meta={meta} onChoice={handleTimerChoice} onBack={() => setScreen(SCREEN.PREVIEW)} />;
   }
 
   if (screen === SCREEN.QUESTIONS && selectedTest && meta && questions.length > 0) {
@@ -911,7 +897,6 @@ export default function Tests() {
         test={selectedTest}
         meta={meta}
         questions={questions}
-        useTimer={useTimer}
         onComplete={handleComplete}
         onBack={handleBackToList}
       />
@@ -919,27 +904,26 @@ export default function Tests() {
   }
 
   if (screen === SCREEN.RESULT && result && meta) {
-    if (selectedTest.testType === 'iq') {
-      return (
-        <IqResultScreen
+    const RESULT_SCREENS = {
+      iq: IqResultScreen,
+      bigFive: BigFiveResultScreen,
+      shcwartz: SchwartzResultScreen,
+      ecr: EcrResultScreen,
+      cope: CopeResultScreen,
+      pid: PidResultScreen,
+    };
+    const ResultScreen = RESULT_SCREENS[selectedTest.testType] || GenericResultScreen;
+    return (
+      <>
+        <ImmersiveTopBar onBack={handleBackToList} />
+        <ResultScreen
           result={result}
           meta={meta}
           onDone={handleBackToList}
           onRetake={handleRetake}
         />
-      );
-    }
-    if (selectedTest.testType === 'bigFive') {
-      return (
-        <BigFiveResultScreen
-          result={result}
-          meta={meta}
-          onDone={handleBackToList}
-          onRetake={handleRetake}
-        />
-      );
-    }
-    return <GenericResultScreen result={result} meta={meta} onDone={handleBackToList} />;
+      </>
+    );
   }
 
   // Fallback

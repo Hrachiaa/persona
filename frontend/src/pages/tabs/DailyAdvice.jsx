@@ -64,7 +64,7 @@ export default function DailyAdvice({ userName }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="px-6 pt-14 pb-6 min-h-[calc(100dvh-80px)] flex flex-col"
+      className="px-6 pt-2 pb-6 min-h-[calc(100dvh-80px)] flex flex-col"
     >
       <motion.div
         initial={{ opacity: 0, y: -10 }}
