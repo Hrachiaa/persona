@@ -123,7 +123,7 @@ export default function Recommendations() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="px-6 pt-14 pb-6"
+      className="px-6 pt-2 pb-6"
     >
       <motion.div
         initial={{ opacity: 0, y: -10 }}

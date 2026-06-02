@@ -270,18 +270,25 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
 // ─── Immersive top bar (mobile "pushed screen" chrome) ───────────────────────
 function ImmersiveTopBar({ onBack }) {
   return (
-    <div className="sticky top-0 z-40 px-6 pt-4 pb-6 flex items-center justify-between bg-gradient-to-b from-persona-bg via-persona-bg/95 to-transparent">
-      <motion.button
-        onClick={onBack}
-        aria-label="Back"
-        className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
-        whileTap={{ scale: 0.9 }}
-      >
-        <HiOutlineArrowLeft className="w-5 h-5" />
-      </motion.button>
-      <p className="text-lg font-medium text-persona-dark flex items-center gap-2">
-        <span className="font-display text-xl">λ</span> Persona
-      </p>
+    <div className="sticky top-0 z-40">
+      {/* Progressive blur — content under the edge stays visible, just blurred */}
+      <div
+        aria-hidden
+        className="absolute inset-0 backdrop-blur-sm [mask-image:linear-gradient(to_bottom,black,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,black,transparent)]"
+      />
+      <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
+        <motion.button
+          onClick={onBack}
+          aria-label="Back"
+          className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+          whileTap={{ scale: 0.9 }}
+        >
+          <HiOutlineArrowLeft className="w-5 h-5" />
+        </motion.button>
+        <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark">
+          <span className="font-display text-xl">λ</span> Persona
+        </p>
+      </div>
     </div>
   );
 }
@@ -802,7 +809,7 @@ export default function Tests({ onImmersiveChange }) {
   if (screen === SCREEN.LIST) {
     if (loading) {
       return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-14 pb-6">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6">
           <div className="grid gap-4">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-persona-line/40 rounded-3xl p-6 animate-pulse">
@@ -822,7 +829,7 @@ export default function Tests({ onImmersiveChange }) {
 
     if (error) {
       return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-14 pb-6 text-center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6 text-center">
           <p className="text-persona-danger mb-4">{error}</p>
           <button onClick={fetchTests} className="btn-primary">Retry</button>
         </motion.div>
@@ -831,7 +838,7 @@ export default function Tests({ onImmersiveChange }) {
 
     if (tests.length === 0) {
       return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-6 pt-14 pb-6 text-center">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-6 pt-2 pb-6 text-center">
           <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">Nothing taken yet</h1>
           <p className="text-persona-muted max-w-prose mx-auto">No tests are available right now. Check back soon.</p>
         </motion.div>
@@ -844,7 +851,7 @@ export default function Tests({ onImmersiveChange }) {
     );
 
     return (
-      <motion.section aria-label="Personality tests" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-14 pb-6">
+      <motion.section aria-label="Personality tests" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-2 pb-6">
         <div className="grid gap-4">
           {orderedTests.map((test, i) => {
             const m = TEST_META[test.testType] || TEST_META.iq;

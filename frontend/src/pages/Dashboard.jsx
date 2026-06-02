@@ -50,18 +50,25 @@ export default function Dashboard({ onLogout }) {
     >
       {/* Top Bar with Logout — hidden on immersive (test / result) screens */}
       {!immersive && (
-        <header className="sticky top-0 z-40 px-6 pt-4 pb-6 flex items-center justify-between bg-gradient-to-b from-persona-bg via-persona-bg/95 to-transparent">
-          <p className="text-lg font-medium text-persona-dark flex items-center gap-2">
-            <span className="font-display text-xl">λ</span> Persona
-          </p>
-          <motion.button
-            onClick={onLogout}
-            className="flex items-center gap-2 text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded-full px-2 py-1"
-            whileTap={{ scale: 0.95 }}
-          >
-            <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-            Sign out
-          </motion.button>
+        <header className="sticky top-0 z-40">
+          {/* Progressive blur — content under the edge stays visible, just blurred */}
+          <div
+            aria-hidden
+            className="absolute inset-0 backdrop-blur-sm [mask-image:linear-gradient(to_bottom,black,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,black,transparent)]"
+          />
+          <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
+            <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark">
+              <span className="font-display text-xl">λ</span> Persona
+            </p>
+            <motion.button
+              onClick={onLogout}
+              className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+              whileTap={{ scale: 0.95 }}
+            >
+              <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
+              Sign out
+            </motion.button>
+          </div>
         </header>
       )}
 
@@ -72,14 +79,22 @@ export default function Dashboard({ onLogout }) {
         </AnimatePresence>
       </section>
 
-      {/* Bottom Navigation — slides away on immersive (test / result) screens */}
+      {/* Bottom progressive blur — content stays visible behind the nav, just blurred (mirrors the top) */}
+      {!immersive && (
+        <div
+          aria-hidden
+          className="fixed bottom-0 inset-x-0 h-28 z-40 pointer-events-none backdrop-blur-sm [mask-image:linear-gradient(to_top,black,black,transparent)] [-webkit-mask-image:linear-gradient(to_top,black,black,transparent)]"
+        />
+      )}
+
+      {/* Bottom Navigation — floating capsule; slides away on immersive screens */}
       <motion.nav
         aria-label="Primary"
-        animate={{ y: immersive ? '120%' : '0%' }}
+        animate={{ y: immersive ? 160 : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-        className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-persona-line/70 z-50"
+        className="fixed bottom-4 inset-x-0 z-50 px-6"
       >
-        <div className="max-w-lg mx-auto flex items-center justify-around py-2 px-2">
+        <div className="max-w-lg mx-auto flex items-center justify-around bg-white/90 backdrop-blur-xl border border-persona-line/60 shadow-warm-lg rounded-full py-2 px-2">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -110,8 +125,6 @@ export default function Dashboard({ onLogout }) {
             );
           })}
         </div>
-        {/* iPhone safe area */}
-        <div className="h-[env(safe-area-inset-bottom)]" />
       </motion.nav>
     </motion.div>
   );
