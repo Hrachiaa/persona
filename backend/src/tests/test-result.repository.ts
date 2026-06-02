@@ -10,7 +10,12 @@ export class TestResultRepository {
     }
 
     async updateTestResult(userId: string, testId: string, result: object) {
-        return await this.prisma.testResult.update({where: {userId_testId: {userId, testId}}, data: {result}})
+        // a fresh submission invalidates any cached AI interpretation of the old result
+        return await this.prisma.testResult.update({where: {userId_testId: {userId, testId}}, data: {result, interpretation: null}})
+    }
+
+    async updateInterpretation(userId: string, testId: string, interpretation: string) {
+        return await this.prisma.testResult.update({where: {userId_testId: {userId, testId}}, data: {interpretation}})
     }
 
     async getTestResults(userId: string) {

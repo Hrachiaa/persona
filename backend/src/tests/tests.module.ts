@@ -7,6 +7,7 @@ import { TestResultRepository } from './test-result.repository';
 import { TestRepository } from './test.repository';
 import { UsersModule } from '../users/users.module';
 import { TestScoringService } from './test-scoring.service';
+import { AiModule } from '../ai/ai.module';
 
 @Module({
   controllers: [TestsController],
@@ -17,6 +18,6 @@ import { TestScoringService } from './test-scoring.service';
     TestResultRepository,
     TestScoringService,
   ],
-  imports: [AuthModule, UsersModule]
+  imports: [AuthModule, UsersModule, AiModule]
 })
 export class TestsModule {}
