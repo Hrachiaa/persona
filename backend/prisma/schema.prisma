@@ -62,13 +62,14 @@ model TestQuestion {
 }
 
 model TestResult {
-  id       String @id @default(cuid())
-  userId   String
-  testId   String
-  testType String
-  result   Json
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  test     Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
+  id             String  @id @default(cuid())
+  userId         String
+  testId         String
+  testType       String
+  result         Json
+  interpretation String? // AI-generated interpretation, null until first viewed
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  test           Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@unique([userId, testId])
 }

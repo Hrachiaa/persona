@@ -31,4 +31,11 @@ export class TestsController {
     async submitTest(@Param('testId') testId: string, @Body() testAnswers: SubmitTestDto, @Req() req) {
         return this.testsService.submitTest(req.user.id, testId, testAnswers);
     }
+
+    @UseGuards(JwtAuthGuard)
+    @ApiResponse({ status: 200, description: 'Test result with AI interpretation', type: TestResultDto })
+    @Get('/:testId/result')
+    async getResult(@Param('testId') testId: string, @Req() req) {
+        return this.testsService.getResult(req.user.id, testId);
+    }
 }

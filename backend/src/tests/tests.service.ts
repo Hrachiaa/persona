@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { SubmitTestDto, AnswerDto } from './dtos/submit-test.dto';
@@ -13,14 +13,18 @@ import testMapper from './mappers/test.mapper';
 import { QuestionsDto } from './dtos/test-questions.dto';
 import { UsersService } from '../users/users.service';
 import { testQuestions } from './tests.seed';
+import { AiService } from '../ai/ai.service';
 
 @Injectable()
 export class TestsService implements OnModuleInit {
+    private readonly logger = new Logger(TestsService.name);
+
     constructor(
         private readonly usersService: UsersService,
         private readonly testRepository: TestRepository,
         private readonly testResultRepository: TestResultRepository,
-    ) {} 
+        private readonly aiService: AiService,
+    ) {}
 
     async onModuleInit() {
         const isExists = await this.testRepository.getAllTests()
@@ -46,6 +50,39 @@ export class TestsService implements OnModuleInit {
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
         if(!questions) throw new NotFoundException('Questions not found')
         return questions.questions.questions
+    }
+
+    async getResult(userId: string, testId: string): Promise<TestResultDto> {
+        const result = await this.testResultRepository.getTestResult(userId, testId) as unknown as TestResultEntity | null
+        if(!result) throw new NotFoundException('Test result not found')
+
+        // fallback: if the background warm-up (in submitTest) hasn't finished or failed,
+        // generate + cache the interpretation now, on first view
+        if(result.interpretation == null) {
+            const interpretation = await this.generateAndCacheInterpretation(userId, testId, result.testType, result.result)
+            if(interpretation) {
+                return testResultMapper.toDto({ ...result, interpretation })
+            }
+        }
+        return testResultMapper.toDto(result)
+    }
+
+    /**
+     * Generates the AI interpretation and caches it on the result row.
+     * Best-effort: never throws — on failure it logs and returns null so the
+     * caller can fall back to the raw result (and retry on the next fetch).
+     */
+    private async generateAndCacheInterpretation(userId: string, testId: string, testType: string, result: TestResultEntity['result']): Promise<string | null> {
+        try {
+            const interpretation = await this.aiService.interpret(testType, result)
+            if(interpretation) {
+                await this.testResultRepository.updateInterpretation(userId, testId, interpretation)
+            }
+            return interpretation
+        } catch (error) {
+            this.logger.error(`Failed to generate interpretation for testId=${testId}`, error as Error)
+            return null
+        }
     }
 
     async submitTest(userId: string, testId: string, answers: SubmitTestDto): Promise<TestResultDto> {

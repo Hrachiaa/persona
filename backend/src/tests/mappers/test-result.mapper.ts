@@ -5,7 +5,7 @@ import { TestResultEntity } from "../models/test-result.entity";
 class TestResultMapper {
     toDto(testResult: TestResultEntity): TestResultDto {
         if (testResult.testType === 'iq' || testResult.testType === 'bigFive' || testResult.testType === 'shcwartz' || testResult.testType === 'ecr' || testResult.testType === 'cope' || testResult.testType === 'pid') {
-            return new TestResultDto(testResult.testId, testResult.testType, testResult.result)
+            return new TestResultDto(testResult.testId, testResult.testType, testResult.result, testResult.interpretation)
         }
         throw new NotFoundException('Unknown test type')
     }

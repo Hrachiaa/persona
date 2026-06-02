@@ -8,6 +8,8 @@ export class TestResultDto {
         // @ApiProperty({example: 'iq'})
         readonly testType: 'iq' | 'bigFive' | 'shcwartz' | 'ecr' | 'cope' | 'pid',
         // @ApiProperty({example: {iq: 123, blocks: {a: 12, b: 12, c: 11, d: 10, e: 8}, reliability: 'valid'}})
-        readonly result: IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult | CopeTestResult | PidTestResult
+        readonly result: IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult | CopeTestResult | PidTestResult,
+        // @ApiProperty({example: 'Markdown interpretation, null until first viewed'})
+        readonly interpretation: string | null = null
     ){}
 }

@@ -6,6 +6,7 @@ import { AuthModule } from '../auth/auth.module';
 import { TestResultRepository } from './test-result.repository';
 import { TestRepository } from './test.repository';
 import { UsersModule } from '../users/users.module';
+import { AiModule } from '../ai/ai.module';
 
 @Module({
   controllers: [TestsController],
@@ -15,6 +16,6 @@ import { UsersModule } from '../users/users.module';
     TestRepository,
     TestResultRepository,
   ],
-  imports: [AuthModule, UsersModule]
+  imports: [AuthModule, UsersModule, AiModule]
 })
 export class TestsModule {}
