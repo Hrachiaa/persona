@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { SubmitTestDto } from './dtos/submit-test.dto';
@@ -11,6 +11,9 @@ import testResultMapper from './mappers/test-result.mapper';
 import testMapper from './mappers/test.mapper';
 import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
+
+// Tests must be completed in this order — a test is locked until every test before it is done.
+const TEST_ORDER = ['bigFive', 'shcwartz', 'cope', 'iq', 'ecr', 'pid'] as const;
 
 @Injectable()
 export class TestsService implements OnModuleInit {
@@ -50,6 +53,8 @@ export class TestsService implements OnModuleInit {
         const test = await this.testRepository.getTestById(testId)
         if(!test) throw new InternalServerErrorException('Test not found')
 
+        await this.ensurePreviousTestsCompleted(userId, test.testType)
+
         const result = await this.testScoringService.calculate(test.testType, userId, testId, answers.answers)
 
         const isExists = await this.testResultRepository.getTestResult(userId, testId)
@@ -59,5 +64,17 @@ export class TestsService implements OnModuleInit {
         }
         const save = await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType}) as unknown as TestResultEntity
         return testResultMapper.toDto(save)
+    }
+
+    private async ensurePreviousTestsCompleted(userId: string, testType: string): Promise<void> {
+        const order = TEST_ORDER.indexOf(testType as typeof TEST_ORDER[number])
+        if(order <= 0) return
+
+        const previousTests = TEST_ORDER.slice(0, order)
+        const results = await this.testResultRepository.getTestResults(userId)
+        const completed = new Set(results.map((result) => result.testType))
+        const missing = previousTests.filter((type) => !completed.has(type))
+
+        if(missing.length) throw new BadRequestException(`Complete previous tests first: ${missing.join(', ')}`)
     }
 }

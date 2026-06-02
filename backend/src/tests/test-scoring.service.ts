@@ -29,6 +29,11 @@ export class TestScoringService {
         const calculator = calculators[testType]
         if (!calculator) throw new InternalServerErrorException('Calculator for test type not found')
 
+        const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
+        if (!questions) throw new InternalServerErrorException('Questions not found')
+        const expectedCount = questions.questions.questions.length
+        if (answers.length !== expectedCount) throw new BadRequestException(`Count of answers has to be ${expectedCount}`)
+
         return calculator(userId, testId, answers)
     }
 
@@ -73,7 +78,6 @@ export class TestScoringService {
     }
 
     private calculateBigFive = async (userId: string, testId: string, answers: AnswerDto[]): Promise<BigFiveResults> => {
-        if(answers.length !== 120){throw new BadRequestException('Count of answers has to be 120')}
         const user = await this.usersService.getUserById(userId)
         if(!user || !user.gender) throw new BadRequestException('Confirm gender of user')
         const scores = testQuestions.bigFive.questions.scoring[user.gender]
@@ -133,8 +137,6 @@ export class TestScoringService {
 
     }
     private calculateSchwartz = async (userId: string, testId: string, answers: AnswerDto[]): Promise<ShcwartzTestResult> => {
-        if(answers.length !== 57){throw new BadRequestException('Count of answers has to be 57')}
-
         const res: ShcwartzTestResult = {
             values: {
                 1: {name: 'Self-Direction: Autonomy of Thought', description: `Freedom to cultivate one's own ideas`, score: 0},
