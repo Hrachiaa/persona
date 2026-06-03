@@ -18,6 +18,7 @@ import {
   HiOutlineLockClosed,
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
+import ProgressiveBlur from '../../components/ProgressiveBlur';
 import BigFiveResultScreen from './BigFiveResult';
 import SchwartzResultScreen from './SchwartzResult';
 import EcrResultScreen from './EcrResult';
@@ -271,11 +272,8 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
 function ImmersiveTopBar({ onBack }) {
   return (
     <div className="sticky top-0 z-40">
-      {/* Progressive blur — content under the edge stays visible, just blurred */}
-      <div
-        aria-hidden
-        className="absolute inset-0 backdrop-blur-sm [mask-image:linear-gradient(to_bottom,black,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,black,transparent)]"
-      />
+      {/* Progressive blur — iOS-style: blur ramps down and fades into the content below */}
+      <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-44" />
       <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
         <motion.button
           onClick={onBack}

@@ -9,6 +9,7 @@ import {
   HiOutlineArrowRightOnRectangle,
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
+import ProgressiveBlur from '../components/ProgressiveBlur';
 import Tests from './tabs/Tests';
 import Analysis from './tabs/Analysis';
 import Compatibility from './tabs/Compatibility';
@@ -51,11 +52,8 @@ export default function Dashboard({ onLogout }) {
       {/* Top Bar with Logout — hidden on immersive (test / result) screens */}
       {!immersive && (
         <header className="sticky top-0 z-40">
-          {/* Progressive blur — content under the edge stays visible, just blurred */}
-          <div
-            aria-hidden
-            className="absolute inset-0 backdrop-blur-sm [mask-image:linear-gradient(to_bottom,black,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,black,transparent)]"
-          />
+          {/* Progressive blur — iOS-style: blur ramps down and fades into the content below */}
+          <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-44" />
           <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
             <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark">
               <span className="font-display text-xl">λ</span> Persona
@@ -81,10 +79,7 @@ export default function Dashboard({ onLogout }) {
 
       {/* Bottom progressive blur — content stays visible behind the nav, just blurred (mirrors the top) */}
       {!immersive && (
-        <div
-          aria-hidden
-          className="fixed bottom-0 inset-x-0 h-28 z-40 pointer-events-none backdrop-blur-sm [mask-image:linear-gradient(to_top,black,black,transparent)] [-webkit-mask-image:linear-gradient(to_top,black,black,transparent)]"
-        />
+        <ProgressiveBlur direction="up" className="fixed bottom-0 inset-x-0 h-40 z-40" />
       )}
 
       {/* Bottom Navigation — floating capsule; slides away on immersive screens */}
