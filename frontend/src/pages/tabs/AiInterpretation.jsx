@@ -23,6 +23,19 @@ const MARKDOWN_COMPONENTS = {
   hr: () => <hr className="border-persona-line/60 my-4" />,
 };
 
+// Shares one in-flight getResult per testId, so StrictMode's double mount (and
+// any concurrent mounts) reuse a single backend request instead of firing two.
+const inFlight = new Map();
+
+function fetchInterpretation(testId) {
+  let promise = inFlight.get(testId);
+  if (!promise) {
+    promise = testsApi.getResult(testId).finally(() => inFlight.delete(testId));
+    inFlight.set(testId, promise);
+  }
+  return promise;
+}
+
 export default function AiInterpretation({ testId, initialInterpretation, delay = 0 }) {
   const [text, setText] = useState(initialInterpretation || null);
   const [loading, setLoading] = useState(!initialInterpretation);
@@ -35,10 +48,7 @@ export default function AiInterpretation({ testId, initialInterpretation, delay 
 
     // GET triggers lazy generation server-side and resolves once it's ready
     // (~30s on the first request, then instantly from the DB cache).
-    // In StrictMode (dev) this runs twice — the `active` flag keeps the latest
-    // mount in control; the extra GET just hits the cache.
-    testsApi
-      .getResult(testId)
+    fetchInterpretation(testId)
       .then((res) => {
         if (!active) return;
         if (res?.interpretation) setText(res.interpretation);
@@ -58,7 +68,7 @@ export default function AiInterpretation({ testId, initialInterpretation, delay 
 
   return (
     <motion.section
-      className="surface-warm rounded-3xl p-5 sm:p-6 mb-8"
+      className="surface-warm rounded-3xl p-5 sm:p-6 mt-8 mb-8"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}

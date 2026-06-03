@@ -1,10 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { BigFiveResults, TestResultType } from '../tests/models/test-result.entity';
+import { TestResultType } from '../tests/models/test-result.entity';
 import { BIG_FIVE_SYSTEM_PROMPT, buildBigFiveUserPrompt } from './prompts/big-five.prompt';
-type OpenRouterClient = import('@openrouter/sdk').OpenRouter;
+import { IQ_SYSTEM_PROMPT, buildIqUserPrompt } from './prompts/iq.prompt';
+import { SCHWARTZ_SYSTEM_PROMPT, buildSchwartzUserPrompt } from './prompts/schwartz.prompt';
+import { ECR_SYSTEM_PROMPT, buildEcrUserPrompt } from './prompts/ecr.prompt';
+import { COPE_SYSTEM_PROMPT, buildCopeUserPrompt } from './prompts/cope.prompt';
+import { PID_SYSTEM_PROMPT, buildPidUserPrompt } from './prompts/pid.prompt';
 
 // `@openrouter/sdk` is ESM-only; the backend compiles to CommonJS, so the
 // client is loaded via dynamic import() at runtime. This is a type-only alias.
+type OpenRouterClient = import('@openrouter/sdk').OpenRouter;
+
+// One entry per test type: the system prompt + a formatter for the user message.
+// Add a new test by dropping a prompt file and registering it here.
+const INTERPRETERS: Record<string, { system: string; build: (result: any) => string }> = {
+  bigFive: { system: BIG_FIVE_SYSTEM_PROMPT, build: buildBigFiveUserPrompt },
+  iq: { system: IQ_SYSTEM_PROMPT, build: buildIqUserPrompt },
+  shcwartz: { system: SCHWARTZ_SYSTEM_PROMPT, build: buildSchwartzUserPrompt },
+  ecr: { system: ECR_SYSTEM_PROMPT, build: buildEcrUserPrompt },
+  cope: { system: COPE_SYSTEM_PROMPT, build: buildCopeUserPrompt },
+  pid: { system: PID_SYSTEM_PROMPT, build: buildPidUserPrompt },
+};
 
 @Injectable()
 export class AiService {
@@ -12,19 +28,12 @@ export class AiService {
 
   /**
    * Returns a human-readable interpretation for a test result, or `null` for
-   * test types that don't have an interpreter yet (only `bigFive` for now).
+   * test types that have no registered interpreter.
    */
   async interpret(testType: string, result: TestResultType): Promise<string | null> {
-    switch (testType) {
-      case 'bigFive':
-        return this.interpretBigFive(result as BigFiveResults);
-      default:
-        return null;
-    }
-  }
-
-  private async interpretBigFive(result: BigFiveResults): Promise<string> {
-    return this.complete(BIG_FIVE_SYSTEM_PROMPT, buildBigFiveUserPrompt(result));
+    const interpreter = INTERPRETERS[testType];
+    if (!interpreter) return null;
+    return this.complete(interpreter.system, interpreter.build(result));
   }
 
   private async complete(systemPrompt: string, userPrompt: string): Promise<string> {

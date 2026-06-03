@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
 import ScaleBar from './ScaleBar';
+import AiInterpretation from './AiInterpretation';
 
 const byScoreDesc = (a, b) => b.score - a.score;
 
@@ -41,7 +42,7 @@ export default function PidResultScreen({ result, meta, onDone, onRetake }) {
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <header className="mb-4">
           <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Facets</h3>
-          <p className="text-sm text-persona-muted mt-1">25 trait facets · scale 0 to 3</p>
+          <p className="text-sm text-persona-muted mt-1">25 trait facets</p>
         </header>
         <div className="divide-y divide-persona-line/60">
           {facets.map((f, i) => (
@@ -53,7 +54,7 @@ export default function PidResultScreen({ result, meta, onDone, onRetake }) {
       {/* Divider + label introducing the domain group */}
       <div className="mt-8 mb-4 border-t border-persona-line pt-6">
         <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Domains</h3>
-        <p className="text-sm text-persona-muted mt-1">Five broad domains · scale 0 to 3</p>
+        <p className="text-sm text-persona-muted mt-1">Five broad domains</p>
       </div>
 
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
@@ -64,8 +65,15 @@ export default function PidResultScreen({ result, meta, onDone, onRetake }) {
         </div>
       </section>
 
+      {/* AI interpretation */}
+      <AiInterpretation
+        testId={result?.testId}
+        initialInterpretation={result?.interpretation}
+        delay={0.3}
+      />
+
       {/* Footer actions */}
-      <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
+      <div className="flex flex-col gap-3 max-w-sm mx-auto">
         <motion.button
           onClick={onDone}
           className="btn-primary w-full"

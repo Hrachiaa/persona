@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
-import { tScoreToPercentile, interpretTrait, percentileColor } from '../../utils/tScore.js';
+import { tScoreToPercentile, percentileColor } from '../../utils/tScore.js';
 import AiInterpretation from './AiInterpretation';
 
 // O at top, going clockwise → C → E → A → N (the OCEAN acronym order)
@@ -152,7 +152,6 @@ function BigFiveRadar({ percentiles }) {
                 style={{ fontFamily: 'Geist, Inter, sans-serif', fontVariantNumeric: 'tabular-nums' }}
               >
                 {pct}
-                <tspan fontSize="8" dy="-3" dx="1">th</tspan>
               </text>
             </g>
           );
@@ -188,11 +187,17 @@ function FacetRow({ name, percentile, delay }) {
   );
 }
 
+// Comparative phrase per trait, used for the "You're {phrase} N% of people" line.
+const TRAIT_COMPARISON = {
+  O: 'more curious than',
+  C: 'more disciplined than',
+  E: 'more outgoing than',
+  A: 'more agreeable than',
+  N: 'more anxious than',
+};
+
 // ─── Per-trait facet group ───────────────────────────────────────────────────
 function FacetGroup({ trait, traitPercentile, facets, delay }) {
-  const interp = interpretTrait(traitPercentile, trait.key);
-  const color = percentileColor(traitPercentile);
-
   return (
     <motion.section
       className="surface-warm rounded-3xl p-5 sm:p-6"
@@ -200,24 +205,15 @@ function FacetGroup({ trait, traitPercentile, facets, delay }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
     >
-      <header className="flex items-start justify-between gap-4 mb-4">
-        <div className="min-w-0">
-          <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">
-            {trait.long}
-          </h3>
-          <p className="text-sm text-persona-muted mt-1 leading-snug">
-            You are <span className="text-persona-dark font-medium">{interp.oneLiner}</span>.
-          </p>
-        </div>
-        <div className={`${color.chip} rounded-2xl px-3 py-2 text-right flex-shrink-0`}>
-          <div className="font-display text-2xl font-semibold text-persona-dark tabular leading-none">
-            {traitPercentile}
-            <span className="text-sm align-top ml-0.5">th</span>
-          </div>
-          <div className="text-[10px] tracking-wide text-persona-dark/70 uppercase mt-1">
-            {interp.label}
-          </div>
-        </div>
+      <header className="mb-4">
+        <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">
+          {trait.long}
+        </h3>
+        <p className="text-sm text-persona-muted mt-1.5">
+          You&apos;re {TRAIT_COMPARISON[trait.key]}{' '}
+          <span className="font-semibold text-persona-dark">{traitPercentile}%</span>{' '}
+          of people
+        </p>
       </header>
 
       <div className="divide-y divide-persona-line/60">
@@ -276,7 +272,7 @@ export default function BigFiveResultScreen({ result, meta, onDone, onRetake }) 
         </h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
           Each axis shows how you compare to other people — the further from the center, the higher
-          you scored. Hover over the facets below for the detail behind each trait.
+          you scored.
         </p>
       </div>
 

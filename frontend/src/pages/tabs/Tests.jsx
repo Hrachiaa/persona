@@ -19,6 +19,7 @@ import {
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
 import ProgressiveBlur from '../../components/ProgressiveBlur';
+import AiInterpretation from './AiInterpretation';
 import BigFiveResultScreen from './BigFiveResult';
 import SchwartzResultScreen from './SchwartzResult';
 import EcrResultScreen from './EcrResult';
@@ -621,6 +622,15 @@ function IqResultScreen({ result, meta, onDone, onRetake }) {
             </p>
           </motion.div>
         )}
+
+        {/* AI interpretation */}
+        <div className="text-left mt-6">
+          <AiInterpretation
+            testId={result?.testId}
+            initialInterpretation={result?.interpretation}
+            delay={0.5}
+          />
+        </div>
 
         <motion.button onClick={onDone} className="btn-primary mt-4 w-full max-w-xs mx-auto" whileTap={{ scale: 0.97 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
           Done
