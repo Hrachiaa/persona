@@ -1,19 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { BigFiveResults, TestResultType } from '../tests/models/test-result.entity';
 import { BIG_FIVE_SYSTEM_PROMPT, buildBigFiveUserPrompt } from './prompts/big-five.prompt';
+type OpenRouterClient = import('@openrouter/sdk').OpenRouter;
 
 // `@openrouter/sdk` is ESM-only; the backend compiles to CommonJS, so the
 // client is loaded via dynamic import() at runtime. This is a type-only alias.
-type OpenRouterClient = import('@openrouter/sdk').OpenRouter;
-
-const DEFAULT_MODEL = 'anthropic/claude-sonnet-4.6';
 
 @Injectable()
 export class AiService {
   private clientPromise: Promise<OpenRouterClient> | null = null;
-
-  constructor(private readonly config: ConfigService) {}
 
   /**
    * Returns a human-readable interpretation for a test result, or `null` for
@@ -34,13 +29,14 @@ export class AiService {
 
   private async complete(systemPrompt: string, userPrompt: string): Promise<string> {
     const client = await this.getClient();
-    const model = this.config.get<string>('OPENROUTER_MODEL') ?? DEFAULT_MODEL;
+    const model = process.env.OPENROUTER_MODEL;
+    const maxTokens = Number(process.env.OPENROUTER_MAX_TOKENS);
 
     const completion = await client.chat.send({
       chatRequest: {
         model,
         temperature: 0.7,
-        maxTokens: 1500,
+        maxTokens,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
@@ -59,7 +55,7 @@ export class AiService {
   /** Lazily creates (and memoizes) the OpenRouter client. */
   private getClient(): Promise<OpenRouterClient> {
     if (!this.clientPromise) {
-      const apiKey = this.config.get<string>('OPENROUTER_API_KEY');
+      const apiKey = process.env.OPENROUTER_API_KEY;
       if (!apiKey) {
         throw new Error('OPENROUTER_API_KEY is not configured');
       }

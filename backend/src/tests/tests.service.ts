@@ -11,16 +11,17 @@ import testResultMapper from './mappers/test-result.mapper';
 import testMapper from './mappers/test.mapper';
 import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
+import { AiService } from '../ai/ai.service';
 
 // Tests must be completed in this order — a test is locked until every test before it is done.
 const TEST_ORDER = ['bigFive', 'shcwartz', 'cope', 'iq', 'ecr', 'pid'] as const;
-import { UsersService } from '../users/users.service';
-import { testQuestions } from './tests.seed';
-import { AiService } from '../ai/ai.service';
 
 @Injectable()
 export class TestsService implements OnModuleInit {
     private readonly logger = new Logger(TestsService.name);
+    // dedupes concurrent interpretation generations for the same result (StrictMode
+    // double-fetch, multiple tabs, races) so the LLM is called only once
+    private readonly interpretationInFlight = new Map<string, Promise<string | null>>();
 
     constructor(
         private readonly testRepository: TestRepository,
@@ -59,15 +60,31 @@ export class TestsService implements OnModuleInit {
         const result = await this.testResultRepository.getTestResult(userId, testId) as unknown as TestResultEntity | null
         if(!result) throw new NotFoundException('Test result not found')
 
-        // fallback: if the background warm-up (in submitTest) hasn't finished or failed,
-        // generate + cache the interpretation now, on first view
+        // generate + cache the interpretation lazily on first view; concurrent
+        // requests for the same result share a single generation (see dedupe below)
         if(result.interpretation == null) {
-            const interpretation = await this.generateAndCacheInterpretation(userId, testId, result.testType, result.result)
+            const interpretation = await this.dedupedInterpretation(userId, testId, result.testType, result.result)
             if(interpretation) {
                 return testResultMapper.toDto({ ...result, interpretation })
             }
         }
         return testResultMapper.toDto(result)
+    }
+
+    /**
+     * Wraps generateAndCacheInterpretation with an in-flight map so that
+     * simultaneous callers for the same (userId, testId) await one generation
+     * instead of each firing their own LLM request.
+     */
+    private dedupedInterpretation(userId: string, testId: string, testType: string, result: TestResultEntity['result']): Promise<string | null> {
+        const key = `${userId}:${testId}`
+        let inFlight = this.interpretationInFlight.get(key)
+        if(!inFlight) {
+            inFlight = this.generateAndCacheInterpretation(userId, testId, testType, result)
+                .finally(() => this.interpretationInFlight.delete(key))
+            this.interpretationInFlight.set(key, inFlight)
+        }
+        return inFlight
     }
 
     /**
