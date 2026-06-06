@@ -12,9 +12,7 @@ import testMapper from './mappers/test.mapper';
 import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
 import { AiService } from '../ai/ai.service';
-
-// Tests must be completed in this order — a test is locked until every test before it is done.
-const TEST_ORDER = ['bigFive', 'shcwartz', 'cope', 'iq', 'ecr', 'pid'] as const;
+import { TEST_ORDER } from './test-order';
 
 @Injectable()
 export class TestsService implements OnModuleInit {

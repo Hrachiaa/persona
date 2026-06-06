@@ -18,6 +18,7 @@ import { AiModule } from '../ai/ai.module';
     TestResultRepository,
     TestScoringService,
   ],
-  imports: [AuthModule, UsersModule, AiModule]
+  imports: [AuthModule, UsersModule, AiModule],
+  exports: [TestResultRepository],
 })
 export class TestsModule {}

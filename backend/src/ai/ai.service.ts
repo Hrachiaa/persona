@@ -6,6 +6,7 @@ import { SCHWARTZ_SYSTEM_PROMPT, buildSchwartzUserPrompt } from './prompts/schwa
 import { ECR_SYSTEM_PROMPT, buildEcrUserPrompt } from './prompts/ecr.prompt';
 import { COPE_SYSTEM_PROMPT, buildCopeUserPrompt } from './prompts/cope.prompt';
 import { PID_SYSTEM_PROMPT, buildPidUserPrompt } from './prompts/pid.prompt';
+import { PORTRAIT_SYSTEM_PROMPT, buildPortraitUserPrompt } from './prompts/portrait.prompt';
 
 // `@openrouter/sdk` is ESM-only; the backend compiles to CommonJS, so the
 // client is loaded via dynamic import() at runtime. This is a type-only alias.
@@ -34,6 +35,15 @@ export class AiService {
     const interpreter = INTERPRETERS[testType];
     if (!interpreter) return null;
     return this.complete(interpreter.system, interpreter.build(result));
+  }
+
+  /**
+   * Synthesizes a single cross-test "portrait" from several results, or `null`
+   * if nothing usable was passed in.
+   */
+  async interpretPortrait(results: { testType: string; result: TestResultType }[]): Promise<string | null> {
+    if (!results.length) return null;
+    return this.complete(PORTRAIT_SYSTEM_PROMPT, buildPortraitUserPrompt(results));
   }
 
   private async complete(systemPrompt: string, userPrompt: string): Promise<string> {
