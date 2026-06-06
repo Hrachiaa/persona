@@ -21,7 +21,14 @@ export class PortraitService {
 
   async getPortrait(userId: string): Promise<PortraitDto> {
     const results = await this.testResultRepository.getTestResults(userId);
-    const completed = new Set(results.map((r) => r.testType));
+
+    // An invalid IQ score doesn't count toward the portrait — it stays locked
+    // (and never generates) until the user retakes IQ and gets a usable result.
+    const iqResult = results.find((r) => r.testType === 'iq');
+    const iqInvalid = (iqResult?.result as { reliability?: string } | undefined)?.reliability === 'invalid';
+    const completed = new Set(
+      results.filter((r) => !(r.testType === 'iq' && iqInvalid)).map((r) => r.testType),
+    );
 
     const baseDone = PORTRAIT_BASE_TESTS.filter((t) => completed.has(t)).length;
     if (baseDone < PORTRAIT_BASE_TESTS.length) {

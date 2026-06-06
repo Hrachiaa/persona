@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TestResultType } from '../tests/models/test-result.entity';
 import { BIG_FIVE_SYSTEM_PROMPT, buildBigFiveUserPrompt } from './prompts/big-five.prompt';
-import { IQ_SYSTEM_PROMPT, buildIqUserPrompt } from './prompts/iq.prompt';
 import { SCHWARTZ_SYSTEM_PROMPT, buildSchwartzUserPrompt } from './prompts/schwartz.prompt';
 import { ECR_SYSTEM_PROMPT, buildEcrUserPrompt } from './prompts/ecr.prompt';
 import { COPE_SYSTEM_PROMPT, buildCopeUserPrompt } from './prompts/cope.prompt';
@@ -16,7 +15,6 @@ type OpenRouterClient = import('@openrouter/sdk').OpenRouter;
 // Add a new test by dropping a prompt file and registering it here.
 const INTERPRETERS: Record<string, { system: string; build: (result: any) => string }> = {
   bigFive: { system: BIG_FIVE_SYSTEM_PROMPT, build: buildBigFiveUserPrompt },
-  iq: { system: IQ_SYSTEM_PROMPT, build: buildIqUserPrompt },
   shcwartz: { system: SCHWARTZ_SYSTEM_PROMPT, build: buildSchwartzUserPrompt },
   ecr: { system: ECR_SYSTEM_PROMPT, build: buildEcrUserPrompt },
   cope: { system: COPE_SYSTEM_PROMPT, build: buildCopeUserPrompt },

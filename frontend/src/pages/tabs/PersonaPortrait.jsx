@@ -1,15 +1,21 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { HiOutlineSparkles, HiOutlineLockClosed, HiOutlineArrowRight } from 'react-icons/hi2';
 
 // Mirror the backend portrait base milestone (see backend/src/tests/test-order.ts).
 const PORTRAIT_BASE = ['bigFive', 'shcwartz', 'cope', 'iq'];
+const SEEN_FLAG = 'portrait_seen';
 
-// First-screen teaser: shows unlock progress, and once the first 4 tests are done
-// turns into a CTA that opens the dedicated portrait screen (where generation
-// happens). It never generates anything itself.
+// First-screen teaser. Three states:
+//  • locked  — unlock progress, while fewer than 4 tests are done;
+//  • created — a glowing celebration the first time the portrait is unlocked
+//              (right after the IQ test); tapping it only dismisses the fanfare;
+//  • ready   — the calm CTA that opens the dedicated portrait screen.
+// It never generates anything itself.
 export default function PersonaPortrait({ completedTypes, onOpen }) {
   const baseDone = PORTRAIT_BASE.filter((t) => completedTypes.has(t)).length;
   const unlocked = baseDone >= PORTRAIT_BASE.length;
+  const [seen, setSeen] = useState(() => !!localStorage.getItem(SEEN_FLAG));
 
   // ─── Locked: progress teaser ───────────────────────────────────────────────
   if (!unlocked) {
@@ -52,7 +58,48 @@ export default function PersonaPortrait({ completedTypes, onOpen }) {
     );
   }
 
-  // ─── Unlocked: CTA into the portrait screen ────────────────────────────────
+  // ─── Just unlocked: glowing celebration ────────────────────────────────────
+  if (!seen) {
+    const dismiss = () => {
+      localStorage.setItem(SEEN_FLAG, '1');
+      setSeen(true);
+    };
+    return (
+      <motion.button
+        type="button"
+        onClick={dismiss}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          boxShadow: [
+            '0 0 0 0 rgba(253,186,116,0.0)',
+            '0 0 40px 6px rgba(253,186,116,0.55)',
+            '0 0 0 0 rgba(253,186,116,0.0)',
+          ],
+        }}
+        transition={{
+          opacity: { duration: 0.4 },
+          scale: { type: 'spring', stiffness: 220, damping: 18 },
+          boxShadow: { repeat: Infinity, duration: 2.4, ease: 'easeInOut' },
+        }}
+        whileTap={{ scale: 0.98 }}
+        className="relative w-full rounded-4xl p-7 mb-6 text-center bg-gradient-to-br from-persona-accent-peach via-persona-accent-lavender to-persona-accent-pink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-dark/20"
+      >
+        <motion.div
+          className="w-14 h-14 mx-auto mb-4 bg-white/70 rounded-3xl flex items-center justify-center"
+          animate={{ rotate: [0, -8, 8, 0], scale: [1, 1.08, 1] }}
+          transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+        >
+          <HiOutlineSparkles className="w-7 h-7 text-persona-dark" />
+        </motion.div>
+        <h3 className="font-display text-2xl font-semibold text-persona-dark">Your portrait is created</h3>
+        <p className="text-sm text-persona-dark/70 mt-1">Tap to continue</p>
+      </motion.button>
+    );
+  }
+
+  // ─── Ready: calm CTA into the portrait screen ──────────────────────────────
   return (
     <motion.button
       type="button"
