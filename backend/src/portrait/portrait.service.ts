@@ -3,14 +3,14 @@ import { TestResultRepository } from '../tests/test-result.repository';
 import { AiService } from '../ai/ai.service';
 import { PortraitRepository } from './portrait.repository';
 import { PortraitDto } from './dtos/portrait.dto';
-import { PORTRAIT_BASE_TESTS, PORTRAIT_FULL_TESTS } from '../tests/test-order';
+import { TEST_ORDER } from '../tests/test-order';
 import { TestResultType } from '../tests/models/test-result.entity';
 
 @Injectable()
 export class PortraitService {
   private readonly logger = new Logger(PortraitService.name);
   // dedupes concurrent generations for the same user (StrictMode double-fetch,
-  // multiple tabs, races) so the LLM is called only once per (user, stage)
+  // multiple tabs, races) so the LLM is called only once per (user, test set)
   private readonly inFlight = new Map<string, Promise<string | null>>();
 
   constructor(
@@ -22,24 +22,21 @@ export class PortraitService {
   async getPortrait(userId: string): Promise<PortraitDto> {
     const results = await this.testResultRepository.getTestResults(userId);
 
-    // An invalid IQ score doesn't count toward the portrait — it stays locked
-    // (and never generates) until the user retakes IQ and gets a usable result.
+    // An invalid IQ score doesn't count toward the portrait — it's left out until
+    // the user retakes IQ and gets a usable result.
     const iqResult = results.find((r) => r.testType === 'iq');
     const iqInvalid = (iqResult?.result as { reliability?: string } | undefined)?.reliability === 'invalid';
     const completed = new Set(
       results.filter((r) => !(r.testType === 'iq' && iqInvalid)).map((r) => r.testType),
     );
 
-    const baseDone = PORTRAIT_BASE_TESTS.filter((t) => completed.has(t)).length;
-    if (baseDone < PORTRAIT_BASE_TESTS.length) {
-      return PortraitDto.locked(baseDone, PORTRAIT_BASE_TESTS.length);
+    // The portrait covers every completed test, in canonical order, and regrows as
+    // the user finishes more — a changed set makes the cached `basedOn` stale and
+    // triggers a regeneration.
+    const targetTests = TEST_ORDER.filter((t) => completed.has(t));
+    if (targetTests.length === 0) {
+      return PortraitDto.locked(0, 1);
     }
-
-    // What the portrait should cover right now: the full set once all 6 tests are
-    // done, otherwise the base 4. Crossing into the full set leaves the cached
-    // base portrait's `basedOn` stale, which triggers a one-time regeneration.
-    const allDone = PORTRAIT_FULL_TESTS.every((t) => completed.has(t));
-    const targetTests: readonly string[] = allDone ? PORTRAIT_FULL_TESTS : PORTRAIT_BASE_TESTS;
 
     const existing = await this.portraitRepository.getByUserId(userId);
     if (existing && this.sameSet(existing.basedOn, targetTests)) {
@@ -56,7 +53,7 @@ export class PortraitService {
     targetTests: readonly string[],
     results: { testType: string; result: unknown }[],
   ): Promise<string | null> {
-    const key = `${userId}:${targetTests.length}`;
+    const key = `${userId}:${[...targetTests].join(',')}`;
     let inFlight = this.inFlight.get(key);
     if (!inFlight) {
       inFlight = this.generateAndCache(userId, targetTests, results).finally(() =>

@@ -68,7 +68,6 @@ model TestResult {
   testId         String
   testType       String
   result         Json
-  interpretation String? // AI-generated interpretation, null until first viewed
   user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   test           Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
 

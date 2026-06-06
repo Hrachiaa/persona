@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
 import { tScoreToPercentile, percentileColor } from '../../utils/tScore.js';
-import AiInterpretation from './AiInterpretation';
 
 // O at top, going clockwise → C → E → A → N (the OCEAN acronym order)
 const TRAIT_AXES = [
@@ -231,7 +230,7 @@ function FacetGroup({ trait, traitPercentile, facets, delay }) {
 }
 
 // ─── Main result screen ──────────────────────────────────────────────────────
-export default function BigFiveResultScreen({ result, meta, onDone, onRetake }) {
+export default function BigFiveResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -299,18 +298,21 @@ export default function BigFiveResultScreen({ result, meta, onDone, onRetake }) 
         ))}
       </div>
 
-      {/* AI interpretation — fetched lazily; renders once ready */}
-      <AiInterpretation
-        testId={result?.testId}
-        initialInterpretation={result?.interpretation}
-        delay={0.4}
-      />
-
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto">
         <motion.button
-          onClick={onDone}
+          onClick={onViewPortrait}
           className="btn-primary w-full"
+          whileTap={{ scale: 0.97 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+        >
+          View portrait
+        </motion.button>
+        <motion.button
+          onClick={onDone}
+          className="btn-secondary w-full"
           whileTap={{ scale: 0.97 }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

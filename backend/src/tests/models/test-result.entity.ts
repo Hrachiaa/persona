@@ -139,10 +139,6 @@ export interface PidTestResult {
     }
 }
 
-interface Test {
-
-}
-
 export type TestResultType = IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult | CopeTestResult | PidTestResult;
 
 export class TestResultEntity {
@@ -151,7 +147,6 @@ export class TestResultEntity {
         readonly userId: string,
         readonly testId: string,
         readonly testType: string,
-        readonly result: TestResultType,
-        readonly interpretation: string | null = null
+        readonly result: TestResultType
     ){}
 }

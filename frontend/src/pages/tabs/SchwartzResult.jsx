@@ -1,13 +1,12 @@
 import { motion } from 'framer-motion';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
 import ScaleBar from './ScaleBar';
-import AiInterpretation from './AiInterpretation';
 
 const byScoreDesc = (a, b) => b.score - a.score;
 
 // Schwartz PVQ-RR: 19 basic values (top) + 4 higher-order values (bottom),
 // each sorted highest-first, on a centered −4..+4 scale.
-export default function SchwartzResultScreen({ result, meta, onDone, onRetake }) {
+export default function SchwartzResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -65,18 +64,21 @@ export default function SchwartzResultScreen({ result, meta, onDone, onRetake })
         </div>
       </section>
 
-      {/* AI interpretation */}
-      <AiInterpretation
-        testId={result?.testId}
-        initialInterpretation={result?.interpretation}
-        delay={0.3}
-      />
-
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto">
         <motion.button
-          onClick={onDone}
+          onClick={onViewPortrait}
           className="btn-primary w-full"
+          whileTap={{ scale: 0.97 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          View portrait
+        </motion.button>
+        <motion.button
+          onClick={onDone}
+          className="btn-secondary w-full"
           whileTap={{ scale: 0.97 }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { SubmitTestDto } from './dtos/submit-test.dto';
@@ -11,21 +11,14 @@ import testResultMapper from './mappers/test-result.mapper';
 import testMapper from './mappers/test.mapper';
 import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
-import { AiService } from '../ai/ai.service';
 import { TEST_ORDER } from './test-order';
 
 @Injectable()
 export class TestsService implements OnModuleInit {
-    private readonly logger = new Logger(TestsService.name);
-    // dedupes concurrent interpretation generations for the same result (StrictMode
-    // double-fetch, multiple tabs, races) so the LLM is called only once
-    private readonly interpretationInFlight = new Map<string, Promise<string | null>>();
-
     constructor(
         private readonly testRepository: TestRepository,
         private readonly testResultRepository: TestResultRepository,
         private readonly testScoringService: TestScoringService,
-        private readonly aiService: AiService,
     ) {}
 
     async onModuleInit() {
@@ -52,55 +45,6 @@ export class TestsService implements OnModuleInit {
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
         if(!questions) throw new NotFoundException('Questions not found')
         return questions.questions.questions
-    }
-
-    async getResult(userId: string, testId: string): Promise<TestResultDto> {
-        const result = await this.testResultRepository.getTestResult(userId, testId) as unknown as TestResultEntity | null
-        if(!result) throw new NotFoundException('Test result not found')
-
-        // generate + cache the interpretation lazily on first view; concurrent
-        // requests for the same result share a single generation (see dedupe below)
-        if(result.interpretation == null) {
-            const interpretation = await this.dedupedInterpretation(userId, testId, result.testType, result.result)
-            if(interpretation) {
-                return testResultMapper.toDto({ ...result, interpretation })
-            }
-        }
-        return testResultMapper.toDto(result)
-    }
-
-    /**
-     * Wraps generateAndCacheInterpretation with an in-flight map so that
-     * simultaneous callers for the same (userId, testId) await one generation
-     * instead of each firing their own LLM request.
-     */
-    private dedupedInterpretation(userId: string, testId: string, testType: string, result: TestResultEntity['result']): Promise<string | null> {
-        const key = `${userId}:${testId}`
-        let inFlight = this.interpretationInFlight.get(key)
-        if(!inFlight) {
-            inFlight = this.generateAndCacheInterpretation(userId, testId, testType, result)
-                .finally(() => this.interpretationInFlight.delete(key))
-            this.interpretationInFlight.set(key, inFlight)
-        }
-        return inFlight
-    }
-
-    /**
-     * Generates the AI interpretation and caches it on the result row.
-     * Best-effort: never throws — on failure it logs and returns null so the
-     * caller can fall back to the raw result (and retry on the next fetch).
-     */
-    private async generateAndCacheInterpretation(userId: string, testId: string, testType: string, result: TestResultEntity['result']): Promise<string | null> {
-        try {
-            const interpretation = await this.aiService.interpret(testType, result)
-            if(interpretation) {
-                await this.testResultRepository.updateInterpretation(userId, testId, interpretation)
-            }
-            return interpretation
-        } catch (error) {
-            this.logger.error(`Failed to generate interpretation for testId=${testId}`, error as Error)
-            return null
-        }
     }
 
     async submitTest(userId: string, testId: string, answers: SubmitTestDto): Promise<TestResultDto> {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineClipboardDocumentList,
-  HiOutlineChartBar,
+  HiOutlineSparkles,
   HiOutlineHeart,
   HiOutlineBookOpen,
   HiOutlineStar,
@@ -11,14 +11,14 @@ import {
 import { useAuth } from '../context/AuthContext';
 import ProgressiveBlur from '../components/ProgressiveBlur';
 import Tests from './tabs/Tests';
-import Analysis from './tabs/Analysis';
+import Portrait from './tabs/Portrait';
 import Compatibility from './tabs/Compatibility';
 import Recommendations from './tabs/Recommendations';
 import DailyAdvice from './tabs/DailyAdvice';
 
 const tabs = [
   { id: 'tests', label: 'Tests', icon: HiOutlineClipboardDocumentList },
-  { id: 'analysis', label: 'Analysis', icon: HiOutlineChartBar },
+  { id: 'portrait', label: 'Portrait', icon: HiOutlineSparkles },
   { id: 'match', label: 'Match', icon: HiOutlineHeart },
   { id: 'reads', label: 'Reads', icon: HiOutlineBookOpen },
   { id: 'advice', label: 'Advice', icon: HiOutlineStar },
@@ -33,8 +33,8 @@ export default function Dashboard({ onLogout }) {
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} />;
-      case 'analysis': return <Analysis key="analysis" userName={userName} />;
+      case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => setActiveTab('portrait')} />;
+      case 'portrait': return <Portrait key="portrait" />;
       case 'match': return <Compatibility key="match" />;
       case 'reads': return <Recommendations key="reads" />;
       case 'advice': return <DailyAdvice key="advice" userName={userName} />;
