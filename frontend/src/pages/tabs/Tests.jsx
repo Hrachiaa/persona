@@ -20,6 +20,8 @@ import {
 import { testsApi } from '../../api/tests';
 import ProgressiveBlur from '../../components/ProgressiveBlur';
 import AiInterpretation from './AiInterpretation';
+import PersonaPortrait from './PersonaPortrait';
+import PortraitScreen from './PortraitScreen';
 import BigFiveResultScreen from './BigFiveResult';
 import SchwartzResultScreen from './SchwartzResult';
 import EcrResultScreen from './EcrResult';
@@ -87,7 +89,7 @@ const LS = {
 };
 
 // ─── Screens ─────────────────────────────────────────────────────────────────
-const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', RESULT: 'result' };
+const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', RESULT: 'result', PORTRAIT: 'portrait' };
 
 // ─── Bell Curve component ────────────────────────────────────────────────────
 function BellCurve({ score }) {
@@ -860,6 +862,7 @@ export default function Tests({ onImmersiveChange }) {
 
     return (
       <motion.section aria-label="Personality tests" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-2 pb-6">
+        <PersonaPortrait completedTypes={completedTypes} onOpen={() => setScreen(SCREEN.PORTRAIT)} />
         <div className="grid gap-4">
           {orderedTests.map((test, i) => {
             const m = TEST_META[test.testType] || TEST_META.iq;
@@ -930,6 +933,16 @@ export default function Tests({ onImmersiveChange }) {
           onDone={handleBackToList}
           onRetake={handleRetake}
         />
+      </>
+    );
+  }
+
+  if (screen === SCREEN.PORTRAIT) {
+    const completedTypes = new Set(tests.filter((t) => t.result).map((t) => t.testType));
+    return (
+      <>
+        <ImmersiveTopBar onBack={handleBackToList} />
+        <PortraitScreen completedTypes={completedTypes} />
       </>
     );
   }
