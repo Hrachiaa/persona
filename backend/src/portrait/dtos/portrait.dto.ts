@@ -1,8 +1,9 @@
-export type PortraitStatus = 'locked' | 'ready' | 'error';
+export type PortraitStatus = 'locked' | 'generating' | 'ready' | 'error';
 
 /**
  * Response for GET /portrait.
  * - `locked`: not enough tests done yet — `completed`/`required` drive the progress UI.
+ * - `generating`: a (re)generation is in flight — the client should poll until ready.
  * - `ready`: `content` (markdown) + `basedOn` (which tests it was synthesized from).
  * - `error`: generation failed; the client can retry by re-fetching.
  */
@@ -19,6 +20,10 @@ export class PortraitDto {
 
   static locked(completed: number, required: number): PortraitDto {
     return new PortraitDto({ status: 'locked', completed, required });
+  }
+
+  static generating(): PortraitDto {
+    return new PortraitDto({ status: 'generating' });
   }
 
   static ready(content: string, basedOn: string[]): PortraitDto {

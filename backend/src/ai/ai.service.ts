@@ -27,7 +27,7 @@ export class AiService {
     const completion = await client.chat.send({
       chatRequest: {
         model,
-        temperature: 0.7,
+        temperature: 1,
         maxTokens,
         messages: [
           { role: 'system', content: systemPrompt },

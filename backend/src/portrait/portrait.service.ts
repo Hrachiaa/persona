@@ -19,33 +19,70 @@ export class PortraitService {
     private readonly aiService: AiService,
   ) {}
 
+  /**
+   * Read-only status for the portrait tab. Generation is triggered when a test is
+   * submitted (see `regenerate`), so this never blocks on the LLM during a normal
+   * read — it just reports where things stand:
+   *   - `locked`     — no usable test results yet
+   *   - `generating` — a (re)generation is in flight; the client should poll
+   *   - `ready`      — a cached portrait is available
+   * As a fallback (pre-existing users, or a generation that failed) it kicks off a
+   * generation when results exist but nothing is cached or in flight.
+   */
   async getPortrait(userId: string): Promise<PortraitDto> {
     const results = await this.testResultRepository.getTestResults(userId);
+    const targetTests = this.resolveTargetTests(results);
+    if (targetTests.length === 0) {
+      return PortraitDto.locked(0, 1);
+    }
 
-    // An invalid IQ score doesn't count toward the portrait — it's left out until
-    // the user retakes IQ and gets a usable result.
+    // A regeneration in flight (e.g. just-submitted test) wins over the cache, which
+    // still holds the previous content — report `generating` so the client polls
+    // instead of flashing a stale portrait.
+    if (this.inFlight.has(this.cacheKey(userId, targetTests))) {
+      return PortraitDto.generating();
+    }
+
+    const existing = await this.portraitRepository.getByUserId(userId);
+    if (existing) {
+      return PortraitDto.ready(existing.content, existing.basedOn);
+    }
+
+    // Nothing cached and nothing running — kick off a generation and let the client
+    // poll until it lands.
+    void this.dedupedGenerate(userId, targetTests, results);
+    return PortraitDto.generating();
+  }
+
+  /**
+   * Regenerates the portrait from the user's current results. Called after a test
+   * is submitted (including retakes — the result content changes even when the set
+   * of completed tests doesn't), so the portrait always reflects the latest answers.
+   * Best-effort and fire-and-forget safe: never throws.
+   */
+  async regenerate(userId: string): Promise<void> {
+    try {
+      const results = await this.testResultRepository.getTestResults(userId);
+      const targetTests = this.resolveTargetTests(results);
+      if (targetTests.length === 0) return;
+      await this.dedupedGenerate(userId, targetTests, results);
+    } catch (error) {
+      this.logger.error(`Failed to regenerate portrait for userId=${userId}`, error as Error);
+    }
+  }
+
+  /**
+   * The set of tests the portrait is synthesized from, in canonical order. An
+   * invalid IQ score doesn't count — it's left out until the user retakes IQ and
+   * gets a usable result.
+   */
+  private resolveTargetTests(results: { testType: string; result: unknown }[]): string[] {
     const iqResult = results.find((r) => r.testType === 'iq');
     const iqInvalid = (iqResult?.result as { reliability?: string } | undefined)?.reliability === 'invalid';
     const completed = new Set(
       results.filter((r) => !(r.testType === 'iq' && iqInvalid)).map((r) => r.testType),
     );
-
-    // The portrait covers every completed test, in canonical order, and regrows as
-    // the user finishes more — a changed set makes the cached `basedOn` stale and
-    // triggers a regeneration.
-    const targetTests = TEST_ORDER.filter((t) => completed.has(t));
-    if (targetTests.length === 0) {
-      return PortraitDto.locked(0, 1);
-    }
-
-    const existing = await this.portraitRepository.getByUserId(userId);
-    if (existing && this.sameSet(existing.basedOn, targetTests)) {
-      return PortraitDto.ready(existing.content, existing.basedOn);
-    }
-
-    const content = await this.dedupedGenerate(userId, targetTests, results);
-    if (!content) return PortraitDto.error();
-    return PortraitDto.ready(content, [...targetTests]);
+    return TEST_ORDER.filter((t) => completed.has(t));
   }
 
   private dedupedGenerate(
@@ -53,7 +90,7 @@ export class PortraitService {
     targetTests: readonly string[],
     results: { testType: string; result: unknown }[],
   ): Promise<string | null> {
-    const key = `${userId}:${[...targetTests].join(',')}`;
+    const key = this.cacheKey(userId, targetTests);
     let inFlight = this.inFlight.get(key);
     if (!inFlight) {
       inFlight = this.generateAndCache(userId, targetTests, results).finally(() =>
@@ -91,9 +128,7 @@ export class PortraitService {
     }
   }
 
-  private sameSet(a: string[], b: readonly string[]): boolean {
-    if (a.length !== b.length) return false;
-    const sa = new Set(a);
-    return b.every((t) => sa.has(t));
+  private cacheKey(userId: string, targetTests: readonly string[]): string {
+    return `${userId}:${[...targetTests].join(',')}`;
   }
 }

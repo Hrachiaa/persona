@@ -15,9 +15,13 @@ function fetchPortrait() {
   return inFlight;
 }
 
-// The portrait tab. Fetches GET /portrait, which lazily generates (and caches)
-// an AI synthesis of every test the user has completed, regrowing as they finish
-// more. The dry per-test results live on the Tests tab; interpretation lives here.
+// How long to wait before re-checking while the portrait is still generating.
+const POLL_INTERVAL_MS = 4000;
+
+// The portrait tab. Fetches GET /portrait — an AI synthesis of every test the user
+// has completed, regenerated server-side whenever a test is submitted. When a
+// generation is still in flight the backend answers 'generating' and we poll until
+// it's ready. The dry per-test results live on the Tests tab; interpretation lives here.
 export default function Portrait() {
   const [data, setData] = useState(null); // backend response: { status, ... }
   const [loading, setLoading] = useState(true);
@@ -33,6 +37,13 @@ export default function Portrait() {
     return () => { active = false; };
   }, [nonce]);
 
+  // Poll while the server is still building the portrait.
+  useEffect(() => {
+    if (data?.status !== 'generating') return;
+    const id = setTimeout(() => setNonce((n) => n + 1), POLL_INTERVAL_MS);
+    return () => clearTimeout(id);
+  }, [data, nonce]);
+
   // Safe to call from event handlers (not synchronously inside the effect).
   const retry = () => {
     setErrored(false);
@@ -42,6 +53,7 @@ export default function Portrait() {
   };
 
   const isError = errored || data?.status === 'error';
+  const isGenerating = !isError && data?.status === 'generating';
   const isLocked = !isError && data?.status === 'locked';
   const isReady = !isError && data?.status === 'ready';
   const includedCount = data?.basedOn?.length ?? 0;
@@ -69,7 +81,7 @@ export default function Portrait() {
       </header>
 
       <AnimatePresence mode="wait">
-        {loading && (
+        {(loading || isGenerating) && (
           <motion.div
             key="loading"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}

@@ -3,9 +3,11 @@ import client from './client';
 export const portraitApi = {
   // returns one of:
   //   { status: 'locked', completed, required }
+  //   { status: 'generating' }
   //   { status: 'ready', content, basedOn }
   //   { status: 'error' }
-  // On the first 'ready' call the portrait is generated server-side (may take up
-  // to a minute) and cached; regenerated once all 6 tests are done.
+  // The portrait is generated server-side when a test is submitted (and regenerated
+  // on every retake). This read is non-blocking: while generation is in flight it
+  // returns 'generating' and the caller should poll until 'ready'.
   getPortrait: () => client.get('/portrait').then((r) => r.data),
 };

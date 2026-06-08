@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { SubmitTestDto } from './dtos/submit-test.dto';
@@ -12,6 +12,7 @@ import testMapper from './mappers/test.mapper';
 import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
 import { TEST_ORDER } from './test-order';
+import { PortraitService } from '../portrait/portrait.service';
 
 @Injectable()
 export class TestsService implements OnModuleInit {
@@ -19,6 +20,8 @@ export class TestsService implements OnModuleInit {
         private readonly testRepository: TestRepository,
         private readonly testResultRepository: TestResultRepository,
         private readonly testScoringService: TestScoringService,
+        @Inject(forwardRef(() => PortraitService))
+        private readonly portraitService: PortraitService,
     ) {}
 
     async onModuleInit() {
@@ -56,11 +59,16 @@ export class TestsService implements OnModuleInit {
         const result = await this.testScoringService.calculate(test.testType, userId, testId, answers.answers)
 
         const isExists = await this.testResultRepository.getTestResult(userId, testId)
-        if(isExists) {
-            const save = await this.testResultRepository.updateTestResult(userId, testId, result) as unknown as TestResultEntity
-            return testResultMapper.toDto(save)
-        }
-        const save = await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType}) as unknown as TestResultEntity
+        const save = isExists
+            ? await this.testResultRepository.updateTestResult(userId, testId, result) as unknown as TestResultEntity
+            : await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType}) as unknown as TestResultEntity
+
+        // Rebuild the cross-test portrait from the latest answers. Fire-and-forget so
+        // the submit response isn't held for the (up to a minute) LLM call; the portrait
+        // tab polls for the result. `regenerate` never throws. Always runs — including
+        // retakes, where the set of completed tests is unchanged but the answers aren't.
+        void this.portraitService.regenerate(userId)
+
         return testResultMapper.toDto(save)
     }
 

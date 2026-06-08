@@ -12,14 +12,11 @@ const DOMAINS: { key: keyof BigFiveResults; facets: (keyof BigFiveResults)[] }[]
 export function buildBigFiveUserPrompt(result: BigFiveResults): string {
   const lines: string[] = ['Результаты теста Big Five (T-баллы, среднее 50):', ''];
 
-  for (const { key, facets } of DOMAINS) {
-    const domain = result[key];
-    lines.push(`## ${domain.name}: ${Math.round(domain.score)}`);
+  for (const { facets } of DOMAINS) {
     for (const facet of facets) {
       const f = result[facet];
       lines.push(`- ${f.name}: ${Math.round(f.score)}`);
     }
-    lines.push('');
   }
 
   return lines.join('\n').trim();

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TestsController } from './tests.controller';
 import { TestsService } from './tests.service';
 import { PrismaService } from '../prisma.service';
@@ -7,6 +7,7 @@ import { TestResultRepository } from './test-result.repository';
 import { TestRepository } from './test.repository';
 import { UsersModule } from '../users/users.module';
 import { TestScoringService } from './test-scoring.service';
+import { PortraitModule } from '../portrait/portrait.module';
 
 @Module({
   controllers: [TestsController],
@@ -17,7 +18,7 @@ import { TestScoringService } from './test-scoring.service';
     TestResultRepository,
     TestScoringService,
   ],
-  imports: [AuthModule, UsersModule],
+  imports: [AuthModule, UsersModule, forwardRef(() => PortraitModule)],
   exports: [TestResultRepository],
 })
 export class TestsModule {}
