@@ -100,8 +100,8 @@ const TICKS = [1, 2, 3, 4, 5, 6, 7];
 const FRAME_MS = 450; // empty plot fades in
 const DOTS_DELAY_MS = 50; // dots start shortly after the plot begins appearing
 const DOTS_MS = 1500; // gray dots pour in over this window (slow → fast)
-const YOU_PAUSE_MS = 80; // tiny beat after the dots before the "You" dot lands
-const YOU_MS = 150; // pause after the "You" dot before the rest is revealed
+const YOU_PAUSE_MS = 0; // (unused now — the "You" dot appears with the cloud)
+const YOU_MS = -100; // rest starts revealing 100ms BEFORE the dots finish (overlaps)
 
 // Count of visible dots, animated 0 → target on an ease-in cubic (slow first,
 // then accelerating) so the cloud starts sparse and rushes in. Starts only once
