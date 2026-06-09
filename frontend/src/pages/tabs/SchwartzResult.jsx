@@ -5,13 +5,20 @@ import ScaleBar from './ScaleBar';
 const byScoreDesc = (a, b) => b.score - a.score;
 
 // Schwartz PVQ-RR: 19 basic values (top) + 4 higher-order values (bottom),
-// each sorted highest-first, on a centered −4..+4 scale.
+// each sorted highest-first, on a centered scale whose half-width is the
+// furthest score from 0 (so the longest bar reaches the edge, 0 stays centered).
 export default function SchwartzResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
   const values = Object.values(r.values || {}).sort(byScoreDesc);
   const higherOrder = Object.values(r.higherOrderValues || {}).sort(byScoreDesc);
+
+  // Symmetric scale bound: the furthest result from 0 (in either direction)
+  // defines the width, with ~5% headroom so the longest bar doesn't touch the
+  // edge, while 0 stays centered.
+  const bound =
+    (Math.max(0, ...[...values, ...higherOrder].map((v) => Math.abs(v.score))) || 1) * 1.05;
 
   return (
     <motion.div
@@ -45,7 +52,7 @@ export default function SchwartzResultScreen({ result, meta, onDone, onRetake, o
         </header>
         <div className="divide-y divide-persona-line/60">
           {values.map((v, i) => (
-            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-4} max={4} delay={0.1 + i * 0.025} />
+            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-bound} max={bound} delay={0.1 + i * 0.025} />
           ))}
         </div>
       </section>
@@ -59,13 +66,13 @@ export default function SchwartzResultScreen({ result, meta, onDone, onRetake, o
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <div className="divide-y divide-persona-line/60">
           {higherOrder.map((v, i) => (
-            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-4} max={4} delay={0.15 + i * 0.05} />
+            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-bound} max={bound} delay={0.15 + i * 0.05} />
           ))}
         </div>
       </section>
 
       {/* Footer actions */}
-      <div className="flex flex-col gap-3 max-w-sm mx-auto">
+      <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
         <motion.button
           onClick={onViewPortrait}
           className="btn-primary w-full"

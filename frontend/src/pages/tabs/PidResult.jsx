@@ -65,7 +65,7 @@ export default function PidResultScreen({ result, meta, onDone, onRetake, onView
       </section>
 
       {/* Footer actions */}
-      <div className="flex flex-col gap-3 max-w-sm mx-auto">
+      <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
         <motion.button
           onClick={onViewPortrait}
           className="btn-primary w-full"

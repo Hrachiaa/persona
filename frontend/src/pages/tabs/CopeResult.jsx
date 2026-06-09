@@ -49,7 +49,7 @@ export default function CopeResultScreen({ result, meta, onDone, onRetake, onVie
       </section>
 
       {/* Footer actions */}
-      <div className="flex flex-col gap-3 max-w-sm mx-auto">
+      <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
         <motion.button
           onClick={onViewPortrait}
           className="btn-primary w-full"

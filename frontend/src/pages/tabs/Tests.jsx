@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineBolt,
@@ -89,16 +89,66 @@ const LS = {
 const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', RESULT: 'result' };
 
 // ─── Bell Curve component ────────────────────────────────────────────────────
-function BellCurve({ score }) {
-  const mean = 100;
-  const sigma = 15;
-  const lo = 55;
-  const hi = 145;
+
+const IQ_MEAN = 100;
+const IQ_SIGMA = 15;
+
+// Standard normal CDF via the Abramowitz-Stegun erf approximation.
+// Returns the share of the population scoring at or below `x`.
+function normalCdf(x, mean = IQ_MEAN, sigma = IQ_SIGMA) {
+  const z = (x - mean) / (sigma * Math.SQRT2);
+  const t = 1 / (1 + 0.3275911 * Math.abs(z));
+  const erf =
+    1 -
+    (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t) *
+      Math.exp(-z * z);
+  return 0.5 * (1 + (z >= 0 ? erf : -erf));
+}
+
+// Whole-number percentile, clamped to 1..99 (matches how Mensa reports it).
+function iqPercentile(score) {
+  return Math.max(1, Math.min(99, Math.round(normalCdf(score) * 100)));
+}
+
+// Animate a value from 0 up to `target` on an ease-out curve (fast first, then
+// settling), calling `onDone` once when it lands. With run=false it jumps
+// straight to `target` (e.g. when the intro animation should be skipped).
+function useCountUp(target, run, onDone, duration = 1800) {
+  const [value, setValue] = useState(run ? 0 : target);
+  const doneRef = useRef(onDone);
+  useEffect(() => { doneRef.current = onDone; });
+  useEffect(() => {
+    if (!run) return undefined; // initial state is already `target`
+    let raf;
+    const start = performance.now();
+    const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      setValue(target * easeOutQuart(t));
+      if (t < 1) raf = requestAnimationFrame(tick);
+      else doneRef.current?.();
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, run, duration]);
+  return value;
+}
+
+// Mensa-style normal-distribution chart with the user's score marked.
+//  • red lower tail (below −1σ), gray bulk, green band highlighting "you"
+//  • a center "Average" line at μ=100 and a red "You" marker at the score
+//  • dual x-axis: raw IQ values on top, σ offsets below
+function BellCurve({ score, showMarkerLabel = true }) {
+  const mean = IQ_MEAN;
+  const sigma = IQ_SIGMA;
+  const lo = mean - 3 * sigma; // 55
+  const hi = mean + 3 * sigma; // 145
   const w = 360;
-  const h = 180;
-  const pad = { top: 20, bottom: 40, left: 10, right: 10 };
+  const h = 210;
+  const pad = { top: 22, bottom: 48, left: 12, right: 12 };
   const innerW = w - pad.left - pad.right;
   const innerH = h - pad.top - pad.bottom;
+  const baseY = pad.top + innerH;
 
   const gauss = (x) => Math.exp(-0.5 * ((x - mean) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
   const maxY = gauss(mean);
@@ -106,63 +156,80 @@ function BellCurve({ score }) {
   const toSvgX = (v) => pad.left + ((v - lo) / (hi - lo)) * innerW;
   const toSvgY = (g) => pad.top + innerH - (g / maxY) * innerH;
 
-  // Build the curve path
+  // Filled area under the curve between two IQ values.
+  const areaPath = (x1, x2) => {
+    const a = Math.max(lo, Math.min(hi, x1));
+    const b = Math.max(lo, Math.min(hi, x2));
+    if (b <= a) return '';
+    const n = 80;
+    let d = '';
+    for (let i = 0; i <= n; i++) {
+      const xVal = a + (i / n) * (b - a);
+      d += `${i === 0 ? 'M' : 'L'}${toSvgX(xVal).toFixed(2)},${toSvgY(gauss(xVal)).toFixed(2)} `;
+    }
+    return d + `L${toSvgX(b).toFixed(2)},${baseY.toFixed(2)} L${toSvgX(a).toFixed(2)},${baseY.toFixed(2)} Z`;
+  };
+
+  // Curve outline.
   const steps = 200;
-  const pts = [];
+  let curvePath = '';
   for (let i = 0; i <= steps; i++) {
     const xVal = lo + (i / steps) * (hi - lo);
-    pts.push({ x: toSvgX(xVal), y: toSvgY(gauss(xVal)) });
+    curvePath += `${i === 0 ? 'M' : 'L'}${toSvgX(xVal).toFixed(2)},${toSvgY(gauss(xVal)).toFixed(2)} `;
   }
-  const curvePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
 
-  // Shaded area under curve up to user score
   const clampedScore = Math.max(lo, Math.min(hi, score));
-  const shadePts = [];
-  for (let i = 0; i <= steps; i++) {
-    const xVal = lo + (i / steps) * (hi - lo);
-    if (xVal > clampedScore) break;
-    shadePts.push({ x: toSvgX(xVal), y: toSvgY(gauss(xVal)) });
-  }
-  const shadePath = shadePts.length > 1
-    ? shadePts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ')
-      + ` L${toSvgX(clampedScore).toFixed(2)},${(pad.top + innerH).toFixed(2)} L${toSvgX(lo).toFixed(2)},${(pad.top + innerH).toFixed(2)} Z`
-    : '';
-
   const scoreX = toSvgX(clampedScore);
   const scoreY = toSvgY(gauss(clampedScore));
-  const labels = [60, 70, 85, 100, 115, 130, 140];
+  const meanY = toSvgY(gauss(mean));
+
+  const ticks = [55, 70, 85, 100, 115, 130, 145];
+
+  // Keep the "Average" and "You" captions from colliding when the score is mid-range.
+  const showAverage = Math.abs(clampedScore - mean) > sigma * 0.7;
 
   return (
     <svg viewBox={`0 0 ${w} ${h}`} className="w-full max-w-sm mx-auto" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#FDBA74" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#FDBA74" stopOpacity="0.06" />
-        </linearGradient>
-      </defs>
+      {/* region fills: warm bulk, peach lower tail, fixed lime "high" zone (130–145) */}
+      <path d={areaPath(mean - sigma, hi)} fill="#E8E5DC" />
+      <path d={areaPath(lo, mean - sigma)} fill="#FDBA74" fillOpacity="0.55" />
+      <path d={areaPath(130, 145)} fill="#BEF264" fillOpacity="0.9" />
 
-      {/* shaded area */}
-      {shadePath && <path d={shadePath} fill="url(#curveGrad)" />}
-
-      {/* curve line */}
-      <path d={curvePath} fill="none" stroke="#FDBA74" strokeWidth="2.5" strokeLinejoin="round" />
+      {/* curve outline */}
+      <path d={curvePath} fill="none" stroke="#1A1A1A" strokeWidth="2" strokeLinejoin="round" />
 
       {/* baseline */}
-      <line x1={pad.left} y1={pad.top + innerH} x2={pad.left + innerW} y2={pad.top + innerH} stroke="#d1d5db" strokeWidth="1" />
+      <line x1={pad.left} y1={baseY} x2={pad.left + innerW} y2={baseY} stroke="#E8E5DC" strokeWidth="1" />
 
-      {/* score marker */}
-      <line x1={scoreX} y1={scoreY} x2={scoreX} y2={pad.top + innerH} stroke="#1a1a1a" strokeWidth="1.5" strokeDasharray="4 3" />
-      <circle cx={scoreX} cy={scoreY} r="5" fill="#1a1a1a" />
-      <text x={scoreX} y={scoreY - 10} textAnchor="middle" fontSize="11" fontWeight="700" fill="#1a1a1a">{score}</text>
+      {/* center "Average" line at the mean */}
+      <line x1={toSvgX(mean)} y1={meanY} x2={toSvgX(mean)} y2={baseY} stroke="#6B7280" strokeWidth="1" strokeDasharray="3 3" />
+      {showAverage && (
+        <text x={toSvgX(mean)} y={baseY + 32} textAnchor="middle" fontSize="10" fontStyle="italic" fontWeight="600" fill="#6B7280">
+          Average
+        </text>
+      )}
 
-      {/* axis labels */}
-      {labels.map((v) => (
-        <text key={v} x={toSvgX(v)} y={pad.top + innerH + 16} textAnchor="middle" fontSize="9" fill="#9ca3af">{v}</text>
-      ))}
+      {/* user "You" marker — only the dot moves during the intro; the vertical
+          line and labels appear once it lands on the final score */}
+      <circle cx={scoreX} cy={scoreY} r="3.5" fill="#1A1A1A" />
+      {showMarkerLabel && (
+        <>
+          <line x1={scoreX} y1={scoreY} x2={scoreX} y2={baseY} stroke="#1A1A1A" strokeWidth="1.75" />
+          <text x={scoreX} y={scoreY - 9} textAnchor="middle" fontSize="12" fontWeight="700" fill="#1A1A1A">
+            {Math.round(score)}
+          </text>
+          <text x={scoreX} y={baseY + 32} textAnchor="middle" fontSize="10" fontStyle="italic" fontWeight="700" fill="#1A1A1A">
+            You
+          </text>
+        </>
+      )}
 
-      {/* sigma markers */}
-      {[85, 115].map((v) => (
-        <line key={v} x1={toSvgX(v)} y1={pad.top + innerH} x2={toSvgX(v)} y2={pad.top + innerH + 4} stroke="#d1d5db" strokeWidth="1" />
+      {/* x-axis: IQ values */}
+      {ticks.map((iq) => (
+        <g key={iq}>
+          <line x1={toSvgX(iq)} y1={baseY} x2={toSvgX(iq)} y2={baseY + 4} stroke="#9ca3af" strokeWidth="1" />
+          <text x={toSvgX(iq)} y={baseY + 16} textAnchor="middle" fontSize="9" fill="#6B7280">{iq}</text>
+        </g>
       ))}
     </svg>
   );
@@ -531,6 +598,23 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
   const { iq, reliability } = result.result;
   const Icon = meta.icon;
 
+  // Intro reveal: the score and the chart marker count up from 0 to `iq`
+  // (fast, then settling). Once they land, a short beat later the top bar and
+  // bottom actions fade in. Space for both is reserved during the intro so the
+  // centered chart never shifts.
+  const INTRO_MS = 3000;
+  const [revealed, setRevealed] = useState(false);
+  const count = useCountUp(iq, reliability !== 'invalid', undefined, INTRO_MS);
+  // Start revealing the UI ~300ms before the count-up fully lands. The ease-out
+  // is nearly settled by then, so the marker barely moves while the interface
+  // fades in — this overlap removes the perceived pause at the end.
+  useEffect(() => {
+    if (reliability === 'invalid') return undefined;
+    const id = setTimeout(() => setRevealed(true), INTRO_MS - 300);
+    return () => clearTimeout(id);
+  }, [reliability]);
+  const displayIq = revealed ? iq : Math.round(count);
+
   if (reliability === 'invalid') {
     return (
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 180, damping: 20 }} className="px-6 pt-10">
@@ -584,58 +668,71 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 200 }} className="px-6 pt-8">
-      <div className="text-center">
-        <motion.div
-          className={`w-28 h-28 ${meta.color} rounded-[2rem] flex items-center justify-center mx-auto mb-6`}
-          initial={{ rotate: -10 }} animate={{ rotate: 0 }} transition={{ type: 'spring', stiffness: 200 }}
-        >
-          <Icon className={`w-14 h-14 ${meta.iconColor}`} />
-        </motion.div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="min-h-dvh flex flex-col">
+      {/* Top bar — space reserved, fades in once the intro finishes */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: revealed ? 1 : 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className={revealed ? '' : 'pointer-events-none'}
+      >
+        <ImmersiveTopBar onBack={onDone} />
+      </motion.div>
 
+      {/* Hero — vertically centered; stays put through the reveal */}
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
         <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Your IQ score</h2>
 
-        <motion.div
-          className="font-display text-7xl font-semibold text-persona-dark mb-4 tabular leading-none"
-          initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+        <div className="font-display text-7xl font-semibold text-persona-dark mb-4 tabular leading-none">
+          {displayIq}
+        </div>
+
+        {/* chart marker uses the raw (un-rounded) value so it glides smoothly */}
+        <BellCurve score={revealed ? iq : count} showMarkerLabel={revealed} />
+
+        {/* Percentile — space reserved so the chart doesn't shift on reveal */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: revealed ? 1 : 0 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="text-sm text-persona-muted mt-4 leading-relaxed max-w-prose mx-auto"
         >
-          {iq}
-        </motion.div>
+          Your IQ of <span className="font-semibold text-persona-dark tabular">{iq}</span> is equivalent to the{' '}
+          <span className="font-semibold text-persona-dark tabular">{iqPercentile(iq)}th</span> percentile — higher than{' '}
+          <span className="tabular">{iqPercentile(iq)}%</span> of people, with a standard deviation of 15.
+        </motion.p>
+      </div>
 
-        {/* Bell curve */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mb-6">
-          <BellCurve score={iq} />
-          <p className="text-xs text-persona-muted mt-2 tabular">Normal distribution · μ=100 · σ=15</p>
-        </motion.div>
-
-        {/* Suspicious notice */}
+      {/* Bottom actions — pinned to the bottom, space reserved, fade in on reveal */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 8 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className={`px-6 pb-10 flex flex-col items-center ${revealed ? '' : 'pointer-events-none'}`}
+      >
         {reliability === 'suspicious' && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-            className="flex items-start gap-3 bg-persona-warn/10 rounded-2xl p-4 text-left mb-6 max-w-prose mx-auto"
-          >
+          <div className="flex items-start gap-3 bg-persona-warn/10 rounded-2xl p-4 text-left mb-5 max-w-prose">
             <HiOutlineInformationCircle className="w-5 h-5 text-persona-warn flex-shrink-0 mt-0.5" />
             <p className="text-sm text-persona-warn leading-relaxed">
               Your results show some unusual patterns. You may want to retake the test for more accurate results.
             </p>
-          </motion.div>
+          </div>
         )}
 
-        <motion.button onClick={onViewPortrait} className="btn-primary mt-8 w-full max-w-xs mx-auto" whileTap={{ scale: 0.97 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
+        <motion.button onClick={onViewPortrait} className="btn-primary w-full max-w-sm" whileTap={{ scale: 0.97 }}>
           View portrait
         </motion.button>
 
-        <motion.button onClick={onDone} className="btn-secondary mt-3 w-full max-w-xs mx-auto" whileTap={{ scale: 0.97 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 }}>
+        <motion.button onClick={onDone} className="btn-secondary w-full max-w-sm mt-3" whileTap={{ scale: 0.97 }}>
           Done
         </motion.button>
 
         {reliability === 'suspicious' && (
-          <motion.button onClick={onRetake} className="mt-3 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5" whileTap={{ scale: 0.97 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+          <motion.button onClick={onRetake} className="mt-3 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5" whileTap={{ scale: 0.97 }}>
             <HiOutlineArrowPath className="w-4 h-4" /> Retake test
           </motion.button>
         )}
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -915,9 +1012,13 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
       pid: PidResultScreen,
     };
     const ResultScreen = RESULT_SCREENS[selectedTest.testType] || GenericResultScreen;
+    // The valid IQ result renders its own top bar inside its full-height intro
+    // layout; every other result (incl. the invalid IQ state) uses the standard
+    // immersive top bar here.
+    const iqReveal = selectedTest.testType === 'iq' && result?.result?.reliability !== 'invalid';
     return (
       <>
-        <ImmersiveTopBar onBack={handleBackToList} />
+        {!iqReveal && <ImmersiveTopBar onBack={handleBackToList} />}
         <ResultScreen
           result={result}
           meta={meta}

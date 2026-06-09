@@ -46,10 +46,6 @@ export default function ScaleBar({ label, description, score, min, max, delay = 
       </span>
 
       <div className="relative flex-1 h-2.5 bg-persona-line/60 rounded-full overflow-hidden">
-        {/* center zero tick — only when the range straddles 0 */}
-        {diverging && (
-          <div className="absolute top-0 bottom-0 w-px bg-persona-dark/25" style={{ left: `${zeroPct}%` }} />
-        )}
         <motion.div
           className={`absolute top-0 bottom-0 ${color.bar} rounded-full`}
           initial={{ width: 0, left: `${zeroPct}%` }}
