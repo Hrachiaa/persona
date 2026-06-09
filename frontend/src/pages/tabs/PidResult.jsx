@@ -6,7 +6,7 @@ const byScoreDesc = (a, b) => b.score - a.score;
 
 // PID-5: 25 maladaptive facets (top) + 5 broad domains (bottom),
 // each sorted highest-first, on a 0..3 scale.
-export default function PidResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
+export default function PidResultScreen({ result, meta, onRetake, onViewPortrait }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -75,16 +75,6 @@ export default function PidResultScreen({ result, meta, onDone, onRetake, onView
           transition={{ delay: 0.4 }}
         >
           View portrait
-        </motion.button>
-        <motion.button
-          onClick={onDone}
-          className="btn-secondary w-full"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          Done
         </motion.button>
         <motion.button
           onClick={onRetake}

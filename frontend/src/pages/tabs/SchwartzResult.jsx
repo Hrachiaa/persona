@@ -7,7 +7,7 @@ const byScoreDesc = (a, b) => b.score - a.score;
 // Schwartz PVQ-RR: 19 basic values (top) + 4 higher-order values (bottom),
 // each sorted highest-first, on a centered scale whose half-width is the
 // furthest score from 0 (so the longest bar reaches the edge, 0 stays centered).
-export default function SchwartzResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
+export default function SchwartzResultScreen({ result, meta, onRetake, onViewPortrait }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -82,16 +82,6 @@ export default function SchwartzResultScreen({ result, meta, onDone, onRetake, o
           transition={{ delay: 0.4 }}
         >
           View portrait
-        </motion.button>
-        <motion.button
-          onClick={onDone}
-          className="btn-secondary w-full"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          Done
         </motion.button>
         <motion.button
           onClick={onRetake}

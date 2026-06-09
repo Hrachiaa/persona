@@ -5,7 +5,7 @@ import ScaleBar from './ScaleBar';
 const byScoreDesc = (a, b) => b.score - a.score;
 
 // COPE: 15 coping-strategy scales, sorted highest-first, on a 1..4 scale.
-export default function CopeResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
+export default function CopeResultScreen({ result, meta, onRetake, onViewPortrait }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -59,16 +59,6 @@ export default function CopeResultScreen({ result, meta, onDone, onRetake, onVie
           transition={{ delay: 0.4 }}
         >
           View portrait
-        </motion.button>
-        <motion.button
-          onClick={onDone}
-          className="btn-secondary w-full"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          Done
         </motion.button>
         <motion.button
           onClick={onRetake}

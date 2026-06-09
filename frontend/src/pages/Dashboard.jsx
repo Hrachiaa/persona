@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineClipboardDocumentList,
@@ -30,6 +30,10 @@ export default function Dashboard({ onLogout }) {
   const [immersive, setImmersive] = useState(false);
 
   const userName = user?.name || 'User';
+
+  // Each tab should open at the top — the window otherwise keeps the previous
+  // tab's scroll position.
+  useEffect(() => { window.scrollTo(0, 0); }, [activeTab]);
 
   const renderTab = () => {
     switch (activeTab) {

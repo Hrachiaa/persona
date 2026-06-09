@@ -6,7 +6,6 @@ import {
   HiOutlineCpuChip,
   HiOutlineFingerPrint,
   HiOutlineCheckCircle,
-  HiOutlineArrowLeft,
   HiOutlineClock,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
@@ -18,7 +17,7 @@ import {
   HiOutlineLockClosed,
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
-import ProgressiveBlur from '../../components/ProgressiveBlur';
+import ImmersiveTopBar from './ImmersiveTopBar';
 import BigFiveResultScreen from './BigFiveResult';
 import SchwartzResultScreen from './SchwartzResult';
 import EcrResultScreen from './EcrResult';
@@ -336,27 +335,6 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
 }
 
 // ─── Immersive top bar (mobile "pushed screen" chrome) ───────────────────────
-function ImmersiveTopBar({ onBack }) {
-  return (
-    <div className="sticky top-0 z-40">
-      {/* Progressive blur — iOS-style: blur ramps down and fades into the content below */}
-      <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-44" />
-      <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
-        <motion.button
-          onClick={onBack}
-          aria-label="Back"
-          className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
-          whileTap={{ scale: 0.9 }}
-        >
-          <HiOutlineArrowLeft className="w-5 h-5" />
-        </motion.button>
-        <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark">
-          <span className="font-display text-xl">λ</span> Persona
-        </p>
-      </div>
-    </div>
-  );
-}
 
 // ─── Resume Prompt Screen ────────────────────────────────────────────────────
 function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
@@ -723,22 +701,16 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
           View portrait
         </motion.button>
 
-        <motion.button onClick={onDone} className="btn-secondary w-full max-w-sm mt-3" whileTap={{ scale: 0.97 }}>
-          Done
+        <motion.button onClick={onRetake} className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5" whileTap={{ scale: 0.97 }}>
+          <HiOutlineArrowPath className="w-4 h-4" /> Retake test
         </motion.button>
-
-        {reliability === 'suspicious' && (
-          <motion.button onClick={onRetake} className="mt-3 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5" whileTap={{ scale: 0.97 }}>
-            <HiOutlineArrowPath className="w-4 h-4" /> Retake test
-          </motion.button>
-        )}
       </motion.div>
     </motion.div>
   );
 }
 
 // ─── Generic Result Screen (non-IQ) ─────────────────────────────────────────
-function GenericResultScreen({ result, meta, onDone }) {
+function GenericResultScreen({ result, meta }) {
   const Icon = meta.icon;
   const r = result.result || {};
   return (
@@ -760,9 +732,6 @@ function GenericResultScreen({ result, meta, onDone }) {
         <motion.p className="text-persona-muted leading-relaxed max-w-prose mx-auto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           {r.detail || ''}
         </motion.p>
-        <motion.button onClick={onDone} className="btn-primary mt-8 w-full max-w-xs mx-auto" whileTap={{ scale: 0.97 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-          Done
-        </motion.button>
       </div>
     </motion.div>
   );
@@ -785,6 +754,9 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // — taking a test, the resume prompt, or a result — so it can hide its chrome.
   useEffect(() => {
     onImmersiveChange?.(screen !== SCREEN.LIST);
+    // Every screen change (into a test / result and back to the list) should
+    // start at the top — the window otherwise keeps the previous scroll position.
+    window.scrollTo(0, 0);
   }, [screen, onImmersiveChange]);
   useEffect(() => () => onImmersiveChange?.(false), [onImmersiveChange]);
 
@@ -1012,13 +984,15 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
       pid: PidResultScreen,
     };
     const ResultScreen = RESULT_SCREENS[selectedTest.testType] || GenericResultScreen;
-    // The valid IQ result renders its own top bar inside its full-height intro
-    // layout; every other result (incl. the invalid IQ state) uses the standard
-    // immersive top bar here.
-    const iqReveal = selectedTest.testType === 'iq' && result?.result?.reliability !== 'invalid';
+    // Some result screens own a full-height layout and render their own top bar
+    // (valid IQ with its intro; ECR with bottom-pinned actions). Everything else
+    // (incl. the invalid IQ state) uses the standard immersive top bar here.
+    const ownsTopBar =
+      (selectedTest.testType === 'iq' && result?.result?.reliability !== 'invalid') ||
+      selectedTest.testType === 'ecr';
     return (
       <>
-        {!iqReveal && <ImmersiveTopBar onBack={handleBackToList} />}
+        {!ownsTopBar && <ImmersiveTopBar onBack={handleBackToList} />}
         <ResultScreen
           result={result}
           meta={meta}
