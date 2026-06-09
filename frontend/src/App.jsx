@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import Survey from './pages/Survey';
 import Dashboard from './pages/Dashboard';
+import ProgressiveBlur from './components/ProgressiveBlur';
 
 const SCREENS = {
   ONBOARDING: 'onboarding',
@@ -121,6 +122,11 @@ export default function App() {
         Skip to content
       </a>
       <main id="main" className="relative">
+        {/* Top progressive blur — matches the Dashboard. Dashboard renders its own
+            (immersive-aware) instance, so skip it here to avoid doubling up. */}
+        {screen !== SCREENS.DASHBOARD && (
+          <ProgressiveBlur direction="down" className="fixed top-0 inset-x-0 h-28 z-40" />
+        )}
         <AnimatePresence mode="wait">
         {screen === SCREENS.ONBOARDING && (
           <Onboarding

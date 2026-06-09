@@ -57,7 +57,7 @@ export default function Dashboard({ onLogout }) {
       {!immersive && (
         <header className="sticky top-0 z-40">
           {/* Progressive blur — iOS-style: blur ramps down and fades into the content below */}
-          <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-44" />
+          <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-28" />
           <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
             <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark">
               <span className="font-display text-xl">λ</span> Persona
@@ -83,7 +83,7 @@ export default function Dashboard({ onLogout }) {
 
       {/* Bottom progressive blur — content stays visible behind the nav, just blurred (mirrors the top) */}
       {!immersive && (
-        <ProgressiveBlur direction="up" className="fixed bottom-0 inset-x-0 h-40 z-40" />
+        <ProgressiveBlur direction="up" className="fixed bottom-0 inset-x-0 h-32 z-40" />
       )}
 
       {/* Bottom Navigation — floating capsule; slides away on immersive screens */}

@@ -7,7 +7,7 @@ export default function ImmersiveTopBar({ onBack }) {
   return (
     <div className="sticky top-0 z-40">
       {/* Progressive blur — iOS-style: blur ramps down and fades into the content below */}
-      <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-44" />
+      <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-28" />
       <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
         <motion.button
           onClick={onBack}
