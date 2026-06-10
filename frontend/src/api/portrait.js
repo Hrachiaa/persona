@@ -3,11 +3,14 @@ import client from './client';
 export const portraitApi = {
   // returns one of:
   //   { status: 'locked', completed, required }
-  //   { status: 'generating' }
-  //   { status: 'ready', content, basedOn }
+  //   { status: 'generating' }                                  // first-ever build, nothing to show yet
+  //   { status: 'ready', content, basedOn, updatedAt, refreshing }
   //   { status: 'error' }
   // The portrait is generated server-side when a test is submitted (and regenerated
-  // on every retake). This read is non-blocking: while generation is in flight it
-  // returns 'generating' and the caller should poll until 'ready'.
+  // on every retake). This read is non-blocking. A cached portrait is always returned
+  // as 'ready' if one exists — even while a newer generation is in flight, in which
+  // case `refreshing` is true and the caller should poll and swap in the fresh version
+  // (keyed by `updatedAt`) once it lands. 'generating' is only returned when there is
+  // no cached portrait at all.
   getPortrait: () => client.get('/portrait').then((r) => r.data),
 };

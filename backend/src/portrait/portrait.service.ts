@@ -24,8 +24,11 @@ export class PortraitService {
    * submitted (see `regenerate`), so this never blocks on the LLM during a normal
    * read — it just reports where things stand:
    *   - `locked`     — no usable test results yet
-   *   - `generating` — a (re)generation is in flight; the client should poll
-   *   - `ready`      — a cached portrait is available
+   *   - `ready`      — a cached portrait is available; `refreshing` says whether a
+   *                    newer generation is in flight (the client keeps showing this
+   *                    one and swaps in the fresh version once it lands)
+   *   - `generating` — a first-ever build is in flight and there's nothing cached to
+   *                    show yet; the client polls
    * As a fallback (pre-existing users, or a generation that failed) it kicks off a
    * generation when results exist but nothing is cached or in flight.
    */
@@ -36,21 +39,24 @@ export class PortraitService {
       return PortraitDto.locked(0, 1);
     }
 
-    // A regeneration in flight (e.g. just-submitted test) wins over the cache, which
-    // still holds the previous content — report `generating` so the client polls
-    // instead of flashing a stale portrait.
-    if (this.inFlight.has(this.cacheKey(userId, targetTests))) {
-      return PortraitDto.generating();
-    }
+    const refreshing = this.inFlight.has(this.cacheKey(userId, targetTests));
 
+    // Always surface a cached portrait if we have one — even while a newer generation
+    // is in flight. The client shows it immediately (no spinner on entry) and swaps in
+    // the fresh version, with an animation, once `refreshing` clears.
     const existing = await this.portraitRepository.getByUserId(userId);
     if (existing) {
-      return PortraitDto.ready(existing.content, existing.basedOn);
+      return PortraitDto.ready(existing.content, existing.basedOn, {
+        updatedAt: existing.updatedAt,
+        refreshing,
+      });
     }
 
-    // Nothing cached and nothing running — kick off a generation and let the client
-    // poll until it lands.
-    void this.dedupedGenerate(userId, targetTests, results);
+    // Nothing cached. If a first-ever build is already running, just report it;
+    // otherwise kick one off. Either way the client polls until it lands.
+    if (!refreshing) {
+      void this.dedupedGenerate(userId, targetTests, results);
+    }
     return PortraitDto.generating();
   }
 
