@@ -5,13 +5,20 @@ import ScaleBar from './ScaleBar';
 const byScoreDesc = (a, b) => b.score - a.score;
 
 // Schwartz PVQ-RR: 19 basic values (top) + 4 higher-order values (bottom),
-// each sorted highest-first, on a centered −4..+4 scale.
-export default function SchwartzResultScreen({ result, meta, onDone, onRetake }) {
+// each sorted highest-first, on a centered scale whose half-width is the
+// furthest score from 0 (so the longest bar reaches the edge, 0 stays centered).
+export default function SchwartzResultScreen({ result, meta, onRetake, onViewPortrait }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
   const values = Object.values(r.values || {}).sort(byScoreDesc);
   const higherOrder = Object.values(r.higherOrderValues || {}).sort(byScoreDesc);
+
+  // Symmetric scale bound: the furthest result from 0 (in either direction)
+  // defines the width, with ~5% headroom so the longest bar doesn't touch the
+  // edge, while 0 stays centered.
+  const bound =
+    (Math.max(0, ...[...values, ...higherOrder].map((v) => Math.abs(v.score))) || 1) * 1.05;
 
   return (
     <motion.div
@@ -41,11 +48,11 @@ export default function SchwartzResultScreen({ result, meta, onDone, onRetake })
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <header className="mb-4">
           <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Values</h3>
-          <p className="text-sm text-persona-muted mt-1">19 basic values · scale −4 to +4</p>
+          <p className="text-sm text-persona-muted mt-1">19 basic values</p>
         </header>
         <div className="divide-y divide-persona-line/60">
           {values.map((v, i) => (
-            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-4} max={4} delay={0.1 + i * 0.025} />
+            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-bound} max={bound} delay={0.1 + i * 0.025} />
           ))}
         </div>
       </section>
@@ -53,13 +60,13 @@ export default function SchwartzResultScreen({ result, meta, onDone, onRetake })
       {/* Divider + label introducing the higher-order group */}
       <div className="mt-8 mb-4 border-t border-persona-line pt-6">
         <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Higher-order values</h3>
-        <p className="text-sm text-persona-muted mt-1">Four broad dimensions · scale −4 to +4</p>
+        <p className="text-sm text-persona-muted mt-1">Four broad dimensions</p>
       </div>
 
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <div className="divide-y divide-persona-line/60">
           {higherOrder.map((v, i) => (
-            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-4} max={4} delay={0.15 + i * 0.05} />
+            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-bound} max={bound} delay={0.15 + i * 0.05} />
           ))}
         </div>
       </section>
@@ -67,14 +74,14 @@ export default function SchwartzResultScreen({ result, meta, onDone, onRetake })
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
         <motion.button
-          onClick={onDone}
+          onClick={onViewPortrait}
           className="btn-primary w-full"
           whileTap={{ scale: 0.97 }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.4 }}
         >
-          Done
+          View portrait
         </motion.button>
         <motion.button
           onClick={onRetake}

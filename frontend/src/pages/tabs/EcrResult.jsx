@@ -1,78 +1,78 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
-import ScaleBar from './ScaleBar';
+import EcrQuadrant from './EcrQuadrant';
+import ImmersiveTopBar from './ImmersiveTopBar';
 
 // ECR-R: two attachment subscales (anxiety, avoidance) on a 1..7 scale.
-// The backend returns plain numbers keyed by name, so labels are derived from
-// the keys and the natural order is preserved (no sorting).
-export default function EcrResultScreen({ result, meta, onDone, onRetake }) {
+// The pair is plotted on a quadrant map whose midpoint (4, 4) splits the
+// plane into the four classic attachment styles.
+export default function EcrResultScreen({ result, onDone, onRetake, onViewPortrait }) {
   const r = result?.result || {};
-  const Icon = meta.icon;
+  const anxiety = Number(r.anxiety) || 0;
+  const avoidance = Number(r.avoidance) || 0;
 
-  const scales = Object.entries(r).map(([key, score]) => ({
-    label: key.charAt(0).toUpperCase() + key.slice(1),
-    score,
-  }));
+  // The graph plays an intro (dots pour in, then the "You" dot lands). Only
+  // once it signals ready do the heading, text and actions fade in.
+  const [revealed, setRevealed] = useState(false);
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="px-5 sm:px-6 pt-8 pb-12"
+      className="min-h-dvh flex flex-col"
     >
-      {/* Hero */}
-      <div className="text-center mb-6">
-        <motion.div
-          className={`w-20 h-20 ${meta.color} rounded-[1.75rem] flex items-center justify-center mx-auto mb-5`}
-          initial={{ rotate: -10, scale: 0.8 }}
-          animate={{ rotate: 0, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 200 }}
-        >
-          <Icon className={`w-10 h-10 ${meta.iconColor}`} />
-        </motion.div>
-        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">Your attachment style</h2>
-        <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          Two dimensions of how you relate in close relationships. Lower scores on both point
-          toward a more secure attachment.
-        </p>
+      <div className="transition-opacity duration-[800ms] ease-out" style={{ opacity: revealed ? 1 : 0, pointerEvents: revealed ? 'auto' : 'none' }}>
+        <ImmersiveTopBar onBack={onDone} />
       </div>
 
-      {/* Scales */}
-      <section className="surface-warm rounded-3xl p-5 sm:p-6">
-        <header className="mb-4">
-          <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Attachment scales</h3>
-          <p className="text-sm text-persona-muted mt-1">Two subscales · scale 1 to 7</p>
-        </header>
-        <div className="divide-y divide-persona-line/60">
-          {scales.map((s, i) => (
-            <ScaleBar key={s.label} label={s.label} score={s.score} min={1} max={7} delay={0.15 + i * 0.08} />
-          ))}
+      <div className="flex-1 flex flex-col px-4 sm:px-6 pb-10">
+        {/* Hero — fades in after the graph intro */}
+        <div className="text-center mb-4 transition-opacity duration-[800ms] ease-out" style={{ opacity: revealed ? 1 : 0 }}>
+          <h2 className="font-display text-3xl font-semibold text-persona-dark">Your attachment style</h2>
         </div>
-      </section>
 
-      {/* Footer actions */}
-      <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
-        <motion.button
-          onClick={onDone}
-          className="btn-primary w-full"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+        {/* Quadrant map */}
+        <section className="w-full max-w-2xl mx-auto">
+          <EcrQuadrant anxiety={anxiety} avoidance={avoidance} onReady={() => setRevealed(true)} />
+        </section>
+
+        {/* Explanation — fades in after the graph intro */}
+        <div
+          className="mt-8 max-w-sm mx-auto space-y-4 text-sm text-persona-muted leading-relaxed transition-opacity duration-[800ms] ease-out"
+          style={{ opacity: revealed ? 1 : 0 }}
         >
-          Done
-        </motion.button>
-        <motion.button
-          onClick={onRetake}
-          className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
+          <p>
+            Higher <span className="font-semibold text-persona-dark">anxiety</span> scores indicate greater fear of
+            rejection and abandonment, while lower scores reflect a sense of security in relationships.
+          </p>
+          <p>
+            Higher <span className="font-semibold text-persona-dark">avoidance</span> scores indicate a preference for
+            emotional distance and self-reliance, while lower scores reflect ease with intimacy and interdependence.
+          </p>
+        </div>
+
+        {/* Footer actions — fade in after the graph intro */}
+        <div
+          className="mt-10 flex flex-col gap-3 max-w-sm w-full mx-auto transition-opacity duration-[800ms] ease-out"
+          style={{ opacity: revealed ? 1 : 0, pointerEvents: revealed ? 'auto' : 'none' }}
         >
-          <HiOutlineArrowPath className="w-4 h-4" /> Retake test
-        </motion.button>
+          <motion.button
+            onClick={onViewPortrait}
+            className="btn-primary w-full"
+            whileTap={{ scale: 0.97 }}
+          >
+            View portrait
+          </motion.button>
+          <motion.button
+            onClick={onRetake}
+            className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
+            whileTap={{ scale: 0.97 }}
+          >
+            <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+          </motion.button>
+        </div>
       </div>
     </motion.div>
   );

@@ -1,23 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineClipboardDocumentList,
-  HiOutlineChartBar,
+  HiOutlineSparkles,
   HiOutlineHeart,
   HiOutlineBookOpen,
   HiOutlineStar,
   HiOutlineArrowRightOnRectangle,
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
+import ProgressiveBlur from '../components/ProgressiveBlur';
 import Tests from './tabs/Tests';
-import Analysis from './tabs/Analysis';
+import Portrait from './tabs/Portrait';
 import Compatibility from './tabs/Compatibility';
 import Recommendations from './tabs/Recommendations';
 import DailyAdvice from './tabs/DailyAdvice';
 
 const tabs = [
   { id: 'tests', label: 'Tests', icon: HiOutlineClipboardDocumentList },
-  { id: 'analysis', label: 'Analysis', icon: HiOutlineChartBar },
+  { id: 'portrait', label: 'Portrait', icon: HiOutlineSparkles },
   { id: 'match', label: 'Match', icon: HiOutlineHeart },
   { id: 'reads', label: 'Reads', icon: HiOutlineBookOpen },
   { id: 'advice', label: 'Advice', icon: HiOutlineStar },
@@ -30,10 +31,14 @@ export default function Dashboard({ onLogout }) {
 
   const userName = user?.name || 'User';
 
+  // Each tab should open at the top — the window otherwise keeps the previous
+  // tab's scroll position.
+  useEffect(() => { window.scrollTo(0, 0); }, [activeTab]);
+
   const renderTab = () => {
     switch (activeTab) {
-      case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} />;
-      case 'analysis': return <Analysis key="analysis" userName={userName} />;
+      case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => setActiveTab('portrait')} />;
+      case 'portrait': return <Portrait key="portrait" />;
       case 'match': return <Compatibility key="match" />;
       case 'reads': return <Recommendations key="reads" />;
       case 'advice': return <DailyAdvice key="advice" userName={userName} />;
@@ -51,11 +56,8 @@ export default function Dashboard({ onLogout }) {
       {/* Top Bar with Logout — hidden on immersive (test / result) screens */}
       {!immersive && (
         <header className="sticky top-0 z-40">
-          {/* Progressive blur — content under the edge stays visible, just blurred */}
-          <div
-            aria-hidden
-            className="absolute inset-0 backdrop-blur-sm [mask-image:linear-gradient(to_bottom,black,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,black,transparent)]"
-          />
+          {/* Progressive blur — iOS-style: blur ramps down and fades into the content below */}
+          <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-28" />
           <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
             <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark">
               <span className="font-display text-xl">λ</span> Persona
@@ -81,10 +83,7 @@ export default function Dashboard({ onLogout }) {
 
       {/* Bottom progressive blur — content stays visible behind the nav, just blurred (mirrors the top) */}
       {!immersive && (
-        <div
-          aria-hidden
-          className="fixed bottom-0 inset-x-0 h-28 z-40 pointer-events-none backdrop-blur-sm [mask-image:linear-gradient(to_top,black,black,transparent)] [-webkit-mask-image:linear-gradient(to_top,black,black,transparent)]"
-        />
+        <ProgressiveBlur direction="up" className="fixed bottom-0 inset-x-0 h-32 z-40" />
       )}
 
       {/* Bottom Navigation — floating capsule; slides away on immersive screens */}

@@ -6,7 +6,7 @@ const byScoreDesc = (a, b) => b.score - a.score;
 
 // PID-5: 25 maladaptive facets (top) + 5 broad domains (bottom),
 // each sorted highest-first, on a 0..3 scale.
-export default function PidResultScreen({ result, meta, onDone, onRetake }) {
+export default function PidResultScreen({ result, meta, onRetake, onViewPortrait }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -41,7 +41,7 @@ export default function PidResultScreen({ result, meta, onDone, onRetake }) {
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <header className="mb-4">
           <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Facets</h3>
-          <p className="text-sm text-persona-muted mt-1">25 trait facets · scale 0 to 3</p>
+          <p className="text-sm text-persona-muted mt-1">25 trait facets</p>
         </header>
         <div className="divide-y divide-persona-line/60">
           {facets.map((f, i) => (
@@ -53,7 +53,7 @@ export default function PidResultScreen({ result, meta, onDone, onRetake }) {
       {/* Divider + label introducing the domain group */}
       <div className="mt-8 mb-4 border-t border-persona-line pt-6">
         <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Domains</h3>
-        <p className="text-sm text-persona-muted mt-1">Five broad domains · scale 0 to 3</p>
+        <p className="text-sm text-persona-muted mt-1">Five broad domains</p>
       </div>
 
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
@@ -67,14 +67,14 @@ export default function PidResultScreen({ result, meta, onDone, onRetake }) {
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
         <motion.button
-          onClick={onDone}
+          onClick={onViewPortrait}
           className="btn-primary w-full"
           whileTap={{ scale: 0.97 }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.4 }}
         >
-          Done
+          View portrait
         </motion.button>
         <motion.button
           onClick={onRetake}

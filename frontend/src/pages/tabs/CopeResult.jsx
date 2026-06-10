@@ -5,7 +5,7 @@ import ScaleBar from './ScaleBar';
 const byScoreDesc = (a, b) => b.score - a.score;
 
 // COPE: 15 coping-strategy scales, sorted highest-first, on a 1..4 scale.
-export default function CopeResultScreen({ result, meta, onDone, onRetake }) {
+export default function CopeResultScreen({ result, meta, onRetake, onViewPortrait }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -39,7 +39,7 @@ export default function CopeResultScreen({ result, meta, onDone, onRetake }) {
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <header className="mb-4">
           <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Coping strategies</h3>
-          <p className="text-sm text-persona-muted mt-1">15 strategies · scale 1 to 4</p>
+          <p className="text-sm text-persona-muted mt-1">15 strategies</p>
         </header>
         <div className="divide-y divide-persona-line/60">
           {scales.map((s, i) => (
@@ -51,14 +51,14 @@ export default function CopeResultScreen({ result, meta, onDone, onRetake }) {
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
         <motion.button
-          onClick={onDone}
+          onClick={onViewPortrait}
           className="btn-primary w-full"
           whileTap={{ scale: 0.97 }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.4 }}
         >
-          Done
+          View portrait
         </motion.button>
         <motion.button
           onClick={onRetake}
