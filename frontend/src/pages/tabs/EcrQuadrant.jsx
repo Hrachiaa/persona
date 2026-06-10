@@ -99,9 +99,8 @@ const TICKS = [1, 2, 3, 4, 5, 6, 7];
 // Intro timeline.
 const FRAME_MS = 450; // empty plot fades in
 const DOTS_DELAY_MS = 50; // dots start shortly after the plot begins appearing
-const DOTS_MS = 1500; // gray dots pour in over this window (slow → fast)
-const YOU_PAUSE_MS = 0; // (unused now — the "You" dot appears with the cloud)
-const YOU_MS = -100; // rest starts revealing 100ms BEFORE the dots finish (overlaps)
+const DOTS_MS = 1200; // gray dots pour in over this window (slow → fast)
+const REVEAL_DELAY_MS = 40; // rest of the interface starts fading in together with the graph
 
 // Count of visible dots, animated 0 → target on an ease-in cubic (slow first,
 // then accelerating) so the cloud starts sparse and rushes in. Starts only once
@@ -137,6 +136,7 @@ export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady }
   // Intro: empty plot fades in → beat → dots pour in → "You" lands → the rest.
   const [dotsStarted, setDotsStarted] = useState(false);
   const dotCount = useDotIntro(PEERS, DOTS_MS, dotsStarted);
+  const [dotsDone, setDotsDone] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const onReadyRef = useRef(onReady);
   useEffect(() => {
@@ -144,12 +144,14 @@ export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady }
   });
   useEffect(() => {
     const t0 = setTimeout(() => setDotsStarted(true), DOTS_DELAY_MS);
+    const t1 = setTimeout(() => setDotsDone(true), DOTS_DELAY_MS + DOTS_MS);
     const t2 = setTimeout(() => {
       setRevealed(true);
       onReadyRef.current?.();
-    }, DOTS_DELAY_MS + DOTS_MS + YOU_PAUSE_MS + YOU_MS);
+    }, REVEAL_DELAY_MS);
     return () => {
       clearTimeout(t0);
+      clearTimeout(t1);
       clearTimeout(t2);
     };
   }, []);
@@ -193,8 +195,8 @@ export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady }
             </feMerge>
           </filter>
         </defs>
-        {/* "You" marker — appears together with the cloud, not as a separate event */}
-        {dotsStarted && (
+        {/* "You" marker — lands after the gray cloud has finished appearing */}
+        {dotsDone && (
           <>
             {/* pulsing glow halo — light, translucent */}
             <motion.circle
