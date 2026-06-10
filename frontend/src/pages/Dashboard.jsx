@@ -51,47 +51,98 @@ export default function Dashboard({ onLogout }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className={`min-h-dvh bg-persona-bg ${immersive ? '' : 'pb-24'}`}
+      className={`min-h-dvh bg-persona-bg lg:flex ${immersive ? '' : 'pb-24 lg:pb-0'}`}
     >
-      {/* Top Bar with Logout — hidden on immersive (test / result) screens */}
+      {/* Desktop sidebar navigation — replaces the bottom bar on lg+; hidden on immersive screens */}
       {!immersive && (
-        <header className="sticky top-0 z-40">
-          {/* Progressive blur — iOS-style: blur ramps down and fades into the content below */}
-          <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-28" />
-          <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
-            <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark">
-              <span className="font-display text-xl">λ</span> Persona
-            </p>
-            <motion.button
-              onClick={onLogout}
-              className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
-              whileTap={{ scale: 0.95 }}
-            >
-              <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-              Sign out
-            </motion.button>
-          </div>
-        </header>
+        <aside
+          aria-label="Primary"
+          className="hidden lg:flex lg:flex-col lg:shrink-0 lg:w-64 lg:sticky lg:top-0 lg:h-dvh px-4 py-6 gap-2"
+        >
+          <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark self-start mb-4">
+            <span className="font-display text-xl">λ</span> Persona
+          </p>
+          <nav className="flex flex-col gap-1">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  aria-current={isActive ? 'page' : undefined}
+                  aria-label={tab.label}
+                  className={`relative flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
+                    isActive ? 'text-persona-dark' : 'text-persona-muted hover:text-persona-dark hover:bg-white/50'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTabDesktop"
+                      className="absolute inset-0 bg-white shadow-warm rounded-2xl"
+                      transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                    />
+                  )}
+                  <tab.icon className="relative w-5 h-5" />
+                  <span className="relative">{tab.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+          <motion.button
+            onClick={onLogout}
+            className="mt-auto flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+            whileTap={{ scale: 0.95 }}
+          >
+            <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
+            Sign out
+          </motion.button>
+        </aside>
       )}
 
-      {/* Tab Content */}
-      <section role="region" aria-label="Dashboard content">
-        <AnimatePresence mode="wait">
-          {renderTab()}
-        </AnimatePresence>
-      </section>
+      {/* Main column */}
+      <div className="flex-1 min-w-0">
+        {/* Top Bar with Logout — mobile only (sidebar owns logo + sign out on lg); hidden on immersive screens */}
+        {!immersive && (
+          <header className="sticky top-0 z-40 lg:hidden">
+            {/* Progressive blur — iOS-style: blur ramps down and fades into the content below */}
+            <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-28" />
+            <div className="relative px-6 pt-4 pb-6 flex items-center justify-between">
+              <p className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-lg font-medium text-persona-dark">
+                <span className="font-display text-xl">λ</span> Persona
+              </p>
+              <motion.button
+                onClick={onLogout}
+                className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+                whileTap={{ scale: 0.95 }}
+              >
+                <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
+                Sign out
+              </motion.button>
+            </div>
+          </header>
+        )}
+
+        {/* Tab Content — full-width on mobile, centered & width-capped on desktop */}
+        <section role="region" aria-label="Dashboard content" className="lg:py-6">
+          <div className="mx-auto w-full lg:max-w-5xl">
+            <AnimatePresence mode="wait">
+              {renderTab()}
+            </AnimatePresence>
+          </div>
+        </section>
+      </div>
 
       {/* Bottom progressive blur — content stays visible behind the nav, just blurred (mirrors the top) */}
       {!immersive && (
-        <ProgressiveBlur direction="up" className="fixed bottom-0 inset-x-0 h-32 z-40" />
+        <ProgressiveBlur direction="up" className="fixed bottom-0 inset-x-0 h-32 z-40 lg:hidden" />
       )}
 
-      {/* Bottom Navigation — floating capsule; slides away on immersive screens */}
+      {/* Bottom Navigation — floating capsule (mobile only); slides away on immersive screens */}
       <motion.nav
         aria-label="Primary"
         animate={{ y: immersive ? 160 : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-        className="fixed bottom-4 inset-x-0 z-50 px-6"
+        className="fixed bottom-4 inset-x-0 z-50 px-6 lg:hidden"
       >
         <div className="max-w-lg mx-auto flex items-center justify-around bg-white/90 backdrop-blur-xl border border-persona-line/60 shadow-warm-lg rounded-full py-2 px-2">
           {tabs.map((tab) => {
