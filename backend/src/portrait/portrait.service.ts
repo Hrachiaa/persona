@@ -49,15 +49,17 @@ export class PortraitService {
       return PortraitDto.ready(existing.content, existing.basedOn, {
         updatedAt: existing.updatedAt,
         refreshing,
+        completedTests: targetTests,
       });
     }
 
     // Nothing cached. If a first-ever build is already running, just report it;
-    // otherwise kick one off. Either way the client polls until it lands.
+    // otherwise kick one off. Either way the client polls until it lands — and it
+    // already knows which tests are done, so it can show the constellation loading.
     if (!refreshing) {
       void this.dedupedGenerate(userId, targetTests, results);
     }
-    return PortraitDto.generating();
+    return PortraitDto.generating(targetTests);
   }
 
   /**

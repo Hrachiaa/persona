@@ -38,7 +38,7 @@ export default function Dashboard({ onLogout }) {
   const renderTab = () => {
     switch (activeTab) {
       case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => setActiveTab('portrait')} />;
-      case 'portrait': return <Portrait key="portrait" />;
+      case 'portrait': return <Portrait key="portrait" onOpenTests={() => setActiveTab('tests')} />;
       case 'match': return <Compatibility key="match" />;
       case 'reads': return <Recommendations key="reads" />;
       case 'advice': return <DailyAdvice key="advice" userName={userName} />;
