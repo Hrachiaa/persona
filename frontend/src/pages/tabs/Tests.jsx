@@ -881,7 +881,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     if (loading) {
       return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6">
-          <div className="grid gap-4">
+          <div className="grid gap-4 lg:grid-cols-2 items-start">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-persona-line/40 rounded-3xl p-6 animate-pulse">
                 <div className="flex items-start justify-between mb-4">
@@ -923,7 +923,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
     return (
       <motion.section aria-label="Personality tests" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-2 pb-6">
-        <div className="grid gap-4">
+        <div className="grid gap-4 lg:grid-cols-2 items-start">
           {orderedTests.map((test, i) => {
             const m = TEST_META[test.testType] || TEST_META.iq;
             const completed = !!test.result;
