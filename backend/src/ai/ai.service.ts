@@ -12,16 +12,22 @@ export class AiService {
 
   /**
    * Synthesizes a single cross-test "portrait" from several results, or `null`
-   * if nothing usable was passed in.
+   * if nothing usable was passed in. When `complete` is set (every test in the
+   * battery is done), the synthesis is routed to a stronger model.
    */
-  async interpretPortrait(results: { testType: string; result: TestResultType }[]): Promise<string | null> {
+  async interpretPortrait(
+    results: { testType: string; result: TestResultType }[],
+    options: { complete?: boolean } = {},
+  ): Promise<string | null> {
     if (!results.length) return null;
-    return this.complete(PORTRAIT_SYSTEM_PROMPT, buildPortraitUserPrompt(results));
+    return this.complete(PORTRAIT_SYSTEM_PROMPT, buildPortraitUserPrompt(results), options.complete ?? false);
   }
 
-  private async complete(systemPrompt: string, userPrompt: string): Promise<string> {
+  private async complete(systemPrompt: string, userPrompt: string, complete: boolean): Promise<string> {
     const client = await this.getClient();
-    const model = process.env.OPENROUTER_MODEL;
+    // Full battery (all tests done) → the synthesis is the most valuable, so use
+    // the stronger model if one is configured; otherwise fall back to the default.
+    const model = (complete && process.env.OPENROUTER_MODEL_COMPLETE) || process.env.OPENROUTER_MODEL;
     const maxTokens = Number(process.env.OPENROUTER_MAX_TOKENS);
 
     const completion = await client.chat.send({

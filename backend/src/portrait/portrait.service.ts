@@ -125,7 +125,9 @@ export class PortraitService {
         .filter((r): r is NonNullable<typeof r> => Boolean(r))
         .map((r) => ({ testType: r.testType, result: r.result as TestResultType }));
 
-      const content = await this.aiService.interpretPortrait(ordered);
+      // All tests done → route the synthesis to the stronger model.
+      const complete = targetTests.length === TEST_ORDER.length;
+      const content = await this.aiService.interpretPortrait(ordered, { complete });
       if (content) {
         await this.portraitRepository.upsert(userId, content, [...targetTests]);
       }
