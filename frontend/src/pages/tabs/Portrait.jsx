@@ -379,9 +379,12 @@ export default function Portrait({ onOpenTests }) {
             </motion.div>
           </section>
 
-          {/* Page 2 — everything else, locked into place below. Generous top/bottom
-              padding clears the floating top bar and bottom nav. */}
-          <section className="min-h-[100dvh] snap-start snap-always px-6 pt-24 pb-40 lg:pt-12 lg:pb-16">
+          {/* Page 2 — everything else, locked into place below. Fixed to one screen and
+              given its OWN scroll, so the long portrait text scrolls freely inside it
+              instead of fighting the outer mandatory snap (which used to make it stick).
+              The page turn itself is unchanged — this is still one snap-start screen.
+              Generous top/bottom padding clears the floating top bar and bottom nav. */}
+          <section className="h-[100dvh] snap-start snap-always overflow-y-auto px-6 pt-24 pb-40 lg:pt-12 lg:pb-16 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div className="mx-auto w-full max-w-2xl">
               {hasContent && <PortraitProgress count={data?.basedOn?.length ?? 0} total={TOTAL_TESTS} onTakeTests={onOpenTests} />}
 
