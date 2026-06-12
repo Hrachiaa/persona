@@ -10,7 +10,7 @@ const DOMAINS: { key: keyof BigFiveResults; facets: (keyof BigFiveResults)[] }[]
 
 /** Renders the Big Five scores into a compact, model-friendly user message. */
 export function buildBigFiveUserPrompt(result: BigFiveResults): string {
-  const lines: string[] = ['Результаты теста Big Five (T-баллы, среднее 50):', ''];
+  const lines: string[] = ['Big Five results (T-scores, mean 50):', ''];
 
   for (const { facets } of DOMAINS) {
     for (const facet of facets) {

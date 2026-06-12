@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { TestResultType } from '../tests/models/test-result.entity';
 import { PORTRAIT_SYSTEM_PROMPT, buildPortraitUserPrompt } from './prompts/portrait.prompt';
+import {
+  RECOMMENDATIONS_SYSTEM_PROMPT,
+  buildRecommendationsUserPrompt,
+  buildCombinedRecommendationsUserPrompt,
+  MediaKind,
+  RawRecommendation,
+} from './prompts/recommendations.prompt';
 
 // `@openrouter/sdk` is ESM-only; the backend compiles to CommonJS, so the
 // client is loaded via dynamic import() at runtime. This is a type-only alias.
@@ -21,6 +28,83 @@ export class AiService {
   ): Promise<string | null> {
     if (!results.length) return null;
     return this.complete(PORTRAIT_SYSTEM_PROMPT, buildPortraitUserPrompt(results), options.complete ?? false);
+  }
+
+  /**
+   * Generates a single-type batch (films OR books). `profileBlock` is the rendered
+   * test results — omitted once the like/dislike history alone is a strong enough
+   * signal. Returns the raw picks (title + year/author); catalog enrichment happens
+   * downstream. Best-effort: returns [] if the model output can't be parsed.
+   */
+  async recommend(params: {
+    mediaType: MediaKind;
+    profileBlock?: string;
+    liked: string[];
+    disliked: string[];
+    exclude: string[];
+    count: number;
+  }): Promise<RawRecommendation[]> {
+    const json = await this.completeJson(
+      RECOMMENDATIONS_SYSTEM_PROMPT,
+      buildRecommendationsUserPrompt(params),
+    );
+    return this.normalizeList(json?.items, params.mediaType);
+  }
+
+  /**
+   * Cold-start: films AND books in a single call (saves a round-trip when both
+   * queues are generated for the first time right after the tests are completed).
+   */
+  async recommendCombined(params: {
+    profileBlock: string;
+    count: number;
+  }): Promise<{ films: RawRecommendation[]; books: RawRecommendation[] }> {
+    const json = await this.completeJson(
+      RECOMMENDATIONS_SYSTEM_PROMPT,
+      buildCombinedRecommendationsUserPrompt(params),
+    );
+    return {
+      films: this.normalizeList(json?.films, 'film'),
+      books: this.normalizeList(json?.books, 'book'),
+    };
+  }
+
+  /** Runs a completion and parses its body as JSON (defensively). */
+  private async completeJson(systemPrompt: string, userPrompt: string): Promise<any> {
+    const raw = await this.complete(systemPrompt, userPrompt, false);
+    return this.extractJson(raw);
+  }
+
+  /**
+   * Pulls a JSON object out of a model response — tolerates ```json fences and
+   * stray prose around the object. Throws if no parseable object is found.
+   */
+  private extractJson(raw: string): any {
+    let text = raw.trim();
+    const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fence) text = fence[1].trim();
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start !== -1 && end > start) text = text.slice(start, end + 1);
+    return JSON.parse(text);
+  }
+
+  /** Validates/normalizes a raw model array into well-formed recommendations. */
+  private normalizeList(arr: unknown, mediaType: MediaKind): RawRecommendation[] {
+    if (!Array.isArray(arr)) return [];
+    const out: RawRecommendation[] = [];
+    for (const it of arr) {
+      const title = typeof it?.title === 'string' ? it.title.trim() : '';
+      if (!title) continue;
+      if (mediaType === 'film') {
+        const year = Number.parseInt(String(it?.year), 10);
+        out.push({ title, year: Number.isFinite(year) ? year : undefined });
+      } else {
+        const author = typeof it?.author === 'string' ? it.author.trim() : '';
+        out.push({ title, author: author || undefined });
+      }
+    }
+    return out;
   }
 
   private async complete(systemPrompt: string, userPrompt: string, complete: boolean): Promise<string> {

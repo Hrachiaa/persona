@@ -5,5 +5,5 @@ export function buildCopeUserPrompt(result: CopeTestResult): string {
   const rows = Object.values(result)
     .map((s) => `- ${s.name}: ${s.score}`)
     .join('\n');
-  return ['Результаты теста совладания со стрессом (COPE):', '', rows].join('\n');
+  return ['Coping with stress (COPE) results:', '', rows].join('\n');
 }
