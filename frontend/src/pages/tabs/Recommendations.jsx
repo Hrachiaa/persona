@@ -28,13 +28,20 @@ const SWIPE_THRESHOLD = 100; // px drag past which a release counts as a swipe
 const swiped = { film: new Set(), book: new Set() };
 
 const swipeVariants = {
-  enter: { scale: 0.95, y: 12, opacity: 1 },
-  center: { scale: 1, y: 0, opacity: 1 },
+  // The resting/incoming top card sits at z-index 1 (above the scaled-down
+  // background cards at -1/-2). The card being swiped jumps to 10 so it flies out
+  // ON TOP of the next card rising beneath it — without it, the freshly-mounted
+  // incoming card stacks above the exiting one (later in DOM order) and it looks
+  // like a lower card is the one sliding away. Kept below the z-20 action bar so
+  // the buttons stay on top during the fly-out, as they do at rest.
+  enter: { scale: 0.95, y: 12, opacity: 1, zIndex: 1 },
+  center: { scale: 1, y: 0, opacity: 1, zIndex: 1 },
   exit: (dir) => ({
     x: dir === 'LIKED' ? 640 : -640,
     rotate: dir === 'LIKED' ? 18 : -18,
     opacity: 0,
-    transition: { duration: 0.32, ease: 'easeOut' },
+    zIndex: 10,
+    transition: { duration: 0.32, ease: 'easeOut', zIndex: { duration: 0 } },
   }),
 };
 
@@ -131,7 +138,7 @@ function BookPreview({ item }) {
   const view = volumeId ? state : 'unavailable';
 
   return (
-    <div className="relative w-full h-[58vh] rounded-2xl overflow-hidden bg-persona-bg border border-persona-line/60">
+    <div className="relative w-full h-full min-h-[16rem] rounded-2xl overflow-hidden bg-persona-bg border border-persona-line/60">
       <div ref={ref} className="w-full h-full" />
       {view !== 'ready' && (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-persona-bg">
@@ -391,7 +398,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 lg:left-64 z-30 bg-persona-bg">
       {/* Padded so the poster clears the dashboard's top bar (mobile) and bottom nav. */}
-      <div className="absolute inset-0 px-3 pt-[5.25rem] pb-[5.75rem] lg:px-6 lg:py-6">
+      <div className="absolute inset-0 px-3 pt-[4.75rem] pb-[6.25rem] lg:px-6 lg:py-6">
         <div className="relative w-full h-full max-w-md mx-auto">
           {/* Poster / state fill */}
           {status === 'error' ? (
@@ -471,31 +478,39 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
       <AnimatePresence>
         {info && (
           <motion.div
-            className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+            className={`fixed inset-0 z-[60] flex justify-center bg-black/40 backdrop-blur-sm ${info.mediaType === 'book' ? 'items-center p-3' : 'items-end sm:items-center p-4'}`}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setInfo(null)}
           >
             <motion.div
-              className={`surface-warm rounded-4xl p-6 w-full ${info.mediaType === 'book' ? 'max-w-2xl' : 'max-w-md'} max-h-[88dvh] overflow-y-auto`}
+              className={`surface-warm rounded-4xl w-full ${info.mediaType === 'book' ? 'max-w-2xl h-[92dvh] flex flex-col p-4' : 'max-w-md max-h-[85dvh] overflow-y-auto p-6'}`}
               initial={{ y: 40, opacity: 0, scale: 0.98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 40, opacity: 0, scale: 0.98 }}
               transition={{ type: 'spring', stiffness: 380, damping: 32 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-start gap-4 mb-4">
-                <img src={info.posterUrl} alt="" className="w-16 h-24 object-cover rounded-xl shadow-warm shrink-0" />
-                <div className="min-w-0">
-                  <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{info.title}</h3>
-                  <p className="text-sm text-persona-muted mt-1 tabular">{info.mediaType === 'film' ? info.year : info.author}</p>
-                </div>
-              </div>
               {info.mediaType === 'book' ? (
-                <BookPreview item={info} />
+                <>
+                  {/* Book: no header — give the reader as much room as possible. */}
+                  <div className="flex-1 min-h-0">
+                    <BookPreview item={info} />
+                  </div>
+                  <button onClick={() => setInfo(null)} className="btn-secondary w-full mt-3 shrink-0">Close</button>
+                </>
               ) : (
-                <p className="text-sm text-persona-dark/90 leading-relaxed">
-                  {info.synopsis || 'No description available for this title.'}
-                </p>
+                <>
+                  <div className="flex items-start gap-4 mb-4">
+                    <img src={info.posterUrl} alt="" className="w-16 h-24 object-cover rounded-xl shadow-warm shrink-0" />
+                    <div className="min-w-0">
+                      <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{info.title}</h3>
+                      <p className="text-sm text-persona-muted mt-1 tabular">{info.year}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-persona-dark/90 leading-relaxed">
+                    {info.synopsis || 'No description available for this title.'}
+                  </p>
+                  <button onClick={() => setInfo(null)} className="btn-secondary w-full mt-6">Close</button>
+                </>
               )}
-              <button onClick={() => setInfo(null)} className="btn-secondary w-full mt-6">Close</button>
             </motion.div>
           </motion.div>
         )}
