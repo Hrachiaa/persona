@@ -6,9 +6,9 @@ export function buildSchwartzUserPrompt(result: ShcwartzTestResult): string {
     .map((v) => `- ${v.name}: ${v.score}`)
     .join('\n');
   return [
-    'Результаты теста ценностей Шварца:',
+    'Schwartz values results:',
     '',
-    'Базовые ценности:',
+    'Basic values:',
     values,
   ].join('\n');
 }

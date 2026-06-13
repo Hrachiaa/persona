@@ -3,9 +3,9 @@ import { EcrResult } from '../../tests/models/test-result.entity';
 /** Renders the ECR result into a compact, model-friendly user message. */
 export function buildEcrUserPrompt(result: EcrResult): string {
   return [
-    `Результаты теста привязанности (ECR):`,
+    `Attachment (ECR) results:`,
     ``,
-    `Тревожность (anxiety): ${result.anxiety}`,
-    `Избегание (avoidance): ${result.avoidance}`,
+    `Anxiety: ${result.anxiety}`,
+    `Avoidance: ${result.avoidance}`,
   ].join('\n');
 }

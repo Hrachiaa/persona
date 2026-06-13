@@ -40,7 +40,7 @@ export default function Dashboard({ onLogout }) {
       case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => setActiveTab('portrait')} />;
       case 'portrait': return <Portrait key="portrait" onOpenTests={() => setActiveTab('tests')} />;
       case 'match': return <Compatibility key="match" />;
-      case 'reads': return <Recommendations key="reads" />;
+      case 'reads': return <Recommendations key="reads" onOpenTests={() => setActiveTab('tests')} onImmersiveChange={setImmersive} />;
       case 'advice': return <DailyAdvice key="advice" userName={userName} />;
       default: return <Tests key="tests" onImmersiveChange={setImmersive} />;
     }

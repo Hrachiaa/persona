@@ -6,9 +6,9 @@ export function buildPidUserPrompt(result: PidTestResult): string {
     .map((v) => `- ${v.name}: ${v.score}`)
     .join('\n');
   return [
-    'Результаты теста PID-5:',
+    'PID-5 results:',
     '',
-    'Фасеты:',
+    'Facets:',
     facets,
   ].join('\n');
 }
