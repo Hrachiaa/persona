@@ -6,6 +6,7 @@ export type RecommendationStatus = 'locked' | 'generating' | 'ready';
 /** A single swipeable card as sent to the client. */
 export class RecommendationItemDto {
   readonly id: string;
+  readonly externalId: string; // catalog id, e.g. "gbooks:<volumeId>" — used for the book preview
   readonly mediaType: MediaKind;
   readonly title: string;
   readonly posterUrl: string;
@@ -19,6 +20,7 @@ export class RecommendationItemDto {
 // Prisma model type while keeping the mapper type-checked.
 interface RecommendationRow {
   id: string;
+  externalId: string;
   mediaType: MediaType;
   title: string;
   posterUrl: string;
@@ -31,6 +33,7 @@ interface RecommendationRow {
 export function toItemDto(row: RecommendationRow): RecommendationItemDto {
   return {
     id: row.id,
+    externalId: row.externalId,
     mediaType: row.mediaType === 'FILM' ? 'film' : 'book',
     title: row.title,
     posterUrl: row.posterUrl,

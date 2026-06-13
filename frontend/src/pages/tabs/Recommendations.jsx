@@ -38,16 +38,137 @@ const swipeVariants = {
   }),
 };
 
+// Lazily loads the Google Books Embedded Viewer API (once) so book previews can
+// render real opening pages inside the app.
+let gbooksReady;
+function ensureGoogleBooks() {
+  if (gbooksReady) return gbooksReady;
+  gbooksReady = new Promise((resolve, reject) => {
+    if (window.google?.books) return resolve();
+    const s = document.createElement('script');
+    s.src = 'https://www.google.com/books/jsapi.js';
+    s.async = true;
+    s.onload = () => {
+      try {
+        window.google.books.load();
+        window.google.books.setOnLoadCallback(() => resolve());
+      } catch (e) {
+        reject(e);
+      }
+    };
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  return gbooksReady;
+}
+
+const bookVolumeId = (item) =>
+  item?.externalId?.startsWith('gbooks:') ? item.externalId.slice('gbooks:'.length) : null;
+
+// ─── Card faces ──────────────────────────────────────────────────────────────
+// Films fill the card as a full-bleed poster; books show a small cover with the
+// description right on the card (the reader preview opens on tap).
+function FilmFace({ item }) {
+  return (
+    <div className="relative w-full h-full rounded-4xl overflow-hidden shadow-warm-lg bg-persona-line select-none">
+      <img src={item.posterUrl} alt={item.title} draggable={false} className="absolute inset-0 w-full h-full object-cover pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+      <div className="absolute inset-x-0 bottom-24 px-6 text-white pointer-events-none">
+        <h3 className="font-display text-2xl font-semibold leading-tight drop-shadow">{item.title}</h3>
+        {item.year && <p className="text-sm text-white/85 mt-1 tabular">{item.year}</p>}
+      </div>
+    </div>
+  );
+}
+
+function BookFace({ item }) {
+  return (
+    <div className="relative w-full h-full rounded-4xl overflow-hidden shadow-warm-lg bg-persona-card select-none flex flex-col">
+      <div className="flex justify-center pt-20 pb-5 px-6 bg-persona-bg/70">
+        <img src={item.posterUrl} alt={item.title} draggable={false} className="max-h-48 w-auto object-contain rounded-xl shadow-warm-lg pointer-events-none" />
+      </div>
+      <div className="flex-1 min-h-0 overflow-hidden px-6 pt-5 pb-24">
+        <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{item.title}</h3>
+        {item.author && <p className="text-sm text-persona-muted mt-0.5 mb-3">{item.author}</p>}
+        <p className="text-sm text-persona-muted leading-relaxed line-clamp-6">
+          {item.synopsis || 'No description available for this book.'}
+        </p>
+        <p className="text-xs font-medium text-persona-accent-blue mt-3">Tap to read a preview →</p>
+      </div>
+    </div>
+  );
+}
+
+// The Google Books preview reader shown inside the book modal.
+function BookPreview({ item }) {
+  const ref = useRef(null);
+  const volumeId = bookVolumeId(item);
+  const [state, setState] = useState('loading'); // loading | ready | unavailable
+
+  useEffect(() => {
+    if (!volumeId) return; // no id → rendered as 'unavailable' below, no state to set
+    let cancelled = false;
+    let timer;
+    ensureGoogleBooks()
+      .then(() => {
+        if (cancelled || !ref.current) return;
+        const viewer = new window.google.books.DefaultViewer(ref.current);
+        viewer.load(
+          volumeId,
+          () => { if (!cancelled) setState('unavailable'); },
+          () => { if (!cancelled) setState('ready'); },
+        );
+        // The success callback is unreliable for some volumes; if neither callback
+        // fires, reveal the viewer anyway so it doesn't sit on the loading overlay.
+        timer = setTimeout(() => {
+          if (!cancelled) setState((s) => (s === 'loading' ? 'ready' : s));
+        }, 2200);
+      })
+      .catch(() => { if (!cancelled) setState('unavailable'); });
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [volumeId]);
+
+  const view = volumeId ? state : 'unavailable';
+
+  return (
+    <div className="relative w-full h-[58vh] rounded-2xl overflow-hidden bg-persona-bg border border-persona-line/60">
+      <div ref={ref} className="w-full h-full" />
+      {view !== 'ready' && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-persona-bg">
+          {view === 'loading' ? (
+            <>
+              <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.1, ease: 'linear' }} className="inline-flex mb-3 text-persona-muted">
+                <HiOutlineArrowPath className="w-6 h-6" />
+              </motion.span>
+              <p className="text-sm text-persona-muted">Loading preview…</p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-persona-dark font-medium mb-1">No preview available</p>
+              <p className="text-sm text-persona-muted leading-relaxed max-w-xs mb-4">
+                {item.synopsis || 'This book has no readable preview.'}
+              </p>
+              {item.extra?.url && (
+                <a href={item.extra.url} target="_blank" rel="noreferrer" className="btn-secondary inline-flex">
+                  Open on Google Books
+                </a>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── The draggable top card ──────────────────────────────────────────────────
 function SwipeCard({ item, custom, onSwipe, onInfo }) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-220, 220], [-14, 14]);
   const likeOpacity = useTransform(x, [40, 130], [0, 1]);
   const nopeOpacity = useTransform(x, [-130, -40], [1, 0]);
-  // Distinguishes a tap (opens the synopsis) from a drag (a swipe shouldn't).
+  // Distinguishes a tap (opens details) from a drag (a swipe shouldn't).
   const dragged = useRef(false);
-
-  const meta = item.mediaType === 'film' ? item.year : item.author;
 
   return (
     <motion.div
@@ -72,35 +193,21 @@ function SwipeCard({ item, custom, onSwipe, onInfo }) {
       animate="center"
       exit="exit"
     >
-      <div className="relative w-full h-full rounded-4xl overflow-hidden shadow-warm-lg bg-persona-line select-none">
-        <img
-          src={item.posterUrl}
-          alt={item.title}
-          draggable={false}
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        />
-        {/* readability gradient for the caption + the overlaid controls */}
-        <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+      {item.mediaType === 'film' ? <FilmFace item={item} /> : <BookFace item={item} />}
 
-        {/* LIKE / NOPE stamps driven by drag distance */}
-        <motion.div
-          style={{ opacity: likeOpacity }}
-          className="absolute top-7 left-6 -rotate-12 border-[3px] border-emerald-400 text-emerald-400 rounded-xl px-3 py-1 text-2xl font-extrabold tracking-wider"
-        >
-          LIKE
-        </motion.div>
-        <motion.div
-          style={{ opacity: nopeOpacity }}
-          className="absolute top-7 right-6 rotate-12 border-[3px] border-rose-500 text-rose-500 rounded-xl px-3 py-1 text-2xl font-extrabold tracking-wider"
-        >
-          NOPE
-        </motion.div>
-
-        <div className="absolute inset-x-0 bottom-24 px-6 text-white pointer-events-none">
-          <h3 className="font-display text-2xl font-semibold leading-tight drop-shadow">{item.title}</h3>
-          {meta && <p className="text-sm text-white/85 mt-1 tabular">{meta}</p>}
-        </div>
-      </div>
+      {/* LIKE / NOPE stamps driven by drag distance */}
+      <motion.div
+        style={{ opacity: likeOpacity }}
+        className="absolute top-7 left-6 z-10 -rotate-12 border-[3px] border-emerald-400 text-emerald-400 rounded-xl px-3 py-1 text-2xl font-extrabold tracking-wider pointer-events-none"
+      >
+        LIKE
+      </motion.div>
+      <motion.div
+        style={{ opacity: nopeOpacity }}
+        className="absolute top-7 right-6 z-10 rotate-12 border-[3px] border-rose-500 text-rose-500 rounded-xl px-3 py-1 text-2xl font-extrabold tracking-wider pointer-events-none"
+      >
+        NOPE
+      </motion.div>
     </motion.div>
   );
 }
@@ -112,9 +219,15 @@ function BackgroundCard({ item, depth }) {
       className="absolute inset-0"
       style={{ transform: `scale(${1 - depth * 0.05}) translateY(${depth * 12}px)`, zIndex: -depth }}
     >
-      <div className="relative w-full h-full rounded-4xl overflow-hidden shadow-warm bg-persona-line">
-        <img src={item.posterUrl} alt="" draggable={false} className="absolute inset-0 w-full h-full object-cover" />
-      </div>
+      {item.mediaType === 'film' ? (
+        <div className="relative w-full h-full rounded-4xl overflow-hidden shadow-warm bg-persona-line">
+          <img src={item.posterUrl} alt="" draggable={false} className="absolute inset-0 w-full h-full object-cover" />
+        </div>
+      ) : (
+        <div className="relative w-full h-full rounded-4xl overflow-hidden shadow-warm bg-persona-card flex justify-center pt-20">
+          <img src={item.posterUrl} alt="" draggable={false} className="max-h-48 w-auto object-contain rounded-xl" />
+        </div>
+      )}
     </div>
   );
 }
@@ -134,7 +247,7 @@ function ActionButton({ onClick, children, className = '', size = 'md', label })
   );
 }
 
-export default function Recommendations({ onOpenTests }) {
+export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   const [mode, setMode] = useState('film');
   const [cards, setCards] = useState([]);
   const [status, setStatus] = useState('loading'); // loading | locked | generating | ready | error
@@ -201,6 +314,14 @@ export default function Recommendations({ onOpenTests }) {
     const id = setTimeout(() => setPollTick((t) => t + 1), POLL_INTERVAL_MS);
     return () => clearTimeout(id);
   }, [needMore, pollTick]);
+
+  // Hide the dashboard's nav/header while a modal is open — it otherwise stacks
+  // above the modal (z-50 sibling over this z-30 layer), and a book preview wants
+  // a clean, full screen.
+  useEffect(() => {
+    onImmersiveChange?.(Boolean(info) || confirmReset);
+    return () => onImmersiveChange?.(false);
+  }, [info, confirmReset, onImmersiveChange]);
 
   function selectMode(next) {
     if (next === mode) return;
@@ -346,7 +467,7 @@ export default function Recommendations({ onOpenTests }) {
         </div>
       </div>
 
-      {/* Synopsis modal */}
+      {/* Details modal — synopsis for films, the reader preview for books */}
       <AnimatePresence>
         {info && (
           <motion.div
@@ -355,21 +476,25 @@ export default function Recommendations({ onOpenTests }) {
             onClick={() => setInfo(null)}
           >
             <motion.div
-              className="surface-warm rounded-4xl p-6 w-full max-w-md max-h-[80dvh] overflow-y-auto"
+              className={`surface-warm rounded-4xl p-6 w-full ${info.mediaType === 'book' ? 'max-w-2xl' : 'max-w-md'} max-h-[88dvh] overflow-y-auto`}
               initial={{ y: 40, opacity: 0, scale: 0.98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 40, opacity: 0, scale: 0.98 }}
               transition={{ type: 'spring', stiffness: 380, damping: 32 }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-start gap-4 mb-4">
-                <img src={info.posterUrl} alt="" className="w-20 h-28 object-cover rounded-xl shadow-warm shrink-0" />
+                <img src={info.posterUrl} alt="" className="w-16 h-24 object-cover rounded-xl shadow-warm shrink-0" />
                 <div className="min-w-0">
                   <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{info.title}</h3>
                   <p className="text-sm text-persona-muted mt-1 tabular">{info.mediaType === 'film' ? info.year : info.author}</p>
                 </div>
               </div>
-              <p className="text-sm text-persona-dark/90 leading-relaxed">
-                {info.synopsis || 'No description available for this title.'}
-              </p>
+              {info.mediaType === 'book' ? (
+                <BookPreview item={info} />
+              ) : (
+                <p className="text-sm text-persona-dark/90 leading-relaxed">
+                  {info.synopsis || 'No description available for this title.'}
+                </p>
+              )}
               <button onClick={() => setInfo(null)} className="btn-secondary w-full mt-6">Close</button>
             </motion.div>
           </motion.div>

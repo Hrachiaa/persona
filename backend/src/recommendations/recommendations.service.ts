@@ -35,7 +35,7 @@ export class RecommendationsService {
   /** Read for GET — never blocks on the LLM; kicks off generation and reports status. */
   async getRecommendations(userId: string, mediaType: MediaKind): Promise<RecommendationListDto> {
     const results = await this.testResultRepository.getTestResults(userId);
-    const completed = this.resolveTargetTests(results);[]
+    const completed = this.resolveTargetTests(results);
     if (completed.length < TEST_ORDER.length) {
       return RecommendationListDto.locked(mediaType, completed.length, TEST_ORDER.length);
     }
