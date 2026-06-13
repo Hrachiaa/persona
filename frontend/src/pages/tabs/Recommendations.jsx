@@ -398,8 +398,8 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 lg:left-64 z-30 bg-persona-bg">
       {/* Padded so the poster clears the dashboard's top bar (mobile) and bottom nav. */}
-      <div className="absolute inset-0 px-3 pt-[4.75rem] pb-[6.25rem] lg:px-6 lg:py-6">
-        <div className="relative w-full h-full max-w-md mx-auto">
+      <div className="absolute inset-0 px-6 pt-[4.75rem] pb-[6.25rem] lg:py-6">
+        <div className="relative w-full h-full max-w-lg mx-auto">
           {/* Poster / state fill */}
           {status === 'error' ? (
             <div className="absolute inset-0 surface-warm rounded-4xl flex flex-col items-center justify-center text-center p-8">
