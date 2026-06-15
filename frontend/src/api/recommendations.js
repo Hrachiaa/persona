@@ -14,6 +14,11 @@ export const recommendationsApi = {
   swipe: (id, verdict) =>
     client.post(`/recommendations/${id}/swipe`, { verdict }).then((r) => r.data),
 
+  // POST /recommendations/:id/rate { verdict: 'LIKED'|'DISLIKED' } -> updated history item.
+  // Re-rates an already-swiped item — powers the like toggle in the profile views.
+  rate: (id, verdict) =>
+    client.post(`/recommendations/${id}/rate`, { verdict }).then((r) => r.data),
+
   // GET /recommendations/history -> { items: [{ ...card, verdict: 'liked'|'disliked', swipedAt }] }
   // Liked + disliked items the user has swiped, newest first. Powers the profile's
   // "Liked" and "History" views (the Liked view just filters verdict === 'liked').

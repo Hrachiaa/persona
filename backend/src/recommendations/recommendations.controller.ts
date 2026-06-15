@@ -36,6 +36,12 @@ export class RecommendationsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post(':id/rate')
+  async rate(@Req() req, @Param('id') id: string, @Body() body: SwipeDto) {
+    return this.recommendationsService.rate(req.user.id, id, body.verdict);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('reset')
   async reset(@Req() req, @Query('type') type: string) {
     await this.recommendationsService.reset(req.user.id, parseMediaType(type));

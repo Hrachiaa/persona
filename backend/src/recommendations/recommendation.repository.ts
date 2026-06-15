@@ -88,6 +88,17 @@ export class RecommendationRepository {
     });
   }
 
+  /** Re-rate an already-swiped item (owner-scoped, any current verdict). Drives the
+   *  like toggle in the profile's Liked / History views. */
+  async rate(userId: string, itemId: string, verdict: 'LIKED' | 'DISLIKED') {
+    const updated = await this.prisma.recommendationItem.updateMany({
+      where: { id: itemId, userId, verdict: { in: ['LIKED', 'DISLIKED'] } },
+      data: { verdict },
+    });
+    if (updated.count === 0) return null;
+    return this.prisma.recommendationItem.findUnique({ where: { id: itemId } });
+  }
+
   /** Records a swipe. Scoped to PENDING + owner, so a double-swipe is a no-op. */
   async setVerdict(userId: string, itemId: string, verdict: 'LIKED' | 'DISLIKED') {
     const updated = await this.prisma.recommendationItem.updateMany({

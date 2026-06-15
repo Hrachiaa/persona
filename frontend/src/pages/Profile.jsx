@@ -13,7 +13,6 @@ import {
   HiOutlineCheckCircle,
   HiOutlineFilm,
   HiOutlineBookOpen,
-  HiOutlineXMark,
   HiHeart,
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
@@ -66,6 +65,17 @@ export default function Profile({ onBack, onLogout }) {
   const likedCount = history ? history.filter((i) => i.verdict === 'liked').length : null;
   const historyCount = history ? history.length : null;
 
+  // Like toggle for the Liked / History views. Optimistic — flips locally, reverts on error.
+  const toggleVerdict = async (item) => {
+    const next = item.verdict === 'liked' ? 'disliked' : 'liked';
+    setHistory((prev) => prev.map((i) => (i.id === item.id ? { ...i, verdict: next } : i)));
+    try {
+      await recommendationsApi.rate(item.id, next.toUpperCase());
+    } catch {
+      setHistory((prev) => prev.map((i) => (i.id === item.id ? { ...i, verdict: item.verdict } : i)));
+    }
+  };
+
   const goMain = () => setView(VIEWS.MAIN);
 
   return (
@@ -109,15 +119,19 @@ export default function Profile({ onBack, onLogout }) {
 
           {view === VIEWS.LIKED && (
             <motion.div key="liked" {...slide}>
-              <ActivityView
-                title="Liked"
-                subtitle="Books & films you swiped right on."
-                items={history ? history.filter((i) => i.verdict === 'liked') : null}
-                loading={historyLoading}
-                error={historyError}
-                showVerdict={false}
-                emptyText="You haven't liked anything yet. Swipe right in Reads to build your list."
-              />
+              {history ? (
+                <LikedView history={history} error={historyError} onToggle={toggleVerdict} />
+              ) : (
+                <ActivityView
+                  title="Liked"
+                  subtitle="Books & films you swiped right on."
+                  items={null}
+                  loading={historyLoading}
+                  error={historyError}
+                  onToggle={toggleVerdict}
+                  emptyText="You haven't liked anything yet. Swipe right in Reads to build your list."
+                />
+              )}
             </motion.div>
           )}
 
@@ -129,7 +143,7 @@ export default function Profile({ onBack, onLogout }) {
                 items={history}
                 loading={historyLoading}
                 error={historyError}
-                showVerdict
+                onToggle={toggleVerdict}
                 emptyText="No recommendations reviewed yet."
               />
             </motion.div>
@@ -392,11 +406,72 @@ function ChangePasswordView({ isGoogle, onDone }) {
 
 /* ----------------------------------------------------------- activity views */
 
-function ActivityView({ title, subtitle, items, loading, error, showVerdict, emptyText }) {
+// Liked list with stable membership: the set of liked ids is snapshotted once on entry
+// (this only mounts after history has loaded, so the lazy useState init is enough).
+// Un-liking an item here just greys its heart — it stays in the list and can be re-liked.
+// It disappears only on the next visit, when the component remounts and re-snapshots.
+function LikedView({ history, error, onToggle }) {
+  const [snapshot] = useState(
+    () => new Set(history.filter((i) => i.verdict === 'liked').map((i) => i.id)),
+  );
+  const items = history.filter((i) => snapshot.has(i.id));
+
+  return (
+    <ActivityView
+      title="Liked"
+      subtitle="Books & films you swiped right on."
+      items={items}
+      loading={false}
+      error={error}
+      onToggle={onToggle}
+      emptyText="You haven't liked anything yet. Swipe right in Reads to build your list."
+    />
+  );
+}
+
+const MEDIA_TABS = [
+  { id: 'all', label: 'All' },
+  { id: 'film', label: 'Films' },
+  { id: 'book', label: 'Books' },
+];
+
+function ActivityView({ title, subtitle, items, loading, error, emptyText, onToggle }) {
+  const [media, setMedia] = useState('all');
+  const filtered = items
+    ? media === 'all'
+      ? items
+      : items.filter((i) => i.mediaType === media)
+    : null;
+
   return (
     <div>
       <h2 className="font-display text-2xl font-semibold text-persona-dark mb-1">{title}</h2>
-      <p className="text-persona-muted text-sm mb-6">{subtitle}</p>
+      <p className="text-persona-muted text-sm mb-5">{subtitle}</p>
+
+      {/* Films / Books split */}
+      <div className="inline-flex p-1 bg-white shadow-warm rounded-full mb-6">
+        {MEDIA_TABS.map((t) => {
+          const active = media === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setMedia(t.id)}
+              className={`relative px-4 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none ${
+                active ? 'text-persona-dark' : 'text-persona-muted hover:text-persona-dark'
+              }`}
+            >
+              {active && (
+                <motion.span
+                  layoutId={`mediaPill-${title}`}
+                  className="absolute inset-0 bg-persona-bg rounded-full"
+                  transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                />
+              )}
+              <span className="relative">{t.label}</span>
+            </button>
+          );
+        })}
+      </div>
 
       {loading && (
         <p className="text-persona-muted text-sm py-8 text-center animate-pulse-soft">Loading…</p>
@@ -406,29 +481,41 @@ function ActivityView({ title, subtitle, items, loading, error, showVerdict, emp
         <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-sm">{error}</div>
       )}
 
-      {!loading && !error && items && items.length === 0 && (
-        <p className="text-persona-muted text-sm py-8 text-center">{emptyText}</p>
+      {!loading && !error && filtered && filtered.length === 0 && (
+        <p className="text-persona-muted text-sm py-8 text-center">
+          {items && items.length > 0 ? `No ${media === 'film' ? 'films' : 'books'} here yet.` : emptyText}
+        </p>
       )}
 
-      {!loading && !error && items && items.length > 0 && (
+      {!loading && !error && filtered && filtered.length > 0 && (
         <ul className="space-y-3">
-          {items.map((item) => (
-            <ActivityCard key={item.id} item={item} showVerdict={showVerdict} />
-          ))}
+          <AnimatePresence initial={false}>
+            {filtered.map((item) => (
+              <ActivityCard key={item.id} item={item} onToggle={onToggle} />
+            ))}
+          </AnimatePresence>
         </ul>
       )}
     </div>
   );
 }
 
-function ActivityCard({ item, showVerdict }) {
+function ActivityCard({ item, onToggle }) {
   const isFilm = item.mediaType === 'film';
+  const liked = item.verdict === 'liked';
   const subtitle = isFilm
     ? [item.year].filter(Boolean).join('')
     : [item.author, item.year].filter(Boolean).join(' · ');
 
   return (
-    <li className="flex items-center gap-4 bg-white shadow-warm rounded-2xl p-3">
+    <motion.li
+      layout
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{ duration: 0.2 }}
+      className="flex items-center gap-4 bg-white shadow-warm rounded-2xl p-3"
+    >
       <div className="w-12 h-16 shrink-0 rounded-lg bg-persona-bg overflow-hidden flex items-center justify-center">
         {item.posterUrl ? (
           <img src={item.posterUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
@@ -445,16 +532,17 @@ function ActivityCard({ item, showVerdict }) {
           {isFilm ? 'Film' : 'Book'}
         </span>
       </div>
-      {showVerdict && (
-        <span
-          className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-            item.verdict === 'liked' ? 'bg-persona-accent-pink/40 text-red-500' : 'bg-persona-line/60 text-persona-muted'
-          }`}
-          title={item.verdict === 'liked' ? 'Liked' : 'Disliked'}
-        >
-          {item.verdict === 'liked' ? <HiHeart className="w-4 h-4" /> : <HiOutlineXMark className="w-4 h-4" />}
-        </span>
-      )}
-    </li>
+      <motion.button
+        onClick={() => onToggle(item)}
+        whileTap={{ scale: 0.85 }}
+        aria-label={liked ? 'Remove like' : 'Like'}
+        aria-pressed={liked}
+        className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach ${
+          liked ? 'bg-persona-accent-pink/40 text-red-500' : 'bg-persona-bg text-persona-muted hover:text-red-400'
+        }`}
+      >
+        {liked ? <HiHeart className="w-5 h-5" /> : <HiOutlineHeart className="w-5 h-5" />}
+      </motion.button>
+    </motion.li>
   );
 }

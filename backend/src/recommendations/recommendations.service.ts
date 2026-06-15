@@ -70,6 +70,13 @@ export class RecommendationsService {
     return { items: rows.map(toHistoryItemDto) };
   }
 
+  /** Re-rate an already-swiped item (profile like toggle). Returns the updated history row. */
+  async rate(userId: string, itemId: string, verdict: 'LIKED' | 'DISLIKED') {
+    const item = await this.repo.rate(userId, itemId, verdict);
+    if (!item) throw new NotFoundException('Recommendation not found');
+    return toHistoryItemDto(item);
+  }
+
   async swipe(userId: string, itemId: string, verdict: 'LIKED' | 'DISLIKED'): Promise<{ pending: number }> {
     const item = await this.repo.setVerdict(userId, itemId, verdict);
     if (!item) throw new NotFoundException('Recommendation not found or already swiped');
