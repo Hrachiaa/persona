@@ -36,6 +36,10 @@ export class AuthService {
         }
     }
 
+    async changePassword(userId: string, currentPassword: string, newPassword: string){
+        await this.usersService.changePassword(userId, currentPassword, newPassword);
+    }
+
     async addProfileInfo(userId: string, profileInfoDto: AddProfileInfoDto){
         const user = await this.usersService.getUserById(userId);
         if(!user){

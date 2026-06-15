@@ -116,6 +116,7 @@ model RecommendationItem {
   extra      Json? // genres, rating, external url, etc.
   order      Int                   @default(0) // position within its generation batch
   createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt // bumped on swipe — drives history ordering
   user       User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, mediaType, verdict])

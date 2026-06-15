@@ -1,5 +1,5 @@
 import { MediaKind } from '../../ai/prompts/recommendations.prompt';
-import { MediaType } from '../../../generated/prisma/enums';
+import { MediaType, RecommendationVerdict } from '../../../generated/prisma/enums';
 
 export type RecommendationStatus = 'locked' | 'generating' | 'ready';
 
@@ -28,6 +28,26 @@ interface RecommendationRow {
   year: number | null;
   author: string | null;
   extra: unknown;
+}
+
+/** A previously swiped card, as shown in the profile's Liked / History views. */
+export class RecommendationHistoryItemDto extends RecommendationItemDto {
+  readonly verdict: 'liked' | 'disliked';
+  readonly swipedAt: Date;
+}
+
+export function toHistoryItemDto(
+  row: RecommendationRow & { verdict: RecommendationVerdict; updatedAt: Date },
+): RecommendationHistoryItemDto {
+  return {
+    ...toItemDto(row),
+    verdict: row.verdict === 'LIKED' ? 'liked' : 'disliked',
+    swipedAt: row.updatedAt,
+  };
+}
+
+export class RecommendationHistoryDto {
+  readonly items: RecommendationHistoryItemDto[];
 }
 
 export function toItemDto(row: RecommendationRow): RecommendationItemDto {

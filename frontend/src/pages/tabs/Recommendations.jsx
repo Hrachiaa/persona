@@ -46,25 +46,38 @@ const swipeVariants = {
 };
 
 // Lazily loads the Google Books Embedded Viewer API (once) so book previews can
-// render real opening pages inside the app.
+// render real opening pages inside the app. Resolves only once DefaultViewer is
+// live: calling google.books.load() swaps window.google.books for the real API
+// object, so a setOnLoadCallback registered on the pre-load stub never fires —
+// we poll for DefaultViewer instead. Failures clear the cache so the next open
+// can retry rather than being stuck on a rejected promise.
 let gbooksReady;
 function ensureGoogleBooks() {
   if (gbooksReady) return gbooksReady;
   gbooksReady = new Promise((resolve, reject) => {
-    if (window.google?.books) return resolve();
-    const s = document.createElement('script');
-    s.src = 'https://www.google.com/books/jsapi.js';
-    s.async = true;
-    s.onload = () => {
+    const waitForViewer = (deadline) => {
+      if (window.google?.books?.DefaultViewer) return resolve();
+      if (Date.now() > deadline) return reject(new Error('Google Books API timed out'));
+      setTimeout(() => waitForViewer(deadline), 100);
+    };
+    const start = () => {
       try {
-        window.google.books.load();
-        window.google.books.setOnLoadCallback(() => resolve());
+        if (!window.google?.books?.DefaultViewer) window.google.books.load();
+        waitForViewer(Date.now() + 10000);
       } catch (e) {
         reject(e);
       }
     };
+    if (window.google?.books) return start();
+    const s = document.createElement('script');
+    s.src = 'https://www.google.com/books/jsapi.js';
+    s.async = true;
+    s.onload = start;
     s.onerror = reject;
     document.head.appendChild(s);
+  }).catch((e) => {
+    gbooksReady = undefined;
+    throw e;
   });
   return gbooksReady;
 }

@@ -22,6 +22,10 @@ export const authApi = {
   changeForgottenPassword: (email, code, newPassword) =>
     client.post('/auth/change-forgotten-password', { email, code, newPassword }).then((r) => r.data),
 
+  // Change password for the logged-in user (JWT-protected)
+  changePassword: (currentPassword, newPassword) =>
+    client.post('/auth/change-password', { currentPassword, newPassword }).then((r) => r.data),
+
   addProfileInfo: ({ name, gender, birthDate }) =>
     client.post('/auth/add-user-profile-info', { name, gender, birthDate }).then((r) => r.data),
 
