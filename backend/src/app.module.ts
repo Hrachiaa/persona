@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { TestsModule } from './tests/tests.module';
 import { PortraitModule } from './portrait/portrait.module';
+import { RecommendationsModule } from './recommendations/recommendations.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { PortraitModule } from './portrait/portrait.module';
     AuthModule,
     MailModule,
     TestsModule,
-    PortraitModule
+    PortraitModule,
+    RecommendationsModule
   ],
   controllers: [],
   providers: [],

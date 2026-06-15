@@ -27,6 +27,7 @@ model User {
   otpCode       OtpCode?
   testsResults  TestResult[]
   portrait      Portrait?
+  recommendations RecommendationItem[]
 }
 
 model RefreshToken {
@@ -85,4 +86,37 @@ model Portrait {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum MediaType {
+  FILM
+  BOOK
+}
+
+enum RecommendationVerdict {
+  PENDING
+  LIKED
+  DISLIKED
+}
+
+// One AI-recommended film/book for a user. `PENDING` rows are the not-yet-swiped
+// queue the frontend shows one at a time; `LIKED`/`DISLIKED` rows are the swipe
+// history fed back into later generations. Cleared per `mediaType` on reset.
+model RecommendationItem {
+  id         String                @id @default(cuid())
+  userId     String
+  mediaType  MediaType
+  verdict    RecommendationVerdict @default(PENDING)
+  externalId String // catalog id, e.g. "tmdb:603" or "gbooks:zyTCAlFPjgYC"
+  title      String
+  posterUrl  String
+  synopsis   String                @default("")
+  year       Int? // films
+  author     String? // books
+  extra      Json? // genres, rating, external url, etc.
+  order      Int                   @default(0) // position within its generation batch
+  createdAt  DateTime              @default(now())
+  user       User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, mediaType, verdict])
 }
