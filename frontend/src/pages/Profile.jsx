@@ -13,6 +13,9 @@ import {
   HiOutlineCheckCircle,
   HiOutlineFilm,
   HiOutlineBookOpen,
+  HiOutlineUser,
+  HiOutlineCalendarDays,
+  HiOutlinePencilSquare,
   HiHeart,
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
@@ -21,10 +24,19 @@ import { recommendationsApi } from '../api/recommendations';
 
 const VIEWS = {
   MAIN: 'main',
+  EDIT: 'edit',
   PASSWORD: 'password',
   LIKED: 'liked',
   HISTORY: 'history',
 };
+
+const GENDER_OPTIONS = [
+  { value: 'M', label: 'Male', emoji: '♂' },
+  { value: 'F', label: 'Female', emoji: '♀' },
+];
+
+const BIRTH_YEAR_MIN = 1900;
+const BIRTH_YEAR_MAX = 2026;
 
 // Language is mocked — English only. Persisted so the choice "sticks" across reloads,
 // but it has no functional effect yet (the whole app ships in English).
@@ -111,6 +123,12 @@ export default function Profile({ onBack, onLogout }) {
             </motion.div>
           )}
 
+          {view === VIEWS.EDIT && (
+            <motion.div key="edit" {...slide}>
+              <EditProfileView onDone={goMain} />
+            </motion.div>
+          )}
+
           {view === VIEWS.PASSWORD && (
             <motion.div key="password" {...slide}>
               <ChangePasswordView isGoogle={Boolean(user?.googleId)} onDone={goMain} />
@@ -165,12 +183,15 @@ function MainView({ user, likedCount, historyCount, onOpen, onLogout }) {
 
   return (
     <div className="space-y-8">
-      {/* Identity */}
-      <div className="flex items-center gap-4">
+      {/* Identity — tap to edit personal details */}
+      <button
+        onClick={() => onOpen(VIEWS.EDIT)}
+        className="w-full flex items-center gap-4 text-left rounded-3xl p-2 -m-2 hover:bg-white/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+      >
         <div className="w-16 h-16 shrink-0 rounded-3xl bg-persona-accent-peach/50 flex items-center justify-center text-2xl font-display font-semibold text-persona-dark">
           {initialsFor(user)}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="font-display text-2xl font-semibold text-persona-dark truncate">
             {user?.name || 'Your profile'}
           </h1>
@@ -181,7 +202,8 @@ function MainView({ user, likedCount, historyCount, onOpen, onLogout }) {
             </span>
           )}
         </div>
-      </div>
+        <HiOutlineChevronRight className="w-5 h-5 shrink-0 text-persona-muted" />
+      </button>
 
       {/* Library */}
       <Section label="Library">
@@ -200,8 +222,14 @@ function MainView({ user, likedCount, historyCount, onOpen, onLogout }) {
         />
       </Section>
 
-      {/* Settings */}
-      <Section label="Settings">
+      {/* Account */}
+      <Section label="Account">
+        <Row
+          icon={HiOutlinePencilSquare}
+          title="Edit profile"
+          onClick={() => onOpen(VIEWS.EDIT)}
+        />
+        <Divider />
         <Row
           icon={HiOutlineLockClosed}
           title="Change password"
@@ -265,6 +293,129 @@ function Row({ icon: Icon, title, meta, onClick }) {
       {meta ? <span className="text-sm text-persona-muted tabular">{meta}</span> : null}
       <HiOutlineChevronRight className="w-5 h-5 text-persona-muted" />
     </button>
+  );
+}
+
+/* -------------------------------------------------------- edit profile view */
+
+function EditProfileView({ onDone }) {
+  const { user, fetchMe } = useAuth();
+  const [name, setName] = useState(user?.name || '');
+  const [gender, setGender] = useState(user?.gender || '');
+  const [birthDate, setBirthDate] = useState(user?.birthDate ? String(user.birthDate) : '');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const year = parseInt(birthDate, 10);
+  const valid =
+    name.trim().length > 0 &&
+    (gender === 'M' || gender === 'F') &&
+    year >= BIRTH_YEAR_MIN &&
+    year <= BIRTH_YEAR_MAX;
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!valid) {
+      setError('Please fill in your name, gender, and a valid birth year.');
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      await authApi.addProfileInfo({ name: name.trim(), gender, birthDate: year });
+      await fetchMe(); // refresh the header / avatar with the new values
+      onDone();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not save your profile. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <h2 className="font-display text-2xl font-semibold text-persona-dark mb-1">Edit profile</h2>
+      <p className="text-persona-muted text-sm mb-6">Update your name, gender, and birth year.</p>
+
+      {error && (
+        <div className="mb-4 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-sm">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={submit} className="space-y-5">
+        <div>
+          <label htmlFor="profile-name" className="field-label">Name</label>
+          <div className="relative">
+            <HiOutlineUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              id="profile-name"
+              type="text"
+              autoComplete="name"
+              placeholder="Your name"
+              value={name}
+              onChange={(e) => { setName(e.target.value); setError(null); }}
+              className="input-field pl-12"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <span className="field-label">Gender</span>
+          <div role="radiogroup" aria-label="Gender" className="flex gap-3">
+            {GENDER_OPTIONS.map((opt) => {
+              const active = gender === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => { setGender(opt.value); setError(null); }}
+                  className={`flex-1 py-4 rounded-2xl border-2 transition-all duration-200 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
+                    active
+                      ? 'border-persona-dark bg-persona-dark/5 shadow-warm'
+                      : 'border-persona-line bg-white hover:border-persona-dark/20'
+                  }`}
+                >
+                  <span className="text-2xl block mb-1" aria-hidden="true">{opt.emoji}</span>
+                  <span className={`font-medium text-sm ${active ? 'text-persona-dark' : 'text-persona-muted'}`}>
+                    {opt.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="profile-birthyear" className="field-label">Birth year</label>
+          <div className="relative">
+            <HiOutlineCalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              id="profile-birthyear"
+              type="number"
+              inputMode="numeric"
+              placeholder="e.g. 1995"
+              value={birthDate}
+              onChange={(e) => { setBirthDate(e.target.value); setError(null); }}
+              className="input-field pl-12 tabular"
+              min={BIRTH_YEAR_MIN}
+              max={BIRTH_YEAR_MAX}
+              required
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading || !valid}
+          className="btn-primary w-full text-center mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Saving…' : 'Save changes'}
+        </button>
+      </form>
+    </div>
   );
 }
 
