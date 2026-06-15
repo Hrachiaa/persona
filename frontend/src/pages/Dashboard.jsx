@@ -6,7 +6,6 @@ import {
   HiOutlineHeart,
   HiOutlineBookOpen,
   HiOutlineStar,
-  HiOutlineArrowRightOnRectangle,
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
 import ProgressiveBlur from '../components/ProgressiveBlur';
@@ -15,6 +14,7 @@ import Portrait from './tabs/Portrait';
 import Compatibility from './tabs/Compatibility';
 import Recommendations from './tabs/Recommendations';
 import DailyAdvice from './tabs/DailyAdvice';
+import Profile from './Profile';
 
 const tabs = [
   { id: 'tests', label: 'Tests', icon: HiOutlineClipboardDocumentList },
@@ -24,12 +24,19 @@ const tabs = [
   { id: 'advice', label: 'Advice', icon: HiOutlineStar },
 ];
 
+/** First letter of the user's name (or email) for the avatar button. */
+function avatarInitial(user) {
+  return (user?.name?.trim() || user?.email || '?').charAt(0).toUpperCase();
+}
+
 export default function Dashboard({ onLogout }) {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('tests');
   const [immersive, setImmersive] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   const userName = user?.name || 'User';
+  const initial = avatarInitial(user);
 
   // Each tab should open at the top — the window otherwise keeps the previous
   // tab's scroll position.
@@ -89,12 +96,15 @@ export default function Dashboard({ onLogout }) {
             })}
           </nav>
           <motion.button
-            onClick={onLogout}
-            className="mt-auto flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+            onClick={() => setShowProfile(true)}
+            aria-label="Open profile"
+            className="mt-auto flex items-center gap-3 h-14 pl-2 pr-5 rounded-full bg-white shadow-warm text-persona-dark hover:shadow-warm-lg transition-all text-sm font-medium self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
             whileTap={{ scale: 0.95 }}
           >
-            <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-            Sign out
+            <span className="w-10 h-10 shrink-0 rounded-full bg-persona-accent-peach/50 flex items-center justify-center font-display font-semibold">
+              {initial}
+            </span>
+            <span className="truncate max-w-[8rem]">{userName}</span>
           </motion.button>
         </aside>
       )}
@@ -111,12 +121,14 @@ export default function Dashboard({ onLogout }) {
                 <span className="font-display text-xl">λ</span> Persona
               </p>
               <motion.button
-                onClick={onLogout}
-                className="flex items-center gap-2 h-12 px-6 rounded-full bg-white shadow-warm text-persona-muted hover:text-persona-dark transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+                onClick={() => setShowProfile(true)}
+                aria-label="Open profile"
+                className="w-12 h-12 rounded-full bg-white shadow-warm text-persona-dark flex items-center justify-center font-display font-semibold hover:shadow-warm-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
                 whileTap={{ scale: 0.95 }}
               >
-                <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-                Sign out
+                <span className="w-9 h-9 rounded-full bg-persona-accent-peach/50 flex items-center justify-center">
+                  {initial}
+                </span>
               </motion.button>
             </div>
           </header>
@@ -176,6 +188,17 @@ export default function Dashboard({ onLogout }) {
           })}
         </div>
       </motion.nav>
+
+      {/* Profile overlay — full-screen, sits above the nav (z-[60]) */}
+      <AnimatePresence>
+        {showProfile && (
+          <Profile
+            key="profile"
+            onBack={() => setShowProfile(false)}
+            onLogout={onLogout}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

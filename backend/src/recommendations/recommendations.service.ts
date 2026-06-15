@@ -5,7 +5,7 @@ import { AiService } from '../ai/ai.service';
 import { CatalogService, EnrichedItem } from './catalog.service';
 import { RecommendationRepository } from './recommendation.repository';
 import { buildProfileBlock, MediaKind } from '../ai/prompts/recommendations.prompt';
-import { RecommendationListDto, toItemDto } from './dtos/recommendation.dto';
+import { RecommendationHistoryDto, RecommendationListDto, toHistoryItemDto, toItemDto } from './dtos/recommendation.dto';
 
 const BATCH_REQUEST = 12; // titles asked of the model per generation (one call, no backfill)
 const PREFETCH_THRESHOLD = 17; // start the next batch once the queue drops to this many cards
@@ -62,6 +62,12 @@ export class RecommendationsService {
       else void this.dedupedGenerate(userId, mediaType);
     }
     return RecommendationListDto.generating(mediaType);
+  }
+
+  /** Liked + disliked items the user has swiped, newest first — the profile history feed. */
+  async getHistory(userId: string): Promise<RecommendationHistoryDto> {
+    const rows = await this.repo.getRated(userId);
+    return { items: rows.map(toHistoryItemDto) };
   }
 
   async swipe(userId: string, itemId: string, verdict: 'LIKED' | 'DISLIKED'): Promise<{ pending: number }> {

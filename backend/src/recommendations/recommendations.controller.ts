@@ -2,7 +2,7 @@ import { BadRequestException, Body, Controller, Get, Param, Post, Query, Req, Us
 import { ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RecommendationsService } from './recommendations.service';
-import { RecommendationListDto } from './dtos/recommendation.dto';
+import { RecommendationHistoryDto, RecommendationListDto } from './dtos/recommendation.dto';
 import { SwipeDto } from './dtos/swipe.dto';
 import { MediaKind } from '../ai/prompts/recommendations.prompt';
 
@@ -20,6 +20,13 @@ export class RecommendationsController {
   @Get('')
   async list(@Req() req, @Query('type') type: string) {
     return this.recommendationsService.getRecommendations(req.user.id, parseMediaType(type));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({ status: 200, description: 'Liked + disliked items, newest first', type: RecommendationHistoryDto })
+  @Get('history')
+  async history(@Req() req) {
+    return this.recommendationsService.getHistory(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

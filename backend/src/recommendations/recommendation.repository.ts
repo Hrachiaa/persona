@@ -18,6 +18,14 @@ export class RecommendationRepository {
     });
   }
 
+  /** Every swiped item (liked + disliked), newest swipe first — the history feed. */
+  getRated(userId: string) {
+    return this.prisma.recommendationItem.findMany({
+      where: { userId, verdict: { in: ['LIKED', 'DISLIKED'] } },
+      orderBy: [{ updatedAt: 'desc' }],
+    });
+  }
+
   countPending(userId: string, mediaType: MediaKind) {
     return this.prisma.recommendationItem.count({
       where: { userId, mediaType: toDb(mediaType), verdict: 'PENDING' },

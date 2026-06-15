@@ -14,6 +14,11 @@ export const recommendationsApi = {
   swipe: (id, verdict) =>
     client.post(`/recommendations/${id}/swipe`, { verdict }).then((r) => r.data),
 
+  // GET /recommendations/history -> { items: [{ ...card, verdict: 'liked'|'disliked', swipedAt }] }
+  // Liked + disliked items the user has swiped, newest first. Powers the profile's
+  // "Liked" and "History" views (the Liked view just filters verdict === 'liked').
+  history: () => client.get('/recommendations/history').then((r) => r.data),
+
   // POST /recommendations/reset?type=film|book -> { ok: true }
   // Body must be a real object — sending `null` with the client's default
   // application/json content type serializes to "null", which the body parser rejects.

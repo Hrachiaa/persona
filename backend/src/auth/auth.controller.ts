@@ -5,6 +5,7 @@ import { AuthDto } from '../users/dtos/auth.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ChangeForgottenPasswordDto, ForgotPasswordCodeDto, ForgotPasswordDto } from './dtos/forgot-password.dto';
+import { ChangePasswordDto } from './dtos/change-password.dto';
 import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { UserDto } from './dtos/user.dto';
@@ -72,6 +73,18 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Invalid refresh token' })
     async logout(@Body() refreshToken: RefreshTokenDto){
         return await this.authService.logout(refreshToken.refreshToken);
+    }
+
+    @Post('change-password')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Change password for the logged-in user' })
+    @ApiResponse({ status: 200, description: 'Password changed successfully' })
+    @ApiResponse({ status: 400, description: 'Invalid current password' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @UseGuards(JwtAuthGuard)
+    async changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req){
+        await this.authService.changePassword(req.user.id, changePasswordDto.currentPassword, changePasswordDto.newPassword);
+        return { ok: true };
     }
 
     @Post('forgot-password')
