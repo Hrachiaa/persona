@@ -34,6 +34,6 @@ There is **no shared types package and no codegen**. The frontend hand-writes re
 
 ## Quirks worth knowing before "fixing" them
 
-- **`react-router-dom` is installed in the frontend but not used.** Navigation is a state machine in [frontend/src/App.jsx](frontend/src/App.jsx) (`SCREENS` constant + `useState`). Don't introduce routing as a drive-by — flag it first.
+- **Frontend navigation uses `react-router-dom` v7** — routes are declared in [frontend/src/App.jsx](frontend/src/App.jsx), each screen/tab has its own URL. See [frontend/CLAUDE.md](frontend/CLAUDE.md#routing) for the route table.
 - **`backend/src/users/models/user.enity.ts`** has a typo (`enity`, missing `t`). Renaming touches every importer of `UserEntity`; treat it as a separate task, not a cleanup.
 - **The frontend is plain JavaScript.** `@types/react` is in devDependencies for editor hints only — there is no `tsconfig.json` and no TS compile step. Don't add `.ts`/`.tsx` files without converting the project deliberately.

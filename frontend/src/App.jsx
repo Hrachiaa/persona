@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useAuth } from './context/AuthContext';
 import Onboarding from './pages/Onboarding';
@@ -9,43 +10,40 @@ import Survey from './pages/Survey';
 import Dashboard from './pages/Dashboard';
 import ProgressiveBlur from './components/ProgressiveBlur';
 
-const SCREENS = {
-  ONBOARDING: 'onboarding',
-  REGISTER: 'register',
-  LOGIN: 'login',
-  FORGOT_PASSWORD: 'forgot_password',
-  SURVEY: 'survey',
-  DASHBOARD: 'dashboard',
-};
+// Dashboard tab routes (+ the profile overlay) all render the same Dashboard
+// layout. They share a single AnimatePresence key so switching tabs doesn't
+// re-animate the whole shell — Dashboard handles its own tab transitions.
+const DASHBOARD_PATHS = ['/tests', '/portrait', '/match', '/reads', '/advice', '/profile'];
 
 /** Check whether the user's profile fields are already populated */
 function isProfileComplete(user) {
   return user && user.name && user.gender && user.birthDate;
 }
 
-/** Decide which screen to start on (called once after loading finishes) */
-function getInitialScreen(user) {
+/** Decide where a visitor hitting `/` should land (mirrors the old getInitialScreen) */
+function getInitialPath(user) {
   // Bug 3: skip onboarding if user has already seen it
   const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
 
   if (user) {
     // Authenticated — go to Survey or Dashboard
-    return isProfileComplete(user) ? SCREENS.DASHBOARD : SCREENS.SURVEY;
+    return isProfileComplete(user) ? '/tests' : '/survey';
   }
 
   if (!hasSeenOnboarding) {
-    return SCREENS.ONBOARDING;
+    return '/onboarding';
   }
 
   // Bug 4: returning users land on Sign In, first-timers on Sign Up
   const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
-  return hasVisitedBefore ? SCREENS.LOGIN : SCREENS.REGISTER;
+  return hasVisitedBefore ? '/login' : '/register';
 }
 
 export default function App() {
   const { user, loading, handleGoogleCallback, fetchMe, logout } = useAuth();
-  const [screen, setScreen] = useState(null); // null until init logic runs
   const [googleHandled, setGoogleHandled] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Bug 1: Handle Google OAuth callback — extract tokens from URL
   useEffect(() => {
@@ -55,19 +53,13 @@ export default function App() {
     const userId = params.get('userId');
 
     if (accessToken && refreshToken && userId) {
-      // Clean up URL immediately
-      window.history.replaceState({}, document.title, window.location.pathname);
-
       handleGoogleCallback({ accessToken, refreshToken, userId }).then((me) => {
         // Mark as visited for Bug 4
         localStorage.setItem('hasVisitedBefore', 'true');
         localStorage.setItem('hasSeenOnboarding', 'true');
-        // Bug 2: skip Survey if profile already complete
-        if (isProfileComplete(me)) {
-          setScreen(SCREENS.DASHBOARD);
-        } else {
-          setScreen(SCREENS.SURVEY);
-        }
+        // Bug 2: skip Survey if profile already complete (replace so the
+        // token-laden callback URL doesn't end up in history)
+        navigate(isProfileComplete(me) ? '/tests' : '/survey', { replace: true });
         setGoogleHandled(true);
       });
     } else {
@@ -75,15 +67,8 @@ export default function App() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Once loading finishes and Google callback is handled, pick the initial screen
-  useEffect(() => {
-    if (!loading && googleHandled && screen === null) {
-      setScreen(getInitialScreen(user));
-    }
-  }, [loading, googleHandled, user, screen]);
-
   // Show loading spinner while auth is being resolved
-  if (loading || !googleHandled || screen === null) {
+  if (loading || !googleHandled) {
     return (
       <div className="min-h-dvh bg-persona-bg grain flex items-center justify-center">
         <div className="animate-pulse-soft text-2xl font-medium text-persona-dark flex items-center gap-2 relative">
@@ -93,25 +78,36 @@ export default function App() {
     );
   }
 
-  const navigate = (to) => setScreen(to);
-
   /** Called after successful signup or login — me is the fresh /auth/me response */
   const handleAuthComplete = (me) => {
     localStorage.setItem('hasVisitedBefore', 'true');
     // Use the fresh user data passed in, not the stale React state
-    if (isProfileComplete(me)) {
-      navigate(SCREENS.DASHBOARD);
-    } else {
-      navigate(SCREENS.SURVEY);
-    }
+    navigate(isProfileComplete(me) ? '/tests' : '/survey');
   };
 
   /** Called after survey completes */
   const handleSurveyComplete = async () => {
     // Refresh user data so we have the latest profile
     await fetchMe();
-    navigate(SCREENS.DASHBOARD);
+    navigate('/tests');
   };
+
+  /** Onboarding finished — persist the flag and route on (Bug 3 / Bug 4) */
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('hasSeenOnboarding', 'true');
+    const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
+    navigate(
+      user
+        ? (isProfileComplete(user) ? '/tests' : '/survey')
+        : (hasVisitedBefore ? '/login' : '/register')
+    );
+  };
+
+  // Routes that require an authenticated user fall back to the login screen.
+  const requireAuth = (element) => (user ? element : <Navigate to="/login" replace />);
+
+  const isDashboardRoute = DASHBOARD_PATHS.includes(location.pathname);
+  const animKey = isDashboardRoute ? 'dashboard' : location.pathname;
 
   return (
     <div className="min-h-dvh bg-persona-bg grain">
@@ -123,60 +119,55 @@ export default function App() {
       </a>
       <main id="main" className="relative">
         {/* Top progressive blur — matches the Dashboard. Dashboard renders its own
-            (immersive-aware) instance, so skip it here to avoid doubling up. */}
-        {screen !== SCREENS.DASHBOARD && (
+            (immersive-aware) instance, so skip it on dashboard routes. */}
+        {!isDashboardRoute && (
           <ProgressiveBlur direction="down" className="fixed top-0 inset-x-0 h-28 z-40" />
         )}
         <AnimatePresence mode="wait">
-        {screen === SCREENS.ONBOARDING && (
-          <Onboarding
-            key="onboarding"
-            onComplete={() => {
-              // Bug 3: persist flag so onboarding never shows again
-              localStorage.setItem('hasSeenOnboarding', 'true');
-              // Bug 4: first-timers go to Sign Up
-              const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
-              navigate(user ? (isProfileComplete(user) ? SCREENS.DASHBOARD : SCREENS.SURVEY) : (hasVisitedBefore ? SCREENS.LOGIN : SCREENS.REGISTER));
-            }}
-          />
-        )}
-        {screen === SCREENS.REGISTER && (
-          <Register
-            key="register"
-            onComplete={handleAuthComplete}
-            onLogin={() => navigate(SCREENS.LOGIN)}
-          />
-        )}
-        {screen === SCREENS.LOGIN && (
-          <Login
-            key="login"
-            onComplete={handleAuthComplete}
-            onLogin={() => navigate(SCREENS.LOGIN)}
-            onRegister={() => navigate(SCREENS.REGISTER)}
-            onForgotPassword={() => navigate(SCREENS.FORGOT_PASSWORD)}
-          />
-        )}
-        {screen === SCREENS.FORGOT_PASSWORD && (
-          <ForgotPassword
-            key="forgot_password"
-            onBack={() => navigate(SCREENS.LOGIN)}
-          />
-        )}
-        {screen === SCREENS.SURVEY && (
-          <Survey
-            key="survey"
-            onComplete={handleSurveyComplete}
-          />
-        )}
-        {screen === SCREENS.DASHBOARD && (
-          <Dashboard
-            key="dashboard"
-            onLogout={async () => {
-              await logout();
-              navigate(SCREENS.LOGIN);
-            }}
-          />
-        )}
+          <Routes location={location} key={animKey}>
+            <Route path="/" element={<Navigate to={getInitialPath(user)} replace />} />
+            <Route
+              path="/onboarding"
+              element={<Onboarding onComplete={handleOnboardingComplete} />}
+            />
+            <Route
+              path="/register"
+              element={<Register onComplete={handleAuthComplete} onLogin={() => navigate('/login')} />}
+            />
+            <Route
+              path="/login"
+              element={
+                <Login
+                  onComplete={handleAuthComplete}
+                  onRegister={() => navigate('/register')}
+                  onForgotPassword={() => navigate('/forgot-password')}
+                />
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={<ForgotPassword onBack={() => navigate('/login')} />}
+            />
+            <Route
+              path="/survey"
+              element={requireAuth(<Survey onComplete={handleSurveyComplete} />)}
+            />
+            {DASHBOARD_PATHS.map((path) => (
+              <Route
+                key={path}
+                path={path}
+                element={requireAuth(
+                  <Dashboard
+                    onLogout={async () => {
+                      await logout();
+                      navigate('/login');
+                    }}
+                  />
+                )}
+              />
+            ))}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </AnimatePresence>
       </main>
     </div>

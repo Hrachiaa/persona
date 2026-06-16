@@ -25,18 +25,22 @@ From [package.json](package.json):
 | `npm run preview` | Serve the production build locally. |
 | `npm run lint` | Flat-config ESLint over the repo. |
 
-## Routing — there isn't one
+## Routing
 
-`react-router-dom` is in [package.json](package.json) but **unused**. Navigation is a screen state machine in [src/App.jsx](src/App.jsx):
+Navigation uses **`react-router-dom` v7** (`BrowserRouter` is mounted in [src/main.jsx](src/main.jsx)). Routes are declared in [src/App.jsx](src/App.jsx):
 
-```js
-const SCREENS = {
-  ONBOARDING, REGISTER, LOGIN, FORGOT_PASSWORD, SURVEY, DASHBOARD,
-};
-const [screen, setScreen] = useState(null);
-```
+| Path | Screen |
+| --- | --- |
+| `/` | redirect — `getInitialPath(user)` picks the landing route |
+| `/onboarding` `/register` `/login` `/forgot-password` `/survey` | top-level screens |
+| `/tests` `/portrait` `/match` `/reads` `/advice` | Dashboard tabs (all render `Dashboard`) |
+| `/profile` | Dashboard with the Profile overlay open |
+| `*` | redirect to `/` |
 
-`getInitialScreen(user)` decides where to start, using `localStorage` flags (`hasSeenOnboarding`, `hasVisitedBefore`) and `isProfileComplete(user)`. Adding a real router would replace this whole flow — flag and ask before doing it.
+- `getInitialPath(user)` decides where `/` lands, using `localStorage` flags (`hasSeenOnboarding`, `hasVisitedBefore`) and `isProfileComplete(user)`. The Google OAuth callback (tokens in the query string) is handled in an effect that `navigate(..., { replace: true })`s once tokens are consumed.
+- Auth-gated routes are wrapped with a `requireAuth(...)` helper that redirects to `/login` when there's no `user`.
+- All `DASHBOARD_PATHS` render the **same** `Dashboard` element and share one `AnimatePresence` key (`'dashboard'`), so switching tabs doesn't re-animate the shell — `Dashboard` derives `activeTab` / `showProfile` from `useLocation()` and navigates with `useNavigate()` (it owns no tab state). Auth screens keep their per-route `motion` enter/exit transitions.
+- SPA deep links work because Vite's dev server / `preview` default to `appType: 'spa'`. Whatever serves the production `dist/` must also fall back to `index.html`.
 
 ## State & data fetching
 

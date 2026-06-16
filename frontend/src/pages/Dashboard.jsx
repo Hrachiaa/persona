@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineClipboardDocumentList,
@@ -17,11 +18,11 @@ import DailyAdvice from './tabs/DailyAdvice';
 import Profile from './Profile';
 
 const tabs = [
-  { id: 'tests', label: 'Tests', icon: HiOutlineClipboardDocumentList },
-  { id: 'portrait', label: 'Portrait', icon: HiOutlineSparkles },
-  { id: 'match', label: 'Match', icon: HiOutlineHeart },
-  { id: 'reads', label: 'Reads', icon: HiOutlineBookOpen },
-  { id: 'advice', label: 'Advice', icon: HiOutlineStar },
+  { id: 'tests', path: '/tests', label: 'Tests', icon: HiOutlineClipboardDocumentList },
+  { id: 'portrait', path: '/portrait', label: 'Portrait', icon: HiOutlineSparkles },
+  { id: 'match', path: '/match', label: 'Match', icon: HiOutlineHeart },
+  { id: 'reads', path: '/reads', label: 'Reads', icon: HiOutlineBookOpen },
+  { id: 'advice', path: '/advice', label: 'Advice', icon: HiOutlineStar },
 ];
 
 /** First letter of the user's name (or email) for the avatar button. */
@@ -31,9 +32,13 @@ function avatarInitial(user) {
 
 export default function Dashboard({ onLogout }) {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('tests');
+  const location = useLocation();
+  const navigate = useNavigate();
   const [immersive, setImmersive] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
+
+  // The URL is the source of truth for which tab / overlay is showing.
+  const showProfile = location.pathname === '/profile';
+  const activeTab = tabs.find((t) => t.path === location.pathname)?.id || 'tests';
 
   const userName = user?.name || 'User';
   const initial = avatarInitial(user);
@@ -44,10 +49,10 @@ export default function Dashboard({ onLogout }) {
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => setActiveTab('portrait')} />;
-      case 'portrait': return <Portrait key="portrait" onOpenTests={() => setActiveTab('tests')} />;
+      case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => navigate('/portrait')} />;
+      case 'portrait': return <Portrait key="portrait" onOpenTests={() => navigate('/tests')} />;
       case 'match': return <Compatibility key="match" />;
-      case 'reads': return <Recommendations key="reads" onOpenTests={() => setActiveTab('tests')} onImmersiveChange={setImmersive} />;
+      case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/tests')} onImmersiveChange={setImmersive} />;
       case 'advice': return <DailyAdvice key="advice" userName={userName} />;
       default: return <Tests key="tests" onImmersiveChange={setImmersive} />;
     }
@@ -75,7 +80,7 @@ export default function Dashboard({ onLogout }) {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => navigate(tab.path)}
                   aria-current={isActive ? 'page' : undefined}
                   aria-label={tab.label}
                   className={`relative flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
@@ -96,7 +101,7 @@ export default function Dashboard({ onLogout }) {
             })}
           </nav>
           <motion.button
-            onClick={() => setShowProfile(true)}
+            onClick={() => navigate('/profile')}
             aria-label="Open profile"
             className="mt-auto flex items-center gap-3 h-14 pl-2 pr-5 rounded-full bg-white shadow-warm text-persona-dark hover:shadow-warm-lg transition-all text-sm font-medium self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
             whileTap={{ scale: 0.95 }}
@@ -121,7 +126,7 @@ export default function Dashboard({ onLogout }) {
                 <span className="font-display text-xl">λ</span> Persona
               </p>
               <motion.button
-                onClick={() => setShowProfile(true)}
+                onClick={() => navigate('/profile')}
                 aria-label="Open profile"
                 className="w-12 h-12 rounded-full bg-white shadow-warm text-persona-dark flex items-center justify-center font-display font-semibold hover:shadow-warm-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
                 whileTap={{ scale: 0.95 }}
@@ -162,7 +167,7 @@ export default function Dashboard({ onLogout }) {
             return (
               <motion.button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => navigate(tab.path)}
                 aria-current={isActive ? 'page' : undefined}
                 aria-label={tab.label}
                 className={`flex flex-col items-center gap-0.5 py-2 px-3 rounded-2xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
@@ -194,7 +199,7 @@ export default function Dashboard({ onLogout }) {
         {showProfile && (
           <Profile
             key="profile"
-            onBack={() => setShowProfile(false)}
+            onBack={() => (location.key === 'default' ? navigate('/tests') : navigate(-1))}
             onLogout={onLogout}
           />
         )}
