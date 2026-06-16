@@ -766,7 +766,6 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // show it for the matching URL (otherwise we fall back to the stored result).
   const [result, setResult] = useState(null);
   const [questionsLoading, setQuestionsLoading] = useState(false);
-  const [sessionRestored, setSessionRestored] = useState(false);
   // The resume prompt is a transient dialog (no URL of its own); once the user
   // picks continue/restart we drop straight into the questions at /tests/:slug.
   const [resumeDecided, setResumeDecided] = useState(false);
@@ -805,8 +804,10 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   }, [screen, onImmersiveChange]);
   useEffect(() => () => onImmersiveChange?.(false), [onImmersiveChange]);
 
-  // A new test in the URL means a fresh resume decision.
-  useEffect(() => { setResumeDecided(false); }, [routeSlug]);
+  // A fresh resume decision whenever we (re)enter a test's runner — either a new
+  // test in the URL, or coming back from that test's result page (which keeps the
+  // same routeSlug, so we also key on isResultRoute).
+  useEffect(() => { setResumeDecided(false); }, [routeSlug, isResultRoute]);
 
   // Fetch test list
   const fetchTests = useCallback(async () => {
@@ -825,31 +826,12 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     }
   }, []);
 
-  // On mount: fetch tests, then — only when sitting on the bare list — restore an
-  // in-progress session by routing to it.
+  // On mount: fetch tests. We intentionally do NOT auto-route an in-progress
+  // session back into the test — the resume prompt should only appear when the
+  // user actually returns to the test itself (clicks it, deep-links, or refreshes
+  // /tests/:slug), not when they merely re-enter the app on the bare /tests list.
   useEffect(() => {
-    fetchTests().then((fetchedTests) => {
-      if (sessionRestored) return;
-      setSessionRestored(true);
-      // Only auto-resume from the bare /tests list (not while mounted behind the
-      // profile overlay, and not when a test is already addressed in the URL).
-      if (!onTestsRoute || routeSlug) return;
-
-      const activeTestId = localStorage.getItem('activeTestId');
-      if (!activeTestId || !fetchedTests.length) return;
-
-      const savedAnswers = LS.get(activeTestId, 'answers');
-      if (!savedAnswers || savedAnswers.length === 0) {
-        localStorage.removeItem('activeTestId'); // stale session
-        return;
-      }
-      const test = fetchedTests.find((t) => t.id === activeTestId);
-      if (!test) {
-        localStorage.removeItem('activeTestId');
-        return;
-      }
-      navigate(`/tests/${testSlug(test)}`, { replace: true });
-    });
+    fetchTests();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load questions whenever the URL points at a test runner and we haven't loaded
@@ -904,12 +886,10 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     navigate(`/tests/${testSlug(selectedTest)}/result`);
   };
 
-  const handleRetake = () => {
-    LS.clearAll(selectedTest.id);
-    loadedQuestionsFor.current = null; // force a fresh question load
-    setResumeDecided(true);
-    navigate(`/tests/${testSlug(selectedTest)}`);
-  };
+  // Open the runner without wiping progress: if an earlier retake was left
+  // unfinished the resume prompt offers Continue / Start over; otherwise the
+  // runner opens fresh (no saved answers → straight to the first question).
+  const handleRetake = () => navigate(`/tests/${testSlug(selectedTest)}`);
 
   const handleBackToList = () => {
     setResult(null);
