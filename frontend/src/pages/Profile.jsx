@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineArrowLeft,
@@ -55,9 +56,20 @@ function initialsFor(user) {
   return base.charAt(0).toUpperCase();
 }
 
+/** Map a profile sub-view to its URL (MAIN lives at the bare /profile). */
+function viewToPath(view) {
+  return view === VIEWS.MAIN ? '/profile' : `/profile/${view}`;
+}
+
 export default function Profile({ onBack, onLogout }) {
   const { user } = useAuth();
-  const [view, setView] = useState(VIEWS.MAIN);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // The URL's last segment is the source of truth for the active sub-view.
+  const segment = location.pathname.replace(/^\/profile\/?/, '');
+  const view = Object.values(VIEWS).includes(segment) ? segment : VIEWS.MAIN;
+  const setView = (next) => navigate(viewToPath(next));
 
   // History (liked + disliked) is fetched once and shared by the Liked and History views.
   const [history, setHistory] = useState(null); // null = not loaded yet
@@ -88,7 +100,10 @@ export default function Profile({ onBack, onLogout }) {
     }
   };
 
-  const goMain = () => setView(VIEWS.MAIN);
+  // Back out of a sub-view by popping history (the entry below is /profile MAIN),
+  // so we don't pile up /profile entries and create a back-button loop. Fall back
+  // to an explicit navigate when there's no history to pop (deep link / refresh).
+  const goMain = () => (location.key === 'default' ? navigate('/profile') : navigate(-1));
 
   return (
     <motion.div

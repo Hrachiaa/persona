@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineHeart, HiOutlineHandThumbUp, HiOutlineBolt, HiOutlineSparkles } from 'react-icons/hi2';
 
@@ -50,11 +51,15 @@ function CircleProgress({ percentage }) {
 }
 
 export default function Compatibility() {
-  const [email, setEmail] = useState('');
-  const [showResult, setShowResult] = useState(false);
+  // The checked person lives in the URL (`?with=email`) so the result survives a
+  // refresh and can be shared; the input mirrors it.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const withEmail = searchParams.get('with') || '';
+  const [email, setEmail] = useState(withEmail);
+  const showResult = Boolean(withEmail);
 
   const handleCheck = () => {
-    if (email.trim()) setShowResult(true);
+    if (email.trim()) setSearchParams({ with: email.trim() });
   };
 
   return (

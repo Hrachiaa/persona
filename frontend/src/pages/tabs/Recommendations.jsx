@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import {
   HiOutlineBookOpen,
@@ -268,7 +269,9 @@ function ActionButton({ onClick, children, className = '', size = 'md', label })
 }
 
 export default function Recommendations({ onOpenTests, onImmersiveChange }) {
-  const [mode, setMode] = useState('film');
+  // `?type=film|book` drives which queue we show; defaults to film.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const mode = searchParams.get('type') === 'book' ? 'book' : 'film';
   const [cards, setCards] = useState([]);
   const [status, setStatus] = useState('loading'); // loading | locked | generating | ready | error
   const [lockInfo, setLockInfo] = useState({ completed: 0, required: TOTAL_TESTS });
@@ -345,7 +348,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
 
   function selectMode(next) {
     if (next === mode) return;
-    setMode(next);
+    setSearchParams({ type: next });
     setStatus('loading');
     setCards([]);
     setExhausted(false);

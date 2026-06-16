@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineBolt,
@@ -42,6 +43,20 @@ const REAL_API_TESTS = new Set(['iq', 'bigFive', 'shcwartz', 'ecr', 'cope', 'pid
 
 // Order in which tests must be taken — each completed test unlocks the next.
 const TEST_ORDER = ['bigFive', 'shcwartz', 'cope', 'iq', 'ecr', 'pid'];
+
+// Human-readable URL slugs for the runner / result links (nicer than the raw cuid).
+const TYPE_SLUGS = {
+  iq: 'logic',
+  bigFive: 'personality',
+  shcwartz: 'values',
+  ecr: 'attachment',
+  cope: 'stress',
+  pid: 'shadows',
+  szondi: 'drives',
+  archetype: 'archetype',
+  mbti: 'type',
+};
+const testSlug = (test) => (test ? TYPE_SLUGS[test.testType] || test.testType : null);
 
 // ─── Mocked questions / results for non-IQ tests ────────────────────────────
 const MOCK_DATA = {
@@ -739,16 +754,46 @@ function GenericResultScreen({ result, meta }) {
 
 // ─── Main Tests Component ────────────────────────────────────────────────────
 export default function Tests({ onImmersiveChange, onOpenPortrait }) {
-  const [screen, setScreen] = useState(SCREEN.LIST);
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedTest, setSelectedTest] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
+  // Fresh result from the just-submitted test, tagged with its slug so we only
+  // show it for the matching URL (otherwise we fall back to the stored result).
   const [result, setResult] = useState(null);
   const [questionsLoading, setQuestionsLoading] = useState(false);
   const [sessionRestored, setSessionRestored] = useState(false);
+  // The resume prompt is a transient dialog (no URL of its own); once the user
+  // picks continue/restart we drop straight into the questions at /tests/:slug.
+  const [resumeDecided, setResumeDecided] = useState(false);
+  const loadedQuestionsFor = useRef(null);
+
+  // The URL is the source of truth: /tests → list, /tests/:slug → runner,
+  // /tests/:slug/result → result. Dashboard keeps this tab mounted behind the
+  // profile overlay, so ignore the path unless we're actually on /tests*.
+  const onTestsRoute =
+    location.pathname === '/tests' || location.pathname.startsWith('/tests/');
+  const segments = location.pathname.split('/').filter(Boolean); // ['tests', slug?, 'result'?]
+  const routeSlug = onTestsRoute ? segments[1] || null : null;
+  const isResultRoute = onTestsRoute && segments[2] === 'result';
+
+  const selectedTest = routeSlug ? tests.find((t) => testSlug(t) === routeSlug) : null;
+  const meta = selectedTest ? (TEST_META[selectedTest.testType] || TEST_META.iq) : null;
+
+  // Derive the current screen from the URL (+ the resume prompt's local decision).
+  let screen;
+  if (!routeSlug) {
+    screen = SCREEN.LIST;
+  } else if (isResultRoute) {
+    screen = SCREEN.RESULT;
+  } else {
+    const saved = selectedTest ? LS.get(selectedTest.id, 'answers') : null;
+    screen = saved && saved.length > 0 && !resumeDecided ? SCREEN.RESUME : SCREEN.QUESTIONS;
+  }
 
   // Tell the dashboard when we're on an immersive ("pushed over the app") screen
   // — taking a test, the resume prompt, or a result — so it can hide its chrome.
@@ -759,6 +804,9 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     window.scrollTo(0, 0);
   }, [screen, onImmersiveChange]);
   useEffect(() => () => onImmersiveChange?.(false), [onImmersiveChange]);
+
+  // A new test in the URL means a fresh resume decision.
+  useEffect(() => { setResumeDecided(false); }, [routeSlug]);
 
   // Fetch test list
   const fetchTests = useCallback(async () => {
@@ -777,42 +825,59 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     }
   }, []);
 
-  // On mount: fetch tests, then check for an active session to restore
+  // On mount: fetch tests, then — only when sitting on the bare list — restore an
+  // in-progress session by routing to it.
   useEffect(() => {
-    fetchTests().then(async (fetchedTests) => {
+    fetchTests().then((fetchedTests) => {
       if (sessionRestored) return;
+      setSessionRestored(true);
+      // Only auto-resume from the bare /tests list (not while mounted behind the
+      // profile overlay, and not when a test is already addressed in the URL).
+      if (!onTestsRoute || routeSlug) return;
+
       const activeTestId = localStorage.getItem('activeTestId');
-      if (!activeTestId || !fetchedTests.length) { setSessionRestored(true); return; }
+      if (!activeTestId || !fetchedTests.length) return;
 
       const savedAnswers = LS.get(activeTestId, 'answers');
       if (!savedAnswers || savedAnswers.length === 0) {
-        // No in-progress answers, clear stale session
-        localStorage.removeItem('activeTestId');
-        setSessionRestored(true);
+        localStorage.removeItem('activeTestId'); // stale session
         return;
       }
-
       const test = fetchedTests.find((t) => t.id === activeTestId);
-      if (!test) { localStorage.removeItem('activeTestId'); setSessionRestored(true); return; }
-
-      // Restore session
-      setSelectedTest(test);
-
-      try {
-        if (REAL_API_TESTS.has(test.testType)) {
-          const qs = await testsApi.getTestQuestions(test.id);
-          setQuestions(qs);
-        } else {
-          setQuestions(MOCK_DATA[test.testType]?.questions || []);
-        }
-        setScreen(SCREEN.RESUME);
-      } catch (err) {
-        console.error('Failed to restore session:', err);
+      if (!test) {
         localStorage.removeItem('activeTestId');
+        return;
       }
-      setSessionRestored(true);
+      navigate(`/tests/${testSlug(test)}`, { replace: true });
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Load questions whenever the URL points at a test runner and we haven't loaded
+  // that test's questions yet (covers clicks, deep links and refreshes alike).
+  useEffect(() => {
+    if (!routeSlug || isResultRoute || !selectedTest) return;
+    if (loadedQuestionsFor.current === selectedTest.id) return;
+
+    let active = true;
+    setQuestionsLoading(true);
+    (async () => {
+      try {
+        const qs = REAL_API_TESTS.has(selectedTest.testType)
+          ? await testsApi.getTestQuestions(selectedTest.id)
+          : (MOCK_DATA[selectedTest.testType]?.questions || []);
+        if (!active) return;
+        setQuestions(qs);
+        loadedQuestionsFor.current = selectedTest.id;
+        localStorage.setItem('activeTestId', selectedTest.id);
+      } catch (err) {
+        console.error('Failed to fetch questions:', err);
+        if (active) setError('Failed to load questions');
+      } finally {
+        if (active) setQuestionsLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, [routeSlug, isResultRoute, selectedTest]);
 
   const toggleExpand = (testId) => {
     setExpandedId((prev) => (prev === testId ? null : testId));
@@ -820,61 +885,39 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   const viewResult = (test) => {
     if (!test?.result) return;
-    setSelectedTest(test);
-    setResult(test.result);
-    setScreen(SCREEN.RESULT);
+    navigate(`/tests/${testSlug(test)}/result`);
   };
 
-  // Begin a test: persist the session, fetch its questions, and open the runner.
-  const beginTest = async (test) => {
-    setSelectedTest(test);
-    localStorage.setItem('activeTestId', test.id);
+  // Begin a test: the questions-loading effect picks it up from the URL.
+  const beginTest = (test) => navigate(`/tests/${testSlug(test)}`);
 
-    setQuestionsLoading(true);
-    try {
-      if (REAL_API_TESTS.has(test.testType)) {
-        const qs = await testsApi.getTestQuestions(test.id);
-        setQuestions(qs);
-      } else {
-        setQuestions(MOCK_DATA[test.testType]?.questions || []);
-      }
-      const saved = LS.get(test.id, 'answers');
-      setScreen(saved && saved.length > 0 ? SCREEN.RESUME : SCREEN.QUESTIONS);
-    } catch (err) {
-      console.error('Failed to fetch questions:', err);
-      setError('Failed to load questions');
-    } finally {
-      setQuestionsLoading(false);
-    }
-  };
-
-  const handleResumeContinue = () => setScreen(SCREEN.QUESTIONS);
+  const handleResumeContinue = () => setResumeDecided(true);
 
   const handleResumeRestart = () => {
     LS.remove(selectedTest.id, 'answers');
-    setScreen(SCREEN.QUESTIONS);
+    setResumeDecided(true);
   };
 
   const handleComplete = (res) => {
-    setResult(res);
-    setScreen(SCREEN.RESULT);
+    setResult({ slug: testSlug(selectedTest), data: res });
     fetchTests(); // Refresh list to get updated result status
+    navigate(`/tests/${testSlug(selectedTest)}/result`);
   };
 
   const handleRetake = () => {
     LS.clearAll(selectedTest.id);
-    beginTest(selectedTest);
+    loadedQuestionsFor.current = null; // force a fresh question load
+    setResumeDecided(true);
+    navigate(`/tests/${testSlug(selectedTest)}`);
   };
 
   const handleBackToList = () => {
-    setScreen(SCREEN.LIST);
-    setSelectedTest(null);
     setResult(null);
     setQuestions([]);
+    loadedQuestionsFor.current = null;
     localStorage.removeItem('activeTestId');
+    navigate('/tests');
   };
-
-  const meta = selectedTest ? (TEST_META[selectedTest.testType] || TEST_META.iq) : null;
 
   // ─── Render ──────────────────────────────────────────────────────────────────
   if (screen === SCREEN.LIST) {
@@ -951,7 +994,21 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     );
   }
 
-  if (screen === SCREEN.RESUME && selectedTest && meta) {
+  // Past the list every screen needs a resolved test. While the list is still
+  // loading (deep link / refresh) show a spinner; an id that doesn't exist once
+  // the list has loaded bounces back to the list.
+  if (!selectedTest || !meta) {
+    if (loading) {
+      return (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-dvh flex items-center justify-center">
+          <div className="animate-pulse-soft text-persona-muted">Loading…</div>
+        </motion.div>
+      );
+    }
+    return <Navigate to="/tests" replace />;
+  }
+
+  if (screen === SCREEN.RESUME) {
     return (
       <ResumePromptScreen
         meta={meta}
@@ -962,7 +1019,14 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     );
   }
 
-  if (screen === SCREEN.QUESTIONS && selectedTest && meta && questions.length > 0) {
+  if (screen === SCREEN.QUESTIONS) {
+    if (questionsLoading || questions.length === 0) {
+      return (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-dvh flex items-center justify-center">
+          <div className="animate-pulse-soft text-persona-muted">Loading…</div>
+        </motion.div>
+      );
+    }
     return (
       <QuestionsScreen
         test={selectedTest}
@@ -974,7 +1038,12 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     );
   }
 
-  if (screen === SCREEN.RESULT && result && meta) {
+  if (screen === SCREEN.RESULT) {
+    // Prefer the freshly submitted result; fall back to the test's stored result
+    // (deep link / refresh). If neither exists, there's nothing to show.
+    const shownResult = result && result.slug === routeSlug ? result.data : selectedTest.result;
+    if (!shownResult) return <Navigate to="/tests" replace />;
+
     const RESULT_SCREENS = {
       iq: IqResultScreen,
       bigFive: BigFiveResultScreen,
@@ -988,13 +1057,13 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     // (valid IQ with its intro; ECR with bottom-pinned actions). Everything else
     // (incl. the invalid IQ state) uses the standard immersive top bar here.
     const ownsTopBar =
-      (selectedTest.testType === 'iq' && result?.result?.reliability !== 'invalid') ||
+      (selectedTest.testType === 'iq' && shownResult?.result?.reliability !== 'invalid') ||
       selectedTest.testType === 'ecr';
     return (
       <>
         {!ownsTopBar && <ImmersiveTopBar onBack={handleBackToList} />}
         <ResultScreen
-          result={result}
+          result={shownResult}
           meta={meta}
           onDone={handleBackToList}
           onRetake={handleRetake}

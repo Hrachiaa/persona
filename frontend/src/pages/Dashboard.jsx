@@ -36,9 +36,15 @@ export default function Dashboard({ onLogout }) {
   const navigate = useNavigate();
   const [immersive, setImmersive] = useState(false);
 
-  // The URL is the source of truth for which tab / overlay is showing.
-  const showProfile = location.pathname === '/profile';
-  const activeTab = tabs.find((t) => t.path === location.pathname)?.id || 'tests';
+  // The URL is the source of truth for which tab / overlay is showing. Tabs match
+  // on a prefix so nested routes (e.g. /tests/:id/result) keep their tab active.
+  const { pathname } = location;
+  const showProfile = pathname === '/profile' || pathname.startsWith('/profile/');
+  const matchedTab = tabs.find((t) => pathname === t.path || pathname.startsWith(t.path + '/'))?.id;
+  // The profile overlay (/profile*) has no tab of its own. Keep the tab the user
+  // opened it from rendered behind it (passed via location.state) so closing the
+  // overlay doesn't flash through the default tab.
+  const activeTab = matchedTab || location.state?.from || 'tests';
 
   const userName = user?.name || 'User';
   const initial = avatarInitial(user);
@@ -101,7 +107,7 @@ export default function Dashboard({ onLogout }) {
             })}
           </nav>
           <motion.button
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate('/profile', { state: { from: activeTab } })}
             aria-label="Open profile"
             className="mt-auto flex items-center gap-3 h-14 pl-2 pr-5 rounded-full bg-white shadow-warm text-persona-dark hover:shadow-warm-lg transition-all text-sm font-medium self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
             whileTap={{ scale: 0.95 }}
@@ -126,7 +132,7 @@ export default function Dashboard({ onLogout }) {
                 <span className="font-display text-xl">λ</span> Persona
               </p>
               <motion.button
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate('/profile', { state: { from: activeTab } })}
                 aria-label="Open profile"
                 className="w-12 h-12 rounded-full bg-white shadow-warm text-persona-dark flex items-center justify-center font-display font-semibold hover:shadow-warm-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
                 whileTap={{ scale: 0.95 }}

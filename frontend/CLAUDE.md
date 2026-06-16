@@ -34,8 +34,17 @@ Navigation uses **`react-router-dom` v7** (`BrowserRouter` is mounted in [src/ma
 | `/` | redirect — `getInitialPath(user)` picks the landing route |
 | `/onboarding` `/register` `/login` `/forgot-password` `/survey` | top-level screens |
 | `/tests` `/portrait` `/match` `/reads` `/advice` | Dashboard tabs (all render `Dashboard`) |
-| `/profile` | Dashboard with the Profile overlay open |
+| `/tests/:slug` · `/tests/:slug/result` | test runner / result (`:slug` is a friendly name — `logic`, `personality`, `values`, `attachment`, `stress`, `shadows`, … via `TYPE_SLUGS` in [tabs/Tests.jsx](src/pages/tabs/Tests.jsx), not the raw cuid) |
+| `/profile` · `/profile/{edit,password,liked,history}` | Dashboard with the Profile overlay open |
 | `*` | redirect to `/` |
+
+`/tests` and `/profile` are registered as `/tests/*` and `/profile/*` so their sub-routes match; `DASHBOARD_PREFIXES` / `isDashboardPath()` in [src/App.jsx](src/App.jsx) treat any path under those as the shared `'dashboard'` animation group.
+
+**Sub-state in the URL — two conventions:**
+- **Path segments** for things you navigate *into* (a distinct screen that survives refresh / is shareable): the test runner & result ([tabs/Tests.jsx](src/pages/tabs/Tests.jsx) derives `screen`/`selectedTest` from the path; the resume prompt is a transient dialog with *no* URL) and the Profile sub-pages ([Profile.jsx](src/pages/Profile.jsx) derives `view` from the last segment).
+- **Query params** for a filter/position *of* the current screen: `/reads?type=film|book`, `/advice?tip=N`, `/match?with=email` (via `useSearchParams`). These tabs hold no equivalent `useState` anymore — the URL is the source of truth.
+
+The Profile overlay (`/profile*`) has no tab of its own, so the avatar button opens it with `navigate('/profile', { state: { from: activeTab } })` and [Dashboard.jsx](src/pages/Dashboard.jsx) renders that tab behind it — closing the overlay then doesn't flash through the default tab. Inside Profile, sub-views push history but the in-app back button *pops* (`navigate(-1)`), so it doesn't pile up `/profile` entries and loop the browser back button.
 
 - `getInitialPath(user)` decides where `/` lands, using `localStorage` flags (`hasSeenOnboarding`, `hasVisitedBefore`) and `isProfileComplete(user)`. The Google OAuth callback (tokens in the query string) is handled in an effect that `navigate(..., { replace: true })`s once tokens are consumed.
 - Auth-gated routes are wrapped with a `requireAuth(...)` helper that redirects to `/login` when there's no `user`.

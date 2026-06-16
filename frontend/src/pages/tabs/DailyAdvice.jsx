@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineArrowPath, HiOutlineCalendarDays, HiOutlineSparkles } from 'react-icons/hi2';
 
@@ -49,14 +50,17 @@ const today = new Date().toLocaleDateString('en-US', {
 });
 
 export default function DailyAdvice({ userName }) {
-  const [tipIndex, setTipIndex] = useState(0);
+  // `?tip=N` keeps the current card position in the URL.
+  const [searchParams, setSearchParams] = useSearchParams();
   const [direction, setDirection] = useState(1);
 
+  const rawTip = Number(searchParams.get('tip'));
+  const tipIndex = Number.isInteger(rawTip) && rawTip >= 0 ? rawTip % tips.length : 0;
   const currentTip = tips[tipIndex];
 
   const nextTip = () => {
     setDirection(1);
-    setTipIndex((prev) => (prev + 1) % tips.length);
+    setSearchParams({ tip: String((tipIndex + 1) % tips.length) });
   };
 
   return (

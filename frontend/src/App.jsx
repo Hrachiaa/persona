@@ -12,8 +12,12 @@ import ProgressiveBlur from './components/ProgressiveBlur';
 
 // Dashboard tab routes (+ the profile overlay) all render the same Dashboard
 // layout. They share a single AnimatePresence key so switching tabs doesn't
-// re-animate the whole shell — Dashboard handles its own tab transitions.
-const DASHBOARD_PATHS = ['/tests', '/portrait', '/match', '/reads', '/advice', '/profile'];
+// re-animate the shell — Dashboard handles its own tab + sub-route transitions.
+// `/tests` and `/profile` have nested sub-routes (test runner / result, profile
+// sub-pages), so they match on a prefix; the rest are leaf tabs.
+const DASHBOARD_PREFIXES = ['/tests', '/portrait', '/match', '/reads', '/advice', '/profile'];
+const DASHBOARD_ROUTES = ['/tests/*', '/portrait', '/match', '/reads', '/advice', '/profile/*'];
+const isDashboardPath = (p) => DASHBOARD_PREFIXES.some((base) => p === base || p.startsWith(base + '/'));
 
 /** Check whether the user's profile fields are already populated */
 function isProfileComplete(user) {
@@ -106,7 +110,7 @@ export default function App() {
   // Routes that require an authenticated user fall back to the login screen.
   const requireAuth = (element) => (user ? element : <Navigate to="/login" replace />);
 
-  const isDashboardRoute = DASHBOARD_PATHS.includes(location.pathname);
+  const isDashboardRoute = isDashboardPath(location.pathname);
   const animKey = isDashboardRoute ? 'dashboard' : location.pathname;
 
   return (
@@ -152,7 +156,7 @@ export default function App() {
               path="/survey"
               element={requireAuth(<Survey onComplete={handleSurveyComplete} />)}
             />
-            {DASHBOARD_PATHS.map((path) => (
+            {DASHBOARD_ROUTES.map((path) => (
               <Route
                 key={path}
                 path={path}
