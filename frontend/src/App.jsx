@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import Survey from './pages/Survey';
 import Dashboard from './pages/Dashboard';
+import SharePage from './pages/SharePage';
 import ProgressiveBlur from './components/ProgressiveBlur';
 
 // Dashboard tab routes (+ the profile overlay) all render the same Dashboard
@@ -130,6 +131,8 @@ export default function App() {
         <AnimatePresence mode="wait">
           <Routes location={location} key={animKey}>
             <Route path="/" element={<Navigate to={getInitialPath(user)} replace />} />
+            {/* Public shared result — viewable without an account. */}
+            <Route path="/share/:token" element={<SharePage />} />
             <Route
               path="/onboarding"
               element={<Onboarding onComplete={handleOnboardingComplete} />}

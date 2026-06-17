@@ -147,6 +147,7 @@ export class TestResultEntity {
         readonly userId: string,
         readonly testId: string,
         readonly testType: string,
-        readonly result: TestResultType
+        readonly result: TestResultType,
+        readonly shareToken: string | null = null
     ){}
 }

@@ -13,6 +13,8 @@ import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
 import { TEST_ORDER } from './test-order';
 import { PortraitService } from '../portrait/portrait.service';
+import { SharedResultDto } from './dtos/shared-result.dto';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class TestsService implements OnModuleInit {
@@ -60,8 +62,10 @@ export class TestsService implements OnModuleInit {
 
         const isExists = await this.testResultRepository.getTestResult(userId, testId)
         const save = isExists
+            // Retake — keep the existing share link so any already-sent URL still works.
             ? await this.testResultRepository.updateTestResult(userId, testId, result) as unknown as TestResultEntity
-            : await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType}) as unknown as TestResultEntity
+            // First time — mint the share token up front so the link exists immediately.
+            : await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType, shareToken: randomBytes(9).toString('base64url')}) as unknown as TestResultEntity
 
         // Rebuild the cross-test portrait from the latest answers. Fire-and-forget so
         // the submit response isn't held for the (up to a minute) LLM call; the portrait
@@ -70,6 +74,30 @@ export class TestsService implements OnModuleInit {
         void this.portraitService.regenerate(userId)
 
         return testResultMapper.toDto(save)
+    }
+
+    // Mint (or reuse) a public share token for the user's result on this test.
+    // Idempotent: a second call returns the same token, so re-sharing keeps the
+    // link the user may have already sent.
+    async createShareLink(userId: string, testId: string): Promise<{ token: string }> {
+        const result = await this.testResultRepository.getTestResult(userId, testId)
+        if(!result) throw new NotFoundException('Result not found')
+        if(result.shareToken) return { token: result.shareToken }
+
+        const token = randomBytes(9).toString('base64url')
+        const saved = await this.testResultRepository.setShareToken(userId, testId, token)
+        return { token: saved.shareToken! }
+    }
+
+    async getSharedResult(token: string): Promise<SharedResultDto> {
+        const result = await this.testResultRepository.getByShareToken(token)
+        if(!result) throw new NotFoundException('Shared result not found')
+
+        const testType = result.testType
+        if(testType !== 'iq' && testType !== 'bigFive' && testType !== 'shcwartz' && testType !== 'ecr' && testType !== 'cope' && testType !== 'pid') {
+            throw new NotFoundException('Unknown test type')
+        }
+        return new SharedResultDto(testType, result.test.testName, result.user.name ?? null, result.result as any)
     }
 
     private async ensurePreviousTestsCompleted(userId: string, testType: string): Promise<void> {

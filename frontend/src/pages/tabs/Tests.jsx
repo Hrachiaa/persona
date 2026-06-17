@@ -19,6 +19,7 @@ import {
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
 import ImmersiveTopBar from './ImmersiveTopBar';
+import ShareResultBar from './ShareResultBar';
 import BigFiveResultScreen from './BigFiveResult';
 import SchwartzResultScreen from './SchwartzResult';
 import EcrResultScreen from './EcrResult';
@@ -152,7 +153,7 @@ function useCountUp(target, run, onDone, duration = 1800) {
 //  • red lower tail (below −1σ), gray bulk, green band highlighting "you"
 //  • a center "Average" line at μ=100 and a red "You" marker at the score
 //  • dual x-axis: raw IQ values on top, σ offsets below
-function BellCurve({ score, showMarkerLabel = true }) {
+function BellCurve({ score, showMarkerLabel = true, youLabel = 'You' }) {
   const mean = IQ_MEAN;
   const sigma = IQ_SIGMA;
   const lo = mean - 3 * sigma; // 55
@@ -233,7 +234,7 @@ function BellCurve({ score, showMarkerLabel = true }) {
             {Math.round(score)}
           </text>
           <text x={scoreX} y={baseY + 32} textAnchor="middle" fontSize="10" fontStyle="italic" fontWeight="700" fill="#1A1A1A">
-            You
+            {youLabel}
           </text>
         </>
       )}
@@ -587,7 +588,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
 }
 
 // ─── IQ Result Screen ────────────────────────────────────────────────────────
-function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
+function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait, headerAction, actions, ownerName }) {
   const { iq, reliability } = result.result;
   const Icon = meta.icon;
 
@@ -639,22 +640,26 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
             No worries — it happens. When you&apos;re ready, you can give it another go.
           </motion.p>
 
-          <motion.button
-            onClick={onRetake}
-            className="btn-primary w-full max-w-xs flex items-center justify-center gap-2 mx-auto"
-            whileTap={{ scale: 0.97 }}
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
-          >
-            <HiOutlineArrowPath className="w-5 h-5" /> Try again
-          </motion.button>
-          <motion.button
-            onClick={onDone}
-            className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5"
-            whileTap={{ scale: 0.97 }}
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}
-          >
-            Back to tests
-          </motion.button>
+          {actions ?? (
+            <>
+              <motion.button
+                onClick={onRetake}
+                className="btn-primary w-full max-w-xs flex items-center justify-center gap-2 mx-auto"
+                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
+              >
+                <HiOutlineArrowPath className="w-5 h-5" /> Try again
+              </motion.button>
+              <motion.button
+                onClick={onDone}
+                className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5"
+                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}
+              >
+                Back to tests
+              </motion.button>
+            </>
+          )}
         </div>
       </motion.div>
     );
@@ -669,19 +674,19 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={revealed ? '' : 'pointer-events-none'}
       >
-        <ImmersiveTopBar onBack={onDone} />
+        <ImmersiveTopBar onBack={onDone} rightSlot={headerAction} />
       </motion.div>
 
       {/* Hero — vertically centered; stays put through the reveal */}
       <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Your IQ score</h2>
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">{ownerName ? `${ownerName}’s IQ score` : 'Your IQ score'}</h2>
 
         <div className="font-display text-7xl font-semibold text-persona-dark mb-4 tabular leading-none">
           {displayIq}
         </div>
 
         {/* chart marker uses the raw (un-rounded) value so it glides smoothly */}
-        <BellCurve score={revealed ? iq : count} showMarkerLabel={revealed} />
+        <BellCurve score={revealed ? iq : count} showMarkerLabel={revealed} youLabel={ownerName ? ownerName.split(' ')[0] : 'You'} />
 
         {/* Percentile — space reserved so the chart doesn't shift on reveal */}
         <motion.p
@@ -690,7 +695,8 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="text-sm text-persona-muted mt-4 leading-relaxed max-w-prose mx-auto"
         >
-          Your IQ of <span className="font-semibold text-persona-dark tabular">{iq}</span> is equivalent to the{' '}
+          {ownerName ? `${ownerName}’s IQ of ` : 'Your IQ of '}
+          <span className="font-semibold text-persona-dark tabular">{iq}</span> is equivalent to the{' '}
           <span className="font-semibold text-persona-dark tabular">{iqPercentile(iq)}th</span> percentile — higher than{' '}
           <span className="tabular">{iqPercentile(iq)}%</span> of people, with a standard deviation of 15.
         </motion.p>
@@ -703,7 +709,7 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={`px-6 pb-10 flex flex-col items-center ${revealed ? '' : 'pointer-events-none'}`}
       >
-        {reliability === 'suspicious' && (
+        {reliability === 'suspicious' && !ownerName && (
           <div className="flex items-start gap-3 bg-persona-warn/10 rounded-2xl p-4 text-left mb-5 max-w-prose">
             <HiOutlineInformationCircle className="w-5 h-5 text-persona-warn flex-shrink-0 mt-0.5" />
             <p className="text-sm text-persona-warn leading-relaxed">
@@ -712,20 +718,24 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
           </div>
         )}
 
-        <motion.button onClick={onViewPortrait} className="btn-primary w-full max-w-sm" whileTap={{ scale: 0.97 }}>
-          View portrait
-        </motion.button>
+        {actions ?? (
+          <>
+            <motion.button onClick={onViewPortrait} className="btn-primary w-full max-w-sm" whileTap={{ scale: 0.97 }}>
+              View portrait
+            </motion.button>
 
-        <motion.button onClick={onRetake} className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5" whileTap={{ scale: 0.97 }}>
-          <HiOutlineArrowPath className="w-4 h-4" /> Retake test
-        </motion.button>
+            <motion.button onClick={onRetake} className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5" whileTap={{ scale: 0.97 }}>
+              <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+            </motion.button>
+          </>
+        )}
       </motion.div>
     </motion.div>
   );
 }
 
 // ─── Generic Result Screen (non-IQ) ─────────────────────────────────────────
-function GenericResultScreen({ result, meta }) {
+function GenericResultScreen({ result, meta, actions }) {
   const Icon = meta.icon;
   const r = result.result || {};
   return (
@@ -748,7 +758,47 @@ function GenericResultScreen({ result, meta }) {
           {r.detail || ''}
         </motion.p>
       </div>
+      {actions && <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">{actions}</div>}
     </motion.div>
+  );
+}
+
+// ─── Result View ─────────────────────────────────────────────────────────────
+// Renders a completed result exactly as the test owner sees it (same screen,
+// same intro animations). Shared by the Tests tab and the public /share page —
+// the only difference is the footer (`actions`) and the top-bar right slot
+// (`headerRightSlot`, e.g. the share buttons), which the caller supplies.
+export function ResultView({ test, result, onBack, onRetake, onViewPortrait, headerRightSlot, actions, ownerName }) {
+  const meta = TEST_META[test.testType] || TEST_META.iq;
+  const RESULT_SCREENS = {
+    iq: IqResultScreen,
+    bigFive: BigFiveResultScreen,
+    shcwartz: SchwartzResultScreen,
+    ecr: EcrResultScreen,
+    cope: CopeResultScreen,
+    pid: PidResultScreen,
+  };
+  const ResultScreen = RESULT_SCREENS[test.testType] || GenericResultScreen;
+  // Some screens own a full-height layout and render their own top bar (valid IQ
+  // with its intro; ECR with bottom-pinned actions). Everything else uses the
+  // standard immersive top bar here.
+  const ownsTopBar =
+    (test.testType === 'iq' && result?.result?.reliability !== 'invalid') ||
+    test.testType === 'ecr';
+  return (
+    <>
+      {!ownsTopBar && <ImmersiveTopBar onBack={onBack} rightSlot={headerRightSlot} />}
+      <ResultScreen
+        result={result}
+        meta={meta}
+        onDone={onBack}
+        onRetake={onRetake}
+        onViewPortrait={onViewPortrait}
+        headerAction={headerRightSlot}
+        actions={actions}
+        ownerName={ownerName}
+      />
+    </>
   );
 }
 
@@ -1024,32 +1074,15 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     const shownResult = result && result.slug === routeSlug ? result.data : selectedTest.result;
     if (!shownResult) return <Navigate to="/tests" replace />;
 
-    const RESULT_SCREENS = {
-      iq: IqResultScreen,
-      bigFive: BigFiveResultScreen,
-      shcwartz: SchwartzResultScreen,
-      ecr: EcrResultScreen,
-      cope: CopeResultScreen,
-      pid: PidResultScreen,
-    };
-    const ResultScreen = RESULT_SCREENS[selectedTest.testType] || GenericResultScreen;
-    // Some result screens own a full-height layout and render their own top bar
-    // (valid IQ with its intro; ECR with bottom-pinned actions). Everything else
-    // (incl. the invalid IQ state) uses the standard immersive top bar here.
-    const ownsTopBar =
-      (selectedTest.testType === 'iq' && shownResult?.result?.reliability !== 'invalid') ||
-      selectedTest.testType === 'ecr';
     return (
-      <>
-        {!ownsTopBar && <ImmersiveTopBar onBack={handleBackToList} />}
-        <ResultScreen
-          result={shownResult}
-          meta={meta}
-          onDone={handleBackToList}
-          onRetake={handleRetake}
-          onViewPortrait={onOpenPortrait}
-        />
-      </>
+      <ResultView
+        test={selectedTest}
+        result={shownResult}
+        onBack={handleBackToList}
+        onRetake={handleRetake}
+        onViewPortrait={onOpenPortrait}
+        headerRightSlot={<ShareResultBar test={selectedTest} result={shownResult} />}
+      />
     );
   }
 

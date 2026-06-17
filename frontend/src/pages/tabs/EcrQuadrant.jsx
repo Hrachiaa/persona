@@ -123,7 +123,7 @@ function useDotIntro(target, duration, active) {
   return n;
 }
 
-export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady }) {
+export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady, youLabel = 'You' }) {
   const peers = useMemo(() => samplePeers(norm, PEERS), [norm]);
 
   const x0 = toX(MIN);
@@ -249,7 +249,7 @@ export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady }
       >
         <div className="flex items-center gap-2 text-xs">
           <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: C.you }} />
-          <span className="font-medium text-persona-dark">You</span>
+          <span className="font-medium text-persona-dark">{youLabel}</span>
         </div>
         <div className="flex items-center gap-2 text-xs text-persona-muted">
           <span className="w-2.5 h-2.5 rounded-full bg-persona-muted/40 flex-shrink-0" />

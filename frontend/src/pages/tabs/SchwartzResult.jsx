@@ -7,7 +7,7 @@ const byScoreDesc = (a, b) => b.score - a.score;
 // Schwartz PVQ-RR: 19 basic values (top) + 4 higher-order values (bottom),
 // each sorted highest-first, on a centered scale whose half-width is the
 // furthest score from 0 (so the longest bar reaches the edge, 0 stays centered).
-export default function SchwartzResultScreen({ result, meta, onRetake, onViewPortrait }) {
+export default function SchwartzResultScreen({ result, meta, onRetake, onViewPortrait, actions, ownerName }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -37,10 +37,11 @@ export default function SchwartzResultScreen({ result, meta, onRetake, onViewPor
         >
           <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">Your values profile</h2>
+        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{ownerName ? `${ownerName}’s values profile` : 'Your values profile'}</h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          Where each value sits relative to your personal average — bars to the right of center
-          matter more to you, bars to the left matter less.
+          {ownerName
+            ? `Where each value sits relative to ${ownerName}’s personal average — bars to the right of center matter more, bars to the left matter less.`
+            : 'Where each value sits relative to your personal average — bars to the right of center matter more to you, bars to the left matter less.'}
         </p>
       </div>
 
@@ -73,26 +74,30 @@ export default function SchwartzResultScreen({ result, meta, onRetake, onViewPor
 
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
-        <motion.button
-          onClick={onViewPortrait}
-          className="btn-primary w-full"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          View portrait
-        </motion.button>
-        <motion.button
-          onClick={onRetake}
-          className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <HiOutlineArrowPath className="w-4 h-4" /> Retake test
-        </motion.button>
+        {actions ?? (
+          <>
+            <motion.button
+              onClick={onViewPortrait}
+              className="btn-primary w-full"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              View portrait
+            </motion.button>
+            <motion.button
+              onClick={onRetake}
+              className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+            </motion.button>
+          </>
+        )}
       </div>
     </motion.div>
   );

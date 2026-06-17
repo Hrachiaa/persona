@@ -6,7 +6,7 @@ const byScoreDesc = (a, b) => b.score - a.score;
 
 // PID-5: 25 maladaptive facets (top) + 5 broad domains (bottom),
 // each sorted highest-first, on a 0..3 scale.
-export default function PidResultScreen({ result, meta, onRetake, onViewPortrait }) {
+export default function PidResultScreen({ result, meta, onRetake, onViewPortrait, actions, ownerName }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -30,10 +30,10 @@ export default function PidResultScreen({ result, meta, onRetake, onViewPortrait
         >
           <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">Your personality facets</h2>
+        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{ownerName ? `${ownerName}’s personality facets` : 'Your personality facets'}</h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
           Maladaptive personality traits from the PID-5 — higher bars indicate stronger
-          expression. Your most pronounced traits appear first.
+          expression. {ownerName ? 'The' : 'Your'} most pronounced traits appear first.
         </p>
       </div>
 
@@ -66,26 +66,30 @@ export default function PidResultScreen({ result, meta, onRetake, onViewPortrait
 
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
-        <motion.button
-          onClick={onViewPortrait}
-          className="btn-primary w-full"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          View portrait
-        </motion.button>
-        <motion.button
-          onClick={onRetake}
-          className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <HiOutlineArrowPath className="w-4 h-4" /> Retake test
-        </motion.button>
+        {actions ?? (
+          <>
+            <motion.button
+              onClick={onViewPortrait}
+              className="btn-primary w-full"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              View portrait
+            </motion.button>
+            <motion.button
+              onClick={onRetake}
+              className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+            </motion.button>
+          </>
+        )}
       </div>
     </motion.div>
   );

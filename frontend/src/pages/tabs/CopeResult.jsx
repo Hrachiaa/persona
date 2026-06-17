@@ -5,7 +5,7 @@ import ScaleBar from './ScaleBar';
 const byScoreDesc = (a, b) => b.score - a.score;
 
 // COPE: 15 coping-strategy scales, sorted highest-first, on a 1..4 scale.
-export default function CopeResultScreen({ result, meta, onRetake, onViewPortrait }) {
+export default function CopeResultScreen({ result, meta, onRetake, onViewPortrait, actions, ownerName }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -28,10 +28,11 @@ export default function CopeResultScreen({ result, meta, onRetake, onViewPortrai
         >
           <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">Your coping profile</h2>
+        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{ownerName ? `${ownerName}’s coping profile` : 'Your coping profile'}</h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          The coping strategies you lean on under stress, strongest first. Higher bars are the
-          responses you reach for most.
+          {ownerName
+            ? `The coping strategies ${ownerName} leans on under stress, strongest first. Higher bars are the responses reached for most.`
+            : 'The coping strategies you lean on under stress, strongest first. Higher bars are the responses you reach for most.'}
         </p>
       </div>
 
@@ -50,26 +51,30 @@ export default function CopeResultScreen({ result, meta, onRetake, onViewPortrai
 
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">
-        <motion.button
-          onClick={onViewPortrait}
-          className="btn-primary w-full"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          View portrait
-        </motion.button>
-        <motion.button
-          onClick={onRetake}
-          className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <HiOutlineArrowPath className="w-4 h-4" /> Retake test
-        </motion.button>
+        {actions ?? (
+          <>
+            <motion.button
+              onClick={onViewPortrait}
+              className="btn-primary w-full"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              View portrait
+            </motion.button>
+            <motion.button
+              onClick={onRetake}
+              className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+            </motion.button>
+          </>
+        )}
       </div>
     </motion.div>
   );

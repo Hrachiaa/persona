@@ -196,7 +196,7 @@ const TRAIT_COMPARISON = {
 };
 
 // ─── Per-trait facet group ───────────────────────────────────────────────────
-function FacetGroup({ trait, traitPercentile, facets, delay }) {
+function FacetGroup({ trait, traitPercentile, facets, delay, ownerName }) {
   return (
     <motion.section
       className="surface-warm rounded-3xl p-5 sm:p-6"
@@ -209,7 +209,7 @@ function FacetGroup({ trait, traitPercentile, facets, delay }) {
           {trait.long}
         </h3>
         <p className="text-sm text-persona-muted mt-1.5">
-          You&apos;re {TRAIT_COMPARISON[trait.key]}{' '}
+          {ownerName ? `${ownerName} is ` : 'You’re '}{TRAIT_COMPARISON[trait.key]}{' '}
           <span className="font-semibold text-persona-dark">{traitPercentile}%</span>{' '}
           of people
         </p>
@@ -230,7 +230,7 @@ function FacetGroup({ trait, traitPercentile, facets, delay }) {
 }
 
 // ─── Main result screen ──────────────────────────────────────────────────────
-export default function BigFiveResultScreen({ result, meta, onRetake, onViewPortrait }) {
+export default function BigFiveResultScreen({ result, meta, onRetake, onViewPortrait, actions, ownerName }) {
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -267,11 +267,12 @@ export default function BigFiveResultScreen({ result, meta, onRetake, onViewPort
           <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
         <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">
-          Your Big Five profile
+          {ownerName ? `${ownerName}’s Big Five profile` : 'Your Big Five profile'}
         </h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          Each axis shows how you compare to other people — the further from the center, the higher
-          you scored.
+          {ownerName
+            ? `Each axis shows how ${ownerName} compares to other people — the further from the center, the higher the score.`
+            : 'Each axis shows how you compare to other people — the further from the center, the higher you scored.'}
         </p>
       </div>
 
@@ -294,32 +295,37 @@ export default function BigFiveResultScreen({ result, meta, onRetake, onViewPort
             traitPercentile={traitPct[trait.key]}
             facets={facetsByTrait[trait.key]}
             delay={0.3 + i * 0.08}
+            ownerName={ownerName}
           />
         ))}
       </div>
 
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto">
-        <motion.button
-          onClick={onViewPortrait}
-          className="btn-primary w-full"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-        >
-          View portrait
-        </motion.button>
-        <motion.button
-          onClick={onRetake}
-          className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9 }}
-        >
-          <HiOutlineArrowPath className="w-4 h-4" /> Retake test
-        </motion.button>
+        {actions ?? (
+          <>
+            <motion.button
+              onClick={onViewPortrait}
+              className="btn-primary w-full"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              View portrait
+            </motion.button>
+            <motion.button
+              onClick={onRetake}
+              className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.9 }}
+            >
+              <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+            </motion.button>
+          </>
+        )}
       </div>
     </motion.div>
   );
