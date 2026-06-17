@@ -8,6 +8,10 @@ import {
   MediaKind,
   RawRecommendation,
 } from './prompts/recommendations.prompt';
+import {
+  COMPATIBILITY_SYSTEM_PROMPT,
+  buildCompatibilityUserPrompt,
+} from './prompts/compatibility.prompt';
 
 // `@openrouter/sdk` is ESM-only; the backend compiles to CommonJS, so the
 // client is loaded via dynamic import() at runtime. This is a type-only alias.
@@ -67,6 +71,26 @@ export class AiService {
       films: this.normalizeList(json?.films, 'film'),
       books: this.normalizeList(json?.books, 'book'),
     };
+  }
+
+  /**
+   * Synthesizes a compatibility analysis across two people's full test batteries.
+   * Returns markdown `content` + a 0–100 `score`, or `null` if the model output
+   * can't be parsed. Both batteries are assumed complete (gating is upstream).
+   */
+  async interpretCompatibility(
+    resultsA: { testType: string; result: TestResultType }[],
+    resultsB: { testType: string; result: TestResultType }[],
+  ): Promise<{ content: string; score: number } | null> {
+    const json = await this.completeJson(
+      COMPATIBILITY_SYSTEM_PROMPT,
+      buildCompatibilityUserPrompt(resultsA, resultsB),
+    );
+    const content = typeof json?.markdown === 'string' ? json.markdown.trim() : '';
+    if (!content) return null;
+    const rawScore = Number(json?.score);
+    const score = Number.isFinite(rawScore) ? Math.max(0, Math.min(100, Math.round(rawScore))) : 50;
+    return { content, score };
   }
 
   /** Runs a completion and parses its body as JSON (defensively). */

@@ -9,6 +9,8 @@ export interface UserRepositoryInterface {
     getAllUsers(): Promise<UserEntity[]>;
     getUserByEmail(email: string): Promise<UserEntity | null>;
     getUserById(id: string): Promise<UserEntity | null>;
+    getUserByInviteToken(inviteToken: string): Promise<UserEntity | null>;
+    setInviteToken(id: string, inviteToken: string): Promise<void>;
     changePassword(id: string, password: string): Promise<void>;
     addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void>;
     addGoogleInfo(id: string, googleId: string): Promise<UserEntity>;
@@ -32,6 +34,14 @@ export class UserRepository implements UserRepositoryInterface {
 
     async getUserById(id: string): Promise<UserEntity | null> {
         return await this.prisma.user.findUnique({ where: { id } });
+    }
+
+    async getUserByInviteToken(inviteToken: string): Promise<UserEntity | null> {
+        return await this.prisma.user.findUnique({ where: { inviteToken } });
+    }
+
+    async setInviteToken(id: string, inviteToken: string): Promise<void> {
+        await this.prisma.user.update({ where: { id }, data: { inviteToken } });
     }
 
     async changePassword(id: string, password: string): Promise<void> {

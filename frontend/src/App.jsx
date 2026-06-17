@@ -9,6 +9,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import Survey from './pages/Survey';
 import Dashboard from './pages/Dashboard';
 import SharePage from './pages/SharePage';
+import InvitePage from './pages/InvitePage';
+import { friendsApi } from './api/friends';
 import ProgressiveBlur from './components/ProgressiveBlur';
 
 // Dashboard tab routes (+ the profile overlay) all render the same Dashboard
@@ -17,12 +19,25 @@ import ProgressiveBlur from './components/ProgressiveBlur';
 // `/tests` and `/profile` have nested sub-routes (test runner / result, profile
 // sub-pages), so they match on a prefix; the rest are leaf tabs.
 const DASHBOARD_PREFIXES = ['/tests', '/portrait', '/match', '/reads', '/advice', '/profile'];
-const DASHBOARD_ROUTES = ['/tests/*', '/portrait', '/match', '/reads', '/advice', '/profile/*'];
+const DASHBOARD_ROUTES = ['/tests/*', '/portrait', '/match/*', '/reads', '/advice', '/profile/*'];
 const isDashboardPath = (p) => DASHBOARD_PREFIXES.some((base) => p === base || p.startsWith(base + '/'));
 
 /** Check whether the user's profile fields are already populated */
 function isProfileComplete(user) {
   return user && user.name && user.gender && user.birthDate;
+}
+
+/**
+ * If the visitor arrived via an invite link before signing in, finish the invite
+ * now (fire-and-forget) and clear the flag. Returns true if one was pending, so the
+ * caller can land them on the Friends tab.
+ */
+function consumePendingInvite() {
+  const token = localStorage.getItem('pendingInvite');
+  if (!token) return false;
+  localStorage.removeItem('pendingInvite');
+  friendsApi.acceptInvite(token).catch(() => {});
+  return true;
 }
 
 /** Decide where a visitor hitting `/` should land (mirrors the old getInitialScreen) */
@@ -62,9 +77,13 @@ export default function App() {
         // Mark as visited for Bug 4
         localStorage.setItem('hasVisitedBefore', 'true');
         localStorage.setItem('hasSeenOnboarding', 'true');
+        const hadInvite = consumePendingInvite();
         // Bug 2: skip Survey if profile already complete (replace so the
         // token-laden callback URL doesn't end up in history)
-        navigate(isProfileComplete(me) ? '/tests' : '/survey', { replace: true });
+        navigate(
+          isProfileComplete(me) ? (hadInvite ? '/match' : '/tests') : '/survey',
+          { replace: true },
+        );
         setGoogleHandled(true);
       });
     } else {
@@ -86,8 +105,10 @@ export default function App() {
   /** Called after successful signup or login — me is the fresh /auth/me response */
   const handleAuthComplete = (me) => {
     localStorage.setItem('hasVisitedBefore', 'true');
+    const hadInvite = consumePendingInvite();
     // Use the fresh user data passed in, not the stale React state
-    navigate(isProfileComplete(me) ? '/tests' : '/survey');
+    if (!isProfileComplete(me)) return navigate('/survey');
+    navigate(hadInvite ? '/match' : '/tests');
   };
 
   /** Called after survey completes */
@@ -133,6 +154,8 @@ export default function App() {
             <Route path="/" element={<Navigate to={getInitialPath(user)} replace />} />
             {/* Public shared result — viewable without an account. */}
             <Route path="/share/:token" element={<SharePage />} />
+            {/* Personal invite link — adds the opener as a friend (auth-gated inside). */}
+            <Route path="/invite/:token" element={<InvitePage />} />
             <Route
               path="/onboarding"
               element={<Onboarding onComplete={handleOnboardingComplete} />}

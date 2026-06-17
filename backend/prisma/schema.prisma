@@ -23,11 +23,18 @@ model User {
   name          String?
   gender        String?
   birthDate     Int?
+  // Stable personal invite token. Minted on first request and reused, so a link
+  // the user already shared keeps working (mirrors TestResult.shareToken).
+  inviteToken   String?       @unique
   refreshToken  RefreshToken?
   otpCode       OtpCode?
   testsResults  TestResult[]
   portrait      Portrait?
   recommendations RecommendationItem[]
+  sentFriendships     Friendship[]    @relation("SentFriendships")
+  receivedFriendships Friendship[]    @relation("ReceivedFriendships")
+  compatibilitiesA    Compatibility[] @relation("CompatibilitiesA")
+  compatibilitiesB    Compatibility[] @relation("CompatibilitiesB")
 }
 
 model RefreshToken {
@@ -123,4 +130,43 @@ model RecommendationItem {
   user       User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, mediaType, verdict])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+}
+
+// Directed friendship row. `requester` sent the request, `addressee` received it.
+// One row per ordered pair; helpers match the pair in both directions. A pair is
+// friends once `status` is ACCEPTED.
+model Friendship {
+  id          String           @id @default(cuid())
+  requesterId String
+  addresseeId String
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  requester   User             @relation("SentFriendships", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee   User             @relation("ReceivedFriendships", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, addresseeId])
+  @@index([addresseeId, status])
+}
+
+// Cached AI compatibility for a pair. Stored in canonical order (userAId < userBId)
+// so there's one row per pair regardless of who requested it. Only generated once
+// both users have completed every test; deleted on either user's retake (TestsService).
+model Compatibility {
+  id        String   @id @default(cuid())
+  userAId   String
+  userBId   String
+  content   String // markdown analysis from the model
+  score     Int // 0–100, for the visual ring
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userA     User     @relation("CompatibilitiesA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB     User     @relation("CompatibilitiesB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  @@unique([userAId, userBId])
 }

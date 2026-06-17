@@ -13,6 +13,7 @@ import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
 import { TEST_ORDER } from './test-order';
 import { PortraitService } from '../portrait/portrait.service';
+import { CompatibilityService } from '../friends/compatibility.service';
 import { SharedResultDto } from './dtos/shared-result.dto';
 import { randomBytes } from 'crypto';
 
@@ -24,6 +25,8 @@ export class TestsService implements OnModuleInit {
         private readonly testScoringService: TestScoringService,
         @Inject(forwardRef(() => PortraitService))
         private readonly portraitService: PortraitService,
+        @Inject(forwardRef(() => CompatibilityService))
+        private readonly compatibilityService: CompatibilityService,
     ) {}
 
     async onModuleInit() {
@@ -72,6 +75,10 @@ export class TestsService implements OnModuleInit {
         // tab polls for the result. `regenerate` never throws. Always runs — including
         // retakes, where the set of completed tests is unchanged but the answers aren't.
         void this.portraitService.regenerate(userId)
+
+        // Drop cached pair compatibilities — the next view regenerates from fresh
+        // results. Fire-and-forget; `invalidateForUser` never throws.
+        void this.compatibilityService.invalidateForUser(userId)
 
         return testResultMapper.toDto(save)
     }

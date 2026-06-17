@@ -17,6 +17,8 @@ export class UserEntity {
     googleId: string | null;
     @ApiProperty({example: 'password', description: 'User Password'})
     password: string;
+    @ApiProperty({example: 'abc123', description: 'Stable personal invite token', nullable: true})
+    inviteToken: string | null;
     constructor(
         id: string,
         email: string,
@@ -26,6 +28,7 @@ export class UserEntity {
         emailVerified: boolean,
         googleId: string | null,
         password: string,
+        inviteToken: string | null = null,
     ) {
         this.id = id;
         this.email = email;
@@ -35,5 +38,6 @@ export class UserEntity {
         this.emailVerified = emailVerified;
         this.googleId = googleId;
         this.password = password;
+        this.inviteToken = inviteToken;
     }
 }

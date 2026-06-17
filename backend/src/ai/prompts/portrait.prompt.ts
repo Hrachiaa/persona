@@ -69,7 +69,8 @@ export const PORTRAIT_SYSTEM_PROMPT = `
 
 // Reuse the per-test formatters so the portrait sees each test rendered exactly
 // the way its own interpreter does — no duplicated scoring/formatting logic.
-const BUILDERS: Record<string, (result: any) => string> = {
+// Exported so the compatibility prompt can render the same per-test blocks.
+export const BUILDERS: Record<string, (result: any) => string> = {
   bigFive: buildBigFiveUserPrompt,
   shcwartz: buildSchwartzUserPrompt,
   cope: buildCopeUserPrompt,
@@ -78,7 +79,7 @@ const BUILDERS: Record<string, (result: any) => string> = {
   pid: buildPidUserPrompt,
 };
 
-const TEST_LABELS: Record<string, string> = {
+export const TEST_LABELS: Record<string, string> = {
   bigFive: 'Big Five — черты личности',
   shcwartz: 'Ценности Шварца (PVQ-RR)',
   cope: 'COPE — как человек справляется со стрессом',

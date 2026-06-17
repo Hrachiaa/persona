@@ -28,6 +28,14 @@ export class UsersService {
         return await this.userRepository.getUserById(id);
     }
 
+    async getUserByInviteToken(inviteToken: string): Promise<User | null> {
+        return await this.userRepository.getUserByInviteToken(inviteToken);
+    }
+
+    async setInviteToken(id: string, inviteToken: string): Promise<void> {
+        return await this.userRepository.setInviteToken(id, inviteToken);
+    }
+
     async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void>{
         const user: UserEntity | null = await this.getUserById(userId);
         if(!user){

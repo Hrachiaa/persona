@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineClipboardDocumentList,
   HiOutlineSparkles,
-  HiOutlineHeart,
+  HiOutlineUsers,
   HiOutlineBookOpen,
   HiOutlineStar,
 } from 'react-icons/hi2';
@@ -20,7 +20,7 @@ import Profile from './Profile';
 const tabs = [
   { id: 'tests', path: '/tests', label: 'Tests', icon: HiOutlineClipboardDocumentList },
   { id: 'portrait', path: '/portrait', label: 'Portrait', icon: HiOutlineSparkles },
-  { id: 'match', path: '/match', label: 'Match', icon: HiOutlineHeart },
+  { id: 'match', path: '/match', label: 'Friends', icon: HiOutlineUsers },
   { id: 'reads', path: '/reads', label: 'Reads', icon: HiOutlineBookOpen },
   { id: 'advice', path: '/advice', label: 'Advice', icon: HiOutlineStar },
 ];
@@ -57,7 +57,7 @@ export default function Dashboard({ onLogout }) {
     switch (activeTab) {
       case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => navigate('/portrait')} />;
       case 'portrait': return <Portrait key="portrait" onOpenTests={() => navigate('/tests')} />;
-      case 'match': return <Compatibility key="match" />;
+      case 'match': return <Compatibility key="match" onImmersiveChange={setImmersive} />;
       case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/tests')} onImmersiveChange={setImmersive} />;
       case 'advice': return <DailyAdvice key="advice" userName={userName} />;
       default: return <Tests key="tests" onImmersiveChange={setImmersive} />;

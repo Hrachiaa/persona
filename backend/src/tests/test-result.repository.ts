@@ -17,6 +17,13 @@ export class TestResultRepository {
         return await this.prisma.testResult.findMany({where: {userId}})
     }
 
+    async getTestResultsWithTest(userId: string) {
+        return await this.prisma.testResult.findMany({
+            where: {userId},
+            include: {test: {select: {testName: true}}},
+        })
+    }
+
     async getTestResult(userId: string, testId: string) {
         return await this.prisma.testResult.findUnique({where: {userId_testId: {userId, testId}}})
     }
