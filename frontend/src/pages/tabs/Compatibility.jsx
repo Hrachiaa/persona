@@ -18,6 +18,7 @@ import {
 } from 'react-icons/hi2';
 import { friendsApi } from '../../api/friends';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
+import { SIGILS } from '../../components/testSigils';
 import { ResultView } from './Tests';
 import ImmersiveTopBar from './ImmersiveTopBar';
 
@@ -39,8 +40,24 @@ function Avatar({ person, className = '' }) {
   );
 }
 
-/** A person row — avatar, name/email, and an optional trailing slot (action). */
-function PersonRow({ person, onClick, trailing }) {
+/** A test's portrait orb (color + sigil) as a standalone icon — used in a friend's
+ *  results list so it speaks the same visual language as the Portrait constellation. */
+function TestSigilIcon({ testType, className = '' }) {
+  const sig = SIGILS[testType];
+  if (!sig) return null;
+  const { color, Glyph } = sig;
+  return (
+    <svg viewBox="-30 -30 60 60" className={className} aria-hidden="true">
+      <circle r="30" fill={color} fillOpacity="0.95" />
+      <g transform="scale(1.25)">
+        <Glyph c="#1A1A1A" />
+      </g>
+    </svg>
+  );
+}
+
+/** A row — a leading slot (avatar by default), name/email, and an optional trailing slot. */
+function PersonRow({ person, onClick, trailing, leading }) {
   const Wrapper = onClick ? 'button' : 'div';
   return (
     <Wrapper
@@ -49,7 +66,7 @@ function PersonRow({ person, onClick, trailing }) {
         onClick ? 'card-hover' : ''
       }`}
     >
-      <Avatar person={person} className="w-11 h-11" />
+      {leading ?? <Avatar person={person} className="w-11 h-11" />}
       <div className="min-w-0 flex-1">
         <p className="font-semibold text-persona-dark text-sm truncate">
           {person.name || person.email}
@@ -114,14 +131,6 @@ function FriendsHome({ navigate }) {
 
   return (
     <ScreenShell label="Friends">
-      <motion.button
-        onClick={() => navigate('/match/add')}
-        className="btn-primary w-full mb-3 flex items-center justify-center gap-2"
-        whileTap={{ scale: 0.98 }}
-      >
-        <HiOutlineUserPlus className="w-5 h-5" /> Add friends
-      </motion.button>
-
       <button
         onClick={() => navigate('/match/requests')}
         className="w-full mb-8 flex items-center justify-between gap-2 bg-persona-card rounded-2xl p-4 card-hover"
@@ -139,9 +148,18 @@ function FriendsHome({ navigate }) {
         </span>
       </button>
 
-      <h2 className="text-lg font-semibold text-persona-dark mb-3 flex items-center gap-2">
-        <HiOutlineUsers className="w-5 h-5" /> Your friends
-      </h2>
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <h2 className="text-lg font-semibold text-persona-dark flex items-center gap-2">
+          <HiOutlineUsers className="w-5 h-5" /> Your friends
+        </h2>
+        <motion.button
+          onClick={() => navigate('/match/add')}
+          className="flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-persona-dark text-white text-sm font-medium shadow-warm"
+          whileTap={{ scale: 0.95 }}
+        >
+          <HiOutlineUserPlus className="w-4 h-4" /> Add
+        </motion.button>
+      </div>
       {loading ? (
         <p className="text-sm text-persona-muted px-1">Loading…</p>
       ) : friends.length === 0 ? (
@@ -513,6 +531,7 @@ function FriendDetail({ friendId, navigate, locationState }) {
             <PersonRow
               key={r.testType}
               person={{ name: r.testName, email: '' }}
+              leading={<TestSigilIcon testType={r.testType} className="w-11 h-11 shrink-0" />}
               onClick={() => setOpenTest(r)}
               trailing={<HiOutlineChevronRight className="w-5 h-5 text-persona-muted shrink-0" />}
             />
