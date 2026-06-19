@@ -105,7 +105,9 @@ function SubScreen({ title, onBack, label, children }) {
     >
       <ImmersiveTopBar onBack={onBack} />
       <div className="px-6 pb-6">
-        <h1 className="font-display text-3xl font-semibold text-persona-dark mb-6 truncate">{title}</h1>
+        {title && (
+          <h1 className="font-display text-3xl font-semibold text-persona-dark mb-6 truncate">{title}</h1>
+        )}
         {children}
       </div>
     </motion.section>
@@ -185,11 +187,13 @@ function FriendsHome({ navigate }) {
 
 // ─── Add friends: search by email + personal invite link ────────────────────────
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function AddFriendView({ navigate, onBack }) {
   const [email, setEmail] = useState('');
   const [searching, setSearching] = useState(false);
-  const [searched, setSearched] = useState(false);
   const [hit, setHit] = useState(null); // search result FriendDto | null
+  const [notFound, setNotFound] = useState(false);
 
   const [inviteToken, setInviteToken] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -198,20 +202,40 @@ function AddFriendView({ navigate, onBack }) {
     friendsApi.getInviteToken().then((r) => setInviteToken(r.token)).catch(() => {});
   }, []);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    const value = email.trim();
-    if (!value) return;
-    setSearching(true);
-    setSearched(true);
-    try {
-      setHit(await friendsApi.search(value));
-    } catch {
-      setHit(null);
-    } finally {
-      setSearching(false);
-    }
-  };
+  // Live search: debounce the input and only hit the API once it's a full email,
+  // so results appear as you type without a separate "search" press. All state
+  // updates happen in async callbacks (never synchronously in the effect body).
+  const validEmail = EMAIL_RE.test(email.trim());
+  useEffect(() => {
+    const value = email.trim().toLowerCase();
+    let cancelled = false;
+    const id = setTimeout(() => {
+      if (!EMAIL_RE.test(value)) {
+        setHit(null);
+        setNotFound(false);
+        setSearching(false);
+        return;
+      }
+      setSearching(true);
+      friendsApi
+        .search(value)
+        .then((r) => {
+          if (cancelled) return;
+          setHit(r);
+          setNotFound(!r);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          setHit(null);
+          setNotFound(true);
+        })
+        .finally(() => !cancelled && setSearching(false));
+    }, 350);
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+    };
+  }, [email]);
 
   const handleAdd = async (targetId) => {
     const { status } = await friendsApi.sendRequest(targetId);
@@ -241,55 +265,9 @@ function AddFriendView({ navigate, onBack }) {
   };
 
   return (
-    <SubScreen label="Add friends" title="Add friends" onBack={onBack}>
-      {/* Search by email */}
-      <form onSubmit={handleSearch} className="mb-4">
-        <label htmlFor="friend-email" className="field-label">
-          Find by email
-        </label>
-        <div className="flex gap-3">
-          <input
-            id="friend-email"
-            name="email"
-            type="email"
-            autoComplete="off"
-            placeholder="friend@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="input-field flex-1"
-          />
-          <motion.button
-            type="submit"
-            className="btn-primary px-5 whitespace-nowrap flex items-center gap-2"
-            whileTap={{ scale: 0.97 }}
-          >
-            <HiOutlineMagnifyingGlass className="w-5 h-5" />
-          </motion.button>
-        </div>
-      </form>
-
-      {/* Search result */}
-      <AnimatePresence>
-        {searched && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="mb-6"
-          >
-            {searching ? (
-              <p className="text-sm text-persona-muted px-1">Searching…</p>
-            ) : hit ? (
-              <PersonRow person={hit} trailing={<SearchAction hit={hit} onAdd={handleAdd} navigate={navigate} />} />
-            ) : (
-              <p className="text-sm text-persona-muted px-1">No one found with that email.</p>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+    <SubScreen label="Add friends" onBack={onBack}>
       {/* Invite link */}
-      <div className="surface-warm rounded-3xl p-4">
+      <div className="surface-warm rounded-3xl p-4 mb-8">
         <div className="flex items-center gap-2 mb-2 text-persona-dark">
           <HiOutlineLink className="w-5 h-5" />
           <h2 className="font-semibold text-sm">Your invite link</h2>
@@ -315,6 +293,72 @@ function AddFriendView({ navigate, onBack }) {
           </motion.button>
         </div>
       </div>
+
+      {/* Search by email — live, as you type */}
+      <label htmlFor="friend-email" className="field-label">
+        Find by email
+      </label>
+      <div className="relative">
+        <HiOutlineMagnifyingGlass className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-persona-muted" />
+        <input
+          id="friend-email"
+          name="email"
+          type="email"
+          autoComplete="off"
+          inputMode="email"
+          placeholder="friend@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="input-field w-full pl-11 pr-11"
+        />
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
+          {searching ? (
+            <motion.span
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+              className="inline-flex text-persona-muted"
+            >
+              <HiOutlineArrowPath className="w-5 h-5" />
+            </motion.span>
+          ) : email ? (
+            <button
+              type="button"
+              onClick={() => setEmail('')}
+              aria-label="Clear"
+              className="text-persona-muted hover:text-persona-dark transition-colors"
+            >
+              <HiOutlineXMark className="w-5 h-5" />
+            </button>
+          ) : null}
+        </div>
+      </div>
+
+      {/* Search result — only takes space when there's something to show */}
+      <AnimatePresence initial={false}>
+        {hit ? (
+          <motion.div
+            key="hit"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="pt-3">
+              <PersonRow person={hit} trailing={<SearchAction hit={hit} onAdd={handleAdd} navigate={navigate} />} />
+            </div>
+          </motion.div>
+        ) : notFound && validEmail && !searching ? (
+          <motion.p
+            key="none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pt-3 text-sm text-persona-muted px-1"
+          >
+            No one found with that email.
+          </motion.p>
+        ) : null}
+      </AnimatePresence>
     </SubScreen>
   );
 }
