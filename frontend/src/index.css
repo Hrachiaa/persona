@@ -9,13 +9,6 @@
     box-sizing: border-box;
   }
 
-  /* Reserve space for the vertical scrollbar so it doesn't eat the right-hand
-     page padding (which made content look flush to the right edge while the left
-     kept its gap). No effect with overlay scrollbars (mobile / macOS). */
-  html {
-    scrollbar-gutter: stable;
-  }
-
   body {
     font-family: 'Geist', 'Inter', system-ui, sans-serif;
     background-color: #f5f5f0;
