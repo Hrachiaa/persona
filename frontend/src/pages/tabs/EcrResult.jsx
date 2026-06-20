@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
 import EcrQuadrant from './EcrQuadrant';
@@ -8,6 +9,7 @@ import ImmersiveTopBar from './ImmersiveTopBar';
 // The pair is plotted on a quadrant map whose midpoint (4, 4) splits the
 // plane into the four classic attachment styles.
 export default function EcrResultScreen({ result, onDone, onRetake, onViewPortrait, headerAction, actions, ownerName }) {
+  const { t } = useTranslation('results');
   const r = result?.result || {};
   const anxiety = Number(r.anxiety) || 0;
   const avoidance = Number(r.avoidance) || 0;
@@ -30,12 +32,12 @@ export default function EcrResultScreen({ result, onDone, onRetake, onViewPortra
       <div className="flex-1 flex flex-col px-4 sm:px-6 pb-10">
         {/* Hero — fades in after the graph intro */}
         <div className="text-center mb-4 transition-opacity duration-[800ms] ease-out" style={{ opacity: revealed ? 1 : 0 }}>
-          <h2 className="font-display text-3xl font-semibold text-persona-dark">{ownerName ? `${ownerName}’s attachment style` : 'Your attachment style'}</h2>
+          <h2 className="font-display text-3xl font-semibold text-persona-dark">{ownerName ? t('ecr.titleOwner', { name: ownerName }) : t('ecr.titleSelf')}</h2>
         </div>
 
         {/* Quadrant map */}
         <section className="w-full max-w-2xl mx-auto">
-          <EcrQuadrant anxiety={anxiety} avoidance={avoidance} youLabel={ownerName || 'You'} onReady={() => setRevealed(true)} />
+          <EcrQuadrant anxiety={anxiety} avoidance={avoidance} youLabel={ownerName || t('quadrant.you')} onReady={() => setRevealed(true)} />
         </section>
 
         {/* Explanation — fades in after the graph intro */}
@@ -44,12 +46,10 @@ export default function EcrResultScreen({ result, onDone, onRetake, onViewPortra
           style={{ opacity: revealed ? 1 : 0 }}
         >
           <p>
-            Higher <span className="font-semibold text-persona-dark">anxiety</span> scores indicate greater fear of
-            rejection and abandonment, while lower scores reflect a sense of security in relationships.
+            <Trans t={t} i18nKey="ecr.explainAnxiety" components={{ b: <span className="font-semibold text-persona-dark" /> }} />
           </p>
           <p>
-            Higher <span className="font-semibold text-persona-dark">avoidance</span> scores indicate a preference for
-            emotional distance and self-reliance, while lower scores reflect ease with intimacy and interdependence.
+            <Trans t={t} i18nKey="ecr.explainAvoidance" components={{ b: <span className="font-semibold text-persona-dark" /> }} />
           </p>
         </div>
 
@@ -65,14 +65,14 @@ export default function EcrResultScreen({ result, onDone, onRetake, onViewPortra
                 className="btn-primary w-full"
                 whileTap={{ scale: 0.97 }}
               >
-                View portrait
+                {t('viewPortrait')}
               </motion.button>
               <motion.button
                 onClick={onRetake}
                 className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
                 whileTap={{ scale: 0.97 }}
               >
-                <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+                <HiOutlineArrowPath className="w-4 h-4" /> {t('retake')}
               </motion.button>
             </>
           )}

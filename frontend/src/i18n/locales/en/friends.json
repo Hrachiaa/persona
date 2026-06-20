@@ -1,0 +1,57 @@
+{
+  "home": {
+    "label": "Friends",
+    "requests": "Friend requests",
+    "yourFriends": "Your friends",
+    "add": "Add",
+    "empty": "No friends yet. Tap “Add friends” to get started."
+  },
+  "add": {
+    "label": "Add friends",
+    "inviteTitle": "Your invite link",
+    "inviteHint": "Share it — whoever opens it sends you a friend request.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "findByEmail": "Find by email",
+    "emailPlaceholder": "friend@example.com",
+    "clear": "Clear",
+    "notFound": "No one found with that email."
+  },
+  "action": {
+    "you": "You",
+    "view": "View",
+    "requested": "Requested",
+    "accept": "Accept",
+    "add": "Add"
+  },
+  "requests": {
+    "label": "Friend requests",
+    "title": "Requests",
+    "incoming": "Incoming",
+    "noIncoming": "No incoming requests.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "sent": "Sent",
+    "noSent": "No sent requests."
+  },
+  "detail": {
+    "label": "Friend",
+    "friendFallback": "Friend",
+    "ownerFallback": "Your friend",
+    "checkCompatibility": "Check compatibility",
+    "theirResults": "Their results",
+    "noTests": "This friend hasn't completed any tests yet.",
+    "remove": "Remove from friends"
+  },
+  "compat": {
+    "label": "Compatibility",
+    "titleFallback": "Compatibility",
+    "error": "Something went wrong.",
+    "lockedTitle": "Not unlocked yet",
+    "lockedBody": "Compatibility unlocks once you both finish every test.",
+    "you": "You",
+    "friendFallback": "Friend",
+    "generating": "Reading you both and writing your compatibility…",
+    "compatible": "compatible"
+  }
+}

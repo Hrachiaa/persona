@@ -56,6 +56,10 @@ export class UsersService {
         return await this.userRepository.addProfileInfo(id, profileInfoDto);
     }
 
+    async updateLanguage(id: string, language: string): Promise<void> {
+        return await this.userRepository.updateLanguage(id, language);
+    }
+
     async addGoogleInfo(id: string, googleId: string): Promise<UserEntity> {
         return await this.userRepository.addGoogleInfo(id, googleId);
     }

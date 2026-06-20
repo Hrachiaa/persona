@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 
 // ECR-R quadrant map. Two subscales on a 1..7 scale:
@@ -124,6 +125,7 @@ function useDotIntro(target, duration, active) {
 }
 
 export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady, youLabel = 'You' }) {
+  const { t } = useTranslation('results');
   const peers = useMemo(() => samplePeers(norm, PEERS), [norm]);
 
   const x0 = toX(MIN);
@@ -172,10 +174,10 @@ export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady, 
 
         {/* quadrant labels — fade in once the intro finishes */}
         <motion.g animate={{ opacity: revealed ? 1 : 0 }} transition={{ duration: 0.8, ease: 'easeOut' }}>
-          <text x={toX(1.3)} y={toY(6.6)} fontSize="12.5" fill={C.quad}>preoccupied</text>
-          <text x={toX(6.7)} y={toY(6.6)} fontSize="12.5" fill={C.quad} textAnchor="end">fearful</text>
-          <text x={toX(1.3)} y={toY(1.25)} fontSize="12.5" fill={C.quad}>secure</text>
-          <text x={toX(6.7)} y={toY(1.25)} fontSize="12.5" fill={C.quad} textAnchor="end">dismissing</text>
+          <text x={toX(1.3)} y={toY(6.6)} fontSize="12.5" fill={C.quad}>{t('quadrant.preoccupied')}</text>
+          <text x={toX(6.7)} y={toY(6.6)} fontSize="12.5" fill={C.quad} textAnchor="end">{t('quadrant.fearful')}</text>
+          <text x={toX(1.3)} y={toY(1.25)} fontSize="12.5" fill={C.quad}>{t('quadrant.secure')}</text>
+          <text x={toX(6.7)} y={toY(1.25)} fontSize="12.5" fill={C.quad} textAnchor="end">{t('quadrant.dismissing')}</text>
         </motion.g>
 
         {/* norm cloud — simulated results of other users, poured in progressively */}
@@ -227,7 +229,7 @@ export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady, 
 
         {/* axis titles — pressed to the bottom (x) and left (y), fade in last */}
         <motion.g animate={{ opacity: revealed ? 1 : 0 }} transition={{ duration: 0.8, ease: 'easeOut' }}>
-          <text x={x0 + innerW / 2} y={y1 + 15} textAnchor="middle" fontSize="12" fill={C.title}>Avoidance →</text>
+          <text x={x0 + innerW / 2} y={y1 + 15} textAnchor="middle" fontSize="12" fill={C.title}>{t('quadrant.avoidanceAxis')}</text>
           <text
             x={9}
             y={y0 + innerH / 2}
@@ -236,7 +238,7 @@ export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady, 
             fill={C.title}
             transform={`rotate(-90 9 ${y0 + innerH / 2})`}
           >
-            Anxiety →
+            {t('quadrant.anxietyAxis')}
           </text>
         </motion.g>
       </svg>
@@ -253,7 +255,7 @@ export default function EcrQuadrant({ anxiety, avoidance, norm = NORM, onReady, 
         </div>
         <div className="flex items-center gap-2 text-xs text-persona-muted">
           <span className="w-2.5 h-2.5 rounded-full bg-persona-muted/40 flex-shrink-0" />
-          <span>Other users&apos; results</span>
+          <span>{t('quadrant.otherUsers')}</span>
         </div>
       </div>
     </div>

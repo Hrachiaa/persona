@@ -13,6 +13,7 @@ export interface UserRepositoryInterface {
     setInviteToken(id: string, inviteToken: string): Promise<void>;
     changePassword(id: string, password: string): Promise<void>;
     addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void>;
+    updateLanguage(id: string, language: string): Promise<void>;
     addGoogleInfo(id: string, googleId: string): Promise<UserEntity>;
 }
 
@@ -50,6 +51,10 @@ export class UserRepository implements UserRepositoryInterface {
 
     async addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void> {
         await this.prisma.user.update({ where: { id }, data: profileInfoDto });
+    }
+
+    async updateLanguage(id: string, language: string): Promise<void> {
+        await this.prisma.user.update({ where: { id }, data: { language } });
     }
 
     async addGoogleInfo(id: string, googleId: string): Promise<UserEntity> {

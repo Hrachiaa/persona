@@ -120,6 +120,18 @@ src/
 - **Imports**: relative only — there are no path aliases in [vite.config.js](vite.config.js).
 - **ESLint** ([eslint.config.js](eslint.config.js)): `@eslint/js` recommended + `eslint-plugin-react-hooks` (flat recommended) + `eslint-plugin-react-refresh` (Vite). Custom: `no-unused-vars` ignores names matching `^[A-Z_]`, so unused PascalCase imports won't error — be aware when cleaning up.
 
+## i18n (English + Russian)
+
+The app is bilingual via **react-i18next** (`i18next` + `react-i18next`). Setup lives in [src/i18n/index.js](src/i18n/index.js), imported once in [src/main.jsx](src/main.jsx) before `App`.
+
+- **Dictionaries** are namespaced JSON under `src/i18n/locales/<lng>/<namespace>.json` (`en` + `ru`). They're **auto-discovered** via `import.meta.glob('./locales/*/*.json')` — just drop a new file in, no config edit. One namespace per feature: `common`, `auth`, `onboarding`, `survey`, `dashboard`, `profile`, `tests`, `portrait`, `friends`, `reco`, `advice`, `results`, `share`, `invite`.
+- **`common`** is the `defaultNS` and `fallbackNS`. In a component, `useTranslation('profile')` makes `t('edit.title')` resolve in `profile`; cross-namespace keys use the prefix, e.g. `t('common:save')`.
+- **Interpolation** `t('key', { n: 3 })` with `{{n}}` in the JSON; **embedded markup** uses `<Trans i18nKey="..." components={{ b: <span/> }} />` (see [Profile.jsx](src/pages/Profile.jsx) password note, [BigFiveResult.jsx](src/pages/tabs/BigFiveResult.jsx) comparison line).
+- **Language resolution**: `localStorage['persona:lang']` (set pre-login on the survey/anonymous screens) → on `fetchMe`, the signed-in user's `user.language` from the backend becomes the source of truth and is mirrored into i18n ([AuthContext.jsx](src/context/AuthContext.jsx) `applyUserLanguage`). Change it with `setLanguage(code)` from [src/i18n/index.js](src/i18n/index.js); the Profile selector also persists it via `authApi.updateLanguage` (`POST /auth/language`), and the survey submits it with the rest of the profile.
+- **Not translated** (intentionally — professional translations land later): test questions/answers (backend `tests.seed.ts`) and backend-provided result content (portrait/compatibility markdown, Big Five/COPE/PID/Schwartz facet names + descriptions, AI text). Only **frontend-authored** strings on result screens are translated. Backend exception messages and the password-reset email are still English.
+
+When adding UI text: add the key to **both** `en` and `ru` files for the relevant namespace, then reference it with `t(...)`. Never hard-code user-facing strings.
+
 ## Env / API URL
 
 - The dev proxy and the axios `baseURL` both read `VITE_API_URL`:

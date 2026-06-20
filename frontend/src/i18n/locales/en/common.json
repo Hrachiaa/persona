@@ -1,0 +1,19 @@
+{
+  "back": "Back",
+  "continue": "Continue",
+  "save": "Save",
+  "saving": "Saving…",
+  "saveChanges": "Save changes",
+  "cancel": "Cancel",
+  "done": "Done",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "close": "Close",
+  "language": "Language",
+  "genericError": "Something went wrong. Please try again.",
+  "film": "Film",
+  "book": "Book",
+  "films": "Films",
+  "books": "Books",
+  "all": "All"
+}

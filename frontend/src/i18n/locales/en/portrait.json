@@ -1,0 +1,29 @@
+{
+  "ariaLabel": "Your portrait — {{count}} of {{total}} pieces revealed",
+  "orbStatus": {
+    "revealed": "revealed",
+    "revealing": "revealing…",
+    "notTaken": "not taken yet"
+  },
+  "accuracy": "Portrait accuracy",
+  "complete": "Drawn from all {{total}} tests — Persona has seen every side of you.",
+  "incomplete1": "This portrait is built from {{count}} of {{total}} tests. With the rest still missing, Persona only knows you from one side and has to guess at the others — so it stays on the surface, short of the real depth of who you are.",
+  "incomplete2": "The more tests you take, the more precisely your portrait describes the real you.",
+  "takeMore": "Take more tests",
+  "swipeDown": "Swipe down for your portrait",
+  "refreshing": "Refreshing your portrait with your latest test…",
+  "generating": "Drawing your portrait from your tests… the orb above will light up the moment it's ready.",
+  "lockedTitle": "No portrait yet",
+  "lockedBody": "Take your first test to light up the first piece of your portrait — each test you finish reveals another, until the whole picture of you comes together.",
+  "firstTest": "Take your first test",
+  "loading": "Building your portrait from your tests… this can take up to a minute.",
+  "error": "Couldn't build your portrait right now.",
+  "sigils": {
+    "bigFive": "Personality",
+    "shcwartz": "Values",
+    "cope": "Stress",
+    "iq": "Logic",
+    "ecr": "Attachment",
+    "pid": "Shadows"
+  }
+}

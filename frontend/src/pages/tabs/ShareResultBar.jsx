@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { HiOutlineShare, HiOutlineCheck } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
@@ -12,6 +13,7 @@ import { testsApi } from '../../api/tests';
 // result, so usually no request is needed; we only hit the (idempotent) /share
 // endpoint to backfill a token for results created before tokens existed.
 export default function ShareResultBar({ test, result }) {
+  const { t } = useTranslation('share');
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -38,8 +40,8 @@ export default function ShareResultBar({ test, result }) {
       const url = `${window.location.origin}/share/${token}`;
       if (navigator.share) {
         await navigator.share({
-          title: 'My Persona result',
-          text: `Check out my ${test.testName} result on Persona`,
+          title: t('bar.shareTitle'),
+          text: t('bar.shareText', { test: test.testName }),
           url,
         });
       } else {
@@ -59,17 +61,17 @@ export default function ShareResultBar({ test, result }) {
     <motion.button
       onClick={handleShare}
       disabled={busy}
-      aria-label="Share result"
+      aria-label={t('bar.ariaShare')}
       className="h-12 px-5 rounded-full bg-persona-dark text-white flex items-center gap-2 shadow-warm text-base font-medium disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
       whileTap={{ scale: 0.95 }}
     >
       {copied ? (
         <>
-          <HiOutlineCheck className="w-5 h-5" /> Link copied
+          <HiOutlineCheck className="w-5 h-5" /> {t('bar.linkCopied')}
         </>
       ) : (
         <>
-          <HiOutlineShare className="w-5 h-5" /> Share
+          <HiOutlineShare className="w-5 h-5" /> {t('bar.share')}
         </>
       )}
     </motion.button>

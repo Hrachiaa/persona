@@ -1,0 +1,64 @@
+{
+  "viewPortrait": "View portrait",
+  "retake": "Retake test",
+  "bigFive": {
+    "titleSelf": "Your Big Five profile",
+    "titleOwner": "{{name}}'s Big Five profile",
+    "subtitleSelf": "Each axis shows how you compare to other people — the further from the center, the higher you scored.",
+    "subtitleOwner": "Each axis shows how {{name}} compares to other people — the further from the center, the higher the score.",
+    "radarAria": "Big Five percentile radar",
+    "comparisonSelf": "You're {{comparison}} <b>{{pct}}%</b> of people",
+    "comparisonOwner": "{{name}} is {{comparison}} <b>{{pct}}%</b> of people",
+    "traits": {
+      "O": { "long": "Openness", "comparison": "more curious than" },
+      "C": { "long": "Conscientiousness", "comparison": "more disciplined than" },
+      "E": { "long": "Extraversion", "comparison": "more outgoing than" },
+      "A": { "long": "Agreeableness", "comparison": "more agreeable than" },
+      "N": { "long": "Neuroticism", "comparison": "more anxious than" }
+    }
+  },
+  "schwartz": {
+    "titleSelf": "Your values profile",
+    "titleOwner": "{{name}}'s values profile",
+    "subtitleSelf": "Where each value sits relative to your personal average — bars to the right of center matter more to you, bars to the left matter less.",
+    "subtitleOwner": "Where each value sits relative to {{name}}'s personal average — bars to the right of center matter more, bars to the left matter less.",
+    "valuesHeading": "Values",
+    "valuesSub": "19 basic values",
+    "higherHeading": "Higher-order values",
+    "higherSub": "Four broad dimensions"
+  },
+  "cope": {
+    "titleSelf": "Your coping profile",
+    "titleOwner": "{{name}}'s coping profile",
+    "subtitleSelf": "The coping strategies you lean on under stress, strongest first. Higher bars are the responses you reach for most.",
+    "subtitleOwner": "The coping strategies {{name}} leans on under stress, strongest first. Higher bars are the responses reached for most.",
+    "heading": "Coping strategies",
+    "sub": "15 strategies"
+  },
+  "pid": {
+    "titleSelf": "Your personality facets",
+    "titleOwner": "{{name}}'s personality facets",
+    "subtitleSelf": "Maladaptive personality traits from the PID-5 — higher bars indicate stronger expression. Your most pronounced traits appear first.",
+    "subtitleOwner": "Maladaptive personality traits from the PID-5 — higher bars indicate stronger expression. The most pronounced traits appear first.",
+    "facetsHeading": "Facets",
+    "facetsSub": "25 trait facets",
+    "domainsHeading": "Domains",
+    "domainsSub": "Five broad domains"
+  },
+  "ecr": {
+    "titleSelf": "Your attachment style",
+    "titleOwner": "{{name}}'s attachment style",
+    "explainAnxiety": "Higher <b>anxiety</b> scores indicate greater fear of rejection and abandonment, while lower scores reflect a sense of security in relationships.",
+    "explainAvoidance": "Higher <b>avoidance</b> scores indicate a preference for emotional distance and self-reliance, while lower scores reflect ease with intimacy and interdependence."
+  },
+  "quadrant": {
+    "you": "You",
+    "preoccupied": "preoccupied",
+    "fearful": "fearful",
+    "secure": "secure",
+    "dismissing": "dismissing",
+    "avoidanceAxis": "Avoidance →",
+    "anxietyAxis": "Anxiety →",
+    "otherUsers": "Other users' results"
+  }
+}

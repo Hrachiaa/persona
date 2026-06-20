@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
 import ScaleBar from './ScaleBar';
 
@@ -7,6 +8,7 @@ const byScoreDesc = (a, b) => b.score - a.score;
 // PID-5: 25 maladaptive facets (top) + 5 broad domains (bottom),
 // each sorted highest-first, on a 0..3 scale.
 export default function PidResultScreen({ result, meta, onRetake, onViewPortrait, actions, ownerName }) {
+  const { t } = useTranslation('results');
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -30,18 +32,17 @@ export default function PidResultScreen({ result, meta, onRetake, onViewPortrait
         >
           <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{ownerName ? `${ownerName}’s personality facets` : 'Your personality facets'}</h2>
+        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{ownerName ? t('pid.titleOwner', { name: ownerName }) : t('pid.titleSelf')}</h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          Maladaptive personality traits from the PID-5 — higher bars indicate stronger
-          expression. {ownerName ? 'The' : 'Your'} most pronounced traits appear first.
+          {ownerName ? t('pid.subtitleOwner') : t('pid.subtitleSelf')}
         </p>
       </div>
 
       {/* Facets */}
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <header className="mb-4">
-          <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Facets</h3>
-          <p className="text-sm text-persona-muted mt-1">25 trait facets</p>
+          <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{t('pid.facetsHeading')}</h3>
+          <p className="text-sm text-persona-muted mt-1">{t('pid.facetsSub')}</p>
         </header>
         <div className="divide-y divide-persona-line/60">
           {facets.map((f, i) => (
@@ -52,8 +53,8 @@ export default function PidResultScreen({ result, meta, onRetake, onViewPortrait
 
       {/* Divider + label introducing the domain group */}
       <div className="mt-8 mb-4 border-t border-persona-line pt-6">
-        <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Domains</h3>
-        <p className="text-sm text-persona-muted mt-1">Five broad domains</p>
+        <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{t('pid.domainsHeading')}</h3>
+        <p className="text-sm text-persona-muted mt-1">{t('pid.domainsSub')}</p>
       </div>
 
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
@@ -76,7 +77,7 @@ export default function PidResultScreen({ result, meta, onRetake, onViewPortrait
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              View portrait
+              {t('viewPortrait')}
             </motion.button>
             <motion.button
               onClick={onRetake}
@@ -86,7 +87,7 @@ export default function PidResultScreen({ result, meta, onRetake, onViewPortrait
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
-              <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+              <HiOutlineArrowPath className="w-4 h-4" /> {t('retake')}
             </motion.button>
           </>
         )}

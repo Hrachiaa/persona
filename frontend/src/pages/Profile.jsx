@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineArrowLeft,
@@ -22,6 +23,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/auth';
 import { recommendationsApi } from '../api/recommendations';
+import i18n, { setLanguage, SUPPORTED_LANGUAGES } from '../i18n';
 
 const VIEWS = {
   MAIN: 'main',
@@ -32,17 +34,12 @@ const VIEWS = {
 };
 
 const GENDER_OPTIONS = [
-  { value: 'M', label: 'Male', emoji: '♂' },
-  { value: 'F', label: 'Female', emoji: '♀' },
+  { value: 'M', labelKey: 'gender.male', emoji: '♂' },
+  { value: 'F', labelKey: 'gender.female', emoji: '♀' },
 ];
 
 const BIRTH_YEAR_MIN = 1900;
 const BIRTH_YEAR_MAX = 2026;
-
-// Language is mocked — English only. Persisted so the choice "sticks" across reloads,
-// but it has no functional effect yet (the whole app ships in English).
-const LANG_KEY = 'persona:lang';
-const LANGUAGES = [{ code: 'en', label: 'English' }];
 
 const slide = {
   initial: { opacity: 0, x: 24 },
@@ -62,6 +59,7 @@ function viewToPath(view) {
 }
 
 export default function Profile({ onBack, onLogout }) {
+  const { t } = useTranslation('profile');
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -81,10 +79,10 @@ export default function Profile({ onBack, onLogout }) {
     recommendationsApi
       .history()
       .then((data) => { if (!cancelled) setHistory(data.items || []); })
-      .catch(() => { if (!cancelled) setHistoryError('Could not load your activity.'); })
+      .catch(() => { if (!cancelled) setHistoryError(t('historyLoadError')); })
       .finally(() => { if (!cancelled) setHistoryLoading(false); });
     return () => { cancelled = true; };
-  }, []);
+  }, [t]);
 
   const likedCount = history ? history.filter((i) => i.verdict === 'liked').length : null;
   const historyCount = history ? history.length : null;
@@ -121,7 +119,7 @@ export default function Profile({ onBack, onLogout }) {
         >
           <HiOutlineArrowLeft className="w-5 h-5" />
           <span className="text-sm font-medium">
-            {view === VIEWS.MAIN ? 'Back' : 'Profile'}
+            {view === VIEWS.MAIN ? t('common:back') : t('title')}
           </span>
         </button>
 
@@ -156,13 +154,13 @@ export default function Profile({ onBack, onLogout }) {
                 <LikedView history={history} error={historyError} onToggle={toggleVerdict} />
               ) : (
                 <ActivityView
-                  title="Liked"
-                  subtitle="Books & films you swiped right on."
+                  title={t('activity.likedTitle')}
+                  subtitle={t('activity.likedSubtitle')}
                   items={null}
                   loading={historyLoading}
                   error={historyError}
                   onToggle={toggleVerdict}
-                  emptyText="You haven't liked anything yet. Swipe right in Reads to build your list."
+                  emptyText={t('activity.likedEmpty')}
                 />
               )}
             </motion.div>
@@ -171,13 +169,13 @@ export default function Profile({ onBack, onLogout }) {
           {view === VIEWS.HISTORY && (
             <motion.div key="history" {...slide}>
               <ActivityView
-                title="History"
-                subtitle="Everything you've reviewed, most recent first."
+                title={t('activity.historyTitle')}
+                subtitle={t('activity.historySubtitle')}
                 items={history}
                 loading={historyLoading}
                 error={historyError}
                 onToggle={toggleVerdict}
-                emptyText="No recommendations reviewed yet."
+                emptyText={t('activity.historyEmpty')}
               />
             </motion.div>
           )}
@@ -190,10 +188,16 @@ export default function Profile({ onBack, onLogout }) {
 /* ---------------------------------------------------------------- main view */
 
 function MainView({ user, likedCount, historyCount, onOpen, onLogout }) {
-  const [lang, setLang] = useState(() => localStorage.getItem(LANG_KEY) || 'en');
+  const { t } = useTranslation('profile');
+  const [lang, setLang] = useState(i18n.language);
+
+  // Change the UI language and persist it to the account. Optimistic — the UI
+  // switches immediately; a failed save just leaves the local choice in place.
   const onLangChange = (e) => {
-    setLang(e.target.value);
-    localStorage.setItem(LANG_KEY, e.target.value);
+    const code = e.target.value;
+    setLang(code);
+    setLanguage(code);
+    authApi.updateLanguage(code).catch(() => {});
   };
 
   return (
@@ -208,12 +212,12 @@ function MainView({ user, likedCount, historyCount, onOpen, onLogout }) {
         </div>
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-2xl font-semibold text-persona-dark truncate">
-            {user?.name || 'Your profile'}
+            {user?.name || t('yourProfile')}
           </h1>
           <p className="text-persona-muted text-sm truncate">{user?.email}</p>
           {user?.googleId && (
             <span className="inline-block mt-1 text-[11px] font-medium text-persona-muted bg-persona-line/60 rounded-full px-2 py-0.5">
-              Google account
+              {t('googleAccount')}
             </span>
           )}
         </div>
@@ -221,49 +225,49 @@ function MainView({ user, likedCount, historyCount, onOpen, onLogout }) {
       </button>
 
       {/* Library */}
-      <Section label="Library">
+      <Section label={t('sections.library')}>
         <Row
           icon={HiOutlineHeart}
-          title="Liked"
+          title={t('rows.liked')}
           meta={likedCount === null ? '' : String(likedCount)}
           onClick={() => onOpen(VIEWS.LIKED)}
         />
         <Divider />
         <Row
           icon={HiOutlineClock}
-          title="Recommendation history"
+          title={t('rows.history')}
           meta={historyCount === null ? '' : String(historyCount)}
           onClick={() => onOpen(VIEWS.HISTORY)}
         />
       </Section>
 
       {/* Account */}
-      <Section label="Account">
+      <Section label={t('sections.account')}>
         <Row
           icon={HiOutlinePencilSquare}
-          title="Edit profile"
+          title={t('rows.editProfile')}
           onClick={() => onOpen(VIEWS.EDIT)}
         />
         <Divider />
         <Row
           icon={HiOutlineLockClosed}
-          title="Change password"
+          title={t('rows.changePassword')}
           onClick={() => onOpen(VIEWS.PASSWORD)}
         />
         <Divider />
-        {/* Language — mocked, English only */}
+        {/* Language — applied immediately and persisted to the account */}
         <div className="flex items-center gap-4 px-5 py-4">
           <span className="w-9 h-9 shrink-0 rounded-xl bg-persona-bg flex items-center justify-center">
             <HiOutlineGlobeAlt className="w-5 h-5 text-persona-dark" />
           </span>
-          <span className="flex-1 text-sm font-medium text-persona-dark">Language</span>
+          <span className="flex-1 text-sm font-medium text-persona-dark">{t('common:language')}</span>
           <select
             value={lang}
             onChange={onLangChange}
-            aria-label="Language"
+            aria-label={t('common:language')}
             className="text-sm font-medium text-persona-dark bg-persona-bg rounded-xl px-3 py-2 border border-persona-line focus:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach"
           >
-            {LANGUAGES.map((l) => (
+            {SUPPORTED_LANGUAGES.map((l) => (
               <option key={l.code} value={l.code}>{l.label}</option>
             ))}
           </select>
@@ -276,7 +280,7 @@ function MainView({ user, likedCount, historyCount, onOpen, onLogout }) {
         className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full bg-white shadow-warm text-red-500 hover:text-red-600 hover:shadow-warm-lg transition-all font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
       >
         <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-        Sign out
+        {t('signOut')}
       </button>
     </div>
   );
@@ -314,6 +318,7 @@ function Row({ icon: Icon, title, meta, onClick }) {
 /* -------------------------------------------------------- edit profile view */
 
 function EditProfileView({ onDone }) {
+  const { t } = useTranslation('profile');
   const { user, fetchMe } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [gender, setGender] = useState(user?.gender || '');
@@ -331,7 +336,7 @@ function EditProfileView({ onDone }) {
   const submit = async (e) => {
     e.preventDefault();
     if (!valid) {
-      setError('Please fill in your name, gender, and a valid birth year.');
+      setError(t('edit.invalid'));
       return;
     }
     setLoading(true);
@@ -341,15 +346,15 @@ function EditProfileView({ onDone }) {
       await fetchMe(); // refresh the header / avatar with the new values
       onDone();
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not save your profile. Please try again.');
+      setError(err.response?.data?.message || t('edit.saveError'));
       setLoading(false);
     }
   };
 
   return (
     <div>
-      <h2 className="font-display text-2xl font-semibold text-persona-dark mb-1">Edit profile</h2>
-      <p className="text-persona-muted text-sm mb-6">Update your name, gender, and birth year.</p>
+      <h2 className="font-display text-2xl font-semibold text-persona-dark mb-1">{t('edit.title')}</h2>
+      <p className="text-persona-muted text-sm mb-6">{t('edit.subtitle')}</p>
 
       {error && (
         <div className="mb-4 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-sm">
@@ -359,14 +364,14 @@ function EditProfileView({ onDone }) {
 
       <form onSubmit={submit} className="space-y-5">
         <div>
-          <label htmlFor="profile-name" className="field-label">Name</label>
+          <label htmlFor="profile-name" className="field-label">{t('edit.nameLabel')}</label>
           <div className="relative">
             <HiOutlineUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               id="profile-name"
               type="text"
               autoComplete="name"
-              placeholder="Your name"
+              placeholder={t('edit.namePlaceholder')}
               value={name}
               onChange={(e) => { setName(e.target.value); setError(null); }}
               className="input-field pl-12"
@@ -376,8 +381,8 @@ function EditProfileView({ onDone }) {
         </div>
 
         <div>
-          <span className="field-label">Gender</span>
-          <div role="radiogroup" aria-label="Gender" className="flex gap-3">
+          <span className="field-label">{t('edit.genderLabel')}</span>
+          <div role="radiogroup" aria-label={t('edit.genderLabel')} className="flex gap-3">
             {GENDER_OPTIONS.map((opt) => {
               const active = gender === opt.value;
               return (
@@ -395,7 +400,7 @@ function EditProfileView({ onDone }) {
                 >
                   <span className="text-2xl block mb-1" aria-hidden="true">{opt.emoji}</span>
                   <span className={`font-medium text-sm ${active ? 'text-persona-dark' : 'text-persona-muted'}`}>
-                    {opt.label}
+                    {t(opt.labelKey)}
                   </span>
                 </button>
               );
@@ -404,14 +409,14 @@ function EditProfileView({ onDone }) {
         </div>
 
         <div>
-          <label htmlFor="profile-birthyear" className="field-label">Birth year</label>
+          <label htmlFor="profile-birthyear" className="field-label">{t('edit.birthYearLabel')}</label>
           <div className="relative">
             <HiOutlineCalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               id="profile-birthyear"
               type="number"
               inputMode="numeric"
-              placeholder="e.g. 1995"
+              placeholder={t('edit.birthYearPlaceholder')}
               value={birthDate}
               onChange={(e) => { setBirthDate(e.target.value); setError(null); }}
               className="input-field pl-12 tabular"
@@ -427,7 +432,7 @@ function EditProfileView({ onDone }) {
           disabled={loading || !valid}
           className="btn-primary w-full text-center mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Saving…' : 'Save changes'}
+          {loading ? t('common:saving') : t('common:saveChanges')}
         </button>
       </form>
     </div>
@@ -437,6 +442,7 @@ function EditProfileView({ onDone }) {
 /* ----------------------------------------------------------- password view */
 
 function ChangePasswordView({ isGoogle, onDone }) {
+  const { t } = useTranslation('profile');
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -449,11 +455,11 @@ function ChangePasswordView({ isGoogle, onDone }) {
     e.preventDefault();
     setError(null);
     if (next.length < 8 || next.length > 32) {
-      setError('New password must be between 8 and 32 characters.');
+      setError(t('password.lengthError'));
       return;
     }
     if (next !== confirm) {
-      setError('New passwords do not match.');
+      setError(t('password.mismatchError'));
       return;
     }
     setLoading(true);
@@ -461,7 +467,7 @@ function ChangePasswordView({ isGoogle, onDone }) {
       await authApi.changePassword(current, next);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not change password. Please try again.');
+      setError(err.response?.data?.message || t('password.changeError'));
     } finally {
       setLoading(false);
     }
@@ -473,22 +479,21 @@ function ChangePasswordView({ isGoogle, onDone }) {
         <div className="w-20 h-20 bg-persona-accent-lime/40 rounded-3xl flex items-center justify-center mx-auto mb-6">
           <HiOutlineCheckCircle className="w-10 h-10 text-persona-dark" />
         </div>
-        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Password updated</h2>
-        <p className="text-persona-muted mb-8">Your new password is now active.</p>
-        <button onClick={onDone} className="btn-primary">Done</button>
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">{t('password.successTitle')}</h2>
+        <p className="text-persona-muted mb-8">{t('password.successSubtitle')}</p>
+        <button onClick={onDone} className="btn-primary">{t('common:done')}</button>
       </div>
     );
   }
 
   return (
     <div>
-      <h2 className="font-display text-2xl font-semibold text-persona-dark mb-1">Change password</h2>
-      <p className="text-persona-muted text-sm mb-6">Choose a strong password you'll remember.</p>
+      <h2 className="font-display text-2xl font-semibold text-persona-dark mb-1">{t('password.title')}</h2>
+      <p className="text-persona-muted text-sm mb-6">{t('password.subtitle')}</p>
 
       {isGoogle && (
         <div className="mb-4 p-4 rounded-2xl bg-persona-accent-lavender/30 text-sm text-persona-dark">
-          You signed up with Google. If you've never set a password, use
-          {' '}<span className="font-medium">Forgot password</span> on the sign-in screen to create one.
+          <Trans t={t} i18nKey="password.googleNote" components={{ b: <span className="font-medium" /> }} />
         </div>
       )}
 
@@ -500,7 +505,7 @@ function ChangePasswordView({ isGoogle, onDone }) {
 
       <form onSubmit={submit} className="space-y-4">
         <div>
-          <label htmlFor="current-password" className="field-label">Current password</label>
+          <label htmlFor="current-password" className="field-label">{t('password.currentLabel')}</label>
           <div className="relative">
             <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -515,7 +520,7 @@ function ChangePasswordView({ isGoogle, onDone }) {
             <button
               type="button"
               onClick={() => setShow((s) => !s)}
-              aria-label={show ? 'Hide passwords' : 'Show passwords'}
+              aria-label={show ? t('password.hidePasswords') : t('password.showPasswords')}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach rounded-full p-0.5"
             >
               {show ? <HiOutlineEyeSlash className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
@@ -524,14 +529,14 @@ function ChangePasswordView({ isGoogle, onDone }) {
         </div>
 
         <div>
-          <label htmlFor="new-password" className="field-label">New password</label>
+          <label htmlFor="new-password" className="field-label">{t('password.newLabel')}</label>
           <div className="relative">
             <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               id="new-password"
               type={show ? 'text' : 'password'}
               autoComplete="new-password"
-              placeholder="8 to 32 characters"
+              placeholder={t('password.newPlaceholder')}
               value={next}
               onChange={(e) => { setNext(e.target.value); setError(null); }}
               className="input-field pl-12"
@@ -543,7 +548,7 @@ function ChangePasswordView({ isGoogle, onDone }) {
         </div>
 
         <div>
-          <label htmlFor="confirm-password" className="field-label">Confirm new password</label>
+          <label htmlFor="confirm-password" className="field-label">{t('password.confirmLabel')}</label>
           <div className="relative">
             <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -563,7 +568,7 @@ function ChangePasswordView({ isGoogle, onDone }) {
           disabled={loading}
           className="btn-primary w-full text-center mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Saving…' : 'Update password'}
+          {loading ? t('common:saving') : t('password.submit')}
         </button>
       </form>
     </div>
@@ -577,6 +582,7 @@ function ChangePasswordView({ isGoogle, onDone }) {
 // Un-liking an item here just greys its heart — it stays in the list and can be re-liked.
 // It disappears only on the next visit, when the component remounts and re-snapshots.
 function LikedView({ history, error, onToggle }) {
+  const { t } = useTranslation('profile');
   const [snapshot] = useState(
     () => new Set(history.filter((i) => i.verdict === 'liked').map((i) => i.id)),
   );
@@ -584,24 +590,25 @@ function LikedView({ history, error, onToggle }) {
 
   return (
     <ActivityView
-      title="Liked"
-      subtitle="Books & films you swiped right on."
+      title={t('activity.likedTitle')}
+      subtitle={t('activity.likedSubtitle')}
       items={items}
       loading={false}
       error={error}
       onToggle={onToggle}
-      emptyText="You haven't liked anything yet. Swipe right in Reads to build your list."
+      emptyText={t('activity.likedEmpty')}
     />
   );
 }
 
 const MEDIA_TABS = [
-  { id: 'all', label: 'All' },
-  { id: 'film', label: 'Films' },
-  { id: 'book', label: 'Books' },
+  { id: 'all', labelKey: 'common:all' },
+  { id: 'film', labelKey: 'common:films' },
+  { id: 'book', labelKey: 'common:books' },
 ];
 
 function ActivityView({ title, subtitle, items, loading, error, emptyText, onToggle }) {
+  const { t } = useTranslation('profile');
   const [media, setMedia] = useState('all');
   const filtered = items
     ? media === 'all'
@@ -616,12 +623,12 @@ function ActivityView({ title, subtitle, items, loading, error, emptyText, onTog
 
       {/* Films / Books split */}
       <div className="inline-flex p-1 bg-white shadow-warm rounded-full mb-6">
-        {MEDIA_TABS.map((t) => {
-          const active = media === t.id;
+        {MEDIA_TABS.map((tab) => {
+          const active = media === tab.id;
           return (
             <button
-              key={t.id}
-              onClick={() => setMedia(t.id)}
+              key={tab.id}
+              onClick={() => setMedia(tab.id)}
               className={`relative px-4 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none ${
                 active ? 'text-persona-dark' : 'text-persona-muted hover:text-persona-dark'
               }`}
@@ -633,14 +640,14 @@ function ActivityView({ title, subtitle, items, loading, error, emptyText, onTog
                   transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                 />
               )}
-              <span className="relative">{t.label}</span>
+              <span className="relative">{t(tab.labelKey)}</span>
             </button>
           );
         })}
       </div>
 
       {loading && (
-        <p className="text-persona-muted text-sm py-8 text-center animate-pulse-soft">Loading…</p>
+        <p className="text-persona-muted text-sm py-8 text-center animate-pulse-soft">{t('common:loading')}</p>
       )}
 
       {!loading && error && (
@@ -649,7 +656,7 @@ function ActivityView({ title, subtitle, items, loading, error, emptyText, onTog
 
       {!loading && !error && filtered && filtered.length === 0 && (
         <p className="text-persona-muted text-sm py-8 text-center">
-          {items && items.length > 0 ? `No ${media === 'film' ? 'films' : 'books'} here yet.` : emptyText}
+          {items && items.length > 0 ? (media === 'film' ? t('activity.noFilms') : t('activity.noBooks')) : emptyText}
         </p>
       )}
 
@@ -667,6 +674,7 @@ function ActivityView({ title, subtitle, items, loading, error, emptyText, onTog
 }
 
 function ActivityCard({ item, onToggle }) {
+  const { t } = useTranslation('profile');
   const isFilm = item.mediaType === 'film';
   const liked = item.verdict === 'liked';
   const subtitle = isFilm
@@ -695,13 +703,13 @@ function ActivityCard({ item, onToggle }) {
         <p className="text-sm font-medium text-persona-dark truncate">{item.title}</p>
         {subtitle && <p className="text-xs text-persona-muted truncate">{subtitle}</p>}
         <span className="inline-block mt-1 text-[10px] font-medium uppercase tracking-wide text-persona-muted">
-          {isFilm ? 'Film' : 'Book'}
+          {isFilm ? t('common:film') : t('common:book')}
         </span>
       </div>
       <motion.button
         onClick={() => onToggle(item)}
         whileTap={{ scale: 0.85 }}
-        aria-label={liked ? 'Remove like' : 'Like'}
+        aria-label={liked ? t('activity.removeLike') : t('activity.like')}
         aria-pressed={liked}
         className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach ${
           liked ? 'bg-persona-accent-pink/40 text-red-500' : 'bg-persona-bg text-persona-muted hover:text-red-400'

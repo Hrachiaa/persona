@@ -1,0 +1,12 @@
+{
+  "nav": {
+    "tests": "Тесты",
+    "portrait": "Портрет",
+    "match": "Друзья",
+    "reads": "Чтение",
+    "advice": "Советы"
+  },
+  "primaryNav": "Основное",
+  "openProfile": "Открыть профиль",
+  "userFallback": "Пользователь"
+}

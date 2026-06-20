@@ -26,8 +26,12 @@ export const authApi = {
   changePassword: (currentPassword, newPassword) =>
     client.post('/auth/change-password', { currentPassword, newPassword }).then((r) => r.data),
 
-  addProfileInfo: ({ name, gender, birthDate }) =>
-    client.post('/auth/add-user-profile-info', { name, gender, birthDate }).then((r) => r.data),
+  addProfileInfo: ({ name, gender, birthDate, language }) =>
+    client.post('/auth/add-user-profile-info', { name, gender, birthDate, language }).then((r) => r.data),
+
+  // Update the logged-in user's UI language (JWT-protected)
+  updateLanguage: (language) =>
+    client.post('/auth/language', { language }).then((r) => r.data),
 
   // Fetch current user profile (JWT-protected)
   getMe: () =>

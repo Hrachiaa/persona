@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { friendsApi } from '../api/friends';
@@ -8,6 +9,7 @@ import { friendsApi } from '../api/friends';
 // request immediately, then land on the Friends tab. Signed-out visitors stash the
 // token and are routed to sign up; App.jsx finishes the invite once they authenticate.
 export default function InvitePage() {
+  const { t } = useTranslation('invite');
   const { token } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -39,13 +41,13 @@ export default function InvitePage() {
       {state === 'error' ? (
         <>
           <h1 className="font-display text-3xl font-semibold text-persona-dark mb-2">
-            Invite not found
+            {t('notFound')}
           </h1>
           <p className="text-persona-muted max-w-prose mb-8">
-            This invite link is invalid or has expired.
+            {t('notFoundBody')}
           </p>
           <button onClick={() => navigate('/match')} className="btn-primary">
-            Go to Friends
+            {t('goToFriends')}
           </button>
         </>
       ) : (
@@ -54,7 +56,7 @@ export default function InvitePage() {
           animate={{ opacity: 1 }}
           className="animate-pulse-soft text-persona-muted"
         >
-          {state === 'done' ? 'Friend request sent ✓' : 'Adding you…'}
+          {state === 'done' ? t('sent') : t('adding')}
         </motion.div>
       )}
     </div>

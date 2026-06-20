@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
 import ScaleBar from './ScaleBar';
 
@@ -8,6 +9,7 @@ const byScoreDesc = (a, b) => b.score - a.score;
 // each sorted highest-first, on a centered scale whose half-width is the
 // furthest score from 0 (so the longest bar reaches the edge, 0 stays centered).
 export default function SchwartzResultScreen({ result, meta, onRetake, onViewPortrait, actions, ownerName }) {
+  const { t } = useTranslation('results');
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -37,19 +39,17 @@ export default function SchwartzResultScreen({ result, meta, onRetake, onViewPor
         >
           <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{ownerName ? `${ownerName}’s values profile` : 'Your values profile'}</h2>
+        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{ownerName ? t('schwartz.titleOwner', { name: ownerName }) : t('schwartz.titleSelf')}</h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          {ownerName
-            ? `Where each value sits relative to ${ownerName}’s personal average — bars to the right of center matter more, bars to the left matter less.`
-            : 'Where each value sits relative to your personal average — bars to the right of center matter more to you, bars to the left matter less.'}
+          {ownerName ? t('schwartz.subtitleOwner', { name: ownerName }) : t('schwartz.subtitleSelf')}
         </p>
       </div>
 
       {/* Values */}
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <header className="mb-4">
-          <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Values</h3>
-          <p className="text-sm text-persona-muted mt-1">19 basic values</p>
+          <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{t('schwartz.valuesHeading')}</h3>
+          <p className="text-sm text-persona-muted mt-1">{t('schwartz.valuesSub')}</p>
         </header>
         <div className="divide-y divide-persona-line/60">
           {values.map((v, i) => (
@@ -60,8 +60,8 @@ export default function SchwartzResultScreen({ result, meta, onRetake, onViewPor
 
       {/* Divider + label introducing the higher-order group */}
       <div className="mt-8 mb-4 border-t border-persona-line pt-6">
-        <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Higher-order values</h3>
-        <p className="text-sm text-persona-muted mt-1">Four broad dimensions</p>
+        <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{t('schwartz.higherHeading')}</h3>
+        <p className="text-sm text-persona-muted mt-1">{t('schwartz.higherSub')}</p>
       </div>
 
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
@@ -84,7 +84,7 @@ export default function SchwartzResultScreen({ result, meta, onRetake, onViewPor
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              View portrait
+              {t('viewPortrait')}
             </motion.button>
             <motion.button
               onClick={onRetake}
@@ -94,7 +94,7 @@ export default function SchwartzResultScreen({ result, meta, onRetake, onViewPor
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
-              <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+              <HiOutlineArrowPath className="w-4 h-4" /> {t('retake')}
             </motion.button>
           </>
         )}

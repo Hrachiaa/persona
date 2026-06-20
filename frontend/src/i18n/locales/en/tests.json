@@ -1,0 +1,59 @@
+{
+  "aria": "Personality tests",
+  "status": {
+    "done": "Done",
+    "locked": "Locked",
+    "notStarted": "Not started"
+  },
+  "card": {
+    "lockedHint": "Complete the earlier tests first to unlock this one.",
+    "unavailable": "Unavailable",
+    "minutes": "~{{n}} min",
+    "noTimeLimit": "No time limit",
+    "questionsCount": "{{n}} questions",
+    "viewResult": "View result",
+    "start": "Start test"
+  },
+  "resume": {
+    "title": "Continue where you left off?",
+    "subtitle": "You have unfinished progress on this test. Continue, or start over from the first question?",
+    "startOver": "Start over"
+  },
+  "questions": {
+    "leaveConfirm": "Your progress will be saved. Leave this test?",
+    "progress": "Question {{n}} of {{total}}",
+    "imageAlt": "Question {{n}}",
+    "prev": "← Prev",
+    "next": "Next →",
+    "submit": "Submit test",
+    "submitting": "Submitting…"
+  },
+  "iq": {
+    "scoreTitleSelf": "Your IQ score",
+    "scoreTitleOwner": "{{name}}'s IQ score",
+    "you": "You",
+    "average": "Average",
+    "percentileSelf": "Your IQ of <b>{{iq}}</b> is equivalent to the <b>{{pct}}th</b> percentile — higher than <b>{{pctPercent}}</b> of people, with a standard deviation of 15.",
+    "percentileOwner": "{{name}}'s IQ of <b>{{iq}}</b> is equivalent to the <b>{{pct}}th</b> percentile — higher than <b>{{pctPercent}}</b> of people, with a standard deviation of 15.",
+    "suspicious": "Your results show some unusual patterns. You may want to retake the test for more accurate results.",
+    "viewPortrait": "View portrait",
+    "retake": "Retake test",
+    "invalid": {
+      "title": "We couldn't calculate a score",
+      "body1": "The score was too low to produce a reliable result. This usually happens when answers are selected randomly or the test is taken without full focus.",
+      "body2": "No worries — it happens. When you're ready, you can give it another go.",
+      "tryAgain": "Try again",
+      "backToTests": "Back to tests"
+    }
+  },
+  "generic": {
+    "title": "Your result",
+    "completed": "Completed"
+  },
+  "list": {
+    "loadError": "Failed to load tests",
+    "questionsError": "Failed to load questions",
+    "emptyTitle": "Nothing taken yet",
+    "emptyBody": "No tests are available right now. Check back soon."
+  }
+}

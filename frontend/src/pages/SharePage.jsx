@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { HiOutlineArrowRight } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
@@ -13,6 +14,7 @@ import { ResultView } from './tabs/Tests';
 //   • signed-in visitor  → no sign-up prompt (it isn't their result), just a way
 //                           back to their own tests
 export default function SharePage() {
+  const { t } = useTranslation('share');
   const { token } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -32,7 +34,7 @@ export default function SharePage() {
   if (state.status === 'loading') {
     return (
       <div className="min-h-dvh flex items-center justify-center">
-        <div className="animate-pulse-soft text-persona-muted">Loading…</div>
+        <div className="animate-pulse-soft text-persona-muted">{t('common:loading')}</div>
       </div>
     );
   }
@@ -40,10 +42,10 @@ export default function SharePage() {
   if (state.status === 'error') {
     return (
       <div className="min-h-dvh flex flex-col items-center justify-center text-center px-6">
-        <h1 className="font-display text-3xl font-semibold text-persona-dark mb-2">Result not found</h1>
-        <p className="text-persona-muted max-w-prose mb-8">This share link is invalid or has expired.</p>
+        <h1 className="font-display text-3xl font-semibold text-persona-dark mb-2">{t('page.notFound')}</h1>
+        <p className="text-persona-muted max-w-prose mb-8">{t('page.notFoundBody')}</p>
         <button onClick={() => navigate('/')} className="btn-primary">
-          Discover Persona
+          {t('page.discover')}
         </button>
       </div>
     );
@@ -62,7 +64,7 @@ export default function SharePage() {
       className="btn-secondary w-full"
       whileTap={{ scale: 0.97 }}
     >
-      Back to your tests
+      {t('page.backToTests')}
     </motion.button>
   ) : (
     <>
@@ -71,11 +73,11 @@ export default function SharePage() {
         className="btn-primary w-full"
         whileTap={{ scale: 0.97 }}
       >
-        Discover your Persona
+        {t('page.discoverYours')}
       </motion.button>
       <p className="text-center text-sm text-persona-muted">
-        {ownerName ? `${ownerName} shared their ${testName} result.` : `A ${testName} result was shared with you.`}{' '}
-        Curious how you compare?
+        {ownerName ? t('page.sharedByOwner', { name: ownerName, test: testName }) : t('page.sharedAnon', { test: testName })}{' '}
+        {t('page.curious')}
       </p>
     </>
   );
@@ -86,7 +88,7 @@ export default function SharePage() {
       className="h-12 px-5 rounded-full bg-persona-dark text-white flex items-center gap-2 shadow-warm text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
       whileTap={{ scale: 0.95 }}
     >
-      Take the test <HiOutlineArrowRight className="w-5 h-5" />
+      {t('page.takeTest')} <HiOutlineArrowRight className="w-5 h-5" />
     </motion.button>
   );
 
@@ -94,7 +96,7 @@ export default function SharePage() {
     <ResultView
       test={{ testType, testName }}
       result={sharedResult}
-      ownerName={ownerName || 'This person'}
+      ownerName={ownerName || t('page.ownerFallback')}
       onBack={() => navigate('/')}
       actions={actions}
       headerRightSlot={headerCta}

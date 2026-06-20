@@ -49,6 +49,15 @@ export class AuthService {
         return;
     }
 
+    async updateLanguage(userId: string, language: string){
+        const user = await this.usersService.getUserById(userId);
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        await this.usersService.updateLanguage(userId, language);
+        return;
+    }
+
     async getUserInfo(userId: string){
         const user = await this.usersService.getUserById(userId);
         if(!user){
@@ -62,6 +71,7 @@ export class AuthService {
             name: user.name,
             birthDate: user.birthDate,
             gender: user.gender,
+            language: user.language,
         };
     }
 

@@ -1,0 +1,50 @@
+{
+  "stamps": {
+    "like": "LIKE",
+    "nope": "NOPE"
+  },
+  "bookFace": {
+    "noDescription": "No description available for this book.",
+    "tapToRead": "Tap to read a preview →"
+  },
+  "preview": {
+    "loading": "Loading preview…",
+    "unavailableTitle": "No preview available",
+    "unavailableBody": "This book has no readable preview.",
+    "openGoogle": "Open on Google Books"
+  },
+  "locked": {
+    "title": "Recommendations are locked",
+    "body": "Finish all {{required}} tests and Persona will hand-pick films and books for you — then you just swipe right on what you like and left on what you don't.",
+    "progress": "{{completed}} of {{required}} tests done",
+    "firstTest": "Take your first test",
+    "continueTests": "Continue your tests"
+  },
+  "error": "Couldn't load recommendations right now.",
+  "busy": {
+    "loading": "Loading your picks…",
+    "generating": "Hand-picking {{media}} for you — this can take a moment."
+  },
+  "empty": {
+    "title": "You're all caught up",
+    "body": "We're out of fresh picks for now. Reset to start over, or check back soon."
+  },
+  "actions": {
+    "reset": "Reset recommendations",
+    "dislike": "Dislike",
+    "details": "Details",
+    "like": "Like"
+  },
+  "filmFallback": "No description available for this title.",
+  "reset": {
+    "title": "Reset {{media}}?",
+    "body": "This clears your entire like/dislike history and watch list for {{mediaGen}}. Persona will start picking from scratch based on your profile. This can't be undone.",
+    "confirm": "Reset"
+  },
+  "media": {
+    "filmsAcc": "films",
+    "booksAcc": "books",
+    "filmsGen": "films",
+    "booksGen": "books"
+  }
+}

@@ -1,6 +1,16 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authApi } from '../api/auth';
+import i18n, { LANG_KEY, SUPPORTED_LANGUAGES } from '../i18n';
 const AuthContext = createContext(null);
+
+// Apply a user's stored language preference to the UI (and remember it locally).
+function applyUserLanguage(user) {
+  const code = user?.language;
+  if (code && SUPPORTED_LANGUAGES.some((l) => l.code === code) && i18n.language !== code) {
+    localStorage.setItem(LANG_KEY, code);
+    i18n.changeLanguage(code);
+  }
+}
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);       // full user object from /auth/me
   const [loading, setLoading] = useState(true);  // true while checking stored tokens
@@ -11,6 +21,7 @@ export function AuthProvider({ children }) {
     try {
       const data = await authApi.getMe();
       setUser(data);
+      applyUserLanguage(data);
       return data;
     } catch {
       // Token invalid or expired — clear auth
@@ -51,7 +62,7 @@ export function AuthProvider({ children }) {
       const me = await fetchMe();
       return me;
     } catch (err) {
-      const message = err.response?.data?.message || 'Signup failed. Please try again.';
+      const message = err.response?.data?.message || i18n.t('auth:signupFailed');
       setError(message);
       throw err;
     }
@@ -66,7 +77,7 @@ export function AuthProvider({ children }) {
       const me = await fetchMe();
       return me;
     } catch (err) {
-      const message = err.response?.data?.message || 'Login failed. Please try again.';
+      const message = err.response?.data?.message || i18n.t('auth:loginFailed');
       setError(message);
       throw err;
     }

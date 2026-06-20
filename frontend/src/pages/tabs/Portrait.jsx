@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineArrowPath, HiOutlineClipboardDocumentList, HiOutlineChevronDown } from 'react-icons/hi2';
 import ReactMarkdown from 'react-markdown';
@@ -46,6 +47,7 @@ const SIGIL_LAYOUT = [
 // When an orb transitions from not-lit to lit (a fresh interpretation landed) it gets
 // a one-shot celebratory burst so the moment reads as an event, not a quiet recolor.
 function PortraitConstellation({ basedOn, loadingTests }) {
+  const { t } = useTranslation('portrait');
   const litArr = basedOn || [];
   const litSet = new Set(litArr);
   const loadingSet = new Set(loadingTests || []);
@@ -84,7 +86,7 @@ function PortraitConstellation({ basedOn, loadingTests }) {
       <svg
         viewBox="0 0 340 340"
         role="img"
-        aria-label={`Your portrait — ${litCount} of ${SIGIL_LAYOUT.length} pieces revealed`}
+        aria-label={t('ariaLabel', { count: litCount, total: SIGIL_LAYOUT.length })}
         className="w-full h-auto overflow-visible"
       >
         <defs>
@@ -136,7 +138,7 @@ function PortraitConstellation({ basedOn, loadingTests }) {
           {SIGIL_LAYOUT.map((s, i) => {
             const lit = litSet.has(s.type);
             const loading = !lit && loadingSet.has(s.type);
-            const { color, label, Glyph } = SIGILS[s.type];
+            const { color, Glyph } = SIGILS[s.type];
             return (
               <g key={s.type} transform={`translate(${s.x} ${s.y})`}>
                 <motion.g
@@ -144,7 +146,7 @@ function PortraitConstellation({ basedOn, loadingTests }) {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.25 + i * 0.08, type: 'spring', stiffness: 220, damping: 18 }}
                 >
-                  <title>{label} — {lit ? 'revealed' : loading ? 'revealing…' : 'not taken yet'}</title>
+                  <title>{t(`sigils.${s.type}`)} — {lit ? t('orbStatus.revealed') : loading ? t('orbStatus.revealing') : t('orbStatus.notTaken')}</title>
 
                   {/* Lit halo */}
                   <motion.circle r="34" fill={color} filter="url(#portraitOrbGlow)" animate={{ opacity: lit ? 0.28 : 0 }} transition={{ duration: 0.6 }} />
@@ -197,6 +199,7 @@ function PortraitConstellation({ basedOn, loadingTests }) {
 // a call to take the rest. Lives *outside* the swap AnimatePresence so the bar
 // animates up in place when a richer portrait lands.
 function PortraitProgress({ count, total, onTakeTests }) {
+  const { t } = useTranslation('portrait');
   const pct = Math.round((count / total) * 100);
   const remaining = total - count;
   const complete = remaining === 0;
@@ -208,7 +211,7 @@ function PortraitProgress({ count, total, onTakeTests }) {
       className="surface-warm rounded-4xl p-6 mb-4"
     >
       <div className="flex items-center justify-between mb-2.5">
-        <span className="text-sm font-medium text-persona-dark">Portrait accuracy</span>
+        <span className="text-sm font-medium text-persona-dark">{t('accuracy')}</span>
         <span className="text-sm font-semibold text-persona-dark tabular">{pct}%</span>
       </div>
       <div className="relative h-2.5 bg-persona-line/60 rounded-full overflow-hidden">
@@ -222,21 +225,19 @@ function PortraitProgress({ count, total, onTakeTests }) {
 
       {complete ? (
         <p className="text-sm text-persona-muted leading-relaxed mt-4">
-          Drawn from all {total} tests — Persona has seen every side of you.
+          {t('complete', { total })}
         </p>
       ) : (
         <>
           <p className="text-sm text-persona-muted leading-relaxed mt-4">
-            This portrait is built from {count} of {total} tests. With the rest still missing, Persona
-            only knows you from one side and has to guess at the others — so it stays on the surface,
-            short of the real depth of who you are.
+            {t('incomplete1', { count, total })}
           </p>
           <p className="text-sm text-persona-dark leading-relaxed mt-2 font-medium">
-            The more tests you take, the more precisely your portrait describes the real you.
+            {t('incomplete2')}
           </p>
           {onTakeTests && (
             <motion.button onClick={onTakeTests} className="btn-primary w-full mt-5" whileTap={{ scale: 0.97 }}>
-              Take more tests
+              {t('takeMore')}
             </motion.button>
           )}
         </>
@@ -252,6 +253,7 @@ function PortraitProgress({ count, total, onTakeTests }) {
 // animation once it's ready. The dry per-test results live on the Tests tab;
 // interpretation lives here.
 export default function Portrait({ onOpenTests }) {
+  const { t } = useTranslation('portrait');
   const [data, setData] = useState(cachedData); // backend response: { status, ... }
   const [loading, setLoading] = useState(!cachedData);
   const [errored, setErrored] = useState(false);
@@ -330,7 +332,7 @@ export default function Portrait({ onOpenTests }) {
               animate={{ opacity: 1 }}
               transition={{ delay: 1.1, duration: 0.6 }}
             >
-              <span className="text-xs font-medium tracking-wide">Swipe down for your portrait</span>
+              <span className="text-xs font-medium tracking-wide">{t('swipeDown')}</span>
               <motion.span animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}>
                 <HiOutlineChevronDown className="w-5 h-5" />
               </motion.span>
@@ -365,7 +367,7 @@ export default function Portrait({ onOpenTests }) {
                         >
                           <HiOutlineArrowPath className="w-3.5 h-3.5" />
                         </motion.span>
-                        Refreshing your portrait with your latest test…
+                        {t('refreshing')}
                       </div>
                     )}
                     <div className="text-persona-dark">
@@ -388,7 +390,7 @@ export default function Portrait({ onOpenTests }) {
                       <HiOutlineArrowPath className="w-5 h-5" />
                     </motion.span>
                     <span className="text-sm leading-relaxed">
-                      Drawing your portrait from your tests… the orb above will light up the moment it&apos;s ready.
+                      {t('generating')}
                     </span>
                   </motion.div>
                 )}
@@ -402,14 +404,13 @@ export default function Portrait({ onOpenTests }) {
                     <div className="w-14 h-14 mx-auto mb-4 bg-persona-accent-lavender/60 rounded-3xl flex items-center justify-center">
                       <HiOutlineClipboardDocumentList className="w-7 h-7 text-persona-dark" />
                     </div>
-                    <h2 className="font-display text-xl font-semibold text-persona-dark mb-1.5">No portrait yet</h2>
+                    <h2 className="font-display text-xl font-semibold text-persona-dark mb-1.5">{t('lockedTitle')}</h2>
                     <p className="text-sm text-persona-muted leading-relaxed max-w-prose mx-auto">
-                      Take your first test to light up the first piece of your portrait — each test you
-                      finish reveals another, until the whole picture of you comes together.
+                      {t('lockedBody')}
                     </p>
                     {onOpenTests && (
                       <motion.button onClick={onOpenTests} className="btn-primary mt-6" whileTap={{ scale: 0.97 }}>
-                        Take your first test
+                        {t('firstTest')}
                       </motion.button>
                     )}
                   </motion.div>
@@ -437,7 +438,7 @@ export default function Portrait({ onOpenTests }) {
                     <HiOutlineArrowPath className="w-5 h-5" />
                   </motion.span>
                   <span className="text-sm leading-relaxed">
-                    Building your portrait from your tests… this can take up to a minute.
+                    {t('loading')}
                   </span>
                 </motion.div>
               )}
@@ -448,9 +449,9 @@ export default function Portrait({ onOpenTests }) {
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                   className="surface-warm rounded-4xl p-6"
                 >
-                  <p className="text-sm text-persona-muted mb-4">Couldn&apos;t build your portrait right now.</p>
+                  <p className="text-sm text-persona-muted mb-4">{t('error')}</p>
                   <motion.button onClick={retry} className="btn-secondary inline-flex items-center gap-2" whileTap={{ scale: 0.97 }}>
-                    <HiOutlineArrowPath className="w-4 h-4" /> Try again
+                    <HiOutlineArrowPath className="w-4 h-4" /> {t('common:retry')}
                   </motion.button>
                 </motion.div>
               )}

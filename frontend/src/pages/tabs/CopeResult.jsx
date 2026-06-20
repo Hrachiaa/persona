@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
 import ScaleBar from './ScaleBar';
 
@@ -6,6 +7,7 @@ const byScoreDesc = (a, b) => b.score - a.score;
 
 // COPE: 15 coping-strategy scales, sorted highest-first, on a 1..4 scale.
 export default function CopeResultScreen({ result, meta, onRetake, onViewPortrait, actions, ownerName }) {
+  const { t } = useTranslation('results');
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -28,19 +30,17 @@ export default function CopeResultScreen({ result, meta, onRetake, onViewPortrai
         >
           <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{ownerName ? `${ownerName}’s coping profile` : 'Your coping profile'}</h2>
+        <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">{ownerName ? t('cope.titleOwner', { name: ownerName }) : t('cope.titleSelf')}</h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          {ownerName
-            ? `The coping strategies ${ownerName} leans on under stress, strongest first. Higher bars are the responses reached for most.`
-            : 'The coping strategies you lean on under stress, strongest first. Higher bars are the responses you reach for most.'}
+          {ownerName ? t('cope.subtitleOwner', { name: ownerName }) : t('cope.subtitleSelf')}
         </p>
       </div>
 
       {/* Scales */}
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <header className="mb-4">
-          <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">Coping strategies</h3>
-          <p className="text-sm text-persona-muted mt-1">15 strategies</p>
+          <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{t('cope.heading')}</h3>
+          <p className="text-sm text-persona-muted mt-1">{t('cope.sub')}</p>
         </header>
         <div className="divide-y divide-persona-line/60">
           {scales.map((s, i) => (
@@ -61,7 +61,7 @@ export default function CopeResultScreen({ result, meta, onRetake, onViewPortrai
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              View portrait
+              {t('viewPortrait')}
             </motion.button>
             <motion.button
               onClick={onRetake}
@@ -71,7 +71,7 @@ export default function CopeResultScreen({ result, meta, onRetake, onViewPortrai
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
-              <HiOutlineArrowPath className="w-4 h-4" /> Retake test
+              <HiOutlineArrowPath className="w-4 h-4" /> {t('retake')}
             </motion.button>
           </>
         )}

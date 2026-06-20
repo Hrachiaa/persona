@@ -23,6 +23,9 @@ model User {
   name          String?
   gender        String?
   birthDate     Int?
+  // UI language preference ('en' | 'ru'). Chosen during the profile survey,
+  // editable in profile settings. Defaults to English.
+  language      String        @default("en")
   // Stable personal invite token. Minted on first request and reused, so a link
   // the user already shared keeps working (mirrors TestResult.shareToken).
   inviteToken   String?       @unique

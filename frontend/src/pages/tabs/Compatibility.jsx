@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import {
@@ -117,6 +118,7 @@ function SubScreen({ title, onBack, label, children }) {
 // ─── Friends home: prominent "Add friends" + the friends list ───────────────────
 
 function FriendsHome({ navigate }) {
+  const { t } = useTranslation('friends');
   const [friends, setFriends] = useState([]);
   const [incomingCount, setIncomingCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -132,13 +134,13 @@ function FriendsHome({ navigate }) {
   }, []);
 
   return (
-    <ScreenShell label="Friends">
+    <ScreenShell label={t('home.label')}>
       <button
         onClick={() => navigate('/match/requests')}
         className="w-full mb-8 flex items-center justify-between gap-2 bg-persona-card rounded-2xl p-4 card-hover"
       >
         <span className="flex items-center gap-2 text-persona-dark font-medium text-sm">
-          <HiOutlineClock className="w-5 h-5" /> Friend requests
+          <HiOutlineClock className="w-5 h-5" /> {t('home.requests')}
         </span>
         <span className="flex items-center gap-2">
           {incomingCount > 0 && (
@@ -152,22 +154,22 @@ function FriendsHome({ navigate }) {
 
       <div className="flex items-center justify-between gap-2 mb-3">
         <h2 className="text-lg font-semibold text-persona-dark flex items-center gap-2">
-          <HiOutlineUsers className="w-5 h-5" /> Your friends
+          <HiOutlineUsers className="w-5 h-5" /> {t('home.yourFriends')}
         </h2>
         <motion.button
           onClick={() => navigate('/match/add')}
           className="flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-persona-dark text-white text-sm font-medium shadow-warm"
           whileTap={{ scale: 0.95 }}
         >
-          <HiOutlineUserPlus className="w-4 h-4" /> Add
+          <HiOutlineUserPlus className="w-4 h-4" /> {t('home.add')}
         </motion.button>
       </div>
       {loading ? (
-        <p className="text-sm text-persona-muted px-1">Loading…</p>
+        <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
       ) : friends.length === 0 ? (
         <div className="text-center text-persona-muted py-10">
           <HiOutlineUserPlus className="w-10 h-10 mx-auto mb-3 opacity-50" />
-          <p className="text-sm">No friends yet. Tap “Add friends” to get started.</p>
+          <p className="text-sm">{t('home.empty')}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -190,6 +192,7 @@ function FriendsHome({ navigate }) {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function AddFriendView({ navigate, onBack }) {
+  const { t } = useTranslation('friends');
   const [email, setEmail] = useState('');
   const [searching, setSearching] = useState(false);
   const [hit, setHit] = useState(null); // search result FriendDto | null
@@ -265,15 +268,15 @@ function AddFriendView({ navigate, onBack }) {
   };
 
   return (
-    <SubScreen label="Add friends" onBack={onBack}>
+    <SubScreen label={t('add.label')} onBack={onBack}>
       {/* Invite link */}
       <div className="surface-warm rounded-3xl p-4 mb-8">
         <div className="flex items-center gap-2 mb-2 text-persona-dark">
           <HiOutlineLink className="w-5 h-5" />
-          <h2 className="font-semibold text-sm">Your invite link</h2>
+          <h2 className="font-semibold text-sm">{t('add.inviteTitle')}</h2>
         </div>
         <p className="text-xs text-persona-muted mb-3">
-          Share it — whoever opens it sends you a friend request.
+          {t('add.inviteHint')}
         </p>
         <div className="flex gap-2">
           <input
@@ -289,14 +292,14 @@ function AddFriendView({ navigate, onBack }) {
             whileTap={{ scale: 0.97 }}
           >
             {copied ? <HiOutlineCheck className="w-5 h-5" /> : <HiOutlineClipboard className="w-5 h-5" />}
-            {copied ? 'Copied' : 'Copy'}
+            {copied ? t('add.copied') : t('add.copy')}
           </motion.button>
         </div>
       </div>
 
       {/* Search by email — live, as you type */}
       <label htmlFor="friend-email" className="field-label">
-        Find by email
+        {t('add.findByEmail')}
       </label>
       <div className="relative">
         <HiOutlineMagnifyingGlass className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-persona-muted" />
@@ -306,7 +309,7 @@ function AddFriendView({ navigate, onBack }) {
           type="email"
           autoComplete="off"
           inputMode="email"
-          placeholder="friend@example.com"
+          placeholder={t('add.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="input-field w-full pl-11 pr-11"
@@ -324,7 +327,7 @@ function AddFriendView({ navigate, onBack }) {
             <button
               type="button"
               onClick={() => setEmail('')}
-              aria-label="Clear"
+              aria-label={t('add.clear')}
               className="text-persona-muted hover:text-persona-dark transition-colors"
             >
               <HiOutlineXMark className="w-5 h-5" />
@@ -355,7 +358,7 @@ function AddFriendView({ navigate, onBack }) {
             exit={{ opacity: 0 }}
             className="pt-3 text-sm text-persona-muted px-1"
           >
-            No one found with that email.
+            {t('add.notFound')}
           </motion.p>
         ) : null}
       </AnimatePresence>
@@ -365,21 +368,22 @@ function AddFriendView({ navigate, onBack }) {
 
 /** The trailing action for a search hit, depending on the relation. */
 function SearchAction({ hit, onAdd, navigate }) {
+  const { t } = useTranslation('friends');
   const [busy, setBusy] = useState(false);
   const relation = hit.relation;
 
-  if (relation === 'self') return <span className="text-xs text-persona-muted shrink-0">You</span>;
+  if (relation === 'self') return <span className="text-xs text-persona-muted shrink-0">{t('action.you')}</span>;
   if (relation === 'friends')
     return (
       <button
         onClick={() => navigate(`/match/${hit.id}`, { state: { friend: hit } })}
         className="btn-secondary px-3 py-1.5 text-xs shrink-0"
       >
-        View
+        {t('action.view')}
       </button>
     );
   if (relation === 'pending_out')
-    return <span className="text-xs text-persona-muted shrink-0">Requested</span>;
+    return <span className="text-xs text-persona-muted shrink-0">{t('action.requested')}</span>;
   if (relation === 'pending_in')
     return (
       <button
@@ -391,7 +395,7 @@ function SearchAction({ hit, onAdd, navigate }) {
         disabled={busy}
         className="btn-primary px-3 py-1.5 text-xs shrink-0"
       >
-        Accept
+        {t('action.accept')}
       </button>
     );
   return (
@@ -405,7 +409,7 @@ function SearchAction({ hit, onAdd, navigate }) {
       className="btn-primary px-3 py-1.5 text-xs shrink-0 flex items-center gap-1"
       whileTap={{ scale: 0.95 }}
     >
-      <HiOutlineUserPlus className="w-4 h-4" /> Add
+      <HiOutlineUserPlus className="w-4 h-4" /> {t('action.add')}
     </motion.button>
   );
 }
@@ -413,6 +417,7 @@ function SearchAction({ hit, onAdd, navigate }) {
 // ─── Requests: incoming (accept/decline) + outgoing (cancel) ────────────────────
 
 function RequestsView({ onBack }) {
+  const { t } = useTranslation('friends');
   const [data, setData] = useState({ incoming: [], outgoing: [] });
   const [loading, setLoading] = useState(true);
 
@@ -432,16 +437,16 @@ function RequestsView({ onBack }) {
   };
 
   return (
-    <SubScreen label="Friend requests" title="Requests" onBack={onBack}>
+    <SubScreen label={t('requests.label')} title={t('requests.title')} onBack={onBack}>
       {loading ? (
-        <p className="text-sm text-persona-muted px-1">Loading…</p>
+        <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
       ) : (
         <>
           <h2 className="text-sm font-semibold text-persona-muted uppercase tracking-wide mb-3">
-            Incoming
+            {t('requests.incoming')}
           </h2>
           {data.incoming.length === 0 ? (
-            <p className="text-sm text-persona-muted px-1 mb-8">No incoming requests.</p>
+            <p className="text-sm text-persona-muted px-1 mb-8">{t('requests.noIncoming')}</p>
           ) : (
             <div className="space-y-2 mb-8">
               {data.incoming.map((p) => (
@@ -452,14 +457,14 @@ function RequestsView({ onBack }) {
                     <div className="flex gap-2 shrink-0">
                       <button
                         onClick={() => act(friendsApi.accept, p.friendshipId)}
-                        aria-label="Accept"
+                        aria-label={t('requests.accept')}
                         className="w-9 h-9 rounded-full bg-persona-dark text-white flex items-center justify-center"
                       >
                         <HiOutlineCheck className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => act(friendsApi.decline, p.friendshipId)}
-                        aria-label="Decline"
+                        aria-label={t('requests.decline')}
                         className="w-9 h-9 rounded-full bg-persona-bg text-persona-dark flex items-center justify-center"
                       >
                         <HiOutlineXMark className="w-5 h-5" />
@@ -472,10 +477,10 @@ function RequestsView({ onBack }) {
           )}
 
           <h2 className="text-sm font-semibold text-persona-muted uppercase tracking-wide mb-3">
-            Sent
+            {t('requests.sent')}
           </h2>
           {data.outgoing.length === 0 ? (
-            <p className="text-sm text-persona-muted px-1">No sent requests.</p>
+            <p className="text-sm text-persona-muted px-1">{t('requests.noSent')}</p>
           ) : (
             <div className="space-y-2">
               {data.outgoing.map((p) => (
@@ -487,7 +492,7 @@ function RequestsView({ onBack }) {
                       onClick={() => act(friendsApi.decline, p.friendshipId)}
                       className="btn-secondary px-3 py-1.5 text-xs shrink-0"
                     >
-                      Cancel
+                      {t('common:cancel')}
                     </button>
                   }
                 />
@@ -503,6 +508,7 @@ function RequestsView({ onBack }) {
 // ─── Friend detail: their test results + compatibility / remove ─────────────────
 
 function FriendDetail({ friendId, navigate, locationState }) {
+  const { t } = useTranslation('friends');
   const [friend, setFriend] = useState(locationState?.friend || null);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -537,7 +543,7 @@ function FriendDetail({ friendId, navigate, locationState }) {
       <ResultView
         test={{ testType: openTest.testType, testName: openTest.testName }}
         result={{ testType: openTest.testType, result: openTest.result }}
-        ownerName={friend?.name || 'Your friend'}
+        ownerName={friend?.name || t('detail.ownerFallback')}
         onBack={() => setOpenTest(null)}
         actions={
           <motion.button
@@ -545,30 +551,30 @@ function FriendDetail({ friendId, navigate, locationState }) {
             className="btn-secondary w-full"
             whileTap={{ scale: 0.97 }}
           >
-            Back
+            {t('common:back')}
           </motion.button>
         }
       />
     );
   }
 
-  const title = friend?.name || friend?.email || 'Friend';
+  const title = friend?.name || friend?.email || t('detail.friendFallback');
 
   return (
-    <SubScreen label="Friend" title={title} onBack={() => navigate('/match')}>
+    <SubScreen label={t('detail.label')} title={title} onBack={() => navigate('/match')}>
       <motion.button
         onClick={() => navigate(`/match/${friendId}/compatibility`)}
         className="btn-primary w-full mb-6 flex items-center justify-center gap-2"
         whileTap={{ scale: 0.98 }}
       >
-        <HiOutlineSparkles className="w-5 h-5" /> Check compatibility
+        <HiOutlineSparkles className="w-5 h-5" /> {t('detail.checkCompatibility')}
       </motion.button>
 
-      <h2 className="text-lg font-semibold text-persona-dark mb-3">Their results</h2>
+      <h2 className="text-lg font-semibold text-persona-dark mb-3">{t('detail.theirResults')}</h2>
       {loading ? (
-        <p className="text-sm text-persona-muted px-1">Loading…</p>
+        <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
       ) : !results || results.length === 0 ? (
-        <p className="text-sm text-persona-muted px-1">This friend hasn't completed any tests yet.</p>
+        <p className="text-sm text-persona-muted px-1">{t('detail.noTests')}</p>
       ) : (
         <div className="space-y-2">
           {results.map((r) => (
@@ -587,7 +593,7 @@ function FriendDetail({ friendId, navigate, locationState }) {
         onClick={handleRemove}
         className="mt-8 w-full flex items-center justify-center gap-2 text-sm text-persona-muted hover:text-persona-dark transition-colors py-3"
       >
-        <HiOutlineTrash className="w-4 h-4" /> Remove from friends
+        <HiOutlineTrash className="w-4 h-4" /> {t('detail.remove')}
       </button>
     </SubScreen>
   );
@@ -596,6 +602,7 @@ function FriendDetail({ friendId, navigate, locationState }) {
 // ─── Compatibility: AI analysis + score ring ────────────────────────────────────
 
 function CircleProgress({ percentage }) {
+  const { t } = useTranslation('friends');
   const radius = 70;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
@@ -626,13 +633,14 @@ function CircleProgress({ percentage }) {
         >
           {percentage}%
         </motion.span>
-        <span className="text-sm text-persona-muted font-medium">compatible</span>
+        <span className="text-sm text-persona-muted font-medium">{t('compat.compatible')}</span>
       </div>
     </div>
   );
 }
 
 function CompatibilityView({ friendId, navigate, locationState }) {
+  const { t } = useTranslation('friends');
   const friend = locationState?.friend || null;
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -659,38 +667,38 @@ function CompatibilityView({ friendId, navigate, locationState }) {
   }, [data, nonce]);
 
   const onBack = () => navigate(`/match/${friendId}`, friend ? { state: { friend } } : undefined);
-  const title = friend?.name || 'Compatibility';
+  const title = friend?.name || t('compat.titleFallback');
 
   return (
-    <SubScreen label="Compatibility" title={title} onBack={onBack}>
+    <SubScreen label={t('compat.label')} title={title} onBack={onBack}>
       {loading && !data ? (
-        <p className="text-sm text-persona-muted px-1">Loading…</p>
+        <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
       ) : errored || data?.status === 'error' ? (
         <div className="text-center text-persona-muted py-10">
-          <p className="text-sm mb-4">Something went wrong.</p>
+          <p className="text-sm mb-4">{t('compat.error')}</p>
           <button onClick={() => setNonce((n) => n + 1)} className="btn-secondary">
-            Try again
+            {t('common:retry')}
           </button>
         </div>
       ) : data?.status === 'locked' ? (
         <div className="surface-warm rounded-3xl p-6 text-center">
           <HiOutlineSparkles className="w-10 h-10 mx-auto mb-3 text-persona-muted" />
-          <h2 className="font-semibold text-persona-dark mb-1">Not unlocked yet</h2>
+          <h2 className="font-semibold text-persona-dark mb-1">{t('compat.lockedTitle')}</h2>
           <p className="text-sm text-persona-muted mb-4">
-            Compatibility unlocks once you both finish every test.
+            {t('compat.lockedBody')}
           </p>
           <div className="flex justify-center gap-6 text-sm">
             <div>
               <p className="font-display text-2xl font-semibold text-persona-dark">
                 {data.meDone}/{data.required}
               </p>
-              <p className="text-xs text-persona-muted">You</p>
+              <p className="text-xs text-persona-muted">{t('compat.you')}</p>
             </div>
             <div>
               <p className="font-display text-2xl font-semibold text-persona-dark">
                 {data.friendDone}/{data.required}
               </p>
-              <p className="text-xs text-persona-muted">{friend?.name || 'Friend'}</p>
+              <p className="text-xs text-persona-muted">{friend?.name || t('compat.friendFallback')}</p>
             </div>
           </div>
         </div>
@@ -703,7 +711,7 @@ function CompatibilityView({ friendId, navigate, locationState }) {
           >
             <HiOutlineArrowPath className="w-5 h-5" />
           </motion.span>
-          <p className="text-sm">Reading you both and writing your compatibility…</p>
+          <p className="text-sm">{t('compat.generating')}</p>
         </div>
       ) : data?.status === 'ready' ? (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

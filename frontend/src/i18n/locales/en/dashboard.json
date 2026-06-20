@@ -1,0 +1,12 @@
+{
+  "nav": {
+    "tests": "Tests",
+    "portrait": "Portrait",
+    "match": "Friends",
+    "reads": "Reads",
+    "advice": "Advice"
+  },
+  "primaryNav": "Primary",
+  "openProfile": "Open profile",
+  "userFallback": "User"
+}
