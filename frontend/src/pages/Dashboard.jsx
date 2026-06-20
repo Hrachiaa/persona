@@ -178,8 +178,8 @@ export default function Dashboard({ onLogout }) {
                 key={tab.id}
                 onClick={() => navigate(tab.path)}
                 aria-current={isActive ? 'page' : undefined}
-                aria-label={tab.label}
-                className={`flex flex-col items-center gap-0.5 py-2 px-3 rounded-2xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
+                aria-label={t(`nav.${tab.id}`)}
+                className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 py-2 px-1 rounded-2xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
                   isActive ? 'text-persona-dark' : 'text-persona-muted'
                 }`}
                 whileTap={{ scale: 0.9 }}
@@ -194,8 +194,8 @@ export default function Dashboard({ onLogout }) {
                     />
                   )}
                 </div>
-                <span className={`text-[10px] font-medium ${isActive ? 'font-semibold' : ''}`}>
-                  {tab.label}
+                <span className={`max-w-full truncate text-[10px] font-medium ${isActive ? 'font-semibold' : ''}`}>
+                  {t(`nav.${tab.id}`)}
                 </span>
               </motion.button>
             );
