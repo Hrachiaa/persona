@@ -65,4 +65,27 @@ export class TestRepository {
             where: {testId}
         })
     }
+
+    // Re-sync the stored question banks from the seed for existing tests, so seed
+    // edits (e.g. translations) take effect on restart without a manual reseed.
+    // Questions are seed-managed (no admin editing), so overwriting is safe.
+    async syncQuestions(existingTests: { id: string; testType: string }[]) {
+        const byType: Record<string, unknown> = {
+            iq: testQuestions.iq.questions,
+            bigFive: testQuestions.bigFive.questions,
+            shcwartz: testQuestions.shcwartz.questions,
+            ecr: testQuestions.ecr.questions,
+            cope: testQuestions.cope.questions,
+            pid: testQuestions.pid.questions,
+        }
+        for (const test of existingTests) {
+            const questions = byType[test.testType]
+            if (!questions) continue
+            await this.prisma.testQuestion.upsert({
+                where: { testId: test.id },
+                update: { questions: questions as any },
+                create: { testId: test.id, questions: questions as any },
+            })
+        }
+    }
 }

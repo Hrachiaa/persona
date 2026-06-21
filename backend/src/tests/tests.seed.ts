@@ -3493,7688 +3493,3845 @@ export const testQuestions = {
             [
                 {
                     id: 'N1', 
-                    text: 'Worry about things',
+                    text: { en: 'Worry about things', ru: 'Беспокоюсь о многом.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E1', 
-                    text: 'Make friends easily',
+                    text: { en: 'Make friends easily', ru: 'Легко завожу друзей.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O1', 
-                    text: 'Have a vivid imagination',
+                    text: { en: 'Have a vivid imagination', ru: 'Обладаю живым воображением.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A1', 
-                    text: 'Trust others',
+                    text: { en: 'Trust others', ru: 'Доверяю людям.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C1', 
-                    text: 'Complete tasks successfully',
+                    text: { en: 'Complete tasks successfully', ru: 'Успешно выполняю задания.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N2', 
-                    text: 'Get angry easily',
+                    text: { en: 'Get angry easily', ru: 'Меня легко разозлить.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E2', 
-                    text: 'Love large parties',
+                    text: { en: 'Love large parties', ru: 'Люблю большие компании.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O2', 
-                    text: 'Believe in the importance of art',
+                    text: { en: 'Believe in the importance of art', ru: 'Верю в важность искусства.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A2', 
-                    text: 'Use others for my own ends',
+                    text: { en: 'Use others for my own ends', ru: 'Использую людей в своих целях.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C2', 
-                    text: 'Like to tidy up',
+                    text: { en: 'Like to tidy up', ru: 'Люблю прибираться.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N3', 
-                    text: 'Often feel blue',
+                    text: { en: 'Often feel blue', ru: 'Часто грущу.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E3', 
-                    text: 'Take charge',
+                    text: { en: 'Take charge', ru: 'Беру на себя ответственность.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O3', 
-                    text: 'Experience my emotions intensely',
+                    text: { en: 'Experience my emotions intensely', ru: 'Бурно переживаю свои эмоции.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A3', 
-                    text: 'Love to help others',
+                    text: { en: 'Love to help others', ru: 'Люблю помогать другим.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C3', 
-                    text: 'Keep my promises',
+                    text: { en: 'Keep my promises', ru: 'Исполняю свои обещания.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N4', 
-                    text: 'Find it difficult to approach others',
+                    text: { en: 'Find it difficult to approach others', ru: 'Трудно сближаюсь с людьми.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E4', 
-                    text: 'Am always busy',
+                    text: { en: 'Am always busy', ru: 'Всегда занят.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O4', 
-                    text: 'Prefer variety to routine',
+                    text: { en: 'Prefer variety to routine', ru: 'Предпочитаю разнообразие рутине.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A4', 
-                    text: 'Love a good fight',
+                    text: { en: 'Love a good fight', ru: 'Нравится бороться.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C4', 
-                    text: 'Work hard',
+                    text: { en: 'Work hard', ru: 'Усердно работаю.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N5', 
-                    text: 'Go on binges',
+                    text: { en: 'Go on binges', ru: 'Склонен злоупотреблять чем-либо.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E5', 
-                    text: 'Love excitement',
+                    text: { en: 'Love excitement', ru: 'Люблю эмоциональное возбуждение.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O5', 
-                    text: 'Love to read challenging material',
+                    text: { en: 'Love to read challenging material', ru: 'Люблю читать сложные тексты.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A5', 
-                    text: 'Believe that I am better than others',
+                    text: { en: 'Believe that I am better than others', ru: 'Считаю, что я лучше других.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C5', 
-                    text: 'Am always prepared',
+                    text: { en: 'Am always prepared', ru: 'Всегда подготовлен.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N6', 
-                    text: 'Panic easily',
+                    text: { en: 'Panic easily', ru: 'Легко впадаю в панику.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E6', 
-                    text: 'Radiate joy',
+                    text: { en: 'Radiate joy', ru: 'Излучаю радость.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O6', 
-                    text: 'Tend to vote for liberal political candidates',
+                    text: { en: 'Tend to vote for liberal political candidates', ru: 'Склонен голосовать за либеральных политиков.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A6', 
-                    text: 'Sympathize with the homeless',
+                    text: { en: 'Sympathize with the homeless', ru: 'Сочувствую бездомным.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C6', 
-                    text: 'Jump into things without thinking',
+                    text: { en: 'Jump into things without thinking', ru: 'Бросаюсь делать, не подумав.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N1', 
-                    text: 'Fear for the worst',
+                    text: { en: 'Fear for the worst', ru: 'Ожидаю худшего.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E1', 
-                    text: 'Feel comfortable around other people',
+                    text: { en: 'Feel comfortable around other people', ru: 'Чувствую себя комфортно среди людей.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O1', 
-                    text: 'Enjoy wild flights of fancy',
+                    text: { en: 'Enjoy wild flights of fancy', ru: 'Наслаждаюсь необузданным полётом фантазии.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A1', 
-                    text: 'Believe that others have good intentions',
+                    text: { en: 'Believe that others have good intentions', ru: 'Верю, что у других людей хорошие намерения.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C1', 
-                    text: 'Excel in what I do',
+                    text: { en: 'Excel in what I do', ru: 'Достигаю высот в том, что я делаю.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N2', 
-                    text: 'Get irritated easily',
+                    text: { en: 'Get irritated easily', ru: 'Легко раздражаюсь.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E2', 
-                    text: 'Talk to a lot of different people at parties',
+                    text: { en: 'Talk to a lot of different people at parties', ru: 'Разговариваю с множеством разных людей на вечеринках.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O2', 
-                    text: 'See beauty in things that others might not notice',
+                    text: { en: 'See beauty in things that others might not notice', ru: 'Вижу красоту в вещах, которых другие могут не замечать.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A2', 
-                    text: 'Cheat to get ahead',
+                    text: { en: 'Cheat to get ahead', ru: 'Обманываю, чтобы преуспеть.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C2', 
-                    text: 'Often forget to put things back in their proper place',
+                    text: { en: 'Often forget to put things back in their proper place', ru: 'Часто забываю вернуть вещи на место.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N3', 
-                    text: 'Dislike myself',
+                    text: { en: 'Dislike myself', ru: 'Не нравлюсь себе.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E3', 
-                    text: 'Try to lead others',
+                    text: { en: 'Try to lead others', ru: 'Стараюсь руководить другими.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O3', 
-                    text: `Feel others' emotions`,
+                    text: { en: `Feel others' emotions`, ru: 'Чувствую эмоции других людей.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A3', 
-                    text: 'Am concerned about others',
+                    text: { en: 'Am concerned about others', ru: 'Беспокоюсь о других.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C3', 
-                    text: 'Tell the truth',
+                    text: { en: 'Tell the truth', ru: 'Говорю правду.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N4', 
-                    text: 'Am afraid to draw attention to myself',
+                    text: { en: 'Am afraid to draw attention to myself', ru: 'Боюсь привлекать к себе внимание.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E4', 
-                    text: 'Am always on the go',
+                    text: { en: 'Am always on the go', ru: 'Всегда в движении.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O4', 
-                    text: 'Prefer to stick with things that I know',
+                    text: { en: 'Prefer to stick with things that I know', ru: 'Предпочитаю придерживаться знакомых мне вещей.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A4', 
-                    text: 'Yell at people',
+                    text: { en: 'Yell at people', ru: 'Кричу на людей.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C4', 
-                    text: `Do more than what's expected of me`,
+                    text: { en: `Do more than what's expected of me`, ru: 'Делаю больше, чем от меня ожидается.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N5', 
-                    text: 'Rarely overindulge',
+                    text: { en: 'Rarely overindulge', ru: 'Редко предаюсь излишествам.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E5', 
-                    text: 'Seek adventure',
+                    text: { en: 'Seek adventure', ru: 'Ищу приключений.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O5', 
-                    text: 'Avoid philosophical discussions',
+                    text: { en: 'Avoid philosophical discussions', ru: 'Избегаю философских дискуссий.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A5', 
-                    text: 'Think highly of myself',
+                    text: { en: 'Think highly of myself', ru: 'Имею о себе высокое мнение.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C5', 
-                    text: 'Carry out my plans',
+                    text: { en: 'Carry out my plans', ru: 'Осуществляю свои планы.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N6', 
-                    text: 'Become overwhelmed by events',
+                    text: { en: 'Become overwhelmed by events', ru: 'Бываю подавлен событиями.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E6', 
-                    text: 'Have a lot of fun',
+                    text: { en: 'Have a lot of fun', ru: 'Много веселюсь.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O6', 
-                    text: 'Believe that there is no absolute right or wrong',
+                    text: { en: 'Believe that there is no absolute right or wrong', ru: 'Считаю, что не существует абсолютно правильного и абсолютно неправильного.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A6', 
-                    text: 'Feel sympathy for those who are worse off than myself',
+                    text: { en: 'Feel sympathy for those who are worse off than myself', ru: 'Сочувствую тем, кому хуже, чем мне.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C6', 
-                    text: 'Make rash decisions',
+                    text: { en: 'Make rash decisions', ru: 'Принимаю поспешные решения.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                  {
                     id: 'N1', 
-                    text: 'Am afraid of many things',
+                    text: { en: 'Am afraid of many things', ru: 'Многого боюсь.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E1', 
-                    text: 'Avoid contacts with others',
+                    text: { en: 'Avoid contacts with others', ru: 'Избегаю контактов с людьми.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O1', 
-                    text: 'Love to daydream',
+                    text: { en: 'Love to daydream', ru: 'Люблю предаваться мечтам.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A1', 
-                    text: 'Trust what people say',
+                    text: { en: 'Trust what people say', ru: 'Верю тому, что люди говорят.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C1', 
-                    text: 'Handle tasks smoothly',
+                    text: { en: 'Handle tasks smoothly', ru: 'Выполняю задания постепенно.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N2', 
-                    text: 'Lose my temper',
+                    text: { en: 'Lose my temper', ru: 'Выхожу из себя.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E2', 
-                    text: 'Prefer to be alone',
+                    text: { en: 'Prefer to be alone', ru: 'Предпочитаю быть в одиночестве.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O2', 
-                    text: 'Do not like poetry',
+                    text: { en: 'Do not like poetry', ru: 'Не люблю поэзию.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A2', 
-                    text: 'Take advantage of others',
+                    text: { en: 'Take advantage of others', ru: 'Использую других людей.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C2', 
-                    text: 'Leave a mess in my room',
+                    text: { en: 'Leave a mess in my room', ru: 'Оставляю беспорядок в своей комнате.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N3', 
-                    text: 'Am often down in the dumps',
+                    text: { en: 'Am often down in the dumps', ru: 'Часто подавлен.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E3', 
-                    text: 'Take control of things',
+                    text: { en: 'Take control of things', ru: 'Беру многое под свой контроль.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O3', 
-                    text: 'Rarely notice my emotional reactions',
+                    text: { en: 'Rarely notice my emotional reactions', ru: 'Редко замечаю свои эмоциональные реакции.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A3', 
-                    text: 'Am indifferent to the feelings of others',
+                    text: { en: 'Am indifferent to the feelings of others', ru: 'Равнодушен к чувствам других людей.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C3', 
-                    text: 'Break rules',
+                    text: { en: 'Break rules', ru: 'Нарушаю правила.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N4', 
-                    text: 'Only feel comfortable with friends',
+                    text: { en: 'Only feel comfortable with friends', ru: 'Чувствую себя комфортно только с друзьями.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E4', 
-                    text: 'Do a lot in my spare time',
+                    text: { en: 'Do a lot in my spare time', ru: 'Делаю многое в своё свободное время.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O4', 
-                    text: 'Dislike changes',
+                    text: { en: 'Dislike changes', ru: 'Не люблю перемены.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A4', 
-                    text: 'Insult people',
+                    text: { en: 'Insult people', ru: 'Оскорбляю людей.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C4', 
-                    text: 'Do just enough work to get by',
+                    text: { en: 'Do just enough work to get by', ru: 'Делаю только необходимый минимум работы.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N5', 
-                    text: 'Easily resist temptations',
+                    text: { en: 'Easily resist temptations', ru: 'Легко преодолеваю соблазны.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E5', 
-                    text: 'Enjoy being reckless',
+                    text: { en: 'Enjoy being reckless', ru: 'Нравится быть безрассудным.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O5', 
-                    text: 'Have difficulty understanding abstract ideas',
+                    text: { en: 'Have difficulty understanding abstract ideas', ru: 'С трудом понимаю абстрактные идеи.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A5', 
-                    text: 'Have a high opinion of myself',
+                    text: { en: 'Have a high opinion of myself', ru: 'Высокого мнения о себе.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C5', 
-                    text: 'Waste my time',
+                    text: { en: 'Waste my time', ru: 'Трачу своё время впустую.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N6', 
-                    text: `Feel that I'm unable to deal with things`,
+                    text: { en: `Feel that I'm unable to deal with things`, ru: 'Чувствую, что я неспособен справиться с делами.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E6', 
-                    text: 'Love life',
+                    text: { en: 'Love life', ru: 'Люблю жизнь.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O6', 
-                    text: 'Tend to vote for conservative political candidates',
+                    text: { en: 'Tend to vote for conservative political candidates', ru: 'Склонен голосовать за консервативных политиков.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A6', 
-                    text: `Am not interested in other people's problems`,
+                    text: { en: `Am not interested in other people's problems`, ru: 'Не интересуюсь проблемами других людей.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C6', 
-                    text: 'Rush into things',
+                    text: { en: 'Rush into things', ru: 'Тороплю события.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N1', 
-                    text: 'Get stressed out easily',
+                    text: { en: 'Get stressed out easily', ru: 'Легко впадаю в стрессовое состояние.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E1', 
-                    text: 'Keep others at a distance',
+                    text: { en: 'Keep others at a distance', ru: 'Держу людей на расстоянии.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O1', 
-                    text: 'Like to get lost in thought',
+                    text: { en: 'Like to get lost in thought', ru: 'Люблю погружаться в свои мысли.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A1', 
-                    text: 'Distrust people',
+                    text: { en: 'Distrust people', ru: 'Не доверяю людям.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C1', 
-                    text: 'Know how to get things done',
+                    text: { en: 'Know how to get things done', ru: 'Знаю, как управляться с делами.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N2', 
-                    text: 'Am not easily annoyed',
+                    text: { en: 'Am not easily annoyed', ru: 'Меня нелегко вывести из себя.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E2', 
-                    text: 'Avoid crowds',
+                    text: { en: 'Avoid crowds', ru: 'Избегаю толп.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O2', 
-                    text: 'Do not enjoy going to art museums',
+                    text: { en: 'Do not enjoy going to art museums', ru: 'Не нравится ходить в художественные музеи.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A2', 
-                    text: `Obstruct others' plans`,
+                    text: { en: `Obstruct others' plans`, ru: 'Препятствую планам других людей.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C2', 
-                    text: 'Leave my belongings around',
+                    text: { en: 'Leave my belongings around', ru: 'Разбрасываю свои вещи.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N3', 
-                    text: 'Feel comfortable with myself',
+                    text: { en: 'Feel comfortable with myself', ru: 'Устраивает всё в себе.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E3', 
-                    text: 'Wait for others to lead the way',
+                    text: { en: 'Wait for others to lead the way', ru: 'Жду, что инициативу возьмут другие.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O3', 
-                    text: `Don't understand people who get emotional`,
+                    text: { en: `Don't understand people who get emotional`, ru: 'Не понимаю людей, которые дают волю эмоциям.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A3', 
-                    text: 'Take no time for others',
+                    text: { en: 'Take no time for others', ru: 'Не трачу время на других людей.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C3', 
-                    text: 'Break my promises',
+                    text: { en: 'Break my promises', ru: 'Нарушаю свои обещания.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N4', 
-                    text: 'Am not bothered by difficult social situations',
+                    text: { en: 'Am not bothered by difficult social situations', ru: 'Меня не беспокоят сложные ситуации при общении.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E4', 
-                    text: 'Like to take it easy',
+                    text: { en: 'Like to take it easy', ru: 'Предпочитаю не напрягаться.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O4', 
-                    text: 'Am attached to conventional ways',
+                    text: { en: 'Am attached to conventional ways', ru: 'Придерживаюсь общепринятых способов.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A4', 
-                    text: 'Get back at others',
+                    text: { en: 'Get back at others', ru: 'Мщу людям.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C4', 
-                    text: `Put little time and effort into my work`,
+                    text: { en: `Put little time and effort into my work`, ru: 'Трачу мало времени и сил на свою работу.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N5', 
-                    text: 'Am able to control my cravings',
+                    text: { en: 'Am able to control my cravings', ru: 'Способен контролировать свои влечения.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E5', 
-                    text: 'Act wild and crazy',
+                    text: { en: 'Act wild and crazy', ru: 'Поступаю безумно.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O5', 
-                    text: 'Am not interested in theoretical discussions',
+                    text: { en: 'Am not interested in theoretical discussions', ru: 'Не заинтересован в теоретических дискуссиях.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A5', 
-                    text: 'Boast about my virtues',
+                    text: { en: 'Boast about my virtues', ru: 'Хвастаюсь своими достоинствами.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C5', 
-                    text: 'Have difficulty starting tasks',
+                    text: { en: 'Have difficulty starting tasks', ru: 'С трудом приступаю к заданиям.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'N6', 
-                    text: 'Remain calm under pressure',
+                    text: { en: 'Remain calm under pressure', ru: 'Остаюсь спокойным под давлением.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'E6', 
-                    text: 'Look at the bright side of life',
+                    text: { en: 'Look at the bright side of life', ru: 'Смотрю на жизнь с оптимизмом.' },
                     image: '',
                     options: [
                         {
                             id: '1',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '5',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'O6', 
-                    text: 'Believe that we should be tough on crime',
+                    text: { en: 'Believe that we should be tough on crime', ru: 'Считаю, что мы должны жестко бороться с преступностью.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'A6', 
-                    text: 'Try not to think about the needy',
+                    text: { en: 'Try not to think about the needy', ru: 'Стараюсь не думать о нуждающихся.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
                 {
                     id: 'C6', 
-                    text: 'Act without thinking',
+                    text: { en: 'Act without thinking', ru: 'Действую, не думая.' },
                     image: '',
                     options: [
                         {
                             id: '5',
-                            text: 'Very Inaccurate',
+                            text: { en: 'Very Inaccurate', ru: 'Совершенно не верно' },
                             icon: ''
                         },
                         {
                             id: '4',
-                            text: 'Moderately Inaccurate',
+                            text: { en: 'Moderately Inaccurate', ru: 'Не совсем верно' },
                             icon: ''
                         },
                         {
                             id: '3',
-                            text: 'Neither Accurate, Nor Inaccurate',
+                            text: { en: 'Neither Accurate, Nor Inaccurate', ru: 'Ни верно, ни неверно' },
                             icon: ''
                         },
                         {
                             id: '2',
-                            text: 'Moderately Accurate',
+                            text: { en: 'Moderately Accurate', ru: 'Отчасти верно' },
                             icon: ''
                         },
                         {
                             id: '1',
-                            text: 'Very Accurate',
+                            text: { en: 'Very Accurate', ru: 'Совершенно верно' },
                             icon: ''
                         },
                     ]
                 },
             ],
-            // questionsRus: 
-            // [
-            //     {
-            //         id: 'N1', 
-            //         text: 'Беспокоюсь о многом.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E1', 
-            //         text: 'Легко завожу друзей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O1', 
-            //         text: 'Обладаю живым воображением.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A1', 
-            //         text: 'Доверяю людям.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C1', 
-            //         text: 'Успешно выполняю задания.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N2', 
-            //         text: 'Меня легко разозлить.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E2', 
-            //         text: 'Люблю большие компании.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O2', 
-            //         text: 'Верю в важность искусства.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A2', 
-            //         text: 'Использую людей в своих целях.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C2', 
-            //         text: 'Люблю прибираться.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N3', 
-            //         text: 'Часто грущу.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E3', 
-            //         text: 'Беру на себя ответственность.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O3', 
-            //         text: 'Бурно переживаю свои эмоции.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A3', 
-            //         text: 'Люблю помогать другим.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C3', 
-            //         text: 'Исполняю свои обещания.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N4', 
-            //         text: 'Трудно сближаюсь с людьми.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E4', 
-            //         text: 'Всегда занят.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O4', 
-            //         text: 'Предпочитаю разнообразие рутине.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A4', 
-            //         text: 'Нравится бороться.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C4', 
-            //         text: 'Усердно работаю.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N5', 
-            //         text: 'Склонен злоупотреблять чем-либо.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E5', 
-            //         text: 'Люблю эмоциональное возбуждение.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O5', 
-            //         text: 'Люблю читать сложные тексты.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A5', 
-            //         text: 'Считаю, что я лучше других.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C5', 
-            //         text: 'Всегда подготовлен.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N6', 
-            //         text: 'Легко впадаю в панику.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E6', 
-            //         text: 'Излучаю радость.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O6', 
-            //         text: 'Склонен голосовать за либеральных политиков.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A6', 
-            //         text: 'Сочувствую бездомным.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C6', 
-            //         text: 'Бросаюсь делать, не подумав.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N1', 
-            //         text: 'Ожидаю худшего.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E1', 
-            //         text: 'Чувствую себя комфортно среди людей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O1', 
-            //         text: 'Наслаждаюсь необузданным полётом фантазии.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A1', 
-            //         text: 'Верю, что у других людей хорошие намерения.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C1', 
-            //         text: 'Достигаю высот в том, что я делаю.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N2', 
-            //         text: 'Легко раздражаюсь.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E2', 
-            //         text: 'Разговариваю с множеством разных людей на вечеринках.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O2', 
-            //         text: 'Вижу красоту в вещах, которых другие могут не замечать.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A2', 
-            //         text: 'Обманываю, чтобы преуспеть.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C2', 
-            //         text: 'Часто забываю вернуть вещи на место.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N3', 
-            //         text: 'Не нравлюсь себе.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E3', 
-            //         text: 'Стараюсь руководить другими.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O3', 
-            //         text: 'Чувствую эмоции других людей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A3', 
-            //         text: 'Беспокоюсь о других.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C3', 
-            //         text: 'Говорю правду.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N4', 
-            //         text: 'Боюсь привлекать к себе внимание.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E4', 
-            //         text: 'Всегда в движении.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O4', 
-            //         text: 'Предпочитаю придерживаться знакомых мне вещей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A4', 
-            //         text: 'Кричу на людей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C4', 
-            //         text: 'Делаю больше, чем от меня ожидается.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N5', 
-            //         text: 'Редко предаюсь излишествам.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E5', 
-            //         text: 'Ищу приключений.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O5', 
-            //         text: 'Избегаю философских дискуссий.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A5', 
-            //         text: 'Имею о себе высокое мнение.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C5', 
-            //         text: 'Осуществляю свои планы.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N6', 
-            //         text: 'Бываю подавлен событиями.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E6', 
-            //         text: 'Много веселюсь.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O6', 
-            //         text: 'Считаю, что не существует абсолютно правильного и абсолютно неправильного.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A6', 
-            //         text: 'Сочувствую тем, кому хуже, чем мне.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C6', 
-            //         text: 'Принимаю поспешные решения.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //      {
-            //         id: 'N1', 
-            //         text: 'Многого боюсь.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E1', 
-            //         text: 'Избегаю контактов с людьми.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O1', 
-            //         text: 'Люблю предаваться мечтам.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A1', 
-            //         text: 'Верю тому, что люди говорят.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C1', 
-            //         text: 'Выполняю задания постепенно.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N2', 
-            //         text: 'Выхожу из себя.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E2', 
-            //         text: 'Предпочитаю быть в одиночестве.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O2', 
-            //         text: 'Не люблю поэзию.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A2', 
-            //         text: 'Использую других людей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C2', 
-            //         text: 'Оставляю беспорядок в своей комнате.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N3', 
-            //         text: 'Часто подавлен.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E3', 
-            //         text: 'Беру многое под свой контроль.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O3', 
-            //         text: 'Редко замечаю свои эмоциональные реакции.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A3', 
-            //         text: 'Равнодушен к чувствам других людей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C3', 
-            //         text: 'Нарушаю правила.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N4', 
-            //         text: 'Чувствую себя комфортно только с друзьями.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E4', 
-            //         text: 'Делаю многое в своё свободное время.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O4', 
-            //         text: 'Не люблю перемены.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A4', 
-            //         text: 'Оскорбляю людей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C4', 
-            //         text: 'Делаю только необходимый минимум работы.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N5', 
-            //         text: 'Легко преодолеваю соблазны.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E5', 
-            //         text: 'Нравится быть безрассудным.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O5', 
-            //         text: 'С трудом понимаю абстрактные идеи.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A5', 
-            //         text: 'Высокого мнения о себе.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C5', 
-            //         text: 'Трачу своё время впустую.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N6', 
-            //         text: 'Чувствую, что я неспособен справиться с делами.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E6', 
-            //         text: 'Люблю жизнь.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O6', 
-            //         text: 'Склонен голосовать за консервативных политиков.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A6', 
-            //         text: 'Не интересуюсь проблемами других людей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C6', 
-            //         text: 'Тороплю события.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N1', 
-            //         text: 'Легко впадаю в стрессовое состояние.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E1', 
-            //         text: 'Держу людей на расстоянии.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O1', 
-            //         text: 'Люблю погружаться в свои мысли.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A1', 
-            //         text: 'Не доверяю людям.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C1', 
-            //         text: 'Знаю, как управляться с делами.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N2', 
-            //         text: 'Меня нелегко вывести из себя.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E2', 
-            //         text: 'Избегаю толп.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O2', 
-            //         text: 'Не нравится ходить в художественные музеи.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A2', 
-            //         text: 'Препятствую планам других людей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C2', 
-            //         text: 'Разбрасываю свои вещи.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N3', 
-            //         text: 'Устраивает всё в себе.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E3', 
-            //         text: 'Жду, что инициативу возьмут другие.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O3', 
-            //         text: 'Не понимаю людей, которые дают волю эмоциям.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A3', 
-            //         text: 'Не трачу время на других людей.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C3', 
-            //         text: 'Нарушаю свои обещания.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N4', 
-            //         text: 'Меня не беспокоят сложные ситуации при общении.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E4', 
-            //         text: 'Предпочитаю не напрягаться.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O4', 
-            //         text: 'Придерживаюсь общепринятых способов.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A4', 
-            //         text: 'Мщу людям.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C4', 
-            //         text: 'Трачу мало времени и сил на свою работу.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N5', 
-            //         text: 'Способен контролировать свои влечения.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E5', 
-            //         text: 'Поступаю безумно.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O5', 
-            //         text: 'Не заинтересован в теоретических дискуссиях.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A5', 
-            //         text: 'Хвастаюсь своими достоинствами.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C5', 
-            //         text: 'С трудом приступаю к заданиям.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'N6', 
-            //         text: 'Остаюсь спокойным под давлением.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'E6', 
-            //         text: 'Смотрю на жизнь с оптимизмом.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'O6', 
-            //         text: 'Считаю, что мы должны жестко бороться с преступностью.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'A6', 
-            //         text: 'Стараюсь не думать о нуждающихся.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            //     {
-            //         id: 'C6', 
-            //         text: 'Действую, не думая.',
-            //         image: '',
-            //         options: [
-            //             {
-            //                 id: '5',
-            //                 text: 'Совершенно не верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '4',
-            //                 text: 'Не совсем верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '3',
-            //                 text: 'Ни верно, ни неверно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '2',
-            //                 text: 'Отчасти верно',
-            //                 icon: ''
-            //             },
-            //             {
-            //                 id: '1',
-            //                 text: 'Совершенно верно',
-            //                 icon: ''
-            //             },
-            //         ]
-            //     },
-            // ],
             scoring: {
                 M: {
                     // Фасеты

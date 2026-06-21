@@ -33,7 +33,7 @@ export class TestScoringService {
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
         if (!questions) throw new InternalServerErrorException(t('errors.test.questionsNotFound'))
         const expectedCount = questions.questions.questions.length
-        if (answers.length !== expectedCount) throw new BadRequestException(`Count of answers has to be ${expectedCount}`)
+        if (answers.length !== expectedCount) throw new BadRequestException(t('errors.test.answersCount', { count: expectedCount }))
 
         return calculator(userId, testId, answers)
     }

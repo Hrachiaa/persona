@@ -15,7 +15,9 @@
     "resultNotFound": "Результат не найден",
     "sharedResultNotFound": "Общий результат не найден",
     "unknownTestType": "Неизвестный тип теста",
-    "testTypeNotFound": "Тип теста не найден"
+    "testTypeNotFound": "Тип теста не найден",
+    "answersCount": "Количество ответов должно быть {{count}}",
+    "completePrevious": "Сначала пройдите предыдущие тесты: {{tests}}"
   },
   "friends": {
     "cannotAddYourself": "Нельзя добавить самого себя",

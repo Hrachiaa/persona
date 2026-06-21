@@ -15,7 +15,9 @@
     "resultNotFound": "Result not found",
     "sharedResultNotFound": "Shared result not found",
     "unknownTestType": "Unknown test type",
-    "testTypeNotFound": "Test type not found"
+    "testTypeNotFound": "Test type not found",
+    "answersCount": "Count of answers has to be {{count}}",
+    "completePrevious": "Complete previous tests first: {{tests}}"
   },
   "friends": {
     "cannotAddYourself": "Cannot add yourself",

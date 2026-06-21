@@ -13,7 +13,8 @@ import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
 import { TEST_ORDER } from './test-order';
 import { PortraitService } from '../portrait/portrait.service';
-import { t } from '../i18n/translate';
+import { t, getLang } from '../i18n/translate';
+import { localizeQuestions } from './localize-questions';
 import { CompatibilityService } from '../friends/compatibility.service';
 import { SharedResultDto } from './dtos/shared-result.dto';
 import { randomBytes } from 'crypto';
@@ -31,12 +32,16 @@ export class TestsService implements OnModuleInit {
     ) {}
 
     async onModuleInit() {
-        const isExists = await this.testRepository.getAllTests()
-        if(isExists.length === 6) return
-        
-        const tests = await this.testRepository.createTests()
-        await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.ecr.id, tests.cope.id, tests.pid.id)
-        return
+        const existing = await this.testRepository.getAllTests()
+        if(existing.length !== 6) {
+            const tests = await this.testRepository.createTests()
+            await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.ecr.id, tests.cope.id, tests.pid.id)
+            return
+        }
+
+        // Keep stored question banks in sync with the seed so edits (e.g. the
+        // bilingual BigFive text) propagate on restart without a manual reseed.
+        await this.testRepository.syncQuestions(existing)
     }
 
     async getAllTests(userId: string): Promise<GetTestsDto[]> {
@@ -53,7 +58,7 @@ export class TestsService implements OnModuleInit {
     async getTestQuesitions(testId: string): Promise<QuestionsDto[]> {
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
         if(!questions) throw new NotFoundException(t('errors.test.questionsNotFound'))
-        return questions.questions.questions
+        return localizeQuestions(questions.questions.questions, getLang())
     }
 
     async submitTest(userId: string, testId: string, answers: SubmitTestDto): Promise<TestResultDto> {
@@ -117,6 +122,6 @@ export class TestsService implements OnModuleInit {
         const completed = new Set(results.map((result) => result.testType))
         const missing = previousTests.filter((type) => !completed.has(type))
 
-        if(missing.length) throw new BadRequestException(`Complete previous tests first: ${missing.join(', ')}`)
+        if(missing.length) throw new BadRequestException(t('errors.test.completePrevious', { tests: missing.join(', ') }))
     }
 }
