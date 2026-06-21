@@ -88,8 +88,19 @@ export const TEST_LABELS: Record<string, string> = {
   pid: 'PID-5 — выраженные (патологические) черты личности',
 };
 
+/**
+ * Final instruction forcing the output language. The prompts are authored in
+ * Russian and default to Russian output, so English users need an explicit
+ * override.
+ */
+function outputLanguageDirective(lang: string): string {
+  return lang === 'en'
+    ? 'IMPORTANT: Write the entire portrait in English, addressing the reader as "you".'
+    : 'ВАЖНО: пиши весь портрет на русском языке, обращаясь к читателю на «ты».';
+}
+
 /** Renders every available test into one labelled, model-friendly user message. */
-export function buildPortraitUserPrompt(results: { testType: string; result: any }[]): string {
+export function buildPortraitUserPrompt(results: { testType: string; result: any }[], lang: string = 'en'): string {
   const sections = results
     .filter((r) => BUILDERS[r.testType])
     .map((r) => `# Методика: ${TEST_LABELS[r.testType] ?? r.testType}\n\n${BUILDERS[r.testType](r.result)}`);
@@ -98,5 +109,7 @@ export function buildPortraitUserPrompt(results: { testType: string; result: any
     'Ниже — результаты нескольких психологических тестов одного человека. Собери из них единый портрет личности, опираясь на связи между методиками.',
     '',
     ...sections,
+    '',
+    outputLanguageDirective(lang),
   ].join('\n\n');
 }

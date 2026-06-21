@@ -6,6 +6,7 @@ import { CatalogService, EnrichedItem } from './catalog.service';
 import { RecommendationRepository } from './recommendation.repository';
 import { buildProfileBlock, MediaKind } from '../ai/prompts/recommendations.prompt';
 import { RecommendationHistoryDto, RecommendationListDto, toHistoryItemDto, toItemDto } from './dtos/recommendation.dto';
+import { t } from '../i18n/translate';
 
 const BATCH_REQUEST = 12; // titles asked of the model per generation (one call, no backfill)
 const PREFETCH_THRESHOLD = 17; // start the next batch once the queue drops to this many cards
@@ -73,13 +74,13 @@ export class RecommendationsService {
   /** Re-rate an already-swiped item (profile like toggle). Returns the updated history row. */
   async rate(userId: string, itemId: string, verdict: 'LIKED' | 'DISLIKED') {
     const item = await this.repo.rate(userId, itemId, verdict);
-    if (!item) throw new NotFoundException('Recommendation not found');
+    if (!item) throw new NotFoundException(t('errors.recommendations.notFound'));
     return toHistoryItemDto(item);
   }
 
   async swipe(userId: string, itemId: string, verdict: 'LIKED' | 'DISLIKED'): Promise<{ pending: number }> {
     const item = await this.repo.setVerdict(userId, itemId, verdict);
-    if (!item) throw new NotFoundException('Recommendation not found or already swiped');
+    if (!item) throw new NotFoundException(t('errors.recommendations.notFoundOrSwiped'));
     const mediaType: MediaKind = item.mediaType === 'FILM' ? 'film' : 'book';
     const pending = await this.repo.countPending(userId, mediaType);
     if (pending <= PREFETCH_THRESHOLD && !this.isGenerating(userId, mediaType)) {

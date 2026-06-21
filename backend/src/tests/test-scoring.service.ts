@@ -6,6 +6,7 @@ import { Result, Results, Scoring } from './models/iqtest-questions.entity';
 import { TestQuestionsEntity } from './models/test-questions.entity';
 import { UsersService } from '../users/users.service';
 import { testQuestions } from './tests.seed';
+import { t } from '../i18n/translate';
 
 type TestResult = IqTestResult | BigFiveResults | ShcwartzTestResult | EcrResult | CopeTestResult | PidTestResult;
 
@@ -27,10 +28,10 @@ export class TestScoringService {
         }
 
         const calculator = calculators[testType]
-        if (!calculator) throw new InternalServerErrorException('Calculator for test type not found')
+        if (!calculator) throw new InternalServerErrorException(t('errors.test.calculatorNotFound'))
 
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
-        if (!questions) throw new InternalServerErrorException('Questions not found')
+        if (!questions) throw new InternalServerErrorException(t('errors.test.questionsNotFound'))
         const expectedCount = questions.questions.questions.length
         if (answers.length !== expectedCount) throw new BadRequestException(`Count of answers has to be ${expectedCount}`)
 
@@ -39,7 +40,7 @@ export class TestScoringService {
 
     private calculateIQ = async (userId: string, testId: string, answers: AnswerDto[]): Promise<IqTestResult> => {
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
-        if (!questions || !('scoring' in questions.questions) || !('results' in questions.questions)) throw new InternalServerErrorException('Options for calculate results not found')
+        if (!questions || !('scoring' in questions.questions) || !('results' in questions.questions)) throw new InternalServerErrorException(t('errors.test.optionsNotFound'))
 
         const res: IqTestResult = {
             iq: 0,
@@ -79,7 +80,7 @@ export class TestScoringService {
 
     private calculateBigFive = async (userId: string, testId: string, answers: AnswerDto[]): Promise<BigFiveResults> => {
         const user = await this.usersService.getUserById(userId)
-        if(!user || !user.gender) throw new BadRequestException('Confirm gender of user')
+        if(!user || !user.gender) throw new BadRequestException(t('errors.test.confirmGender'))
         const scores = testQuestions.bigFive.questions.scoring[user.gender]
 
         const res: BigFiveResults = {

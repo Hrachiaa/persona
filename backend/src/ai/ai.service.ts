@@ -28,10 +28,14 @@ export class AiService {
    */
   async interpretPortrait(
     results: { testType: string; result: TestResultType }[],
-    options: { complete?: boolean } = {},
+    options: { complete?: boolean; lang?: string } = {},
   ): Promise<string | null> {
     if (!results.length) return null;
-    return this.complete(PORTRAIT_SYSTEM_PROMPT, buildPortraitUserPrompt(results), options.complete ?? false);
+    return this.complete(
+      PORTRAIT_SYSTEM_PROMPT,
+      buildPortraitUserPrompt(results, options.lang ?? 'en'),
+      options.complete ?? false,
+    );
   }
 
   /**
@@ -81,10 +85,11 @@ export class AiService {
   async interpretCompatibility(
     resultsA: { testType: string; result: TestResultType }[],
     resultsB: { testType: string; result: TestResultType }[],
+    lang: string = 'en',
   ): Promise<{ content: string; score: number } | null> {
     const json = await this.completeJson(
       COMPATIBILITY_SYSTEM_PROMPT,
-      buildCompatibilityUserPrompt(resultsA, resultsB),
+      buildCompatibilityUserPrompt(resultsA, resultsB, lang),
     );
     const content = typeof json?.markdown === 'string' ? json.markdown.trim() : '';
     if (!content) return null;

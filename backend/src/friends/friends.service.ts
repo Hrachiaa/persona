@@ -10,6 +10,7 @@ import { UsersService } from '../users/users.service';
 import { TestResultRepository } from '../tests/test-result.repository';
 import { FriendRepository } from './friend.repository';
 import { FriendDto, FriendRelation } from './dtos/friend.dto';
+import { t } from '../i18n/translate';
 
 @Injectable()
 export class FriendsService {
@@ -35,9 +36,9 @@ export class FriendsService {
    * (mutual intent → instant friendship). Idempotent-ish: rejects duplicates.
    */
   async sendRequest(meId: string, targetId: string): Promise<{ status: FriendRelation }> {
-    if (meId === targetId) throw new BadRequestException('Cannot add yourself');
+    if (meId === targetId) throw new BadRequestException(t('errors.friends.cannotAddYourself'));
     const target = await this.usersService.getUserById(targetId);
-    if (!target) throw new NotFoundException('User not found');
+    if (!target) throw new NotFoundException(t('errors.userNotFound'));
 
     const existing = await this.friendRepository.findPair(meId, targetId);
     if (existing) {
@@ -59,7 +60,7 @@ export class FriendsService {
 
   async accept(meId: string, friendshipId: string): Promise<void> {
     const fr = await this.friendRepository.findById(friendshipId);
-    if (!fr || fr.addresseeId !== meId) throw new NotFoundException('Request not found');
+    if (!fr || fr.addresseeId !== meId) throw new NotFoundException(t('errors.friends.requestNotFound'));
     if (fr.status === FriendshipStatus.ACCEPTED) return;
     await this.friendRepository.accept(friendshipId);
   }
@@ -68,14 +69,14 @@ export class FriendsService {
   async decline(meId: string, friendshipId: string): Promise<void> {
     const fr = await this.friendRepository.findById(friendshipId);
     if (!fr || (fr.addresseeId !== meId && fr.requesterId !== meId)) {
-      throw new NotFoundException('Request not found');
+      throw new NotFoundException(t('errors.friends.requestNotFound'));
     }
     await this.friendRepository.deleteById(friendshipId);
   }
 
   async remove(meId: string, otherId: string): Promise<void> {
     const fr = await this.friendRepository.findPair(meId, otherId);
-    if (!fr) throw new NotFoundException('Not friends');
+    if (!fr) throw new NotFoundException(t('errors.friends.notFriends'));
     await this.friendRepository.deleteById(fr.id);
   }
 
@@ -125,7 +126,7 @@ export class FriendsService {
   /** The viewer's stable personal invite link token (minted once, then reused). */
   async getOrCreateInviteToken(meId: string): Promise<{ token: string }> {
     const me = await this.usersService.getUserById(meId);
-    if (!me) throw new NotFoundException('User not found');
+    if (!me) throw new NotFoundException(t('errors.userNotFound'));
     if (me.inviteToken) return { token: me.inviteToken };
     const token = randomBytes(9).toString('base64url');
     await this.usersService.setInviteToken(meId, token);
@@ -135,7 +136,7 @@ export class FriendsService {
   /** Opening someone's invite link → send them a friend request (they confirm). */
   async acceptInvite(meId: string, token: string): Promise<{ status: FriendRelation }> {
     const owner = await this.usersService.getUserByInviteToken(token);
-    if (!owner) throw new NotFoundException('Invite not found');
+    if (!owner) throw new NotFoundException(t('errors.friends.inviteNotFound'));
     return this.sendRequest(meId, owner.id);
   }
 
@@ -154,7 +155,7 @@ export class FriendsService {
   async assertFriends(meId: string, otherId: string): Promise<void> {
     const fr = await this.friendRepository.findPair(meId, otherId);
     if (!fr || fr.status !== FriendshipStatus.ACCEPTED) {
-      throw new ForbiddenException('Not friends');
+      throw new ForbiddenException(t('errors.friends.notFriends'));
     }
   }
 

@@ -1,0 +1,31 @@
+{
+  "userNotFound": "User not found",
+  "userExists": "User with this email already exists",
+  "invalidPassword": "Invalid password",
+  "invalidRefreshToken": "Invalid refresh token",
+  "invalidCode": "Invalid code",
+  "noToken": "No token provided",
+  "invalidToken": "Invalid token",
+  "test": {
+    "calculatorNotFound": "Calculator for test type not found",
+    "questionsNotFound": "Questions not found",
+    "optionsNotFound": "Options for calculate results not found",
+    "confirmGender": "Confirm gender of user",
+    "testNotFound": "Test not found",
+    "resultNotFound": "Result not found",
+    "sharedResultNotFound": "Shared result not found",
+    "unknownTestType": "Unknown test type",
+    "testTypeNotFound": "Test type not found"
+  },
+  "friends": {
+    "cannotAddYourself": "Cannot add yourself",
+    "requestNotFound": "Request not found",
+    "notFriends": "Not friends",
+    "inviteNotFound": "Invite not found"
+  },
+  "recommendations": {
+    "notFound": "Recommendation not found",
+    "notFoundOrSwiped": "Recommendation not found or already swiped",
+    "invalidType": "Query param 'type' must be 'film' or 'book'"
+  }
+}

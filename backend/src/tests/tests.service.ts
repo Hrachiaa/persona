@@ -13,6 +13,7 @@ import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
 import { TEST_ORDER } from './test-order';
 import { PortraitService } from '../portrait/portrait.service';
+import { t } from '../i18n/translate';
 import { CompatibilityService } from '../friends/compatibility.service';
 import { SharedResultDto } from './dtos/shared-result.dto';
 import { randomBytes } from 'crypto';
@@ -51,13 +52,13 @@ export class TestsService implements OnModuleInit {
 
     async getTestQuesitions(testId: string): Promise<QuestionsDto[]> {
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
-        if(!questions) throw new NotFoundException('Questions not found')
+        if(!questions) throw new NotFoundException(t('errors.test.questionsNotFound'))
         return questions.questions.questions
     }
 
     async submitTest(userId: string, testId: string, answers: SubmitTestDto): Promise<TestResultDto> {
         const test = await this.testRepository.getTestById(testId)
-        if(!test) throw new InternalServerErrorException('Test not found')
+        if(!test) throw new InternalServerErrorException(t('errors.test.testNotFound'))
 
         await this.ensurePreviousTestsCompleted(userId, test.testType)
 
@@ -88,7 +89,7 @@ export class TestsService implements OnModuleInit {
     // link the user may have already sent.
     async createShareLink(userId: string, testId: string): Promise<{ token: string }> {
         const result = await this.testResultRepository.getTestResult(userId, testId)
-        if(!result) throw new NotFoundException('Result not found')
+        if(!result) throw new NotFoundException(t('errors.test.resultNotFound'))
         if(result.shareToken) return { token: result.shareToken }
 
         const token = randomBytes(9).toString('base64url')
@@ -98,11 +99,11 @@ export class TestsService implements OnModuleInit {
 
     async getSharedResult(token: string): Promise<SharedResultDto> {
         const result = await this.testResultRepository.getByShareToken(token)
-        if(!result) throw new NotFoundException('Shared result not found')
+        if(!result) throw new NotFoundException(t('errors.test.sharedResultNotFound'))
 
         const testType = result.testType
         if(testType !== 'iq' && testType !== 'bigFive' && testType !== 'shcwartz' && testType !== 'ecr' && testType !== 'cope' && testType !== 'pid') {
-            throw new NotFoundException('Unknown test type')
+            throw new NotFoundException(t('errors.test.unknownTestType'))
         }
         return new SharedResultDto(testType, result.test.testName, result.user.name ?? null, result.result as any)
     }

@@ -8,6 +8,7 @@ import { UserEntity } from '../users/models/user.entity';
 import { MailService } from '../mail/mail.service';
 import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
 import { RefreshTokenRepository } from './refresh-token.repository';
+import { t } from '../i18n/translate';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,7 @@ export class AuthService {
     async signup(authDto: AuthDto){
         const condidate = await this.usersService.getUserByEmail(authDto.email);
         if(condidate){
-            throw new HttpException('User with this email already exists', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.userExists'), HttpStatus.BAD_REQUEST);
         }
         const hashPassword = await bcrypt.hash(authDto.password, 8);
         const user = await this.usersService.create({
@@ -43,7 +44,7 @@ export class AuthService {
     async addProfileInfo(userId: string, profileInfoDto: AddProfileInfoDto){
         const user = await this.usersService.getUserById(userId);
         if(!user){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
         }
         await this.usersService.addProfileInfo(userId, profileInfoDto);
         return;
@@ -52,7 +53,7 @@ export class AuthService {
     async updateLanguage(userId: string, language: string){
         const user = await this.usersService.getUserById(userId);
         if(!user){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
         }
         await this.usersService.updateLanguage(userId, language);
         return;
@@ -61,7 +62,7 @@ export class AuthService {
     async getUserInfo(userId: string){
         const user = await this.usersService.getUserById(userId);
         if(!user){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
         }
         return {
             id: user.id,
@@ -119,14 +120,14 @@ export class AuthService {
     private async validateUser(loginDto: AuthDto){
         const user = await this.usersService.getUserByEmail(loginDto.email);
         if(!user){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
         }
         if(user.password === '' || loginDto.password === ''){
-            throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.invalidPassword'), HttpStatus.BAD_REQUEST);
         }
         const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
         if(!isPasswordValid){
-            throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.invalidPassword'), HttpStatus.BAD_REQUEST);
         }
         return user;
     }
@@ -149,11 +150,11 @@ export class AuthService {
             .digest('hex');
         const token = await this.refreshTokenRepository.findByToken(hashToken);
         if(!token){
-            throw new HttpException('Invalid refresh token', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.invalidRefreshToken'), HttpStatus.BAD_REQUEST);
         }
         const user = await this.usersService.getUserById(token.userId);
         if(!user){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
         }
         return this.generateTokens(user);
     }
@@ -166,7 +167,7 @@ export class AuthService {
     async forgotPassword(email: string){
         const user = await this.usersService.getUserByEmail(email);
         if(!user){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
         }
         await this.mailService.sendCode(email, user.id);
         return
@@ -175,11 +176,11 @@ export class AuthService {
     async forgotPasswordCode(email: string, code: string): Promise<Boolean>{
         const user = await this.usersService.getUserByEmail(email);
         if(!user){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
         }
         const checkCode = await this.mailService.checkCode(user.id, code);
         if(!checkCode){
-            throw new HttpException('Invalid code', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.invalidCode'), HttpStatus.BAD_REQUEST);
         }
         return checkCode;
     }
@@ -187,11 +188,11 @@ export class AuthService {
     async changeForgottenPassword(email: string, code: string, newPassword: string){
         const user = await this.usersService.getUserByEmail(email);
         if(!user){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
         }
         const checkCode = await this.mailService.checkCode(user.id, code);
         if(!checkCode){
-            throw new HttpException('Invalid code', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.invalidCode'), HttpStatus.BAD_REQUEST);
         }
         await this.mailService.deleteCode(user.id);
         const hashPassword = await bcrypt.hash(newPassword, 8);

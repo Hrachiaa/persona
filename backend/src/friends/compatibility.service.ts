@@ -6,6 +6,7 @@ import { TestResultType } from '../tests/models/test-result.entity';
 import { FriendsService } from './friends.service';
 import { CompatibilityRepository } from './compatibility.repository';
 import { CompatibilityDto } from './dtos/compatibility.dto';
+import { getLang } from '../i18n/translate';
 
 @Injectable()
 export class CompatibilityService {
@@ -50,7 +51,7 @@ export class CompatibilityService {
 
     const key = this.cacheKey(meId, friendId);
     if (!this.inFlight.has(key)) {
-      const job = this.generateAndCache(meId, friendId, myResults, friendResults).finally(() =>
+      const job = this.generateAndCache(meId, friendId, myResults, friendResults, getLang()).finally(() =>
         this.inFlight.delete(key),
       );
       this.inFlight.set(key, job);
@@ -72,11 +73,12 @@ export class CompatibilityService {
     friendId: string,
     myResults: { testType: string; result: unknown }[],
     friendResults: { testType: string; result: unknown }[],
+    lang: string,
   ): Promise<void> {
     try {
       const a = this.orderedResults(myResults);
       const b = this.orderedResults(friendResults);
-      const out = await this.aiService.interpretCompatibility(a, b);
+      const out = await this.aiService.interpretCompatibility(a, b, lang);
       if (out) {
         await this.compatibilityRepository.upsert(meId, friendId, out.content, out.score);
       }

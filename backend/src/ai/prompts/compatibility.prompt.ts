@@ -44,10 +44,22 @@ function renderPerson(results: { testType: string; result: any }[]): string {
     .join('\n\n');
 }
 
+/**
+ * Final instruction forcing the language of the `markdown` field. The prompt is
+ * authored in Russian and defaults to Russian, so English readers need an
+ * explicit override (the JSON format itself stays the same).
+ */
+function outputLanguageDirective(lang: string): string {
+  return lang === 'en'
+    ? 'IMPORTANT: Write the "markdown" field entirely in English (return the same strict JSON format).'
+    : 'ВАЖНО: поле "markdown" пиши на русском языке (формат ответа — тот же строгий JSON).';
+}
+
 /** Builds the user message: both people's results, clearly separated. */
 export function buildCompatibilityUserPrompt(
   resultsA: { testType: string; result: any }[],
   resultsB: { testType: string; result: any }[],
+  lang: string = 'en',
 ): string {
   return [
     'Ниже — результаты психологических тестов двух человек. Разбери их совместимость: где совпадают, в чём сила связи, где недопонимание, где конфликты и как их решать.',
@@ -59,5 +71,7 @@ export function buildCompatibilityUserPrompt(
     '# ЧЕЛОВЕК 2 (другой человек)',
     '',
     renderPerson(resultsB),
+    '',
+    outputLanguageDirective(lang),
   ].join('\n');
 }

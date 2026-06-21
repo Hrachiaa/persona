@@ -5,10 +5,11 @@ import { RecommendationsService } from './recommendations.service';
 import { RecommendationHistoryDto, RecommendationListDto } from './dtos/recommendation.dto';
 import { SwipeDto } from './dtos/swipe.dto';
 import { MediaKind } from '../ai/prompts/recommendations.prompt';
+import { t } from '../i18n/translate';
 
 function parseMediaType(type: string): MediaKind {
   if (type === 'film' || type === 'book') return type;
-  throw new BadRequestException("Query param 'type' must be 'film' or 'book'");
+  throw new BadRequestException(t('errors.recommendations.invalidType'));
 }
 
 @Controller('recommendations')
