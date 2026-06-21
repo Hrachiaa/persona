@@ -221,7 +221,7 @@ function FacetGroup({ trait, traitPercentile, facets, delay, ownerName }) {
         {facets.map((f, i) => (
           <FacetRow
             key={f.key}
-            name={f.name}
+            name={t(`bigFive.facets.${f.key}`)}
             percentile={f.percentile}
             delay={delay + 0.05 + i * 0.04}
           />
