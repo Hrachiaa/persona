@@ -254,8 +254,11 @@ function BellCurve({ score, showMarkerLabel = true, youLabel = 'You' }) {
 
 // ─── Test Card ───────────────────────────────────────────────────────────────
 function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, onStart, onView }) {
-  const { t } = useTranslation('tests');
+  const { t, i18n } = useTranslation('tests');
   const Icon = meta.icon;
+  // Russian test names run longer than the English ones — nudge the title down a
+  // step so they sit comfortably next to the status badge.
+  const titleSize = i18n.language?.startsWith('ru') ? 'text-lg' : 'text-xl';
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -269,7 +272,7 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
         <div className={`w-14 h-14 ${meta.color} rounded-2xl flex items-center justify-center flex-shrink-0`}>
           <Icon className={`w-7 h-7 ${meta.iconColor}`} />
         </div>
-        <h3 className="flex-1 min-w-0 font-display text-xl font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
+        <h3 className={`flex-1 min-w-0 break-words font-display ${titleSize} font-semibold text-persona-dark`}>{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
         {completed ? (
           <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-dark bg-persona-accent-lime/50 px-2.5 py-1 rounded-md flex-shrink-0">
             <HiOutlineCheckCircle className="w-4 h-4" /> {t('status.done')}
