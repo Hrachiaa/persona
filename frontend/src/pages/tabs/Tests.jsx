@@ -269,7 +269,7 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
         <div className={`w-14 h-14 ${meta.color} rounded-2xl flex items-center justify-center flex-shrink-0`}>
           <Icon className={`w-7 h-7 ${meta.iconColor}`} />
         </div>
-        <h3 className="flex-1 min-w-0 font-display text-xl font-semibold text-persona-dark">{test.testName}</h3>
+        <h3 className="flex-1 min-w-0 font-display text-xl font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
         {completed ? (
           <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-dark bg-persona-accent-lime/50 px-2.5 py-1 rounded-md flex-shrink-0">
             <HiOutlineCheckCircle className="w-4 h-4" /> {t('status.done')}
@@ -308,7 +308,7 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
                 </>
               ) : (
                 <>
-                  <p className="text-persona-muted text-sm leading-relaxed mb-4">{test.description}</p>
+                  <p className="text-persona-muted text-sm leading-relaxed mb-4">{t(`descriptions.${test.testType}`, { defaultValue: test.description })}</p>
                   <div className="flex flex-wrap items-center gap-2 mb-5">
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
                       <HiOutlineClock className="w-3.5 h-3.5" />
@@ -482,7 +482,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
       <div className="px-6 pt-2">
       {/* Title */}
       <div className="mb-4">
-        <h3 className="font-semibold text-persona-dark">{test.testName}</h3>
+        <h3 className="font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
         <p className="text-sm text-persona-muted">{t('questions.progress', { n: questionIndex + 1, total: questions.length })}</p>
       </div>
 

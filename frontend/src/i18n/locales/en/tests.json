@@ -55,5 +55,21 @@
     "questionsError": "Failed to load questions",
     "emptyTitle": "Nothing taken yet",
     "emptyBody": "No tests are available right now. Check back soon."
+  },
+  "names": {
+    "iq": "Logic",
+    "bigFive": "Personality",
+    "shcwartz": "Values",
+    "ecr": "Attachment",
+    "cope": "Stress",
+    "pid": "Shadows"
+  },
+  "descriptions": {
+    "iq": "How quickly you find patterns and a way out of new situations",
+    "bigFive": "Discover the core traits that shape how you think, feel, and act",
+    "shcwartz": "What truly matters to you in life and what drives your big decisions",
+    "ecr": "How you love and let people get close",
+    "cope": "How you cope when everything goes wrong",
+    "pid": "The darker side you usually keep hidden"
   }
 }
