@@ -11,7 +11,10 @@ export default function CopeResultScreen({ result, meta, onRetake, onViewPortrai
   const r = result?.result || {};
   const Icon = meta.icon;
 
-  const scales = Object.values(r).sort(byScoreDesc);
+  // Keep the scale id (1–15) so the display name/description can be localized by
+  // id — the stored result's `name`/`description` are English; labels come from
+  // the i18n catalog.
+  const scales = Object.entries(r).map(([id, s]) => ({ id, ...s })).sort(byScoreDesc);
 
   return (
     <motion.div
@@ -44,7 +47,7 @@ export default function CopeResultScreen({ result, meta, onRetake, onViewPortrai
         </header>
         <div className="divide-y divide-persona-line/60">
           {scales.map((s, i) => (
-            <ScaleBar key={s.name} label={s.name} description={s.description} score={s.score} min={1} max={4} delay={0.1 + i * 0.03} />
+            <ScaleBar key={s.id} label={t(`cope.scaleNames.${s.id}`)} description={t(`cope.scaleDescriptions.${s.id}`)} score={s.score} min={1} max={4} delay={0.1 + i * 0.03} />
           ))}
         </div>
       </section>

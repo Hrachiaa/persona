@@ -119,7 +119,41 @@
     "subtitleSelf": "The coping strategies you lean on under stress, strongest first. Higher bars are the responses you reach for most.",
     "subtitleOwner": "The coping strategies {{name}} leans on under stress, strongest first. Higher bars are the responses reached for most.",
     "heading": "Coping strategies",
-    "sub": "15 strategies"
+    "sub": "15 strategies",
+    "scaleNames": {
+      "1": "Positive reinterpretation and growth",
+      "2": "Mental disengagement",
+      "3": "Focus on and venting of emotions",
+      "4": "Use of instrumental social support",
+      "5": "Active coping",
+      "6": "Denial",
+      "7": "Religious coping",
+      "8": "Humor",
+      "9": "Behavioral disengagement",
+      "10": "Restraint",
+      "11": "Use of emotional social support",
+      "12": "Substance use",
+      "13": "Acceptance",
+      "14": "Suppression of competing activities",
+      "15": "Planning"
+    },
+    "scaleDescriptions": {
+      "1": "Making the best of the situation by growing from it, or viewing it in a more favorable light.",
+      "2": "Psychological disengagement from the goal with which the stressor is interfering, through daydreaming, sleep, or distraction.",
+      "3": "An increased awareness of one's emotional distress, and a concomitant tendency to ventilate or discharge those feelings.",
+      "4": "Seeking assistance, information, or advice about what to do.",
+      "5": "Taking action or exerting efforts to remove or circumvent the stressor.",
+      "6": "An attempt to reject the reality of the stressful event.",
+      "7": "Increased engagement in religious activities.",
+      "8": "",
+      "9": "Giving up, or withdrawing effort from, the attempt to attain the goal with which the stressor is interfering.",
+      "10": "Coping passively by holding back one's coping attempts until they can be of use.",
+      "11": "Getting sympathy or emotional support from someone.",
+      "12": "",
+      "13": "Accepting the fact that the stressful event has occurred and is real.",
+      "14": "Suppressing attention to other activities in which one might engage, in order to concentrate more completely on dealing with the stressor.",
+      "15": "Thinking about how to confront the stressor, planning one's active coping efforts."
+    }
   },
   "pid": {
     "titleSelf": "Your personality facets",
