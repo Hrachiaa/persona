@@ -13,8 +13,10 @@ export default function SchwartzResultScreen({ result, meta, onRetake, onViewPor
   const r = result?.result || {};
   const Icon = meta.icon;
 
-  const values = Object.values(r.values || {}).sort(byScoreDesc);
-  const higherOrder = Object.values(r.higherOrderValues || {}).sort(byScoreDesc);
+  // Keep the value id (1–19 / 1–4) so the display name can be localized by id
+  // (the stored result's `name` is English; the label comes from the i18n catalog).
+  const values = Object.entries(r.values || {}).map(([id, v]) => ({ id, ...v })).sort(byScoreDesc);
+  const higherOrder = Object.entries(r.higherOrderValues || {}).map(([id, v]) => ({ id, ...v })).sort(byScoreDesc);
 
   // Symmetric scale bound: the furthest result from 0 (in either direction)
   // defines the width, with ~5% headroom so the longest bar doesn't touch the
@@ -53,7 +55,7 @@ export default function SchwartzResultScreen({ result, meta, onRetake, onViewPor
         </header>
         <div className="divide-y divide-persona-line/60">
           {values.map((v, i) => (
-            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-bound} max={bound} delay={0.1 + i * 0.025} />
+            <ScaleBar key={v.id} label={t(`schwartz.valueNames.${v.id}`)} description={t(`schwartz.valueDescriptions.${v.id}`)} score={v.score} min={-bound} max={bound} delay={0.1 + i * 0.025} />
           ))}
         </div>
       </section>
@@ -67,7 +69,7 @@ export default function SchwartzResultScreen({ result, meta, onRetake, onViewPor
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <div className="divide-y divide-persona-line/60">
           {higherOrder.map((v, i) => (
-            <ScaleBar key={v.name} label={v.name} description={v.description} score={v.score} min={-bound} max={bound} delay={0.15 + i * 0.05} />
+            <ScaleBar key={v.id} label={t(`schwartz.higherNames.${v.id}`)} description={t(`schwartz.higherDescriptions.${v.id}`)} score={v.score} min={-bound} max={bound} delay={0.15 + i * 0.05} />
           ))}
         </div>
       </section>

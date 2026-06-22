@@ -57,7 +57,61 @@
     "valuesHeading": "Values",
     "valuesSub": "19 basic values",
     "higherHeading": "Higher-order values",
-    "higherSub": "Four broad dimensions"
+    "higherSub": "Four broad dimensions",
+    "valueNames": {
+      "1": "Self-Direction: Autonomy of Thought",
+      "2": "Self-Direction: Autonomy of Action",
+      "3": "Stimulation",
+      "4": "Hedonism",
+      "5": "Achievement",
+      "6": "Power: Dominance over people",
+      "7": "Power: Resources",
+      "8": "Face",
+      "9": "Security: Societal",
+      "10": "Security: Personal",
+      "11": "Tradition",
+      "12": "Conformity: Rules",
+      "13": "Conformity: Interpersonal",
+      "14": "Humility",
+      "15": "Benevolence: Dependability",
+      "16": "Benevolence: Caring",
+      "17": "Universalism: Concern",
+      "18": "Universalism: Nature",
+      "19": "Universalism: Tolerance"
+    },
+    "higherNames": {
+      "1": "Self-Transcendence",
+      "2": "Self-Enhancement",
+      "3": "Openness to change",
+      "4": "Conservation"
+    },
+    "valueDescriptions": {
+      "1": "Freedom to cultivate one's own ideas",
+      "2": "Freedom to determine one's own actions",
+      "3": "Excitement, novelty, and change",
+      "4": "Pleasure or sensuous gratification",
+      "5": "Success according to social standards",
+      "6": "Dominance over people",
+      "7": "Wealth and material resources",
+      "8": "Maintaining public image",
+      "9": "Security in the wider society",
+      "10": "Security of self and one's immediate environment",
+      "11": "Maintaining and preserving cultural, family and/or religious traditions",
+      "12": "Compliance with rules, laws and formal obligations",
+      "13": "Avoidance of upsetting or harming others",
+      "14": "Recognizing one's insignificance in the larger scheme of things",
+      "15": "Trustworthy and reliable",
+      "16": "Devotion to the needs of the in-group",
+      "17": "Equality, justice and protection for the weak in society",
+      "18": "Preservation of the natural environment",
+      "19": "Acceptance and understanding of those who differ from oneself"
+    },
+    "higherDescriptions": {
+      "1": "Mean of universalism-nature, universalism-concern, universalism-tolerance, benevolence-care and benevolence-dependability",
+      "2": "Mean of achievement, power-dominance and power-resources",
+      "3": "Mean of self-direction thought, self-direction action, stimulation and hedonism",
+      "4": "Mean of security-personal, security-societal, tradition, conformity-rules and conformity-interpersonal"
+    }
   },
   "cope": {
     "titleSelf": "Your coping profile",

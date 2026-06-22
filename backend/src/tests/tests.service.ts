@@ -17,6 +17,7 @@ import { t, getLang } from '../i18n/translate';
 import { localizeQuestions } from './localize-questions';
 import { CompatibilityService } from '../friends/compatibility.service';
 import { SharedResultDto } from './dtos/shared-result.dto';
+import { UsersService } from '../users/users.service';
 import { randomBytes } from 'crypto';
 
 @Injectable()
@@ -29,6 +30,7 @@ export class TestsService implements OnModuleInit {
         private readonly portraitService: PortraitService,
         @Inject(forwardRef(() => CompatibilityService))
         private readonly compatibilityService: CompatibilityService,
+        private readonly usersService: UsersService,
     ) {}
 
     async onModuleInit() {
@@ -55,10 +57,22 @@ export class TestsService implements OnModuleInit {
         })
     }
 
-    async getTestQuesitions(testId: string): Promise<QuestionsDto[]> {
+    async getTestQuesitions(testId: string, userId: string): Promise<QuestionsDto[]> {
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
         if(!questions) throw new NotFoundException(t('errors.test.questionsNotFound'))
-        return localizeQuestions(questions.questions.questions, getLang())
+
+        // Some tests have gender-specific wording (Schwartz PVQ-RR: him/her). The bank
+        // then carries a separate `F` set; serve it to female users. Other tests have no
+        // `F`, so this is a no-op for them. Item ids are identical across sets, so
+        // scoring is unaffected by which wording was shown.
+        const bank = questions.questions as any
+        let list = bank.questions
+        if (bank.F) {
+            const user = await this.usersService.getUserById(userId)
+            if (user?.gender === 'F') list = bank.F
+        }
+
+        return localizeQuestions(list, getLang())
     }
 
     async submitTest(userId: string, testId: string, answers: SubmitTestDto): Promise<TestResultDto> {

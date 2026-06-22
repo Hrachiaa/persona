@@ -30,7 +30,7 @@ export class TestsController {
     @ApiResponse({ status: 200, description: 'Test questions', type: [QuestionsDto] })
     @Get('/:testId')
     async getTestById(@Param('testId') testId: string, @Req() req) {
-        return this.testsService.getTestQuesitions(testId);
+        return this.testsService.getTestQuesitions(testId, req.user.id);
     }
 
     @UseGuards(JwtAuthGuard)
