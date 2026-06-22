@@ -12,8 +12,11 @@ export default function PidResultScreen({ result, meta, onRetake, onViewPortrait
   const r = result?.result || {};
   const Icon = meta.icon;
 
-  const facets = Object.values(r.values || {}).sort(byScoreDesc);
-  const domains = Object.values(r.higherOrderValues || {}).sort(byScoreDesc);
+  // Keep the facet/domain id (1–25 / 1–5) so labels can be localized by id —
+  // the stored result's `name`/`description` are English; the displayed text
+  // comes from the i18n catalog.
+  const facets = Object.entries(r.values || {}).map(([id, f]) => ({ id, ...f })).sort(byScoreDesc);
+  const domains = Object.entries(r.higherOrderValues || {}).map(([id, d]) => ({ id, ...d })).sort(byScoreDesc);
 
   return (
     <motion.div
@@ -46,7 +49,7 @@ export default function PidResultScreen({ result, meta, onRetake, onViewPortrait
         </header>
         <div className="divide-y divide-persona-line/60">
           {facets.map((f, i) => (
-            <ScaleBar key={f.name} label={f.name} description={f.description} score={f.score} min={0} max={3} delay={0.1 + i * 0.02} />
+            <ScaleBar key={f.id} label={t(`pid.facetNames.${f.id}`)} description={t(`pid.facetDescriptions.${f.id}`)} score={f.score} min={0} max={3} delay={0.1 + i * 0.02} />
           ))}
         </div>
       </section>
@@ -60,7 +63,7 @@ export default function PidResultScreen({ result, meta, onRetake, onViewPortrait
       <section className="surface-warm rounded-3xl p-5 sm:p-6">
         <div className="divide-y divide-persona-line/60">
           {domains.map((d, i) => (
-            <ScaleBar key={d.name} label={d.name} description={d.description} score={d.score} min={0} max={3} delay={0.15 + i * 0.05} />
+            <ScaleBar key={d.id} label={t(`pid.domainNames.${d.id}`)} description={t(`pid.domainDescriptions.${d.id}`)} score={d.score} min={0} max={3} delay={0.15 + i * 0.05} />
           ))}
         </div>
       </section>
