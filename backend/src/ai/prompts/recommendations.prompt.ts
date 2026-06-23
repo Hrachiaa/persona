@@ -59,10 +59,23 @@ Hard rules:
 
 Output:
 - Respond with RAW JSON ONLY — no prose, no commentary, no markdown code fences.
-- Match EXACTLY the JSON schema given in the user message. Use English titles.
+- Match EXACTLY the JSON schema given in the user message. Write the titles in the language the user message asks for.
 `;
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+const LANG_NAMES: Record<string, string> = { en: 'English', ru: 'Russian' };
+
+/** Human-readable language name for a lang code (defaults to English). */
+function langName(lang: string): string {
+  return LANG_NAMES[lang.split('-')[0].toLowerCase()] ?? 'English';
+}
+
+/** Instruction telling the model which language to write titles/authors in. */
+function titleLanguageDirective(lang: string): string {
+  const name = langName(lang);
+  return `Write every "title" in ${name} — the title by which the work is officially known in ${name} (use the localized title for works released in ${name}). Write "author" names as they are commonly written in ${name}.`;
+}
 
 /** User message for a single-type batch (films OR books). */
 export function buildRecommendationsUserPrompt(params: {
@@ -72,8 +85,9 @@ export function buildRecommendationsUserPrompt(params: {
   disliked: string[];
   exclude: string[];
   count: number;
+  lang: string;
 }): string {
-  const { mediaType, profileBlock, liked, disliked, exclude, count } = params;
+  const { mediaType, profileBlock, liked, disliked, exclude, count, lang } = params;
   const noun = mediaType === 'film' ? 'films' : 'books';
   const schema =
     mediaType === 'film'
@@ -81,8 +95,8 @@ export function buildRecommendationsUserPrompt(params: {
       : '{"items":[{"title":"Dune","author":"Frank Herbert"}]}';
   const itemDesc =
     mediaType === 'film'
-      ? 'each item has "title" (English title) and "year" (release year as an integer)'
-      : 'each item has "title" (English title) and "author" (primary author)';
+      ? 'each item has "title" and "year" (release year as an integer)'
+      : 'each item has "title" and "author" (primary author)';
 
   const parts: string[] = [`Recommend ${count} ${noun} for this person.`, ''];
 
@@ -102,6 +116,7 @@ export function buildRecommendationsUserPrompt(params: {
   parts.push(
     `Return a JSON object exactly in this shape: ${schema}`,
     `The "items" array must contain ${count} entries; ${itemDesc}.`,
+    titleLanguageDirective(lang),
   );
   return parts.join('\n');
 }
@@ -110,8 +125,9 @@ export function buildRecommendationsUserPrompt(params: {
 export function buildCombinedRecommendationsUserPrompt(params: {
   profileBlock: string;
   count: number;
+  lang: string;
 }): string {
-  const { profileBlock, count } = params;
+  const { profileBlock, count, lang } = params;
   return [
     `Recommend ${count} films AND ${count} books for this person, based on their psychological profile.`,
     '',
@@ -122,5 +138,6 @@ export function buildCombinedRecommendationsUserPrompt(params: {
     'Return a JSON object exactly in this shape:',
     '{"films":[{"title":"The Matrix","year":1999}],"books":[{"title":"Dune","author":"Frank Herbert"}]}',
     `Each array must contain ${count} entries. Film items have "title" and integer "year"; book items have "title" and "author". Films and books should each be independently well matched to the person.`,
+    titleLanguageDirective(lang),
   ].join('\n');
 }

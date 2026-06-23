@@ -51,6 +51,7 @@ export class AiService {
     disliked: string[];
     exclude: string[];
     count: number;
+    lang: string;
   }): Promise<RawRecommendation[]> {
     const json = await this.completeJson(
       RECOMMENDATIONS_SYSTEM_PROMPT,
@@ -66,6 +67,7 @@ export class AiService {
   async recommendCombined(params: {
     profileBlock: string;
     count: number;
+    lang: string;
   }): Promise<{ films: RawRecommendation[]; books: RawRecommendation[] }> {
     const json = await this.completeJson(
       RECOMMENDATIONS_SYSTEM_PROMPT,
