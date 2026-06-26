@@ -170,7 +170,7 @@ export default function Dashboard({ onLogout }) {
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
         className="fixed bottom-4 inset-x-0 z-50 px-6 lg:hidden"
       >
-        <div className="max-w-lg mx-auto flex items-center justify-around bg-white/90 backdrop-blur-xl border border-persona-line/60 shadow-warm-lg rounded-full py-2 px-2">
+        <div className="max-w-lg mx-auto flex items-center justify-around bg-white/90 backdrop-blur-xl border border-persona-line/60 shadow-warm-lg rounded-full py-1 px-2">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -179,7 +179,7 @@ export default function Dashboard({ onLogout }) {
                 onClick={() => navigate(tab.path)}
                 aria-current={isActive ? 'page' : undefined}
                 aria-label={t(`nav.${tab.id}`)}
-                className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 py-2 px-1 rounded-2xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
+                className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 py-1.5 px-1 rounded-2xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
                   isActive ? 'text-persona-dark' : 'text-persona-muted'
                 }`}
                 whileTap={{ scale: 0.9 }}
