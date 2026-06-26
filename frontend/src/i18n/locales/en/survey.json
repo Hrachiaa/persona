@@ -1,0 +1,27 @@
+{
+  "aria": "Profile survey",
+  "stepOf": "Step {{n}} of {{total}}",
+  "languagePrompt": "Language",
+  "letsGo": "Let's go",
+  "saveError": "Failed to save profile. Please try again.",
+  "steps": {
+    "name": {
+      "title": "What's your name?",
+      "subtitle": "We'd love to know what to call you",
+      "placeholder": "Enter your name"
+    },
+    "gender": {
+      "title": "How do you identify?",
+      "subtitle": "This helps us personalize your experience"
+    },
+    "birthDate": {
+      "title": "When were you born?",
+      "subtitle": "This helps personalize your experience",
+      "placeholder": "Enter your birth year (e.g. 1995)"
+    }
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female"
+  }
+}

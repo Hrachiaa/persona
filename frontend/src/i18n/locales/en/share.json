@@ -1,0 +1,21 @@
+{
+  "page": {
+    "notFound": "Result not found",
+    "notFoundBody": "This share link is invalid or has expired.",
+    "discover": "Discover Persona",
+    "backToTests": "Back to your tests",
+    "discoverYours": "Discover your Persona",
+    "sharedByOwner": "{{name}} shared their {{test}} result.",
+    "sharedAnon": "A {{test}} result was shared with you.",
+    "curious": "Curious how you compare?",
+    "takeTest": "Take the test",
+    "ownerFallback": "This person"
+  },
+  "bar": {
+    "share": "Share",
+    "linkCopied": "Link copied",
+    "ariaShare": "Share result",
+    "shareTitle": "My Persona result",
+    "shareText": "Check out my {{test}} result on Persona"
+  }
+}

@@ -6,4 +6,5 @@ export class UserDto {
     name: string | null;
     birthDate: Date | null;
     gender: string | null;
+    language: string;
 }

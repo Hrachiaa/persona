@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineBolt,
@@ -18,6 +20,7 @@ import {
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
 import ImmersiveTopBar from './ImmersiveTopBar';
+import ShareResultBar from './ShareResultBar';
 import BigFiveResultScreen from './BigFiveResult';
 import SchwartzResultScreen from './SchwartzResult';
 import EcrResultScreen from './EcrResult';
@@ -42,6 +45,20 @@ const REAL_API_TESTS = new Set(['iq', 'bigFive', 'shcwartz', 'ecr', 'cope', 'pid
 
 // Order in which tests must be taken — each completed test unlocks the next.
 const TEST_ORDER = ['bigFive', 'shcwartz', 'cope', 'iq', 'ecr', 'pid'];
+
+// Human-readable URL slugs for the runner / result links (nicer than the raw cuid).
+const TYPE_SLUGS = {
+  iq: 'logic',
+  bigFive: 'personality',
+  shcwartz: 'values',
+  ecr: 'attachment',
+  cope: 'stress',
+  pid: 'shadows',
+  szondi: 'drives',
+  archetype: 'archetype',
+  mbti: 'type',
+};
+const testSlug = (test) => (test ? TYPE_SLUGS[test.testType] || test.testType : null);
 
 // ─── Mocked questions / results for non-IQ tests ────────────────────────────
 const MOCK_DATA = {
@@ -137,7 +154,8 @@ function useCountUp(target, run, onDone, duration = 1800) {
 //  • red lower tail (below −1σ), gray bulk, green band highlighting "you"
 //  • a center "Average" line at μ=100 and a red "You" marker at the score
 //  • dual x-axis: raw IQ values on top, σ offsets below
-function BellCurve({ score, showMarkerLabel = true }) {
+function BellCurve({ score, showMarkerLabel = true, youLabel = 'You' }) {
+  const { t } = useTranslation('tests');
   const mean = IQ_MEAN;
   const sigma = IQ_SIGMA;
   const lo = mean - 3 * sigma; // 55
@@ -204,7 +222,7 @@ function BellCurve({ score, showMarkerLabel = true }) {
       <line x1={toSvgX(mean)} y1={meanY} x2={toSvgX(mean)} y2={baseY} stroke="#6B7280" strokeWidth="1" strokeDasharray="3 3" />
       {showAverage && (
         <text x={toSvgX(mean)} y={baseY + 32} textAnchor="middle" fontSize="10" fontStyle="italic" fontWeight="600" fill="#6B7280">
-          Average
+          {t('iq.average')}
         </text>
       )}
 
@@ -218,7 +236,7 @@ function BellCurve({ score, showMarkerLabel = true }) {
             {Math.round(score)}
           </text>
           <text x={scoreX} y={baseY + 32} textAnchor="middle" fontSize="10" fontStyle="italic" fontWeight="700" fill="#1A1A1A">
-            You
+            {youLabel}
           </text>
         </>
       )}
@@ -236,7 +254,11 @@ function BellCurve({ score, showMarkerLabel = true }) {
 
 // ─── Test Card ───────────────────────────────────────────────────────────────
 function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, onStart, onView }) {
+  const { t, i18n } = useTranslation('tests');
   const Icon = meta.icon;
+  // Russian test names run longer than the English ones — nudge the title down a
+  // step so they sit comfortably next to the status badge.
+  const titleSize = i18n.language?.startsWith('ru') ? 'text-lg' : 'text-xl';
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -250,18 +272,18 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
         <div className={`w-14 h-14 ${meta.color} rounded-2xl flex items-center justify-center flex-shrink-0`}>
           <Icon className={`w-7 h-7 ${meta.iconColor}`} />
         </div>
-        <h3 className="flex-1 min-w-0 font-display text-xl font-semibold text-persona-dark">{test.testName}</h3>
+        <h3 className={`flex-1 min-w-0 break-words font-display ${titleSize} font-semibold text-persona-dark`}>{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
         {completed ? (
           <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-dark bg-persona-accent-lime/50 px-2.5 py-1 rounded-md flex-shrink-0">
-            <HiOutlineCheckCircle className="w-4 h-4" /> Done
+            <HiOutlineCheckCircle className="w-4 h-4" /> {t('status.done')}
           </span>
         ) : locked ? (
           <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md flex-shrink-0">
-            <HiOutlineLockClosed className="w-3.5 h-3.5" /> Locked
+            <HiOutlineLockClosed className="w-3.5 h-3.5" /> {t('status.locked')}
           </span>
         ) : (
           <span className="text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md flex-shrink-0">
-            Not started
+            {t('status.notStarted')}
           </span>
         )}
       </div>
@@ -281,22 +303,22 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
               {locked ? (
                 <>
                   <p className="text-persona-muted text-sm leading-relaxed mb-4">
-                    Complete the earlier tests first to unlock this one.
+                    {t('card.lockedHint')}
                   </p>
                   <div className="w-full py-3.5 px-8 rounded-full font-medium text-center bg-persona-line text-persona-muted">
-                    Unavailable
+                    {t('card.unavailable')}
                   </div>
                 </>
               ) : (
                 <>
-                  <p className="text-persona-muted text-sm leading-relaxed mb-4">{test.description}</p>
+                  <p className="text-persona-muted text-sm leading-relaxed mb-4">{t(`descriptions.${test.testType}`, { defaultValue: test.description })}</p>
                   <div className="flex flex-wrap items-center gap-2 mb-5">
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
                       <HiOutlineClock className="w-3.5 h-3.5" />
-                      {test.duration > 0 ? `~${test.duration} min` : 'No time limit'}
+                      {test.duration > 0 ? t('card.minutes', { n: test.duration }) : t('card.noTimeLimit')}
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
-                      {test.totalQuestions} questions
+                      {t('card.questionsCount', { n: test.totalQuestions })}
                     </span>
                   </div>
                   {completed ? (
@@ -305,7 +327,7 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
                       className="btn-secondary w-full"
                       whileTap={{ scale: 0.97 }}
                     >
-                      View result
+                      {t('card.viewResult')}
                     </motion.button>
                   ) : (
                     <motion.button
@@ -317,10 +339,10 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
                       {loading ? (
                         <span className="flex items-center gap-2">
                           <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Loading…
+                          {t('common:loading')}
                         </span>
                       ) : (
-                        'Start test'
+                        t('card.start')
                       )}
                     </motion.button>
                   )}
@@ -338,6 +360,7 @@ function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, 
 
 // ─── Resume Prompt Screen ────────────────────────────────────────────────────
 function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
+  const { t } = useTranslation('tests');
   const Icon = meta.icon;
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-8">
@@ -351,18 +374,18 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
         >
           <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Continue where you left off?</h2>
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">{t('resume.title')}</h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          You have unfinished progress on this test. Continue, or start over from the first question?
+          {t('resume.subtitle')}
         </p>
       </div>
 
       <div className="space-y-3">
         <motion.button onClick={onContinue} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
-          Continue
+          {t('common:continue')}
         </motion.button>
         <motion.button onClick={onRestart} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
-          Start over
+          {t('resume.startOver')}
         </motion.button>
       </div>
       </div>
@@ -372,6 +395,7 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
 
 // ─── Questions Screen ────────────────────────────────────────────────────────
 function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
+  const { t } = useTranslation('tests');
   const Icon = meta.icon;
   const isIQ = test.testType === 'iq';
 
@@ -453,7 +477,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
       <ImmersiveTopBar
         onBack={() => {
-          if (answers.length > 0 && !window.confirm('Your progress will be saved. Leave this test?')) return;
+          if (answers.length > 0 && !window.confirm(t('questions.leaveConfirm'))) return;
           onBack();
         }}
       />
@@ -461,8 +485,8 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
       <div className="px-6 pt-2">
       {/* Title */}
       <div className="mb-4">
-        <h3 className="font-semibold text-persona-dark">{test.testName}</h3>
-        <p className="text-sm text-persona-muted">Question {questionIndex + 1} of {questions.length}</p>
+        <h3 className="font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
+        <p className="text-sm text-persona-muted">{t('questions.progress', { n: questionIndex + 1, total: questions.length })}</p>
       </div>
 
       {/* Progress */}
@@ -485,7 +509,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
               <div className="bg-white rounded-2xl p-2 shadow-warm flex items-center justify-center">
                 <img
                   src={currentQ.image}
-                  alt={`Question ${questionIndex + 1}`}
+                  alt={t('questions.imageAlt', { n: questionIndex + 1 })}
                   className="w-full max-h-[50vh] object-contain rounded-xl"
                 />
               </div>
@@ -539,7 +563,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
           className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
           whileTap={{ scale: 0.95 }}
         >
-          ← Prev
+          {t('questions.prev')}
         </motion.button>
 
         {isLastQuestion ? (
@@ -550,9 +574,9 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
             whileTap={{ scale: 0.97 }}
           >
             {submitting ? (
-              <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting…</span>
+              <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> {t('questions.submitting')}</span>
             ) : (
-              'Submit test'
+              t('questions.submit')
             )}
           </motion.button>
         ) : (
@@ -562,7 +586,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
             className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
             whileTap={{ scale: 0.95 }}
           >
-            Next →
+            {t('questions.next')}
           </motion.button>
         )}
       </div>
@@ -572,7 +596,8 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
 }
 
 // ─── IQ Result Screen ────────────────────────────────────────────────────────
-function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
+function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait, headerAction, actions, ownerName }) {
+  const { t } = useTranslation('tests');
   const { iq, reliability } = result.result;
   const Icon = meta.icon;
 
@@ -608,38 +633,42 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
             className="font-display text-3xl font-semibold text-persona-dark mb-3"
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           >
-            We couldn&apos;t calculate a score
+            {t('iq.invalid.title')}
           </motion.h2>
 
           <motion.p
             className="text-persona-muted leading-relaxed mb-3 max-w-prose mx-auto"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}
           >
-            The score was too low to produce a reliable result. This usually happens when answers are selected randomly or the test is taken without full focus.
+            {t('iq.invalid.body1')}
           </motion.p>
           <motion.p
             className="text-persona-muted leading-relaxed mb-10 max-w-prose mx-auto text-sm"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }}
           >
-            No worries — it happens. When you&apos;re ready, you can give it another go.
+            {t('iq.invalid.body2')}
           </motion.p>
 
-          <motion.button
-            onClick={onRetake}
-            className="btn-primary w-full max-w-xs flex items-center justify-center gap-2 mx-auto"
-            whileTap={{ scale: 0.97 }}
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
-          >
-            <HiOutlineArrowPath className="w-5 h-5" /> Try again
-          </motion.button>
-          <motion.button
-            onClick={onDone}
-            className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5"
-            whileTap={{ scale: 0.97 }}
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}
-          >
-            Back to tests
-          </motion.button>
+          {actions ?? (
+            <>
+              <motion.button
+                onClick={onRetake}
+                className="btn-primary w-full max-w-xs flex items-center justify-center gap-2 mx-auto"
+                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
+              >
+                <HiOutlineArrowPath className="w-5 h-5" /> {t('iq.invalid.tryAgain')}
+              </motion.button>
+              <motion.button
+                onClick={onDone}
+                className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5"
+                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}
+              >
+                {t('iq.invalid.backToTests')}
+              </motion.button>
+            </>
+          )}
         </div>
       </motion.div>
     );
@@ -654,19 +683,19 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={revealed ? '' : 'pointer-events-none'}
       >
-        <ImmersiveTopBar onBack={onDone} />
+        <ImmersiveTopBar onBack={onDone} rightSlot={headerAction} />
       </motion.div>
 
       {/* Hero — vertically centered; stays put through the reveal */}
       <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Your IQ score</h2>
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">{ownerName ? t('iq.scoreTitleOwner', { name: ownerName }) : t('iq.scoreTitleSelf')}</h2>
 
         <div className="font-display text-7xl font-semibold text-persona-dark mb-4 tabular leading-none">
           {displayIq}
         </div>
 
         {/* chart marker uses the raw (un-rounded) value so it glides smoothly */}
-        <BellCurve score={revealed ? iq : count} showMarkerLabel={revealed} />
+        <BellCurve score={revealed ? iq : count} showMarkerLabel={revealed} youLabel={ownerName ? ownerName.split(' ')[0] : t('iq.you')} />
 
         {/* Percentile — space reserved so the chart doesn't shift on reveal */}
         <motion.p
@@ -675,9 +704,12 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="text-sm text-persona-muted mt-4 leading-relaxed max-w-prose mx-auto"
         >
-          Your IQ of <span className="font-semibold text-persona-dark tabular">{iq}</span> is equivalent to the{' '}
-          <span className="font-semibold text-persona-dark tabular">{iqPercentile(iq)}th</span> percentile — higher than{' '}
-          <span className="tabular">{iqPercentile(iq)}%</span> of people, with a standard deviation of 15.
+          <Trans
+            t={t}
+            i18nKey={ownerName ? 'iq.percentileOwner' : 'iq.percentileSelf'}
+            values={{ name: ownerName, iq, pct: iqPercentile(iq), pctPercent: `${iqPercentile(iq)}%` }}
+            components={{ b: <span className="font-semibold text-persona-dark tabular" /> }}
+          />
         </motion.p>
       </div>
 
@@ -688,29 +720,34 @@ function IqResultScreen({ result, meta, onDone, onRetake, onViewPortrait }) {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={`px-6 pb-10 flex flex-col items-center ${revealed ? '' : 'pointer-events-none'}`}
       >
-        {reliability === 'suspicious' && (
+        {reliability === 'suspicious' && !ownerName && (
           <div className="flex items-start gap-3 bg-persona-warn/10 rounded-2xl p-4 text-left mb-5 max-w-prose">
             <HiOutlineInformationCircle className="w-5 h-5 text-persona-warn flex-shrink-0 mt-0.5" />
             <p className="text-sm text-persona-warn leading-relaxed">
-              Your results show some unusual patterns. You may want to retake the test for more accurate results.
+              {t('iq.suspicious')}
             </p>
           </div>
         )}
 
-        <motion.button onClick={onViewPortrait} className="btn-primary w-full max-w-sm" whileTap={{ scale: 0.97 }}>
-          View portrait
-        </motion.button>
+        {actions ?? (
+          <>
+            <motion.button onClick={onViewPortrait} className="btn-primary w-full max-w-sm" whileTap={{ scale: 0.97 }}>
+              {t('iq.viewPortrait')}
+            </motion.button>
 
-        <motion.button onClick={onRetake} className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5" whileTap={{ scale: 0.97 }}>
-          <HiOutlineArrowPath className="w-4 h-4" /> Retake test
-        </motion.button>
+            <motion.button onClick={onRetake} className="mt-4 text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5" whileTap={{ scale: 0.97 }}>
+              <HiOutlineArrowPath className="w-4 h-4" /> {t('iq.retake')}
+            </motion.button>
+          </>
+        )}
       </motion.div>
     </motion.div>
   );
 }
 
 // ─── Generic Result Screen (non-IQ) ─────────────────────────────────────────
-function GenericResultScreen({ result, meta }) {
+function GenericResultScreen({ result, meta, actions }) {
+  const { t } = useTranslation('tests');
   const Icon = meta.icon;
   const r = result.result || {};
   return (
@@ -722,33 +759,103 @@ function GenericResultScreen({ result, meta }) {
         >
           <Icon className={`w-14 h-14 ${meta.iconColor}`} />
         </motion.div>
-        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">Your result</h2>
+        <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">{t('generic.title')}</h2>
         <motion.div
           className={`inline-block ${meta.color} px-6 py-2 rounded-full text-lg font-medium text-persona-dark mb-4`}
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
         >
-          {r.label || 'Completed'}
+          {r.label || t('generic.completed')}
         </motion.div>
         <motion.p className="text-persona-muted leading-relaxed max-w-prose mx-auto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           {r.detail || ''}
         </motion.p>
       </div>
+      {actions && <div className="flex flex-col gap-3 max-w-sm mx-auto mt-10">{actions}</div>}
     </motion.div>
+  );
+}
+
+// ─── Result View ─────────────────────────────────────────────────────────────
+// Renders a completed result exactly as the test owner sees it (same screen,
+// same intro animations). Shared by the Tests tab and the public /share page —
+// the only difference is the footer (`actions`) and the top-bar right slot
+// (`headerRightSlot`, e.g. the share buttons), which the caller supplies.
+export function ResultView({ test, result, onBack, onRetake, onViewPortrait, headerRightSlot, actions, ownerName }) {
+  const meta = TEST_META[test.testType] || TEST_META.iq;
+  const RESULT_SCREENS = {
+    iq: IqResultScreen,
+    bigFive: BigFiveResultScreen,
+    shcwartz: SchwartzResultScreen,
+    ecr: EcrResultScreen,
+    cope: CopeResultScreen,
+    pid: PidResultScreen,
+  };
+  const ResultScreen = RESULT_SCREENS[test.testType] || GenericResultScreen;
+  // Some screens own a full-height layout and render their own top bar (valid IQ
+  // with its intro; ECR with bottom-pinned actions). Everything else uses the
+  // standard immersive top bar here.
+  const ownsTopBar =
+    (test.testType === 'iq' && result?.result?.reliability !== 'invalid') ||
+    test.testType === 'ecr';
+  return (
+    <>
+      {!ownsTopBar && <ImmersiveTopBar onBack={onBack} rightSlot={headerRightSlot} />}
+      <ResultScreen
+        result={result}
+        meta={meta}
+        onDone={onBack}
+        onRetake={onRetake}
+        onViewPortrait={onViewPortrait}
+        headerAction={headerRightSlot}
+        actions={actions}
+        ownerName={ownerName}
+      />
+    </>
   );
 }
 
 // ─── Main Tests Component ────────────────────────────────────────────────────
 export default function Tests({ onImmersiveChange, onOpenPortrait }) {
-  const [screen, setScreen] = useState(SCREEN.LIST);
+  const { t } = useTranslation('tests');
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedTest, setSelectedTest] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
+  // Fresh result from the just-submitted test, tagged with its slug so we only
+  // show it for the matching URL (otherwise we fall back to the stored result).
   const [result, setResult] = useState(null);
   const [questionsLoading, setQuestionsLoading] = useState(false);
-  const [sessionRestored, setSessionRestored] = useState(false);
+  // The resume prompt is a transient dialog (no URL of its own); once the user
+  // picks continue/restart we drop straight into the questions at /tests/:slug.
+  const [resumeDecided, setResumeDecided] = useState(false);
+  const loadedQuestionsFor = useRef(null);
+
+  // The URL is the source of truth: /tests → list, /tests/:slug → runner,
+  // /tests/:slug/result → result. Dashboard keeps this tab mounted behind the
+  // profile overlay, so ignore the path unless we're actually on /tests*.
+  const onTestsRoute =
+    location.pathname === '/tests' || location.pathname.startsWith('/tests/');
+  const segments = location.pathname.split('/').filter(Boolean); // ['tests', slug?, 'result'?]
+  const routeSlug = onTestsRoute ? segments[1] || null : null;
+  const isResultRoute = onTestsRoute && segments[2] === 'result';
+
+  const selectedTest = routeSlug ? tests.find((t) => testSlug(t) === routeSlug) : null;
+  const meta = selectedTest ? (TEST_META[selectedTest.testType] || TEST_META.iq) : null;
+
+  // Derive the current screen from the URL (+ the resume prompt's local decision).
+  let screen;
+  if (!routeSlug) {
+    screen = SCREEN.LIST;
+  } else if (isResultRoute) {
+    screen = SCREEN.RESULT;
+  } else {
+    const saved = selectedTest ? LS.get(selectedTest.id, 'answers') : null;
+    screen = saved && saved.length > 0 && !resumeDecided ? SCREEN.RESUME : SCREEN.QUESTIONS;
+  }
 
   // Tell the dashboard when we're on an immersive ("pushed over the app") screen
   // — taking a test, the resume prompt, or a result — so it can hide its chrome.
@@ -760,6 +867,11 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   }, [screen, onImmersiveChange]);
   useEffect(() => () => onImmersiveChange?.(false), [onImmersiveChange]);
 
+  // A fresh resume decision whenever we (re)enter a test's runner — either a new
+  // test in the URL, or coming back from that test's result page (which keeps the
+  // same routeSlug, so we also key on isResultRoute).
+  useEffect(() => { setResumeDecided(false); }, [routeSlug, isResultRoute]);
+
   // Fetch test list
   const fetchTests = useCallback(async () => {
     setLoading(true);
@@ -770,49 +882,47 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
       return data;
     } catch (err) {
       console.error('Failed to fetch tests:', err);
-      setError('Failed to load tests');
+      setError(t('list.loadError'));
       return [];
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
-  // On mount: fetch tests, then check for an active session to restore
+  // On mount: fetch tests. We intentionally do NOT auto-route an in-progress
+  // session back into the test — the resume prompt should only appear when the
+  // user actually returns to the test itself (clicks it, deep-links, or refreshes
+  // /tests/:slug), not when they merely re-enter the app on the bare /tests list.
   useEffect(() => {
-    fetchTests().then(async (fetchedTests) => {
-      if (sessionRestored) return;
-      const activeTestId = localStorage.getItem('activeTestId');
-      if (!activeTestId || !fetchedTests.length) { setSessionRestored(true); return; }
-
-      const savedAnswers = LS.get(activeTestId, 'answers');
-      if (!savedAnswers || savedAnswers.length === 0) {
-        // No in-progress answers, clear stale session
-        localStorage.removeItem('activeTestId');
-        setSessionRestored(true);
-        return;
-      }
-
-      const test = fetchedTests.find((t) => t.id === activeTestId);
-      if (!test) { localStorage.removeItem('activeTestId'); setSessionRestored(true); return; }
-
-      // Restore session
-      setSelectedTest(test);
-
-      try {
-        if (REAL_API_TESTS.has(test.testType)) {
-          const qs = await testsApi.getTestQuestions(test.id);
-          setQuestions(qs);
-        } else {
-          setQuestions(MOCK_DATA[test.testType]?.questions || []);
-        }
-        setScreen(SCREEN.RESUME);
-      } catch (err) {
-        console.error('Failed to restore session:', err);
-        localStorage.removeItem('activeTestId');
-      }
-      setSessionRestored(true);
-    });
+    fetchTests();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Load questions whenever the URL points at a test runner and we haven't loaded
+  // that test's questions yet (covers clicks, deep links and refreshes alike).
+  useEffect(() => {
+    if (!routeSlug || isResultRoute || !selectedTest) return;
+    if (loadedQuestionsFor.current === selectedTest.id) return;
+
+    let active = true;
+    setQuestionsLoading(true);
+    (async () => {
+      try {
+        const qs = REAL_API_TESTS.has(selectedTest.testType)
+          ? await testsApi.getTestQuestions(selectedTest.id)
+          : (MOCK_DATA[selectedTest.testType]?.questions || []);
+        if (!active) return;
+        setQuestions(qs);
+        loadedQuestionsFor.current = selectedTest.id;
+        localStorage.setItem('activeTestId', selectedTest.id);
+      } catch (err) {
+        console.error('Failed to fetch questions:', err);
+        if (active) setError(t('list.questionsError'));
+      } finally {
+        if (active) setQuestionsLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, [routeSlug, isResultRoute, selectedTest, t]);
 
   const toggleExpand = (testId) => {
     setExpandedId((prev) => (prev === testId ? null : testId));
@@ -820,61 +930,37 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   const viewResult = (test) => {
     if (!test?.result) return;
-    setSelectedTest(test);
-    setResult(test.result);
-    setScreen(SCREEN.RESULT);
+    navigate(`/tests/${testSlug(test)}/result`);
   };
 
-  // Begin a test: persist the session, fetch its questions, and open the runner.
-  const beginTest = async (test) => {
-    setSelectedTest(test);
-    localStorage.setItem('activeTestId', test.id);
+  // Begin a test: the questions-loading effect picks it up from the URL.
+  const beginTest = (test) => navigate(`/tests/${testSlug(test)}`);
 
-    setQuestionsLoading(true);
-    try {
-      if (REAL_API_TESTS.has(test.testType)) {
-        const qs = await testsApi.getTestQuestions(test.id);
-        setQuestions(qs);
-      } else {
-        setQuestions(MOCK_DATA[test.testType]?.questions || []);
-      }
-      const saved = LS.get(test.id, 'answers');
-      setScreen(saved && saved.length > 0 ? SCREEN.RESUME : SCREEN.QUESTIONS);
-    } catch (err) {
-      console.error('Failed to fetch questions:', err);
-      setError('Failed to load questions');
-    } finally {
-      setQuestionsLoading(false);
-    }
-  };
-
-  const handleResumeContinue = () => setScreen(SCREEN.QUESTIONS);
+  const handleResumeContinue = () => setResumeDecided(true);
 
   const handleResumeRestart = () => {
     LS.remove(selectedTest.id, 'answers');
-    setScreen(SCREEN.QUESTIONS);
+    setResumeDecided(true);
   };
 
   const handleComplete = (res) => {
-    setResult(res);
-    setScreen(SCREEN.RESULT);
+    setResult({ slug: testSlug(selectedTest), data: res });
     fetchTests(); // Refresh list to get updated result status
+    navigate(`/tests/${testSlug(selectedTest)}/result`);
   };
 
-  const handleRetake = () => {
-    LS.clearAll(selectedTest.id);
-    beginTest(selectedTest);
-  };
+  // Open the runner without wiping progress: if an earlier retake was left
+  // unfinished the resume prompt offers Continue / Start over; otherwise the
+  // runner opens fresh (no saved answers → straight to the first question).
+  const handleRetake = () => navigate(`/tests/${testSlug(selectedTest)}`);
 
   const handleBackToList = () => {
-    setScreen(SCREEN.LIST);
-    setSelectedTest(null);
     setResult(null);
     setQuestions([]);
+    loadedQuestionsFor.current = null;
     localStorage.removeItem('activeTestId');
+    navigate('/tests');
   };
-
-  const meta = selectedTest ? (TEST_META[selectedTest.testType] || TEST_META.iq) : null;
 
   // ─── Render ──────────────────────────────────────────────────────────────────
   if (screen === SCREEN.LIST) {
@@ -902,7 +988,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
       return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6 text-center">
           <p className="text-persona-danger mb-4">{error}</p>
-          <button onClick={fetchTests} className="btn-primary">Retry</button>
+          <button onClick={fetchTests} className="btn-primary">{t('common:retry')}</button>
         </motion.div>
       );
     }
@@ -910,8 +996,8 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     if (tests.length === 0) {
       return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-6 pt-2 pb-6 text-center">
-          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">Nothing taken yet</h1>
-          <p className="text-persona-muted max-w-prose mx-auto">No tests are available right now. Check back soon.</p>
+          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">{t('list.emptyTitle')}</h1>
+          <p className="text-persona-muted max-w-prose mx-auto">{t('list.emptyBody')}</p>
         </motion.div>
       );
     }
@@ -922,7 +1008,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     );
 
     return (
-      <motion.section aria-label="Personality tests" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-2 pb-6">
+      <motion.section aria-label={t('aria')} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-2 pb-6">
         <div className="grid gap-4 lg:grid-cols-2 items-start">
           {orderedTests.map((test, i) => {
             const m = TEST_META[test.testType] || TEST_META.iq;
@@ -951,7 +1037,21 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     );
   }
 
-  if (screen === SCREEN.RESUME && selectedTest && meta) {
+  // Past the list every screen needs a resolved test. While the list is still
+  // loading (deep link / refresh) show a spinner; an id that doesn't exist once
+  // the list has loaded bounces back to the list.
+  if (!selectedTest || !meta) {
+    if (loading) {
+      return (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-dvh flex items-center justify-center">
+          <div className="animate-pulse-soft text-persona-muted">{t('common:loading')}</div>
+        </motion.div>
+      );
+    }
+    return <Navigate to="/tests" replace />;
+  }
+
+  if (screen === SCREEN.RESUME) {
     return (
       <ResumePromptScreen
         meta={meta}
@@ -962,7 +1062,14 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     );
   }
 
-  if (screen === SCREEN.QUESTIONS && selectedTest && meta && questions.length > 0) {
+  if (screen === SCREEN.QUESTIONS) {
+    if (questionsLoading || questions.length === 0) {
+      return (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-dvh flex items-center justify-center">
+          <div className="animate-pulse-soft text-persona-muted">{t('common:loading')}</div>
+        </motion.div>
+      );
+    }
     return (
       <QuestionsScreen
         test={selectedTest}
@@ -974,33 +1081,21 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     );
   }
 
-  if (screen === SCREEN.RESULT && result && meta) {
-    const RESULT_SCREENS = {
-      iq: IqResultScreen,
-      bigFive: BigFiveResultScreen,
-      shcwartz: SchwartzResultScreen,
-      ecr: EcrResultScreen,
-      cope: CopeResultScreen,
-      pid: PidResultScreen,
-    };
-    const ResultScreen = RESULT_SCREENS[selectedTest.testType] || GenericResultScreen;
-    // Some result screens own a full-height layout and render their own top bar
-    // (valid IQ with its intro; ECR with bottom-pinned actions). Everything else
-    // (incl. the invalid IQ state) uses the standard immersive top bar here.
-    const ownsTopBar =
-      (selectedTest.testType === 'iq' && result?.result?.reliability !== 'invalid') ||
-      selectedTest.testType === 'ecr';
+  if (screen === SCREEN.RESULT) {
+    // Prefer the freshly submitted result; fall back to the test's stored result
+    // (deep link / refresh). If neither exists, there's nothing to show.
+    const shownResult = result && result.slug === routeSlug ? result.data : selectedTest.result;
+    if (!shownResult) return <Navigate to="/tests" replace />;
+
     return (
-      <>
-        {!ownsTopBar && <ImmersiveTopBar onBack={handleBackToList} />}
-        <ResultScreen
-          result={result}
-          meta={meta}
-          onDone={handleBackToList}
-          onRetake={handleRetake}
-          onViewPortrait={onOpenPortrait}
-        />
-      </>
+      <ResultView
+        test={selectedTest}
+        result={shownResult}
+        onBack={handleBackToList}
+        onRetake={handleRetake}
+        onViewPortrait={onOpenPortrait}
+        headerRightSlot={<ShareResultBar test={selectedTest} result={shownResult} />}
+      />
     );
   }
 

@@ -6,6 +6,7 @@ import { ApiResponse } from '@nestjs/swagger';
 import { TestResultDto } from './dtos/test-result.dto';
 import { GetTestsDto } from './dtos/get-tests.dto';
 import { QuestionsDto } from './dtos/test-questions.dto';
+import { SharedResultDto } from './dtos/shared-result.dto';
 
 @Controller('tests')
 export class TestsController {
@@ -18,11 +19,25 @@ export class TestsController {
         return this.testsService.getAllTests(req.user.id);
     }
 
+    // Public — no auth. Lets anyone open a shared result link a user sent them.
+    @ApiResponse({ status: 200, description: 'Shared test result', type: SharedResultDto })
+    @Get('/shared/:token')
+    async getSharedResult(@Param('token') token: string) {
+        return this.testsService.getSharedResult(token);
+    }
+
     @UseGuards(JwtAuthGuard)
     @ApiResponse({ status: 200, description: 'Test questions', type: [QuestionsDto] })
     @Get('/:testId')
     async getTestById(@Param('testId') testId: string, @Req() req) {
-        return this.testsService.getTestQuesitions(testId);
+        return this.testsService.getTestQuesitions(testId, req.user.id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @ApiResponse({ status: 201, description: 'Share link created', schema: { example: { token: 'abc123' } } })
+    @Post('/:testId/share')
+    async shareTest(@Param('testId') testId: string, @Req() req) {
+        return this.testsService.createShareLink(req.user.id, testId);
     }
 
     @UseGuards(JwtAuthGuard)

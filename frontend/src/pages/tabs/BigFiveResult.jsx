@@ -1,14 +1,16 @@
 import { motion } from 'framer-motion';
+import { useTranslation, Trans } from 'react-i18next';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
 import { tScoreToPercentile, percentileColor } from '../../utils/tScore.js';
 
-// O at top, going clockwise → C → E → A → N (the OCEAN acronym order)
+// O at top, going clockwise → C → E → A → N (the OCEAN acronym order).
+// Display names + comparison phrases come from the `results` namespace (bigFive.traits).
 const TRAIT_AXES = [
-  { key: 'O', short: 'O', long: 'Openness' },
-  { key: 'C', short: 'C', long: 'Conscientiousness' },
-  { key: 'E', short: 'E', long: 'Extraversion' },
-  { key: 'A', short: 'A', long: 'Agreeableness' },
-  { key: 'N', short: 'N', long: 'Neuroticism' },
+  { key: 'O', short: 'O' },
+  { key: 'C', short: 'C' },
+  { key: 'E', short: 'E' },
+  { key: 'A', short: 'A' },
+  { key: 'N', short: 'N' },
 ];
 
 // Facet keys map to backend result keys (E1..E6, A1..A6, etc.).
@@ -22,6 +24,7 @@ const FACET_KEYS = {
 
 // ─── Radar / spider chart ────────────────────────────────────────────────────
 function BigFiveRadar({ percentiles }) {
+  const { t } = useTranslation('results');
   const size = 360;
   const cx = size / 2;
   const cy = size / 2;
@@ -57,7 +60,7 @@ function BigFiveRadar({ percentiles }) {
         className="w-full max-w-md mx-auto"
         preserveAspectRatio="xMidYMid meet"
         role="img"
-        aria-label="Big Five percentile radar"
+        aria-label={t('bigFive.radarAria')}
       >
         <defs>
           <radialGradient id="bigFiveFill" cx="50%" cy="50%" r="50%">
@@ -140,7 +143,7 @@ function BigFiveRadar({ percentiles }) {
                 fill="#1A1A1A"
                 style={{ fontFamily: 'Geist, Inter, sans-serif', letterSpacing: '0.04em' }}
               >
-                {trait.long.toUpperCase()}
+                {t(`bigFive.traits.${trait.key}.long`).toUpperCase()}
               </text>
               <text
                 x={labelPt.x}
@@ -186,17 +189,9 @@ function FacetRow({ name, percentile, delay }) {
   );
 }
 
-// Comparative phrase per trait, used for the "You're {phrase} N% of people" line.
-const TRAIT_COMPARISON = {
-  O: 'more curious than',
-  C: 'more disciplined than',
-  E: 'more outgoing than',
-  A: 'more agreeable than',
-  N: 'more anxious than',
-};
-
 // ─── Per-trait facet group ───────────────────────────────────────────────────
-function FacetGroup({ trait, traitPercentile, facets, delay }) {
+function FacetGroup({ trait, traitPercentile, facets, delay, ownerName }) {
+  const { t } = useTranslation('results');
   return (
     <motion.section
       className="surface-warm rounded-3xl p-5 sm:p-6"
@@ -206,12 +201,19 @@ function FacetGroup({ trait, traitPercentile, facets, delay }) {
     >
       <header className="mb-4">
         <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">
-          {trait.long}
+          {t(`bigFive.traits.${trait.key}.long`)}
         </h3>
         <p className="text-sm text-persona-muted mt-1.5">
-          You&apos;re {TRAIT_COMPARISON[trait.key]}{' '}
-          <span className="font-semibold text-persona-dark">{traitPercentile}%</span>{' '}
-          of people
+          <Trans
+            t={t}
+            i18nKey={ownerName ? 'bigFive.comparisonOwner' : 'bigFive.comparisonSelf'}
+            values={{
+              name: ownerName,
+              comparison: t(`bigFive.traits.${trait.key}.comparison`),
+              pct: traitPercentile,
+            }}
+            components={{ b: <span className="font-semibold text-persona-dark" /> }}
+          />
         </p>
       </header>
 
@@ -219,7 +221,7 @@ function FacetGroup({ trait, traitPercentile, facets, delay }) {
         {facets.map((f, i) => (
           <FacetRow
             key={f.key}
-            name={f.name}
+            name={t(`bigFive.facets.${f.key}`)}
             percentile={f.percentile}
             delay={delay + 0.05 + i * 0.04}
           />
@@ -230,7 +232,8 @@ function FacetGroup({ trait, traitPercentile, facets, delay }) {
 }
 
 // ─── Main result screen ──────────────────────────────────────────────────────
-export default function BigFiveResultScreen({ result, meta, onRetake, onViewPortrait }) {
+export default function BigFiveResultScreen({ result, meta, onRetake, onViewPortrait, actions, ownerName }) {
+  const { t } = useTranslation('results');
   const r = result?.result || {};
   const Icon = meta.icon;
 
@@ -267,11 +270,10 @@ export default function BigFiveResultScreen({ result, meta, onRetake, onViewPort
           <Icon className={`w-10 h-10 ${meta.iconColor}`} />
         </motion.div>
         <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">
-          Your Big Five profile
+          {ownerName ? t('bigFive.titleOwner', { name: ownerName }) : t('bigFive.titleSelf')}
         </h2>
         <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-          Each axis shows how you compare to other people — the further from the center, the higher
-          you scored.
+          {ownerName ? t('bigFive.subtitleOwner', { name: ownerName }) : t('bigFive.subtitleSelf')}
         </p>
       </div>
 
@@ -294,32 +296,37 @@ export default function BigFiveResultScreen({ result, meta, onRetake, onViewPort
             traitPercentile={traitPct[trait.key]}
             facets={facetsByTrait[trait.key]}
             delay={0.3 + i * 0.08}
+            ownerName={ownerName}
           />
         ))}
       </div>
 
       {/* Footer actions */}
       <div className="flex flex-col gap-3 max-w-sm mx-auto">
-        <motion.button
-          onClick={onViewPortrait}
-          className="btn-primary w-full"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-        >
-          View portrait
-        </motion.button>
-        <motion.button
-          onClick={onRetake}
-          className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
-          whileTap={{ scale: 0.97 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9 }}
-        >
-          <HiOutlineArrowPath className="w-4 h-4" /> Retake test
-        </motion.button>
+        {actions ?? (
+          <>
+            <motion.button
+              onClick={onViewPortrait}
+              className="btn-primary w-full"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              {t('viewPortrait')}
+            </motion.button>
+            <motion.button
+              onClick={onRetake}
+              className="text-sm text-persona-muted hover:text-persona-dark transition-colors flex items-center gap-1.5 mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-2 py-1"
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.9 }}
+            >
+              <HiOutlineArrowPath className="w-4 h-4" /> {t('retake')}
+            </motion.button>
+          </>
+        )}
       </div>
     </motion.div>
   );

@@ -1,0 +1,33 @@
+{
+  "userNotFound": "Пользователь не найден",
+  "userExists": "Пользователь с такой почтой уже существует",
+  "invalidPassword": "Неверный пароль",
+  "invalidRefreshToken": "Недействительный токен обновления",
+  "invalidCode": "Неверный код",
+  "noToken": "Токен не предоставлен",
+  "invalidToken": "Недействительный токен",
+  "test": {
+    "calculatorNotFound": "Калькулятор для этого типа теста не найден",
+    "questionsNotFound": "Вопросы не найдены",
+    "optionsNotFound": "Не найдены варианты для расчёта результата",
+    "confirmGender": "Укажите пол пользователя",
+    "testNotFound": "Тест не найден",
+    "resultNotFound": "Результат не найден",
+    "sharedResultNotFound": "Общий результат не найден",
+    "unknownTestType": "Неизвестный тип теста",
+    "testTypeNotFound": "Тип теста не найден",
+    "answersCount": "Количество ответов должно быть {{count}}",
+    "completePrevious": "Сначала пройдите предыдущие тесты: {{tests}}"
+  },
+  "friends": {
+    "cannotAddYourself": "Нельзя добавить самого себя",
+    "requestNotFound": "Заявка не найдена",
+    "notFriends": "Вы не друзья",
+    "inviteNotFound": "Приглашение не найдено"
+  },
+  "recommendations": {
+    "notFound": "Рекомендация не найдена",
+    "notFoundOrSwiped": "Рекомендация не найдена или уже оценена",
+    "invalidType": "Параметр запроса «type» должен быть «film» или «book»"
+  }
+}

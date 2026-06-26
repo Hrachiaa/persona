@@ -1,50 +1,44 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineUser, HiOutlineCalendarDays } from 'react-icons/hi2';
 import { authApi } from '../api/auth';
+import i18n, { setLanguage, SUPPORTED_LANGUAGES } from '../i18n';
 
+// Visual/structural config only — copy comes from the `survey` namespace by step id.
 const genderOptions = [
-  { value: 'M', label: 'Male', emoji: '♂' },
-  { value: 'F', label: 'Female', emoji: '♀' },
+  { value: 'M', labelKey: 'gender.male', emoji: '♂' },
+  { value: 'F', labelKey: 'gender.female', emoji: '♀' },
 ];
 
 const steps = [
-  {
-    id: 'name',
-    title: "What's your name?",
-    subtitle: "We'd love to know what to call you",
-    icon: HiOutlineUser,
-    placeholder: 'Enter your name',
-    type: 'text',
-    field: 'name',
-  },
-  {
-    id: 'gender',
-    title: 'How do you identify?',
-    subtitle: 'This helps us personalize your experience',
-    icon: HiOutlineUser,
-    type: 'gender',
-    field: 'gender',
-  },
-  {
-    id: 'birthDate',
-    title: 'When were you born?',
-    subtitle: 'This helps personalize your experience',
-    icon: HiOutlineCalendarDays,
-    placeholder: 'Enter your birth year (e.g. 1995)',
-    type: 'number',
-    field: 'birthDate',
-  },
+  { id: 'name', icon: HiOutlineUser, type: 'text', field: 'name' },
+  { id: 'gender', icon: HiOutlineUser, type: 'gender', field: 'gender' },
+  { id: 'birthDate', icon: HiOutlineCalendarDays, type: 'number', field: 'birthDate' },
 ];
 
 export default function Survey({ onComplete }) {
+  const { t } = useTranslation('survey');
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [profileData, setProfileData] = useState({ name: '', gender: '', birthDate: '' });
+  const [profileData, setProfileData] = useState({
+    name: '',
+    gender: '',
+    birthDate: '',
+    language: i18n.language,
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const currentStep = steps[step];
+
+  // Language is chosen on the first (name) step and applied to the UI immediately,
+  // so the rest of the survey is shown in the selected language. It's persisted to
+  // the account together with the rest of the profile on submit.
+  const handleLanguageChange = (code) => {
+    setProfileData((prev) => ({ ...prev, language: code }));
+    setLanguage(code);
+  };
 
   const handleNext = async () => {
     if (step === steps.length - 1) {
@@ -56,10 +50,11 @@ export default function Survey({ onComplete }) {
           name: profileData.name,
           gender: profileData.gender,
           birthDate: parseInt(profileData.birthDate, 10),
+          language: profileData.language,
         });
         onComplete();
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to save profile. Please try again.');
+        setError(err.response?.data?.message || t('saveError'));
         setIsLoading(false);
       }
     } else {
@@ -103,7 +98,7 @@ export default function Survey({ onComplete }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4 }}
-      aria-label="Profile survey"
+      aria-label={t('aria')}
       className="min-h-dvh bg-persona-bg flex flex-col items-center justify-center px-6 py-12"
     >
       <div className="w-full max-w-md">
@@ -115,7 +110,7 @@ export default function Survey({ onComplete }) {
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium tracking-wide text-persona-muted">
-              Step {step + 1} of {steps.length}
+              {t('stepOf', { n: step + 1, total: steps.length })}
             </span>
             <span className="text-sm font-medium text-persona-dark tabular">
               {Math.round(progress)}%
@@ -151,9 +146,9 @@ export default function Survey({ onComplete }) {
             </motion.div>
 
             <h2 className="font-display text-3xl font-semibold text-persona-dark mb-2">
-              {currentStep.title}
+              {t(`steps.${currentStep.id}.title`)}
             </h2>
-            <p className="text-persona-muted mb-8">{currentStep.subtitle}</p>
+            <p className="text-persona-muted mb-8">{t(`steps.${currentStep.id}.subtitle`)}</p>
 
             {/* Input */}
             {currentStep.type === 'gender' ? (
@@ -177,7 +172,7 @@ export default function Survey({ onComplete }) {
                     <span className={`font-medium text-lg ${
                       profileData.gender === opt.value ? 'text-persona-dark' : 'text-persona-muted'
                     }`}>
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </span>
                   </motion.button>
                 ))}
@@ -185,19 +180,46 @@ export default function Survey({ onComplete }) {
             ) : (
               <div className="text-left">
                 <label htmlFor={`survey-${currentStep.field}`} className="field-label sr-only">
-                  {currentStep.title}
+                  {t(`steps.${currentStep.id}.title`)}
                 </label>
                 <input
                   id={`survey-${currentStep.field}`}
                   name={currentStep.field}
                   type={currentStep.type}
                   inputMode={currentStep.type === 'number' ? 'numeric' : 'text'}
-                  placeholder={currentStep.placeholder}
+                  placeholder={t(`steps.${currentStep.id}.placeholder`)}
                   value={profileData[currentStep.field]}
                   onChange={handleChange}
                   className={`input-field text-center text-lg ${currentStep.type === 'number' ? 'tabular' : ''}`}
                   autoFocus
                 />
+              </div>
+            )}
+
+            {/* Language chooser — shown on the first (name) step. Applies immediately
+                and is saved with the profile. */}
+            {currentStep.id === 'name' && (
+              <div className="mt-8">
+                <p className="field-label text-center">{t('languagePrompt')}</p>
+                <div role="radiogroup" aria-label={t('languagePrompt')} className="inline-flex w-full p-1 bg-white shadow-warm rounded-full">
+                  {SUPPORTED_LANGUAGES.map((l) => {
+                    const active = profileData.language === l.code;
+                    return (
+                      <button
+                        key={l.code}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        onClick={() => handleLanguageChange(l.code)}
+                        className={`flex-1 py-2.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach ${
+                          active ? 'bg-persona-dark text-white' : 'text-persona-muted hover:text-persona-dark'
+                        }`}
+                      >
+                        {l.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </motion.div>
@@ -225,7 +247,7 @@ export default function Survey({ onComplete }) {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              Back
+              {t('common:back')}
             </motion.button>
           )}
           <motion.button
@@ -235,7 +257,7 @@ export default function Survey({ onComplete }) {
             whileHover={isStepValid() && !isLoading ? { scale: 1.02 } : {}}
             whileTap={isStepValid() && !isLoading ? { scale: 0.97 } : {}}
           >
-            {isLoading ? 'Saving…' : step === steps.length - 1 ? "Let's go" : 'Continue'}
+            {isLoading ? t('common:saving') : step === steps.length - 1 ? t('letsGo') : t('common:continue')}
           </motion.button>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ChangeForgottenPasswordDto, ForgotPasswordCodeDto, ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { ChangePasswordDto } from './dtos/change-password.dto';
 import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
+import { UpdateLanguageDto } from './dtos/update-language.dto';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { UserDto } from './dtos/user.dto';
 
@@ -46,6 +47,17 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     async addProfileInfo(@Body() profileInfoDto: AddProfileInfoDto, @Req() req){
         return await this.authService.addProfileInfo(req.user.id, profileInfoDto);
+    }
+
+    @Post('language')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Update user UI language' })
+    @ApiResponse({ status: 200, description: 'Language updated successfully' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @UseGuards(JwtAuthGuard)
+    async updateLanguage(@Body() updateLanguageDto: UpdateLanguageDto, @Req() req){
+        await this.authService.updateLanguage(req.user.id, updateLanguageDto.language);
+        return { ok: true };
     }
 
     @Post('login')

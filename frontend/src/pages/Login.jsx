@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeSlash } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/auth';
 
 export default function Login({ onComplete, onRegister, onForgotPassword }) {
+  const { t } = useTranslation('auth');
   const { login, error, clearError } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,8 +49,8 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
           <p className="text-2xl font-medium tracking-tight text-persona-dark flex items-center justify-center gap-2 mb-6">
             <span className="font-display text-3xl">λ</span> Persona
           </p>
-          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">Welcome back</h1>
-          <p className="text-persona-muted">Sign in to continue your journey.</p>
+          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">{t('login.title')}</h1>
+          <p className="text-persona-muted">{t('login.subtitle')}</p>
         </motion.header>
 
         {/* Error Message */}
@@ -72,7 +74,7 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
         >
           {/* Email */}
           <div>
-            <label htmlFor="login-email" className="field-label">Email</label>
+            <label htmlFor="login-email" className="field-label">{t('emailLabel')}</label>
             <div className="relative">
               <HiOutlineEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -80,7 +82,7 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
                 name="email"
                 type="email"
                 autoComplete="email"
-                placeholder="you@example.com"
+                placeholder={t('emailPlaceholder')}
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); clearError(); }}
                 className="input-field pl-12"
@@ -91,7 +93,7 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
 
           {/* Password */}
           <div>
-            <label htmlFor="login-password" className="field-label">Password</label>
+            <label htmlFor="login-password" className="field-label">{t('passwordLabel')}</label>
             <div className="relative">
               <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -99,7 +101,7 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
                 name="password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
-                placeholder="Your password"
+                placeholder={t('passwordPlaceholder')}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); clearError(); }}
                 className="input-field pl-12 pr-12"
@@ -108,7 +110,7 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? t('hidePassword') : t('showPassword')}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach rounded-full p-0.5"
               >
                 {showPassword ? <HiOutlineEyeSlash className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
@@ -123,7 +125,7 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
               onClick={onForgotPassword}
               className="text-sm text-persona-muted hover:text-persona-dark transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1"
             >
-              Forgot password?
+              {t('login.forgotPassword')}
             </button>
           </div>
 
@@ -141,9 +143,9 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                Signing in…
+                {t('login.submitting')}
               </span>
-            ) : 'Sign in'}
+            ) : t('login.submit')}
           </motion.button>
         </motion.form>
 
@@ -155,7 +157,7 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
           className="flex items-center gap-4 my-8"
         >
           <div className="flex-1 h-px bg-persona-line" />
-          <span className="text-sm text-persona-muted">or continue with</span>
+          <span className="text-sm text-persona-muted">{t('orContinueWith')}</span>
           <div className="flex-1 h-px bg-persona-line" />
         </motion.div>
 
@@ -188,12 +190,12 @@ export default function Login({ onComplete, onRegister, onForgotPassword }) {
           transition={{ delay: 0.6 }}
           className="text-center text-sm text-persona-muted mt-8"
         >
-          Don&apos;t have an account?{' '}
+          {t('login.noAccount')}{' '}
           <button
             onClick={onRegister}
             className="text-persona-dark font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1"
           >
-            Sign up
+            {t('login.signUp')}
           </button>
         </motion.p>
       </div>

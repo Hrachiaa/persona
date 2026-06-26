@@ -5,6 +5,7 @@ import { PortraitRepository } from './portrait.repository';
 import { PortraitDto } from './dtos/portrait.dto';
 import { TEST_ORDER } from '../tests/test-order';
 import { TestResultType } from '../tests/models/test-result.entity';
+import { getLang } from '../i18n/translate';
 
 @Injectable()
 export class PortraitService {
@@ -57,7 +58,7 @@ export class PortraitService {
     // otherwise kick one off. Either way the client polls until it lands — and it
     // already knows which tests are done, so it can show the constellation loading.
     if (!refreshing) {
-      void this.dedupedGenerate(userId, targetTests, results);
+      void this.dedupedGenerate(userId, targetTests, results, getLang());
     }
     return PortraitDto.generating(targetTests);
   }
@@ -73,7 +74,7 @@ export class PortraitService {
       const results = await this.testResultRepository.getTestResults(userId);
       const targetTests = this.resolveTargetTests(results);
       if (targetTests.length === 0) return;
-      await this.dedupedGenerate(userId, targetTests, results);
+      await this.dedupedGenerate(userId, targetTests, results, getLang());
     } catch (error) {
       this.logger.error(`Failed to regenerate portrait for userId=${userId}`, error as Error);
     }
@@ -97,11 +98,12 @@ export class PortraitService {
     userId: string,
     targetTests: readonly string[],
     results: { testType: string; result: unknown }[],
+    lang: string,
   ): Promise<string | null> {
     const key = this.cacheKey(userId, targetTests);
     let inFlight = this.inFlight.get(key);
     if (!inFlight) {
-      inFlight = this.generateAndCache(userId, targetTests, results).finally(() =>
+      inFlight = this.generateAndCache(userId, targetTests, results, lang).finally(() =>
         this.inFlight.delete(key),
       );
       this.inFlight.set(key, inFlight);
@@ -117,6 +119,7 @@ export class PortraitService {
     userId: string,
     targetTests: readonly string[],
     results: { testType: string; result: unknown }[],
+    lang: string,
   ): Promise<string | null> {
     try {
       // Order results by the portrait's test sequence for a stable prompt.
@@ -127,7 +130,7 @@ export class PortraitService {
 
       // All tests done → route the synthesis to the stronger model.
       const complete = targetTests.length === TEST_ORDER.length;
-      const content = await this.aiService.interpretPortrait(ordered, { complete });
+      const content = await this.aiService.interpretPortrait(ordered, { complete, lang });
       if (content) {
         await this.portraitRepository.upsert(userId, content, [...targetTests]);
       }

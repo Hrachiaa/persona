@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import {
   HiOutlineBookOpen,
@@ -12,8 +14,8 @@ import {
 import { recommendationsApi } from '../../api/recommendations';
 
 const MODES = [
-  { id: 'film', label: 'Films', icon: HiOutlineFilm },
-  { id: 'book', label: 'Books', icon: HiOutlineBookOpen },
+  { id: 'film', labelKey: 'common:films', icon: HiOutlineFilm },
+  { id: 'book', labelKey: 'common:books', icon: HiOutlineBookOpen },
 ];
 
 const TOTAL_TESTS = 6;
@@ -102,6 +104,7 @@ function FilmFace({ item }) {
 }
 
 function BookFace({ item }) {
+  const { t } = useTranslation('reco');
   return (
     <div className="relative w-full h-full rounded-4xl overflow-hidden shadow-warm-lg bg-persona-card select-none flex flex-col">
       <div className="flex justify-center pt-20 pb-5 px-6 bg-persona-bg/70">
@@ -111,9 +114,9 @@ function BookFace({ item }) {
         <h3 className="font-display text-xl font-semibold text-persona-dark leading-tight">{item.title}</h3>
         {item.author && <p className="text-sm text-persona-muted mt-0.5 mb-3">{item.author}</p>}
         <p className="text-sm text-persona-muted leading-relaxed line-clamp-6">
-          {item.synopsis || 'No description available for this book.'}
+          {item.synopsis || t('bookFace.noDescription')}
         </p>
-        <p className="text-xs font-medium text-persona-accent-blue mt-3">Tap to read a preview →</p>
+        <p className="text-xs font-medium text-persona-accent-blue mt-3">{t('bookFace.tapToRead')}</p>
       </div>
     </div>
   );
@@ -121,6 +124,7 @@ function BookFace({ item }) {
 
 // The Google Books preview reader shown inside the book modal.
 function BookPreview({ item }) {
+  const { t } = useTranslation('reco');
   const ref = useRef(null);
   const volumeId = bookVolumeId(item);
   const [state, setState] = useState('loading'); // loading | ready | unavailable
@@ -160,17 +164,17 @@ function BookPreview({ item }) {
               <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.1, ease: 'linear' }} className="inline-flex mb-3 text-persona-muted">
                 <HiOutlineArrowPath className="w-6 h-6" />
               </motion.span>
-              <p className="text-sm text-persona-muted">Loading preview…</p>
+              <p className="text-sm text-persona-muted">{t('preview.loading')}</p>
             </>
           ) : (
             <>
-              <p className="text-sm text-persona-dark font-medium mb-1">No preview available</p>
+              <p className="text-sm text-persona-dark font-medium mb-1">{t('preview.unavailableTitle')}</p>
               <p className="text-sm text-persona-muted leading-relaxed max-w-xs mb-4">
-                {item.synopsis || 'This book has no readable preview.'}
+                {item.synopsis || t('preview.unavailableBody')}
               </p>
               {item.extra?.url && (
                 <a href={item.extra.url} target="_blank" rel="noreferrer" className="btn-secondary inline-flex">
-                  Open on Google Books
+                  {t('preview.openGoogle')}
                 </a>
               )}
             </>
@@ -183,6 +187,7 @@ function BookPreview({ item }) {
 
 // ─── The draggable top card ──────────────────────────────────────────────────
 function SwipeCard({ item, custom, onSwipe, onInfo }) {
+  const { t } = useTranslation('reco');
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-220, 220], [-14, 14]);
   const likeOpacity = useTransform(x, [40, 130], [0, 1]);
@@ -220,13 +225,13 @@ function SwipeCard({ item, custom, onSwipe, onInfo }) {
         style={{ opacity: likeOpacity }}
         className="absolute top-7 left-6 z-10 -rotate-12 border-[3px] border-emerald-400 text-emerald-400 rounded-xl px-3 py-1 text-2xl font-extrabold tracking-wider pointer-events-none"
       >
-        LIKE
+        {t('stamps.like')}
       </motion.div>
       <motion.div
         style={{ opacity: nopeOpacity }}
         className="absolute top-7 right-6 z-10 rotate-12 border-[3px] border-rose-500 text-rose-500 rounded-xl px-3 py-1 text-2xl font-extrabold tracking-wider pointer-events-none"
       >
-        NOPE
+        {t('stamps.nope')}
       </motion.div>
     </motion.div>
   );
@@ -268,7 +273,10 @@ function ActionButton({ onClick, children, className = '', size = 'md', label })
 }
 
 export default function Recommendations({ onOpenTests, onImmersiveChange }) {
-  const [mode, setMode] = useState('film');
+  const { t } = useTranslation('reco');
+  // `?type=film|book` drives which queue we show; defaults to film.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const mode = searchParams.get('type') === 'book' ? 'book' : 'film';
   const [cards, setCards] = useState([]);
   const [status, setStatus] = useState('loading'); // loading | locked | generating | ready | error
   const [lockInfo, setLockInfo] = useState({ completed: 0, required: TOTAL_TESTS });
@@ -345,7 +353,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
 
   function selectMode(next) {
     if (next === mode) return;
-    setMode(next);
+    setSearchParams({ type: next });
     setStatus('loading');
     setCards([]);
     setExhausted(false);
@@ -386,18 +394,17 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
           <div className="w-14 h-14 mx-auto mb-4 bg-persona-accent-lime/60 rounded-3xl flex items-center justify-center">
             <HiOutlineSparkles className="w-7 h-7 text-persona-dark" />
           </div>
-          <h2 className="font-display text-xl font-semibold text-persona-dark mb-1.5">Recommendations are locked</h2>
+          <h2 className="font-display text-xl font-semibold text-persona-dark mb-1.5">{t('locked.title')}</h2>
           <p className="text-sm text-persona-muted leading-relaxed mb-5">
-            Finish all {required} tests and Persona will hand-pick films and books for you — then you just
-            swipe right on what you like and left on what you don&apos;t.
+            {t('locked.body', { required })}
           </p>
           <div className="relative h-2.5 bg-persona-line/60 rounded-full overflow-hidden mb-2">
             <motion.div className="absolute inset-y-0 left-0 bg-persona-accent-lime rounded-full" initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8, ease: 'easeOut' }} />
           </div>
-          <p className="text-xs text-persona-muted mb-6 tabular">{completed} of {required} tests done</p>
+          <p className="text-xs text-persona-muted mb-6 tabular">{t('locked.progress', { completed, required })}</p>
           {onOpenTests && (
             <motion.button onClick={onOpenTests} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
-              {completed === 0 ? 'Take your first test' : 'Continue your tests'}
+              {completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
             </motion.button>
           )}
         </div>
@@ -407,6 +414,8 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
 
   const empty = cards.length === 0;
   const busy = status === 'loading' || status === 'generating' || (empty && generatingMore);
+  const mediaAcc = t(mode === 'film' ? 'media.filmsAcc' : 'media.booksAcc');
+  const mediaGen = t(mode === 'film' ? 'media.filmsGen' : 'media.booksGen');
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 lg:left-64 z-30 bg-persona-bg">
@@ -416,9 +425,9 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
           {/* Poster / state fill */}
           {status === 'error' ? (
             <div className="absolute inset-0 surface-warm rounded-4xl flex flex-col items-center justify-center text-center p-8">
-              <p className="text-sm text-persona-muted mb-4">Couldn&apos;t load recommendations right now.</p>
-              <motion.button onClick={() => { loadedModeRef.current = null; setPollTick((t) => t + 1); }} className="btn-secondary inline-flex items-center gap-2" whileTap={{ scale: 0.97 }}>
-                <HiOutlineArrowPath className="w-4 h-4" /> Try again
+              <p className="text-sm text-persona-muted mb-4">{t('error')}</p>
+              <motion.button onClick={() => { loadedModeRef.current = null; setPollTick((n) => n + 1); }} className="btn-secondary inline-flex items-center gap-2" whileTap={{ scale: 0.97 }}>
+                <HiOutlineArrowPath className="w-4 h-4" /> {t('common:retry')}
               </motion.button>
             </div>
           ) : busy ? (
@@ -427,7 +436,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
                 <HiOutlineArrowPath className="w-7 h-7" />
               </motion.span>
               <p className="text-sm text-persona-muted leading-relaxed max-w-xs">
-                {status === 'loading' ? 'Loading your picks…' : `Hand-picking ${mode === 'film' ? 'films' : 'books'} for you — this can take a moment.`}
+                {status === 'loading' ? t('busy.loading') : t('busy.generating', { media: mediaAcc })}
               </p>
             </div>
           ) : empty ? (
@@ -435,9 +444,9 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
               <div className="w-12 h-12 mb-3 bg-persona-accent-peach/50 rounded-2xl flex items-center justify-center">
                 <HiOutlineSparkles className="w-6 h-6 text-persona-dark" />
               </div>
-              <p className="text-sm text-persona-dark font-medium mb-1">You&apos;re all caught up</p>
+              <p className="text-sm text-persona-dark font-medium mb-1">{t('empty.title')}</p>
               <p className="text-sm text-persona-muted leading-relaxed max-w-xs">
-                We&apos;re out of fresh picks for now. Reset to start over, or check back soon.
+                {t('empty.body')}
               </p>
             </div>
           ) : (
@@ -463,7 +472,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
                 >
                   {isActive && <motion.div layoutId="recoModePill" className="absolute inset-0 bg-white shadow-warm rounded-full" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
                   <m.icon className="relative w-4 h-4" />
-                  <span className="relative">{m.label}</span>
+                  <span className="relative">{t(m.labelKey)}</span>
                 </button>
               );
             })}
@@ -471,16 +480,16 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
 
           {/* Action bar — floating on the poster */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center gap-3.5">
-            <ActionButton onClick={() => setConfirmReset(true)} size="md" label="Reset recommendations" className="text-persona-muted hover:text-persona-dark">
+            <ActionButton onClick={() => setConfirmReset(true)} size="md" label={t('actions.reset')} className="text-persona-muted hover:text-persona-dark">
               <HiOutlineArrowPath className="w-5 h-5" />
             </ActionButton>
-            <ActionButton onClick={() => doSwipe('DISLIKED')} size="lg" label="Dislike" className="text-rose-500">
+            <ActionButton onClick={() => doSwipe('DISLIKED')} size="lg" label={t('actions.dislike')} className="text-rose-500">
               <HiOutlineXMark className="w-8 h-8" />
             </ActionButton>
-            <ActionButton onClick={() => cards[0] && setInfo(cards[0])} size="md" label="Details" className="text-persona-accent-blue">
+            <ActionButton onClick={() => cards[0] && setInfo(cards[0])} size="md" label={t('actions.details')} className="text-persona-accent-blue">
               <HiOutlineInformationCircle className="w-6 h-6" />
             </ActionButton>
-            <ActionButton onClick={() => doSwipe('LIKED')} size="lg" label="Like" className="text-emerald-500">
+            <ActionButton onClick={() => doSwipe('LIKED')} size="lg" label={t('actions.like')} className="text-emerald-500">
               <HiOutlineHeart className="w-8 h-8" />
             </ActionButton>
           </div>
@@ -507,7 +516,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
                   <div className="flex-1 min-h-0">
                     <BookPreview item={info} />
                   </div>
-                  <button onClick={() => setInfo(null)} className="btn-secondary w-full mt-3 shrink-0">Close</button>
+                  <button onClick={() => setInfo(null)} className="btn-secondary w-full mt-3 shrink-0">{t('common:close')}</button>
                 </>
               ) : (
                 <>
@@ -519,9 +528,9 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
                     </div>
                   </div>
                   <p className="text-sm text-persona-dark/90 leading-relaxed">
-                    {info.synopsis || 'No description available for this title.'}
+                    {info.synopsis || t('filmFallback')}
                   </p>
-                  <button onClick={() => setInfo(null)} className="btn-secondary w-full mt-6">Close</button>
+                  <button onClick={() => setInfo(null)} className="btn-secondary w-full mt-6">{t('common:close')}</button>
                 </>
               )}
             </motion.div>
@@ -545,15 +554,14 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
               <div className="w-12 h-12 mx-auto mb-4 bg-rose-100 rounded-2xl flex items-center justify-center">
                 <HiOutlineArrowPath className="w-6 h-6 text-rose-500" />
               </div>
-              <h3 className="font-display text-lg font-semibold text-persona-dark mb-1.5">Reset {mode === 'film' ? 'films' : 'books'}?</h3>
+              <h3 className="font-display text-lg font-semibold text-persona-dark mb-1.5">{t('reset.title', { media: mediaAcc })}</h3>
               <p className="text-sm text-persona-muted leading-relaxed mb-6">
-                This clears your entire like/dislike history and watch list for {mode === 'film' ? 'films' : 'books'}.
-                Persona will start picking from scratch based on your profile. This can&apos;t be undone.
+                {t('reset.body', { mediaGen })}
               </p>
               <div className="flex gap-3">
-                <button onClick={() => setConfirmReset(false)} className="btn-secondary flex-1">Cancel</button>
+                <button onClick={() => setConfirmReset(false)} className="btn-secondary flex-1">{t('common:cancel')}</button>
                 <button onClick={handleReset} className="flex-1 rounded-full bg-rose-500 text-white font-medium py-2.5 px-4 hover:bg-rose-600 transition-colors">
-                  Reset
+                  {t('reset.confirm')}
                 </button>
               </div>
             </motion.div>

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import i18n from '../i18n';
 
 // In dev, Vite proxy rewrites /api → backend. In prod, we hit the backend directly.
 const API_URL = import.meta.env.VITE_API_URL || '/api';
@@ -8,12 +9,14 @@ const client = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach access token to every request
+// Attach access token + current UI language to every request
 client.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  // Lets the backend localize error messages, emails and AI-generated content.
+  config.headers['Accept-Language'] = i18n.language;
   return config;
 });
 

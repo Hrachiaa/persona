@@ -1,0 +1,24 @@
+{
+  "slides": [
+    {
+      "title": "Discover Who You Are",
+      "description": "Take scientifically-inspired personality tests and uncover the traits that make you unique."
+    },
+    {
+      "title": "Deep Personality Insights",
+      "description": "Get detailed analysis of your strengths, risk zones, and behavioral patterns."
+    },
+    {
+      "title": "Check Compatibility",
+      "description": "See how well you match with friends, partners, or colleagues based on personality type."
+    },
+    {
+      "title": "Grow Every Day",
+      "description": "Receive personalized book & film recommendations and daily advice tailored to your personality."
+    }
+  ],
+  "goToSlide": "Go to slide {{n}}",
+  "next": "Next",
+  "getStarted": "Get started",
+  "skip": "Skip"
+}

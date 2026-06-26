@@ -5,6 +5,7 @@ import { UserEntity } from './models/user.entity';
 import { AuthDto } from './dtos/auth.dto';
 import { AddProfileInfoDto } from '../auth/dtos/add-profile-info.dto';
 import { UserRepository } from './user.repository';
+import { t } from '../i18n/translate';
 
 @Injectable()
 export class UsersService {
@@ -28,17 +29,25 @@ export class UsersService {
         return await this.userRepository.getUserById(id);
     }
 
+    async getUserByInviteToken(inviteToken: string): Promise<User | null> {
+        return await this.userRepository.getUserByInviteToken(inviteToken);
+    }
+
+    async setInviteToken(id: string, inviteToken: string): Promise<void> {
+        return await this.userRepository.setInviteToken(id, inviteToken);
+    }
+
     async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void>{
         const user: UserEntity | null = await this.getUserById(userId);
         if(!user){
-            throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+            throw new HttpException(t('errors.userNotFound'), HttpStatus.UNAUTHORIZED);
         } 
         if(!user.password){
-            throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.invalidPassword'), HttpStatus.BAD_REQUEST);
         }
         const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
         if(!isPasswordValid){
-            throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.invalidPassword'), HttpStatus.BAD_REQUEST);
         }
         const hashPassword = await bcrypt.hash(newPassword, 8);
         await this.userRepository.changePassword(userId, hashPassword);
@@ -46,6 +55,10 @@ export class UsersService {
 
     async addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void> {
         return await this.userRepository.addProfileInfo(id, profileInfoDto);
+    }
+
+    async updateLanguage(id: string, language: string): Promise<void> {
+        return await this.userRepository.updateLanguage(id, language);
     }
 
     async addGoogleInfo(id: string, googleId: string): Promise<UserEntity> {

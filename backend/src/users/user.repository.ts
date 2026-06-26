@@ -9,8 +9,11 @@ export interface UserRepositoryInterface {
     getAllUsers(): Promise<UserEntity[]>;
     getUserByEmail(email: string): Promise<UserEntity | null>;
     getUserById(id: string): Promise<UserEntity | null>;
+    getUserByInviteToken(inviteToken: string): Promise<UserEntity | null>;
+    setInviteToken(id: string, inviteToken: string): Promise<void>;
     changePassword(id: string, password: string): Promise<void>;
     addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void>;
+    updateLanguage(id: string, language: string): Promise<void>;
     addGoogleInfo(id: string, googleId: string): Promise<UserEntity>;
 }
 
@@ -34,12 +37,24 @@ export class UserRepository implements UserRepositoryInterface {
         return await this.prisma.user.findUnique({ where: { id } });
     }
 
+    async getUserByInviteToken(inviteToken: string): Promise<UserEntity | null> {
+        return await this.prisma.user.findUnique({ where: { inviteToken } });
+    }
+
+    async setInviteToken(id: string, inviteToken: string): Promise<void> {
+        await this.prisma.user.update({ where: { id }, data: { inviteToken } });
+    }
+
     async changePassword(id: string, password: string): Promise<void> {
         await this.prisma.user.update({ where: { id }, data: { password } });
     }
 
     async addProfileInfo(id: string, profileInfoDto: AddProfileInfoDto): Promise<void> {
         await this.prisma.user.update({ where: { id }, data: profileInfoDto });
+    }
+
+    async updateLanguage(id: string, language: string): Promise<void> {
+        await this.prisma.user.update({ where: { id }, data: { language } });
     }
 
     async addGoogleInfo(id: string, googleId: string): Promise<UserEntity> {

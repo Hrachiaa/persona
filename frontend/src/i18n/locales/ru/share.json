@@ -1,0 +1,21 @@
+{
+  "page": {
+    "notFound": "Результат не найден",
+    "notFoundBody": "Эта ссылка недействительна или истекла.",
+    "discover": "Узнать о Persona",
+    "backToTests": "К вашим тестам",
+    "discoverYours": "Откройте свою Persona",
+    "sharedByOwner": "{{name}} поделился(-ась) своим результатом теста «{{test}}».",
+    "sharedAnon": "С вами поделились результатом теста «{{test}}».",
+    "curious": "Интересно, как вы себя проявите?",
+    "takeTest": "Пройти тест",
+    "ownerFallback": "Этот человек"
+  },
+  "bar": {
+    "share": "Поделиться",
+    "linkCopied": "Ссылка скопирована",
+    "ariaShare": "Поделиться результатом",
+    "shareTitle": "Мой результат в Persona",
+    "shareText": "Посмотрите мой результат теста «{{test}}» в Persona"
+  }
+}

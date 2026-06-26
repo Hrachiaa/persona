@@ -1,32 +1,14 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineSparkles, HiOutlinePuzzlePiece, HiOutlineUserGroup, HiOutlineRocketLaunch } from 'react-icons/hi2';
 
+// Visual config only — copy lives in the `onboarding` namespace, keyed by index.
 const slides = [
-  {
-    icon: HiOutlineSparkles,
-    color: 'bg-persona-accent-lavender',
-    title: 'Discover Who You Are',
-    description: 'Take scientifically-inspired personality tests and uncover the traits that make you unique.',
-  },
-  {
-    icon: HiOutlinePuzzlePiece,
-    color: 'bg-persona-accent-yellow',
-    title: 'Deep Personality Insights',
-    description: 'Get detailed analysis of your strengths, risk zones, and behavioral patterns.',
-  },
-  {
-    icon: HiOutlineUserGroup,
-    color: 'bg-persona-accent-pink',
-    title: 'Check Compatibility',
-    description: 'See how well you match with friends, partners, or colleagues based on personality type.',
-  },
-  {
-    icon: HiOutlineRocketLaunch,
-    color: 'bg-persona-accent-lime',
-    title: 'Grow Every Day',
-    description: 'Receive personalized book & film recommendations and daily advice tailored to your personality.',
-  },
+  { icon: HiOutlineSparkles, color: 'bg-persona-accent-lavender' },
+  { icon: HiOutlinePuzzlePiece, color: 'bg-persona-accent-yellow' },
+  { icon: HiOutlineUserGroup, color: 'bg-persona-accent-pink' },
+  { icon: HiOutlineRocketLaunch, color: 'bg-persona-accent-lime' },
 ];
 
 const slideVariants = {
@@ -45,6 +27,7 @@ const slideVariants = {
 };
 
 export default function Onboarding({ onComplete }) {
+  const { t } = useTranslation('onboarding');
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -108,10 +91,10 @@ export default function Onboarding({ onComplete }) {
 
               {/* Text */}
               <h2 className="font-display text-4xl font-semibold text-persona-dark mb-4 leading-tight">
-                {slide.title}
+                {t(`slides.${current}.title`)}
               </h2>
               <p className="text-persona-muted text-lg leading-relaxed max-w-prose">
-                {slide.description}
+                {t(`slides.${current}.description`)}
               </p>
             </motion.div>
           </AnimatePresence>
@@ -123,7 +106,7 @@ export default function Onboarding({ onComplete }) {
             <motion.button
               key={i}
               onClick={() => goTo(i)}
-              aria-label={`Go to slide ${i + 1}`}
+              aria-label={t('goToSlide', { n: i + 1 })}
               className={`h-2.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
                 i === current
                   ? 'bg-persona-dark w-8'
@@ -141,7 +124,7 @@ export default function Onboarding({ onComplete }) {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
         >
-          {current === slides.length - 1 ? 'Get started' : 'Next'}
+          {current === slides.length - 1 ? t('getStarted') : t('next')}
         </motion.button>
 
         {/* Skip */}
@@ -153,7 +136,7 @@ export default function Onboarding({ onComplete }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            Skip
+            {t('skip')}
           </motion.button>
         )}
       </div>

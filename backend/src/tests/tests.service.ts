@@ -13,6 +13,12 @@ import { QuestionsDto } from './dtos/test-questions.dto';
 import { TestScoringService } from './test-scoring.service';
 import { TEST_ORDER } from './test-order';
 import { PortraitService } from '../portrait/portrait.service';
+import { t, getLang } from '../i18n/translate';
+import { localizeQuestions } from './localize-questions';
+import { CompatibilityService } from '../friends/compatibility.service';
+import { SharedResultDto } from './dtos/shared-result.dto';
+import { UsersService } from '../users/users.service';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class TestsService implements OnModuleInit {
@@ -22,15 +28,22 @@ export class TestsService implements OnModuleInit {
         private readonly testScoringService: TestScoringService,
         @Inject(forwardRef(() => PortraitService))
         private readonly portraitService: PortraitService,
+        @Inject(forwardRef(() => CompatibilityService))
+        private readonly compatibilityService: CompatibilityService,
+        private readonly usersService: UsersService,
     ) {}
 
     async onModuleInit() {
-        const isExists = await this.testRepository.getAllTests()
-        if(isExists.length === 6) return
-        
-        const tests = await this.testRepository.createTests()
-        await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.ecr.id, tests.cope.id, tests.pid.id)
-        return
+        const existing = await this.testRepository.getAllTests()
+        if(existing.length !== 6) {
+            const tests = await this.testRepository.createTests()
+            await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.ecr.id, tests.cope.id, tests.pid.id)
+            return
+        }
+
+        // Keep stored question banks in sync with the seed so edits (e.g. the
+        // bilingual BigFive text) propagate on restart without a manual reseed.
+        await this.testRepository.syncQuestions(existing)
     }
 
     async getAllTests(userId: string): Promise<GetTestsDto[]> {
@@ -44,15 +57,27 @@ export class TestsService implements OnModuleInit {
         })
     }
 
-    async getTestQuesitions(testId: string): Promise<QuestionsDto[]> {
+    async getTestQuesitions(testId: string, userId: string): Promise<QuestionsDto[]> {
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
-        if(!questions) throw new NotFoundException('Questions not found')
-        return questions.questions.questions
+        if(!questions) throw new NotFoundException(t('errors.test.questionsNotFound'))
+
+        // Some tests have gender-specific wording (Schwartz PVQ-RR: him/her). The bank
+        // then carries a separate `F` set; serve it to female users. Other tests have no
+        // `F`, so this is a no-op for them. Item ids are identical across sets, so
+        // scoring is unaffected by which wording was shown.
+        const bank = questions.questions as any
+        let list = bank.questions
+        if (bank.F) {
+            const user = await this.usersService.getUserById(userId)
+            if (user?.gender === 'F') list = bank.F
+        }
+
+        return localizeQuestions(list, getLang())
     }
 
     async submitTest(userId: string, testId: string, answers: SubmitTestDto): Promise<TestResultDto> {
         const test = await this.testRepository.getTestById(testId)
-        if(!test) throw new InternalServerErrorException('Test not found')
+        if(!test) throw new InternalServerErrorException(t('errors.test.testNotFound'))
 
         await this.ensurePreviousTestsCompleted(userId, test.testType)
 
@@ -60,8 +85,10 @@ export class TestsService implements OnModuleInit {
 
         const isExists = await this.testResultRepository.getTestResult(userId, testId)
         const save = isExists
+            // Retake — keep the existing share link so any already-sent URL still works.
             ? await this.testResultRepository.updateTestResult(userId, testId, result) as unknown as TestResultEntity
-            : await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType}) as unknown as TestResultEntity
+            // First time — mint the share token up front so the link exists immediately.
+            : await this.testResultRepository.createTestResult({userId, testId, result, testType: test.testType, shareToken: randomBytes(9).toString('base64url')}) as unknown as TestResultEntity
 
         // Rebuild the cross-test portrait from the latest answers. Fire-and-forget so
         // the submit response isn't held for the (up to a minute) LLM call; the portrait
@@ -69,7 +96,35 @@ export class TestsService implements OnModuleInit {
         // retakes, where the set of completed tests is unchanged but the answers aren't.
         void this.portraitService.regenerate(userId)
 
+        // Drop cached pair compatibilities — the next view regenerates from fresh
+        // results. Fire-and-forget; `invalidateForUser` never throws.
+        void this.compatibilityService.invalidateForUser(userId)
+
         return testResultMapper.toDto(save)
+    }
+
+    // Mint (or reuse) a public share token for the user's result on this test.
+    // Idempotent: a second call returns the same token, so re-sharing keeps the
+    // link the user may have already sent.
+    async createShareLink(userId: string, testId: string): Promise<{ token: string }> {
+        const result = await this.testResultRepository.getTestResult(userId, testId)
+        if(!result) throw new NotFoundException(t('errors.test.resultNotFound'))
+        if(result.shareToken) return { token: result.shareToken }
+
+        const token = randomBytes(9).toString('base64url')
+        const saved = await this.testResultRepository.setShareToken(userId, testId, token)
+        return { token: saved.shareToken! }
+    }
+
+    async getSharedResult(token: string): Promise<SharedResultDto> {
+        const result = await this.testResultRepository.getByShareToken(token)
+        if(!result) throw new NotFoundException(t('errors.test.sharedResultNotFound'))
+
+        const testType = result.testType
+        if(testType !== 'iq' && testType !== 'bigFive' && testType !== 'shcwartz' && testType !== 'ecr' && testType !== 'cope' && testType !== 'pid') {
+            throw new NotFoundException(t('errors.test.unknownTestType'))
+        }
+        return new SharedResultDto(testType, result.test.testName, result.user.name ?? null, result.result as any)
     }
 
     private async ensurePreviousTestsCompleted(userId: string, testType: string): Promise<void> {
@@ -81,6 +136,6 @@ export class TestsService implements OnModuleInit {
         const completed = new Set(results.map((result) => result.testType))
         const missing = previousTests.filter((type) => !completed.has(type))
 
-        if(missing.length) throw new BadRequestException(`Complete previous tests first: ${missing.join(', ')}`)
+        if(missing.length) throw new BadRequestException(t('errors.test.completePrevious', { tests: missing.join(', ') }))
     }
 }

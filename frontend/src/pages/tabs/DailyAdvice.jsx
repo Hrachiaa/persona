@@ -1,62 +1,41 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineArrowPath, HiOutlineCalendarDays, HiOutlineSparkles } from 'react-icons/hi2';
 
-const tips = [
-  {
-    text: "Today, embrace the silence. Your best ideas come when you give your mind space to wander without pressure.",
-    category: 'Mindfulness',
-    emoji: '🧘',
-    color: 'bg-persona-accent-lavender/40',
-  },
-  {
-    text: "Challenge yourself to express one genuine compliment to someone today. Connection doesn't always require grand gestures.",
-    category: 'Social',
-    emoji: '💬',
-    color: 'bg-persona-accent-blue/40',
-  },
-  {
-    text: "Your perfectionism is a superpower — but today, try finishing something at 80%. Done is better than perfect.",
-    category: 'Productivity',
-    emoji: '🚀',
-    color: 'bg-persona-accent-yellow/40',
-  },
-  {
-    text: "Step outside your routine today. Visit a new place, try a new food, or read something outside your usual genre.",
-    category: 'Growth',
-    emoji: '🌱',
-    color: 'bg-persona-accent-lime/40',
-  },
-  {
-    text: "Remember: not every problem needs solving immediately. Sometimes the best strategy is patience.",
-    category: 'Wisdom',
-    emoji: '🦉',
-    color: 'bg-persona-accent-pink/40',
-  },
-  {
-    text: "Your analytical mind is a gift. Today, use it to understand someone else's perspective, not just to solve a problem.",
-    category: 'Empathy',
-    emoji: '❤️',
-    color: 'bg-persona-accent-peach/40',
-  },
+// Visual config only — category labels and tip text live in the `advice` namespace.
+const tipStyles = [
+  { emoji: '🧘', color: 'bg-persona-accent-lavender/40' },
+  { emoji: '💬', color: 'bg-persona-accent-blue/40' },
+  { emoji: '🚀', color: 'bg-persona-accent-yellow/40' },
+  { emoji: '🌱', color: 'bg-persona-accent-lime/40' },
+  { emoji: '🦉', color: 'bg-persona-accent-pink/40' },
+  { emoji: '❤️', color: 'bg-persona-accent-peach/40' },
 ];
 
-const today = new Date().toLocaleDateString('en-US', {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
-
 export default function DailyAdvice({ userName }) {
-  const [tipIndex, setTipIndex] = useState(0);
+  const { t, i18n } = useTranslation('advice');
+  // `?tip=N` keeps the current card position in the URL.
+  const [searchParams, setSearchParams] = useSearchParams();
   const [direction, setDirection] = useState(1);
 
+  const tips = t('tips', { returnObjects: true });
+  const today = new Date().toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const rawTip = Number(searchParams.get('tip'));
+  const tipIndex = Number.isInteger(rawTip) && rawTip >= 0 ? rawTip % tips.length : 0;
   const currentTip = tips[tipIndex];
+  const style = tipStyles[tipIndex];
 
   const nextTip = () => {
     setDirection(1);
-    setTipIndex((prev) => (prev + 1) % tips.length);
+    setSearchParams({ tip: String((tipIndex + 1) % tips.length) });
   };
 
   return (
@@ -71,8 +50,8 @@ export default function DailyAdvice({ userName }) {
         animate={{ opacity: 1, y: 0 }}
         className="mb-2"
       >
-        <h1 className="font-display text-4xl font-semibold text-persona-dark mb-1">Daily advice</h1>
-        <p className="text-persona-muted">A small idea to sit with today.</p>
+        <h1 className="font-display text-4xl font-semibold text-persona-dark mb-1">{t('title')}</h1>
+        <p className="text-persona-muted">{t('subtitle')}</p>
       </motion.div>
 
       {/* Date */}
@@ -96,7 +75,7 @@ export default function DailyAdvice({ userName }) {
             animate={{ x: 0, opacity: 1, rotateY: 0 }}
             exit={{ x: direction > 0 ? -200 : 200, opacity: 0, rotateY: direction > 0 ? -15 : 15 }}
             transition={{ type: 'spring', stiffness: 250, damping: 25 }}
-            className={`w-full ${currentTip.color} rounded-3xl p-8 relative overflow-hidden`}
+            className={`w-full ${style.color} rounded-3xl p-8 relative overflow-hidden`}
           >
             {/* Decorative */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-12 translate-x-12" />
@@ -105,7 +84,7 @@ export default function DailyAdvice({ userName }) {
             <div className="relative">
               {/* Category */}
               <div className="flex items-center gap-2 mb-6">
-                <span className="text-3xl">{currentTip.emoji}</span>
+                <span className="text-3xl">{style.emoji}</span>
                 <span className="text-xs font-medium tracking-wide text-persona-dark/70 bg-white/60 px-2.5 py-1 rounded-md">
                   {currentTip.category}
                 </span>
@@ -121,7 +100,7 @@ export default function DailyAdvice({ userName }) {
 
               {/* Footer */}
               <p className="text-sm text-persona-muted">
-                For <span className="font-medium text-persona-dark">{userName || 'Alex'}</span> · INTJ
+                {t('for')} <span className="font-medium text-persona-dark">{userName || 'Alex'}</span> · INTJ
               </p>
             </div>
           </motion.div>
@@ -142,7 +121,7 @@ export default function DailyAdvice({ userName }) {
           whileTap={{ scale: 0.97 }}
         >
           <HiOutlineArrowPath className="w-5 h-5" />
-          Next tip
+          {t('nextTip')}
         </motion.button>
       </motion.div>
 

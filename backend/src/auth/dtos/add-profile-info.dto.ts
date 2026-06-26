@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsInt, Min, Max, IsIn } from "class-validator";
+import { IsString, IsNotEmpty, IsInt, Min, Max, IsIn, IsOptional } from "class-validator";
 
 export class AddProfileInfoDto {
     @ApiProperty({example: 'Rachia', description: 'User Name'})
@@ -15,4 +15,9 @@ export class AddProfileInfoDto {
     @Min(1900)
     @Max(2026)
     birthDate: number;
+    @ApiProperty({example: 'en', description: 'User UI language', required: false})
+    @IsOptional()
+    @IsString()
+    @IsIn(['en', 'ru'])
+    language?: string;
 }

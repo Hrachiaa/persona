@@ -6,6 +6,7 @@ import { CatalogService, EnrichedItem } from './catalog.service';
 import { RecommendationRepository } from './recommendation.repository';
 import { buildProfileBlock, MediaKind } from '../ai/prompts/recommendations.prompt';
 import { RecommendationHistoryDto, RecommendationListDto, toHistoryItemDto, toItemDto } from './dtos/recommendation.dto';
+import { getLang, t } from '../i18n/translate';
 
 const BATCH_REQUEST = 12; // titles asked of the model per generation (one call, no backfill)
 const PREFETCH_THRESHOLD = 17; // start the next batch once the queue drops to this many cards
@@ -40,10 +41,14 @@ export class RecommendationsService {
       return RecommendationListDto.locked(mediaType, completed.length, TEST_ORDER.length);
     }
 
+    // Captured here (inside the request) so the detached generation below uses the
+    // caller's UI language even though it runs after the response is sent.
+    const lang = getLang();
+
     const queue = await this.repo.getQueue(userId, mediaType);
     if (queue.length > 0) {
       if (queue.length <= PREFETCH_THRESHOLD && !this.isGenerating(userId, mediaType)) {
-        void this.dedupedGenerate(userId, mediaType);
+        void this.dedupedGenerate(userId, mediaType, lang);
       }
       return RecommendationListDto.ready(mediaType, queue.map(toItemDto), this.isGenerating(userId, mediaType));
     }
@@ -58,8 +63,8 @@ export class RecommendationsService {
       }
       this.lastEmptyGen.set(key, Date.now());
       const total = await this.repo.countAll(userId);
-      if (total === 0) void this.dedupedGenerateCombined(userId);
-      else void this.dedupedGenerate(userId, mediaType);
+      if (total === 0) void this.dedupedGenerateCombined(userId, lang);
+      else void this.dedupedGenerate(userId, mediaType, lang);
     }
     return RecommendationListDto.generating(mediaType);
   }
@@ -73,24 +78,24 @@ export class RecommendationsService {
   /** Re-rate an already-swiped item (profile like toggle). Returns the updated history row. */
   async rate(userId: string, itemId: string, verdict: 'LIKED' | 'DISLIKED') {
     const item = await this.repo.rate(userId, itemId, verdict);
-    if (!item) throw new NotFoundException('Recommendation not found');
+    if (!item) throw new NotFoundException(t('errors.recommendations.notFound'));
     return toHistoryItemDto(item);
   }
 
   async swipe(userId: string, itemId: string, verdict: 'LIKED' | 'DISLIKED'): Promise<{ pending: number }> {
     const item = await this.repo.setVerdict(userId, itemId, verdict);
-    if (!item) throw new NotFoundException('Recommendation not found or already swiped');
+    if (!item) throw new NotFoundException(t('errors.recommendations.notFoundOrSwiped'));
     const mediaType: MediaKind = item.mediaType === 'FILM' ? 'film' : 'book';
     const pending = await this.repo.countPending(userId, mediaType);
     if (pending <= PREFETCH_THRESHOLD && !this.isGenerating(userId, mediaType)) {
-      void this.dedupedGenerate(userId, mediaType);
+      void this.dedupedGenerate(userId, mediaType, getLang());
     }
     return { pending };
   }
 
   async reset(userId: string, mediaType: MediaKind): Promise<void> {
     await this.repo.deleteByType(userId, mediaType);
-    void this.dedupedGenerate(userId, mediaType);
+    void this.dedupedGenerate(userId, mediaType, getLang());
   }
 
   // ---- generation ----------------------------------------------------------
@@ -99,11 +104,11 @@ export class RecommendationsService {
     return this.inFlight.has(`${userId}:${mediaType}`);
   }
 
-  private dedupedGenerate(userId: string, mediaType: MediaKind): Promise<void> {
+  private dedupedGenerate(userId: string, mediaType: MediaKind, lang: string): Promise<void> {
     const key = `${userId}:${mediaType}`;
     let inFlight = this.inFlight.get(key);
     if (!inFlight) {
-      inFlight = this.generateBatch(userId, mediaType)
+      inFlight = this.generateBatch(userId, mediaType, lang)
         .catch((e) => this.logger.error(`generate ${mediaType} failed for userId=${userId}`, e as Error))
         .finally(() => this.inFlight.delete(key));
       this.inFlight.set(key, inFlight);
@@ -111,12 +116,12 @@ export class RecommendationsService {
     return inFlight;
   }
 
-  private dedupedGenerateCombined(userId: string): Promise<void> {
+  private dedupedGenerateCombined(userId: string, lang: string): Promise<void> {
     const filmKey = `${userId}:film`;
     const bookKey = `${userId}:book`;
     const existing = this.inFlight.get(filmKey) ?? this.inFlight.get(bookKey);
     if (existing) return existing;
-    const inFlight = this.generateCombined(userId)
+    const inFlight = this.generateCombined(userId, lang)
       .catch((e) => this.logger.error(`combined generate failed for userId=${userId}`, e as Error))
       .finally(() => {
         this.inFlight.delete(filmKey);
@@ -127,7 +132,7 @@ export class RecommendationsService {
     return inFlight;
   }
 
-  private async generateBatch(userId: string, mediaType: MediaKind): Promise<void> {
+  private async generateBatch(userId: string, mediaType: MediaKind, lang: string): Promise<void> {
     const ctx = await this.buildContext(userId, mediaType);
     if (!ctx) return;
     const existingIds = await this.repo.getExistingExternalIds(userId, mediaType);
@@ -135,21 +140,21 @@ export class RecommendationsService {
 
     // One LLM call per top-up. If it comes back light, the prefetch threshold simply
     // fires again on the next swipe rather than chaining a second (slow, costly) call.
-    const enriched = await this.generateAndEnrich(mediaType, ctx, exclude, existingIds);
+    const enriched = await this.generateAndEnrich(mediaType, ctx, exclude, existingIds, lang);
     await this.repo.createMany(userId, mediaType, enriched);
   }
 
   /** Cold start: both queues from one LLM call. */
-  private async generateCombined(userId: string): Promise<void> {
+  private async generateCombined(userId: string, lang: string): Promise<void> {
     const results = await this.testResultRepository.getTestResults(userId);
     const completed = this.resolveTargetTests(results);
     if (completed.length < TEST_ORDER.length) return;
     const profileBlock = buildProfileBlock(this.orderResults(completed, results));
 
-    const { films, books } = await this.ai.recommendCombined({ profileBlock, count: BATCH_REQUEST });
+    const { films, books } = await this.ai.recommendCombined({ profileBlock, count: BATCH_REQUEST, lang });
     const [ef, eb] = await Promise.all([
-      this.catalog.enrichMany('film', films),
-      this.catalog.enrichMany('book', books),
+      this.catalog.enrichMany('film', films, lang),
+      this.catalog.enrichMany('book', books, lang),
     ]);
     await Promise.all([
       this.repo.createMany(userId, 'film', this.dedupeByExternalId(ef)),
@@ -162,6 +167,7 @@ export class RecommendationsService {
     ctx: GenContext,
     exclude: string[],
     excludeIds: Set<string>,
+    lang: string,
   ): Promise<EnrichedItem[]> {
     const raw = await this.ai.recommend({
       mediaType,
@@ -170,8 +176,9 @@ export class RecommendationsService {
       disliked: ctx.disliked,
       exclude,
       count: BATCH_REQUEST,
+      lang,
     });
-    const enriched = await this.catalog.enrichMany(mediaType, raw);
+    const enriched = await this.catalog.enrichMany(mediaType, raw, lang);
     return enriched.filter((e) => !excludeIds.has(e.externalId));
   }
 

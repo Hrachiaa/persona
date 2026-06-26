@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineEnvelope,
@@ -19,6 +20,7 @@ const STEPS = {
 };
 
 export default function ForgotPassword({ onBack }) {
+  const { t } = useTranslation('auth');
   const [step, setStep] = useState(STEPS.EMAIL);
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -35,7 +37,7 @@ export default function ForgotPassword({ onBack }) {
       await authApi.forgotPassword(email);
       setStep(STEPS.CODE);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send reset email. Please try again.');
+      setError(err.response?.data?.message || t('forgot.sendFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -49,7 +51,7 @@ export default function ForgotPassword({ onBack }) {
       await authApi.forgotPasswordCode(email, code);
       setStep(STEPS.NEW_PASSWORD);
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid code. Please try again.');
+      setError(err.response?.data?.message || t('forgot.invalidCode'));
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +60,7 @@ export default function ForgotPassword({ onBack }) {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (newPassword.length < 8 || newPassword.length > 32) {
-      setError('Password must be between 8 and 32 characters.');
+      setError(t('forgot.passwordLength'));
       return;
     }
     setIsLoading(true);
@@ -67,7 +69,7 @@ export default function ForgotPassword({ onBack }) {
       await authApi.changeForgottenPassword(email, code, newPassword);
       setStep(STEPS.SUCCESS);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to change password. Please try again.');
+      setError(err.response?.data?.message || t('forgot.changeFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -75,23 +77,23 @@ export default function ForgotPassword({ onBack }) {
 
   const stepConfig = [
     {
-      title: 'Reset your password',
-      subtitle: 'Enter your email and we\'ll send a verification code.',
+      title: t('forgot.email.title'),
+      subtitle: t('forgot.email.subtitle'),
       icon: HiOutlineEnvelope,
     },
     {
-      title: 'Enter the verification code',
-      subtitle: `We sent a 6-digit code to ${email}.`,
+      title: t('forgot.code.title'),
+      subtitle: t('forgot.code.subtitle', { email }),
       icon: HiOutlineShieldCheck,
     },
     {
-      title: 'Choose a new password',
-      subtitle: 'Pick something strong you can remember.',
+      title: t('forgot.newPassword.title'),
+      subtitle: t('forgot.newPassword.subtitle'),
       icon: HiOutlineLockClosed,
     },
     {
-      title: 'Password changed',
-      subtitle: 'You can now sign in with your new password.',
+      title: t('forgot.success.title'),
+      subtitle: t('forgot.success.subtitle'),
       icon: HiOutlineCheckCircle,
     },
   ];
@@ -116,7 +118,7 @@ export default function ForgotPassword({ onBack }) {
           className="flex items-center gap-2 text-persona-muted hover:text-persona-dark transition-colors mb-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded-full px-2 py-1 -ml-2"
         >
           <HiOutlineArrowLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">Back to sign in</span>
+          <span className="text-sm font-medium">{t('forgot.backToSignIn')}</span>
         </motion.button>
 
         {/* Progress Bar */}
@@ -124,7 +126,7 @@ export default function ForgotPassword({ onBack }) {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-persona-muted">
-                Step {step + 1} of 3
+                {t('forgot.stepOf', { n: step + 1, total: 3 })}
               </span>
             </div>
             <div className="w-full h-1.5 bg-persona-line rounded-full overflow-hidden">
@@ -181,7 +183,7 @@ export default function ForgotPassword({ onBack }) {
               className="space-y-4"
             >
               <div>
-                <label htmlFor="reset-email" className="field-label">Email</label>
+                <label htmlFor="reset-email" className="field-label">{t('emailLabel')}</label>
                 <div className="relative">
                   <HiOutlineEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
@@ -189,7 +191,7 @@ export default function ForgotPassword({ onBack }) {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="you@example.com"
+                    placeholder={t('emailPlaceholder')}
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setError(null); }}
                     className="input-field pl-12"
@@ -205,7 +207,7 @@ export default function ForgotPassword({ onBack }) {
                 whileHover={!isLoading ? { scale: 1.02 } : {}}
                 whileTap={!isLoading ? { scale: 0.97 } : {}}
               >
-                {isLoading ? 'Sending…' : 'Send code'}
+                {isLoading ? t('forgot.email.submitting') : t('forgot.email.submit')}
               </motion.button>
             </motion.form>
           )}
@@ -220,7 +222,7 @@ export default function ForgotPassword({ onBack }) {
               className="space-y-4"
             >
               <div>
-                <label htmlFor="reset-code" className="field-label">Verification code</label>
+                <label htmlFor="reset-code" className="field-label">{t('forgot.code.label')}</label>
                 <div className="relative">
                   <HiOutlineShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
@@ -229,7 +231,7 @@ export default function ForgotPassword({ onBack }) {
                     inputMode="numeric"
                     autoComplete="one-time-code"
                     type="text"
-                    placeholder="6-digit code"
+                    placeholder={t('forgot.code.placeholder')}
                     value={code}
                     onChange={(e) => {
                       const val = e.target.value.replace(/\D/g, '').slice(0, 6);
@@ -250,14 +252,14 @@ export default function ForgotPassword({ onBack }) {
                 whileHover={!isLoading ? { scale: 1.02 } : {}}
                 whileTap={!isLoading ? { scale: 0.97 } : {}}
               >
-                {isLoading ? 'Verifying…' : 'Verify code'}
+                {isLoading ? t('forgot.code.submitting') : t('forgot.code.submit')}
               </motion.button>
               <button
                 type="button"
                 onClick={() => { setStep(STEPS.EMAIL); setError(null); }}
                 className="w-full text-center text-sm text-persona-muted hover:text-persona-dark transition-colors mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg rounded px-1 py-0.5"
               >
-                Didn&apos;t receive a code? Try again
+                {t('forgot.code.resend')}
               </button>
             </motion.form>
           )}
@@ -272,7 +274,7 @@ export default function ForgotPassword({ onBack }) {
               className="space-y-4"
             >
               <div>
-                <label htmlFor="reset-new-password" className="field-label">New password</label>
+                <label htmlFor="reset-new-password" className="field-label">{t('forgot.newPassword.label')}</label>
                 <div className="relative">
                   <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
@@ -280,7 +282,7 @@ export default function ForgotPassword({ onBack }) {
                     name="new-password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="new-password"
-                    placeholder="8 to 32 characters"
+                    placeholder={t('passwordHint')}
                     value={newPassword}
                     onChange={(e) => { setNewPassword(e.target.value); setError(null); }}
                     className="input-field pl-12 pr-12"
@@ -299,7 +301,7 @@ export default function ForgotPassword({ onBack }) {
                   </button>
                 </div>
                 <p className="text-xs text-persona-muted px-1 mt-2">
-                  Must be between 8 and 32 characters.
+                  {t('forgot.newPassword.hint')}
                 </p>
               </div>
               <motion.button
@@ -309,7 +311,7 @@ export default function ForgotPassword({ onBack }) {
                 whileHover={!isLoading ? { scale: 1.02 } : {}}
                 whileTap={!isLoading ? { scale: 0.97 } : {}}
               >
-                {isLoading ? 'Saving…' : 'Save new password'}
+                {isLoading ? t('forgot.newPassword.submitting') : t('forgot.newPassword.submit')}
               </motion.button>
             </motion.form>
           )}
@@ -327,7 +329,7 @@ export default function ForgotPassword({ onBack }) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
               >
-                Back to sign in
+                {t('forgot.backToSignIn')}
               </motion.button>
             </motion.div>
           )}

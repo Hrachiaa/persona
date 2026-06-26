@@ -1,0 +1,61 @@
+{
+  "title": "Profile",
+  "yourProfile": "Your profile",
+  "googleAccount": "Google account",
+  "signOut": "Sign out",
+  "historyLoadError": "Could not load your activity.",
+  "sections": {
+    "library": "Library",
+    "account": "Account"
+  },
+  "rows": {
+    "liked": "Liked",
+    "history": "Recommendation history",
+    "editProfile": "Edit profile",
+    "changePassword": "Change password"
+  },
+  "edit": {
+    "title": "Edit profile",
+    "subtitle": "Update your name, gender, and birth year.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "genderLabel": "Gender",
+    "birthYearLabel": "Birth year",
+    "birthYearPlaceholder": "e.g. 1995",
+    "invalid": "Please fill in your name, gender, and a valid birth year.",
+    "saveError": "Could not save your profile. Please try again."
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female"
+  },
+  "password": {
+    "title": "Change password",
+    "subtitle": "Choose a strong password you'll remember.",
+    "googleNote": "You signed up with Google. If you've never set a password, use <b>Forgot password</b> on the sign-in screen to create one.",
+    "currentLabel": "Current password",
+    "newLabel": "New password",
+    "newPlaceholder": "8 to 32 characters",
+    "confirmLabel": "Confirm new password",
+    "showPasswords": "Show passwords",
+    "hidePasswords": "Hide passwords",
+    "lengthError": "New password must be between 8 and 32 characters.",
+    "mismatchError": "New passwords do not match.",
+    "changeError": "Could not change password. Please try again.",
+    "submit": "Update password",
+    "successTitle": "Password updated",
+    "successSubtitle": "Your new password is now active."
+  },
+  "activity": {
+    "likedTitle": "Liked",
+    "likedSubtitle": "Books & films you swiped right on.",
+    "likedEmpty": "You haven't liked anything yet. Swipe right in Reads to build your list.",
+    "historyTitle": "History",
+    "historySubtitle": "Everything you've reviewed, most recent first.",
+    "historyEmpty": "No recommendations reviewed yet.",
+    "noFilms": "No films here yet.",
+    "noBooks": "No books here yet.",
+    "like": "Like",
+    "removeLike": "Remove like"
+  }
+}

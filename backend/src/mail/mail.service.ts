@@ -3,6 +3,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import type { OtpCodeRepository } from './otp-code.repository';
 import { createHash, createHmac } from 'crypto';
 import { OtpCodeEntity } from './models/otp-code.entity';
+import { t, getLang } from '../i18n/translate';
 
 @Injectable()
 export class MailService {
@@ -56,8 +57,9 @@ export class MailService {
         await this.mailerService.sendMail({
           to: email,
           from: process.env.EMAIL_USER,
-          subject: 'Confirm your email',
-          template: 'reset-password',
+          subject: t('mail.resetSubject'),
+          // Per-language template: reset-password.en.hbs / reset-password.ru.hbs
+          template: `reset-password.${getLang()}`,
           context: {
             code,
           },
