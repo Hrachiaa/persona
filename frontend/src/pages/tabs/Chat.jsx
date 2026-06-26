@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,6 +8,7 @@ import {
   HiOutlineBars3,
   HiOutlineTrash,
   HiOutlinePaperAirplane,
+  HiOutlinePlus,
   HiOutlineSparkles,
   HiOutlineUsers,
   HiOutlineChevronRight,
@@ -39,6 +41,7 @@ function ChatList({ navigate }) {
   const { t } = useTranslation('chat');
   const title = useChatTitle();
   const [chats, setChats] = useState(null);
+  const [showNew, setShowNew] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -49,59 +52,138 @@ function ChatList({ navigate }) {
     return () => { active = false; };
   }, []);
 
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      aria-label={t('listTitle')}
-      className="px-6 pt-2 pb-6 min-h-[calc(100dvh-80px)]"
-    >
-      <h1 className="font-display text-4xl font-semibold text-persona-dark mb-1">{t('listTitle')}</h1>
-      <p className="text-persona-muted mb-8">{t('listSubtitle')}</p>
+  const startPortrait = async () => {
+    setShowNew(false);
+    try {
+      const chat = await chatApi.openPortrait();
+      navigate(`/chat/${chat.id}`, { state: { chat } });
+    } catch { /* ignore */ }
+  };
 
-      {chats === null ? (
-        <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
-      ) : chats.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div className="space-y-2">
-          {chats.map((c) => {
-            const Icon = c.kind === 'compatibility' ? HiOutlineUsers : HiOutlineSparkles;
-            return (
-              <button
-                key={c.id}
-                onClick={() => navigate(`/chat/${c.id}`, { state: { chat: c } })}
-                className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
-              >
-                <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-peach/40 flex items-center justify-center text-persona-dark">
-                  <Icon className="w-5 h-5" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-persona-dark text-sm truncate">{title(c)}</p>
-                  <p className="text-xs text-persona-muted truncate">
-                    {c.lastMessage || t('noMessages')}
-                  </p>
-                </div>
-                <HiOutlineChevronRight className="w-5 h-5 text-persona-muted shrink-0" />
-              </button>
-            );
-          })}
+  return (
+    // Fixed full-screen (no page scroll); the dashboard's top bar + bottom nav float
+    // over it. The input row is pinned just above the nav and never scrolls.
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      aria-label={t('listTitle')}
+      className="fixed inset-0 lg:left-64 z-30 bg-persona-bg flex flex-col"
+    >
+      <div className="flex-1 min-h-0 flex flex-col px-6 pt-24 lg:pt-12 overflow-hidden">
+        {chats === null ? (
+          <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
+        ) : chats.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <Emblem className="text-6xl mb-6 text-persona-dark/70" />
+            <h2 className="font-display text-xl font-semibold text-persona-dark mb-2">{t('emptyTitle')}</h2>
+            <p className="text-sm text-persona-muted max-w-xs leading-relaxed">{t('emptyBody')}</p>
+          </div>
+        ) : (
+          <div className="space-y-2 overflow-y-auto">
+            {chats.map((c) => {
+              const Icon = c.kind === 'compatibility' ? HiOutlineUsers : HiOutlineSparkles;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => navigate(`/chat/${c.id}`, { state: { chat: c } })}
+                  className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
+                >
+                  <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-peach/40 flex items-center justify-center text-persona-dark">
+                    <Icon className="w-5 h-5" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-persona-dark text-sm truncate">{title(c)}</p>
+                    <p className="text-xs text-persona-muted truncate">
+                      {c.lastMessage || t('noMessages')}
+                    </p>
+                  </div>
+                  <HiOutlineChevronRight className="w-5 h-5 text-persona-muted shrink-0" />
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Decorative input row + new-chat button — pinned just above the bottom nav, doesn't scroll */}
+      <div className="shrink-0 flex items-end gap-2 px-6 pt-2 pb-[5.5rem] lg:pb-8">
+        <div className="flex-1 rounded-3xl bg-white shadow-warm px-5 py-3.5 text-sm text-persona-muted/70 select-none truncate">
+          {t('inputPlaceholder')}
         </div>
-      )}
+        <motion.button
+          onClick={() => setShowNew(true)}
+          aria-label={t('startTitle')}
+          className="w-12 h-12 shrink-0 rounded-full bg-persona-dark text-white flex items-center justify-center shadow-warm"
+          whileTap={{ scale: 0.9 }}
+        >
+          <HiOutlinePlus className="w-5 h-5" />
+        </motion.button>
+      </div>
+
+      <AnimatePresence>
+        {showNew && (
+          <NewChatSheet
+            onClose={() => setShowNew(false)}
+            onPortrait={startPortrait}
+            onFriend={() => navigate('/match')}
+          />
+        )}
+      </AnimatePresence>
     </motion.section>
   );
 }
 
-/** Shown when the user has no chats — chats are started from Portrait / Compatibility. */
-function EmptyState() {
+/** Chooser for starting a chat — the only two kinds (portrait / friend compatibility).
+ *  Rendered through a body portal so it sits above the dashboard's bottom nav (which is
+ *  in a higher stacking context than this tab) — the nav tucks underneath the sheet. */
+function NewChatSheet({ onClose, onPortrait, onFriend }) {
   const { t } = useTranslation('chat');
-  return (
-    <div className="flex flex-col items-center text-center py-16">
-      <Emblem className="text-6xl mb-6 text-persona-accent-peach" />
-      <h2 className="font-display text-xl font-semibold text-persona-dark mb-2">{t('emptyTitle')}</h2>
-      <p className="text-sm text-persona-muted max-w-xs leading-relaxed">{t('emptyBody')}</p>
-    </div>
+  return createPortal(
+    <motion.div
+      className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/30"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="w-full sm:max-w-sm bg-persona-bg rounded-t-4xl sm:rounded-4xl p-6 pb-8"
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 40, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="font-display text-lg font-semibold text-persona-dark mb-4">{t('startTitle')}</h2>
+        <div className="space-y-2">
+          <button
+            onClick={onPortrait}
+            className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
+          >
+            <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-peach/40 flex items-center justify-center text-persona-dark">
+              <HiOutlineSparkles className="w-5 h-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="font-semibold text-persona-dark text-sm">{t('startPortrait')}</p>
+              <p className="text-xs text-persona-muted">{t('startPortraitDesc')}</p>
+            </div>
+          </button>
+          <button
+            onClick={onFriend}
+            className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
+          >
+            <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-lavender/50 flex items-center justify-center text-persona-dark">
+              <HiOutlineUsers className="w-5 h-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="font-semibold text-persona-dark text-sm">{t('startCompat')}</p>
+              <p className="text-xs text-persona-muted">{t('startCompatDesc')}</p>
+            </div>
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>,
+    document.body,
   );
 }
 
@@ -119,7 +201,7 @@ function MessageBubble({ role, content, pending }) {
   }
   return (
     <div className="flex gap-2.5">
-      <Emblem className="text-xl shrink-0 mt-0.5 text-persona-accent-peach" />
+      <Emblem className="text-xl shrink-0 mt-0.5 text-persona-dark/70" />
       <div className="min-w-0 flex-1 text-persona-dark">
         {content ? (
           <ReactMarkdown components={MARKDOWN_COMPONENTS}>{content}</ReactMarkdown>
@@ -194,6 +276,11 @@ function Conversation({ chatId, navigate, locationState }) {
 
   const scrollRef = useRef(null);
   const abortRef = useRef(null);
+  const taRef = useRef(null);
+  // The just-sent question is the scroll anchor: while a reply streams we follow the
+  // newest text down, but never past the point where the answer's start sits at the top.
+  const anchorIdRef = useRef(null);
+  const anchorElRef = useRef(null);
 
   useEffect(() => {
     let active = true;
@@ -212,12 +299,30 @@ function Conversation({ chatId, navigate, locationState }) {
     };
   }, [chatId]);
 
-  // Keep the latest message in view as it streams in.
-  const scrollToBottom = useCallback(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, []);
-  useEffect(() => { scrollToBottom(); }, [messages, scrollToBottom]);
+  // Auto-grow the input up to ~6 lines, then it scrolls internally.
+  const MAX_INPUT_H = 148; // 6 lines of text-sm + vertical padding
+  useEffect(() => {
+    const el = taRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, MAX_INPUT_H)}px`;
+  }, [input]);
+
+  // Follow the stream downward, but only until the start of the reply reaches the top —
+  // then stop, so a long answer can be read from the beginning. Never scrolls up, and
+  // never fights a user who scrolls further down themselves.
+  useEffect(() => {
+    const c = scrollRef.current;
+    if (!c) return;
+    const bottom = c.scrollHeight - c.clientHeight;
+    let desired = bottom;
+    const a = anchorElRef.current;
+    if (a) {
+      const offset = a.getBoundingClientRect().top - c.getBoundingClientRect().top + c.scrollTop;
+      desired = Math.min(bottom, Math.max(0, offset - 12));
+    }
+    if (desired > c.scrollTop) c.scrollTop = desired;
+  }, [messages]);
 
   const send = async () => {
     const content = input.trim();
@@ -225,10 +330,12 @@ function Conversation({ chatId, navigate, locationState }) {
     setInput('');
     setSending(true);
 
+    const userId = `u-${Date.now()}`;
     const assistantId = `a-${Date.now()}`;
+    anchorIdRef.current = userId; // anchor scroll to this question
     setMessages((prev) => [
       ...prev,
-      { id: `u-${Date.now()}`, role: 'user', content },
+      { id: userId, role: 'user', content },
       { id: assistantId, role: 'assistant', content: '', pending: true },
     ]);
 
@@ -308,7 +415,7 @@ function Conversation({ chatId, navigate, locationState }) {
           </div>
         ) : messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center px-8">
-            <Emblem className="text-6xl mb-5 text-persona-accent-peach" />
+            <Emblem className="text-6xl mb-5 text-persona-dark/70" />
             <p className="text-sm text-persona-muted max-w-xs leading-relaxed">
               {chat?.kind === 'compatibility'
                 ? t('hintCompat', { name: chat?.friendName || t('friendFallback') })
@@ -318,7 +425,12 @@ function Conversation({ chatId, navigate, locationState }) {
         ) : (
           <div className="mx-auto w-full max-w-2xl px-4 py-6 space-y-5">
             {messages.map((m) => (
-              <MessageBubble key={m.id} role={m.role} content={m.content} pending={m.pending} />
+              <div
+                key={m.id}
+                ref={(el) => { if (el && m.id === anchorIdRef.current) anchorElRef.current = el; }}
+              >
+                <MessageBubble role={m.role} content={m.content} pending={m.pending} />
+              </div>
             ))}
           </div>
         )}
@@ -328,12 +440,13 @@ function Conversation({ chatId, navigate, locationState }) {
       <div className="shrink-0 px-4 pb-5 pt-2">
         <div className="mx-auto w-full max-w-2xl flex items-end gap-2">
           <textarea
+            ref={taRef}
             rows={1}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder={t('inputPlaceholder')}
-            className="flex-1 resize-none max-h-40 rounded-3xl bg-white shadow-warm px-5 py-3.5 text-sm text-persona-dark placeholder:text-persona-muted focus:outline-none focus:ring-2 focus:ring-persona-accent-peach"
+            className="flex-1 resize-none overflow-y-auto rounded-3xl bg-white shadow-warm px-5 py-3.5 text-sm leading-5 text-persona-dark placeholder:text-persona-muted focus:outline-none focus:ring-2 focus:ring-persona-accent-peach"
           />
           <motion.button
             onClick={send}
