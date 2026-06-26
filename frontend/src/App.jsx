@@ -18,8 +18,8 @@ import ProgressiveBlur from './components/ProgressiveBlur';
 // re-animate the shell — Dashboard handles its own tab + sub-route transitions.
 // `/tests` and `/profile` have nested sub-routes (test runner / result, profile
 // sub-pages), so they match on a prefix; the rest are leaf tabs.
-const DASHBOARD_PREFIXES = ['/tests', '/portrait', '/match', '/reads', '/advice', '/profile'];
-const DASHBOARD_ROUTES = ['/tests/*', '/portrait', '/match/*', '/reads', '/advice', '/profile/*'];
+const DASHBOARD_PREFIXES = ['/tests', '/portrait', '/match', '/reads', '/chat', '/profile'];
+const DASHBOARD_ROUTES = ['/tests/*', '/portrait', '/match/*', '/reads', '/chat/*', '/profile/*'];
 const isDashboardPath = (p) => DASHBOARD_PREFIXES.some((base) => p === base || p.startsWith(base + '/'));
 
 /** Check whether the user's profile fields are already populated */

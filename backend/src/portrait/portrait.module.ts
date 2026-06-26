@@ -11,6 +11,6 @@ import { TestsModule } from '../tests/tests.module';
   controllers: [PortraitController],
   providers: [PortraitService, PortraitRepository, PrismaService],
   imports: [AuthModule, AiModule, forwardRef(() => TestsModule)],
-  exports: [PortraitService],
+  exports: [PortraitService, PortraitRepository],
 })
 export class PortraitModule {}

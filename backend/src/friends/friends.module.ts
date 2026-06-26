@@ -20,6 +20,6 @@ import { TestsModule } from '../tests/tests.module';
     PrismaService,
   ],
   imports: [AuthModule, AiModule, UsersModule, forwardRef(() => TestsModule)],
-  exports: [CompatibilityService],
+  exports: [CompatibilityService, FriendsService, CompatibilityRepository],
 })
 export class FriendsModule {}

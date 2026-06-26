@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiOutlineArrowPath, HiOutlineClipboardDocumentList, HiOutlineChevronDown } from 'react-icons/hi2';
+import { HiOutlineArrowPath, HiOutlineClipboardDocumentList, HiOutlineChevronDown, HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
 import ReactMarkdown from 'react-markdown';
 import { portraitApi } from '../../api/portrait';
+import { chatApi } from '../../api/chat';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import { SIGILS } from '../../components/testSigils';
 
@@ -254,10 +256,24 @@ function PortraitProgress({ count, total, onTakeTests }) {
 // interpretation lives here.
 export default function Portrait({ onOpenTests }) {
   const { t } = useTranslation('portrait');
+  const navigate = useNavigate();
   const [data, setData] = useState(cachedData); // backend response: { status, ... }
   const [loading, setLoading] = useState(!cachedData);
   const [errored, setErrored] = useState(false);
   const [nonce, setNonce] = useState(0); // bump to refetch
+  const [openingChat, setOpeningChat] = useState(false);
+
+  // Open (or resume) the portrait chat and drop the user straight into it.
+  const discussWithAi = async () => {
+    if (openingChat) return;
+    setOpeningChat(true);
+    try {
+      const chat = await chatApi.openPortrait();
+      navigate(`/chat/${chat.id}`, { state: { chat } });
+    } catch {
+      setOpeningChat(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -373,6 +389,16 @@ export default function Portrait({ onOpenTests }) {
                     <div className="text-persona-dark">
                       <ReactMarkdown components={MARKDOWN_COMPONENTS}>{content}</ReactMarkdown>
                     </div>
+
+                    {/* Continue the portrait as a conversation with the AI. */}
+                    <motion.button
+                      onClick={discussWithAi}
+                      disabled={openingChat}
+                      className="btn-primary w-full mt-6 flex items-center justify-center gap-2 disabled:opacity-60"
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      <HiOutlineChatBubbleLeftRight className="w-5 h-5" /> {t('chat:discuss')}
+                    </motion.button>
                   </motion.div>
                 )}
 
