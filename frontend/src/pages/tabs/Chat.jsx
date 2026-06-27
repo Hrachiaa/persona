@@ -1,21 +1,24 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import {
-  HiOutlineBars3,
+  HiOutlineArrowLeft,
   HiOutlineTrash,
   HiOutlinePaperAirplane,
   HiOutlinePlus,
   HiOutlineSparkles,
   HiOutlineUsers,
   HiOutlineChevronRight,
+  HiOutlineChevronLeft,
   HiOutlineExclamationTriangle,
 } from 'react-icons/hi2';
 import { chatApi } from '../../api/chat';
+import { friendsApi } from '../../api/friends';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
+import ProgressiveBlur from '../../components/ProgressiveBlur';
 
 // ─── Shared bits ────────────────────────────────────────────────────────────────
 
@@ -56,6 +59,13 @@ function ChatList({ navigate }) {
     setShowNew(false);
     try {
       const chat = await chatApi.openPortrait();
+      navigate(`/chat/${chat.id}`, { state: { chat } });
+    } catch { /* ignore */ }
+  };
+
+  const startCompat = async (friendId) => {
+    try {
+      const chat = await chatApi.openCompatibility(friendId);
       navigate(`/chat/${chat.id}`, { state: { chat } });
     } catch { /* ignore */ }
   };
@@ -106,18 +116,15 @@ function ChatList({ navigate }) {
         )}
       </div>
 
-      {/* Decorative input row + new-chat button — pinned just above the bottom nav, doesn't scroll */}
-      <div className="shrink-0 flex items-end gap-2 px-6 pt-2 pb-[5.5rem] lg:pb-8">
-        <div className="flex-1 rounded-3xl bg-white shadow-warm px-5 py-3.5 text-sm text-persona-muted/70 select-none truncate">
-          {t('inputPlaceholder')}
-        </div>
+      {/* New-chat button — pinned above the bottom nav, doesn't scroll */}
+      <div className="shrink-0 flex justify-end px-6 pt-2 pb-[6.5rem] lg:pb-9">
         <motion.button
           onClick={() => setShowNew(true)}
           aria-label={t('startTitle')}
-          className="w-12 h-12 shrink-0 rounded-full bg-persona-dark text-white flex items-center justify-center shadow-warm"
+          className="w-14 h-14 shrink-0 rounded-full bg-persona-dark text-white flex items-center justify-center shadow-warm-lg"
           whileTap={{ scale: 0.9 }}
         >
-          <HiOutlinePlus className="w-5 h-5" />
+          <HiOutlinePlus className="w-6 h-6" />
         </motion.button>
       </div>
 
@@ -126,7 +133,8 @@ function ChatList({ navigate }) {
           <NewChatSheet
             onClose={() => setShowNew(false)}
             onPortrait={startPortrait}
-            onFriend={() => navigate('/match')}
+            onFriend={startCompat}
+            onGoToFriends={() => navigate('/match/add')}
           />
         )}
       </AnimatePresence>
@@ -135,10 +143,21 @@ function ChatList({ navigate }) {
 }
 
 /** Chooser for starting a chat — the only two kinds (portrait / friend compatibility).
- *  Rendered through a body portal so it sits above the dashboard's bottom nav (which is
- *  in a higher stacking context than this tab) — the nav tucks underneath the sheet. */
-function NewChatSheet({ onClose, onPortrait, onFriend }) {
+ *  Step 1 picks the kind; "With a friend" drills into a friend list (step 2) that opens
+ *  the compatibility chat directly. Rendered through a body portal so it sits above the
+ *  dashboard's bottom nav (higher stacking context) — the nav tucks underneath. */
+function NewChatSheet({ onClose, onPortrait, onFriend, onGoToFriends }) {
   const { t } = useTranslation('chat');
+  const [step, setStep] = useState('root'); // 'root' | 'friends'
+  const [friends, setFriends] = useState(null);
+
+  const openFriends = () => {
+    setStep('friends');
+    if (friends === null) {
+      friendsApi.list().then(setFriends).catch(() => setFriends([]));
+    }
+  };
+
   return createPortal(
     <motion.div
       className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/30"
@@ -148,39 +167,85 @@ function NewChatSheet({ onClose, onPortrait, onFriend }) {
       onClick={onClose}
     >
       <motion.div
-        className="w-full sm:max-w-sm bg-persona-bg rounded-t-4xl sm:rounded-4xl p-6 pb-8"
+        className="w-full sm:max-w-sm bg-persona-bg rounded-t-4xl sm:rounded-4xl p-6 pb-8 max-h-[80dvh] flex flex-col"
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 40, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="font-display text-lg font-semibold text-persona-dark mb-4">{t('startTitle')}</h2>
-        <div className="space-y-2">
-          <button
-            onClick={onPortrait}
-            className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
-          >
-            <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-peach/40 flex items-center justify-center text-persona-dark">
-              <HiOutlineSparkles className="w-5 h-5" />
-            </span>
-            <div className="min-w-0">
-              <p className="font-semibold text-persona-dark text-sm">{t('startPortrait')}</p>
-              <p className="text-xs text-persona-muted">{t('startPortraitDesc')}</p>
+        {step === 'root' ? (
+          <>
+            <h2 className="font-display text-lg font-semibold text-persona-dark mb-4">{t('startTitle')}</h2>
+            <div className="space-y-2">
+              <button
+                onClick={onPortrait}
+                className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
+              >
+                <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-peach/40 flex items-center justify-center text-persona-dark">
+                  <HiOutlineSparkles className="w-5 h-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-semibold text-persona-dark text-sm">{t('startPortrait')}</p>
+                  <p className="text-xs text-persona-muted">{t('startPortraitDesc')}</p>
+                </div>
+              </button>
+              <button
+                onClick={openFriends}
+                className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
+              >
+                <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-lavender/50 flex items-center justify-center text-persona-dark">
+                  <HiOutlineUsers className="w-5 h-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-semibold text-persona-dark text-sm">{t('startCompat')}</p>
+                  <p className="text-xs text-persona-muted">{t('startCompatDesc')}</p>
+                </div>
+                <HiOutlineChevronRight className="w-5 h-5 text-persona-muted shrink-0 ml-auto" />
+              </button>
             </div>
-          </button>
-          <button
-            onClick={onFriend}
-            className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
-          >
-            <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-lavender/50 flex items-center justify-center text-persona-dark">
-              <HiOutlineUsers className="w-5 h-5" />
-            </span>
-            <div className="min-w-0">
-              <p className="font-semibold text-persona-dark text-sm">{t('startCompat')}</p>
-              <p className="text-xs text-persona-muted">{t('startCompatDesc')}</p>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2 mb-4">
+              <button
+                onClick={() => setStep('root')}
+                aria-label={t('common:back')}
+                className="w-9 h-9 shrink-0 rounded-full bg-persona-card flex items-center justify-center"
+              >
+                <HiOutlineChevronLeft className="w-5 h-5 text-persona-dark" />
+              </button>
+              <h2 className="font-display text-lg font-semibold text-persona-dark">{t('pickFriend')}</h2>
             </div>
-          </button>
-        </div>
+
+            {friends === null ? (
+              <p className="text-sm text-persona-muted px-1 py-4">{t('common:loading')}</p>
+            ) : friends.length === 0 ? (
+              <div className="text-center py-6">
+                <p className="text-sm text-persona-muted mb-4">{t('noFriends')}</p>
+                <button onClick={onGoToFriends} className="btn-secondary">{t('addFriends')}</button>
+              </div>
+            ) : (
+              <div className="space-y-2 overflow-y-auto">
+                {friends.map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => onFriend(f.id)}
+                    className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3 text-left card-hover"
+                  >
+                    <span className="w-10 h-10 shrink-0 rounded-full bg-persona-accent-peach/50 flex items-center justify-center font-display font-semibold text-persona-dark">
+                      {(f.name?.trim() || f.email || '?').charAt(0).toUpperCase()}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-persona-dark text-sm truncate">{f.name || f.email}</p>
+                      {f.name && <p className="text-xs text-persona-muted truncate">{f.email}</p>}
+                    </div>
+                    <HiOutlineChevronRight className="w-5 h-5 text-persona-muted shrink-0" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </motion.div>
     </motion.div>,
     document.body,
@@ -189,29 +254,30 @@ function NewChatSheet({ onClose, onPortrait, onFriend }) {
 
 // ─── Conversation ───────────────────────────────────────────────────────────────
 
-function MessageBubble({ role, content, pending }) {
+// Memoized so typing in the input (which re-renders Conversation on every keystroke)
+// doesn't re-parse the whole markdown history — only changed messages re-render.
+const MessageBubble = memo(function MessageBubble({ role, content, pending }) {
   if (role === 'user') {
     return (
       <div className="flex justify-end">
         <div className="max-w-[80%] bg-persona-card rounded-3xl rounded-br-lg px-4 py-2.5 shadow-warm">
-          <p className="text-sm text-persona-dark whitespace-pre-wrap break-words">{content}</p>
+          <p className="font-reading text-[17px] text-persona-dark whitespace-pre-wrap break-words">{content}</p>
         </div>
       </div>
     );
   }
+  // Assistant message — full width, no leading emblem. Serif (font-display) at a slightly
+  // larger size for the on-screen reading look; overrides the shared markdown text-sm.
   return (
-    <div className="flex gap-2.5">
-      <Emblem className="text-xl shrink-0 mt-0.5 text-persona-dark/70" />
-      <div className="min-w-0 flex-1 text-persona-dark">
-        {content ? (
-          <ReactMarkdown components={MARKDOWN_COMPONENTS}>{content}</ReactMarkdown>
-        ) : pending ? (
-          <TypingDots />
-        ) : null}
-      </div>
+    <div className="font-reading text-persona-dark [&_p]:text-[17px] [&_li]:text-[17px] [&_p]:leading-relaxed [&_li]:leading-relaxed">
+      {content ? (
+        <ReactMarkdown components={MARKDOWN_COMPONENTS}>{content}</ReactMarkdown>
+      ) : pending ? (
+        <TypingDots />
+      ) : null}
     </div>
   );
-}
+});
 
 function TypingDots() {
   return (
@@ -264,7 +330,7 @@ function DeleteConfirm({ onCancel, onConfirm }) {
   );
 }
 
-function Conversation({ chatId, navigate, locationState }) {
+function Conversation({ chatId, onBack, locationState }) {
   const { t } = useTranslation('chat');
   const title = useChatTitle();
   const [chat, setChat] = useState(locationState?.chat || null);
@@ -281,6 +347,13 @@ function Conversation({ chatId, navigate, locationState }) {
   // newest text down, but never past the point where the answer's start sits at the top.
   const anchorIdRef = useRef(null);
   const anchorElRef = useRef(null);
+  // Auto-follow is on while a reply streams, but the moment the user scrolls by hand we
+  // stop following so we never yank them back. Re-armed on next send.
+  const autoFollowRef = useRef(true);
+  // The scrollTop value WE last set. Streaming appends below the viewport never move
+  // scrollTop, so if it differs from this at the next tick, the USER scrolled — detected
+  // synchronously (any input: wheel, touch, scrollbar, keys), no event-timing races.
+  const expectedTopRef = useRef(0);
 
   useEffect(() => {
     let active = true;
@@ -312,16 +385,24 @@ function Conversation({ chatId, navigate, locationState }) {
   // then stop, so a long answer can be read from the beginning. Never scrolls up, and
   // never fights a user who scrolls further down themselves.
   useEffect(() => {
+    if (!autoFollowRef.current) return;
     const c = scrollRef.current;
     if (!c) return;
+    // The user scrolled away from where we left them → hand control over, stop following.
+    if (Math.abs(c.scrollTop - expectedTopRef.current) > 4) {
+      autoFollowRef.current = false;
+      return;
+    }
     const bottom = c.scrollHeight - c.clientHeight;
     let desired = bottom;
     const a = anchorElRef.current;
     if (a) {
       const offset = a.getBoundingClientRect().top - c.getBoundingClientRect().top + c.scrollTop;
-      desired = Math.min(bottom, Math.max(0, offset - 12));
+      // leave room for the floating top bar so the question lands just below it, not under it
+      desired = Math.min(bottom, Math.max(0, offset - 84));
     }
     if (desired > c.scrollTop) c.scrollTop = desired;
+    expectedTopRef.current = c.scrollTop;
   }, [messages]);
 
   const send = async () => {
@@ -333,6 +414,8 @@ function Conversation({ chatId, navigate, locationState }) {
     const userId = `u-${Date.now()}`;
     const assistantId = `a-${Date.now()}`;
     anchorIdRef.current = userId; // anchor scroll to this question
+    autoFollowRef.current = true; // re-arm follow for this reply (until the user scrolls)
+    expectedTopRef.current = scrollRef.current ? scrollRef.current.scrollTop : 0; // baseline
     setMessages((prev) => [
       ...prev,
       { id: userId, role: 'user', content },
@@ -376,6 +459,11 @@ function Conversation({ chatId, navigate, locationState }) {
     setSending(false);
   };
 
+  // The disclaimer shows only once a reply has finished generating — not while the AI
+  // is still typing and not while waiting on the user.
+  const lastMsg = messages[messages.length - 1];
+  const showDisclaimer = !sending && lastMsg?.role === 'assistant' && !lastMsg.pending && !!lastMsg.content;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -383,32 +471,45 @@ function Conversation({ chatId, navigate, locationState }) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 lg:left-64 z-30 bg-persona-bg flex flex-col"
     >
-      {/* Top bar: burger (all chats) · title · delete history */}
-      <header className="shrink-0 flex items-center gap-3 px-4 pt-4 pb-3 border-b border-persona-line/50">
-        <motion.button
-          onClick={() => navigate('/chat')}
-          aria-label={t('allChats')}
-          className="w-11 h-11 shrink-0 rounded-full bg-white flex items-center justify-center shadow-warm"
-          whileTap={{ scale: 0.9 }}
-        >
-          <HiOutlineBars3 className="w-5 h-5 text-persona-dark" />
-        </motion.button>
-        <p className="flex-1 min-w-0 text-center font-medium text-persona-dark truncate">
-          {chat ? title(chat) : ''}
-        </p>
-        <motion.button
-          onClick={() => setConfirmDelete(true)}
-          aria-label={t('deleteTitle')}
-          disabled={messages.length === 0}
-          className="w-11 h-11 shrink-0 rounded-full bg-white flex items-center justify-center shadow-warm text-persona-dark disabled:opacity-40"
-          whileTap={{ scale: 0.9 }}
-        >
-          <HiOutlineTrash className="w-5 h-5" />
-        </motion.button>
+      {/* Top bar — floats over the messages. Text fades into the background as it scrolls
+          up (a bg→transparent gradient) and blurs (progressive blur) — the Claude look. */}
+      <header className="absolute top-0 inset-x-0 z-40 pointer-events-none">
+        <ProgressiveBlur direction="down" className="absolute top-0 inset-x-0 h-24" />
+        <div className="relative flex items-center gap-3 px-4 pt-4 pb-3 pointer-events-auto">
+          <motion.button
+            onClick={onBack}
+            aria-label={t('common:back')}
+            className="w-11 h-11 shrink-0 rounded-full bg-white flex items-center justify-center shadow-warm"
+            whileTap={{ scale: 0.9 }}
+          >
+            <HiOutlineArrowLeft className="w-5 h-5 text-persona-dark" />
+          </motion.button>
+          <p className="flex-1 min-w-0 text-center font-medium text-persona-dark truncate">
+            {chat ? title(chat) : ''}
+          </p>
+          <motion.button
+            onClick={() => setConfirmDelete(true)}
+            aria-label={t('deleteTitle')}
+            disabled={messages.length === 0}
+            className="w-11 h-11 shrink-0 rounded-full bg-white flex items-center justify-center shadow-warm text-persona-dark disabled:opacity-40"
+            whileTap={{ scale: 0.9 }}
+          >
+            <HiOutlineTrash className="w-5 h-5" />
+          </motion.button>
+        </div>
       </header>
 
-      {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain">
+      {/* Messages — scroll underneath the floating top bar (hence the top padding). The
+          content is masked at the top so text fades to transparent as it scrolls up,
+          like Claude's mobile header (the buttons live outside this mask). */}
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto overscroll-contain"
+        style={{
+          maskImage: 'linear-gradient(to bottom, transparent 0, transparent 56px, #000 104px)',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, transparent 56px, #000 104px)',
+        }}
+      >
         {loading ? (
           <div className="h-full flex items-center justify-center text-persona-muted text-sm">
             {t('common:loading')}
@@ -423,7 +524,7 @@ function Conversation({ chatId, navigate, locationState }) {
             </p>
           </div>
         ) : (
-          <div className="mx-auto w-full max-w-2xl px-4 py-6 space-y-5">
+          <div className="mx-auto w-full max-w-2xl px-7 pt-20 pb-24 space-y-5">
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -432,13 +533,23 @@ function Conversation({ chatId, navigate, locationState }) {
                 <MessageBubble role={m.role} content={m.content} pending={m.pending} />
               </div>
             ))}
+
+            {/* Footer disclaimer — only after a reply is done. Emblem left, text right
+                (Anthropic-style). */}
+            {showDisclaimer && (
+              <div className="flex items-center gap-3 pt-1">
+                <Emblem className="text-xl shrink-0 text-persona-dark/50" />
+                <p className="flex-1 text-right text-xs text-persona-muted leading-snug">{t('disclaimer')}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Input row — send button only, on the same level as the field */}
-      <div className="shrink-0 px-4 pb-5 pt-2">
-        <div className="mx-auto w-full max-w-2xl flex items-end gap-2">
+      {/* Input — floats over the messages with no backdrop (fully transparent around it);
+          the field and send button are a free-floating pill. */}
+      <div className="absolute bottom-0 inset-x-0 z-40 pointer-events-none">
+        <div className="relative mx-auto w-full max-w-2xl flex items-end gap-2 px-4 pb-5 pt-2 pointer-events-auto">
           <textarea
             ref={taRef}
             rows={1}
@@ -446,13 +557,13 @@ function Conversation({ chatId, navigate, locationState }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder={t('inputPlaceholder')}
-            className="flex-1 resize-none overflow-y-auto rounded-3xl bg-white shadow-warm px-5 py-3.5 text-sm leading-5 text-persona-dark placeholder:text-persona-muted focus:outline-none focus:ring-2 focus:ring-persona-accent-peach"
+            className="flex-1 resize-none overflow-y-auto rounded-3xl bg-white shadow-warm-lg px-5 py-3.5 text-[15px] leading-5 text-persona-dark placeholder:text-persona-muted focus:outline-none focus:ring-2 focus:ring-persona-dark/30"
           />
           <motion.button
             onClick={send}
             disabled={!input.trim() || sending}
             aria-label={t('send')}
-            className="w-12 h-12 shrink-0 rounded-full bg-persona-dark text-white flex items-center justify-center shadow-warm disabled:opacity-40 transition-opacity"
+            className="w-12 h-12 shrink-0 rounded-full bg-persona-dark text-white flex items-center justify-center shadow-warm-lg disabled:opacity-40 transition-opacity"
             whileTap={{ scale: 0.9 }}
           >
             <HiOutlinePaperAirplane className="w-5 h-5" />
@@ -487,11 +598,14 @@ export default function Chat({ onImmersiveChange }) {
   if (!onChatRoute) return null;
 
   if (chatId) {
+    // Back goes to wherever they came from (chat list / portrait / compatibility); falls
+    // back to the chat list on a cold deep-link with no history to pop.
+    const onBack = () => (location.key === 'default' ? navigate('/chat') : navigate(-1));
     return (
       <Conversation
         key={`chat-${chatId}`}
         chatId={chatId}
-        navigate={navigate}
+        onBack={onBack}
         locationState={location.state}
       />
     );

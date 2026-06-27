@@ -9,6 +9,9 @@ export default {
       fontFamily: {
         sans: ['Geist', 'Inter', 'system-ui', 'sans-serif'],
         display: ['Fraunces', 'Georgia', 'serif'],
+        // Reading serif for chat messages — the named fonts are commercial and not
+        // bundled, so they apply only if installed; otherwise it falls back to Fraunces.
+        reading: ['Tiempos Text', 'Galaxie Copernicus', 'Styrene', 'Fraunces', 'Georgia', 'serif'],
       },
       colors: {
         persona: {
