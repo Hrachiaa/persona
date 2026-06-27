@@ -16,8 +16,10 @@ import {
   HiOutlineChevronRight,
   HiOutlineClock,
   HiOutlineArrowPath,
+  HiOutlineChatBubbleLeftRight,
 } from 'react-icons/hi2';
 import { friendsApi } from '../../api/friends';
+import { chatApi } from '../../api/chat';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import { SIGILS } from '../../components/testSigils';
 import { ResultView } from './Tests';
@@ -646,6 +648,19 @@ function CompatibilityView({ friendId, navigate, locationState }) {
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState(false);
   const [nonce, setNonce] = useState(0);
+  const [openingChat, setOpeningChat] = useState(false);
+
+  // Open (or resume) the compatibility chat with this friend and jump into it.
+  const discussWithAi = async () => {
+    if (openingChat) return;
+    setOpeningChat(true);
+    try {
+      const chat = await chatApi.openCompatibility(friendId);
+      navigate(`/chat/${chat.id}`, { state: { chat } });
+    } catch {
+      setOpeningChat(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -721,6 +736,16 @@ function CompatibilityView({ friendId, navigate, locationState }) {
           <div className="text-persona-dark">
             <ReactMarkdown components={MARKDOWN_COMPONENTS}>{data.content}</ReactMarkdown>
           </div>
+
+          {/* Talk the relationship through with the AI. */}
+          <motion.button
+            onClick={discussWithAi}
+            disabled={openingChat}
+            className="btn-primary w-full mt-6 flex items-center justify-center gap-2 disabled:opacity-60"
+            whileTap={{ scale: 0.97 }}
+          >
+            <HiOutlineChatBubbleLeftRight className="w-5 h-5" /> {t('chat:discuss')}
+          </motion.button>
         </motion.div>
       ) : null}
     </SubScreen>

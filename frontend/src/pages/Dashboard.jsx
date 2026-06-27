@@ -7,7 +7,7 @@ import {
   HiOutlineSparkles,
   HiOutlineUsers,
   HiOutlineBookOpen,
-  HiOutlineStar,
+  HiOutlineChatBubbleLeftRight,
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
 import ProgressiveBlur from '../components/ProgressiveBlur';
@@ -15,7 +15,7 @@ import Tests from './tabs/Tests';
 import Portrait from './tabs/Portrait';
 import Compatibility from './tabs/Compatibility';
 import Recommendations from './tabs/Recommendations';
-import DailyAdvice from './tabs/DailyAdvice';
+import Chat from './tabs/Chat';
 import Profile from './Profile';
 
 // Labels come from the `dashboard` namespace, keyed by id (nav.<id>).
@@ -24,7 +24,7 @@ const tabs = [
   { id: 'portrait', path: '/portrait', icon: HiOutlineSparkles },
   { id: 'match', path: '/match', icon: HiOutlineUsers },
   { id: 'reads', path: '/reads', icon: HiOutlineBookOpen },
-  { id: 'advice', path: '/advice', icon: HiOutlineStar },
+  { id: 'chat', path: '/chat', icon: HiOutlineChatBubbleLeftRight },
 ];
 
 /** First letter of the user's name (or email) for the avatar button. */
@@ -62,7 +62,7 @@ export default function Dashboard({ onLogout }) {
       case 'portrait': return <Portrait key="portrait" onOpenTests={() => navigate('/tests')} />;
       case 'match': return <Compatibility key="match" onImmersiveChange={setImmersive} />;
       case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/tests')} onImmersiveChange={setImmersive} />;
-      case 'advice': return <DailyAdvice key="advice" userName={userName} />;
+      case 'chat': return <Chat key="chat" onImmersiveChange={setImmersive} />;
       default: return <Tests key="tests" onImmersiveChange={setImmersive} />;
     }
   };
@@ -170,7 +170,7 @@ export default function Dashboard({ onLogout }) {
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
         className="fixed bottom-4 inset-x-0 z-50 px-6 lg:hidden"
       >
-        <div className="max-w-lg mx-auto flex items-center justify-around bg-white/90 backdrop-blur-xl border border-persona-line/60 shadow-warm-lg rounded-full py-2 px-2">
+        <div className="max-w-lg mx-auto flex items-center justify-around bg-white/90 backdrop-blur-xl border border-persona-line/60 shadow-warm-lg rounded-full py-1 px-2">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -179,7 +179,7 @@ export default function Dashboard({ onLogout }) {
                 onClick={() => navigate(tab.path)}
                 aria-current={isActive ? 'page' : undefined}
                 aria-label={t(`nav.${tab.id}`)}
-                className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 py-2 px-1 rounded-2xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
+                className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 py-1.5 px-1 rounded-2xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
                   isActive ? 'text-persona-dark' : 'text-persona-muted'
                 }`}
                 whileTap={{ scale: 0.9 }}

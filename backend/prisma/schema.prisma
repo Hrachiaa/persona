@@ -38,6 +38,7 @@ model User {
   receivedFriendships Friendship[]    @relation("ReceivedFriendships")
   compatibilitiesA    Compatibility[] @relation("CompatibilitiesA")
   compatibilitiesB    Compatibility[] @relation("CompatibilitiesB")
+  chats               Chat[]
 }
 
 model RefreshToken {
@@ -172,4 +173,47 @@ model Compatibility {
   userB     User     @relation("CompatibilitiesB", fields: [userBId], references: [id], onDelete: Cascade)
 
   @@unique([userAId, userBId])
+}
+
+enum ChatKind {
+  PORTRAIT
+  COMPATIBILITY
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+}
+
+// An AI conversation owned by `userId`. Two kinds, both singletons per context so
+// chats can't be created freely (enforced in ChatService.getOrCreate*):
+//   - PORTRAIT      — one per user; `friendId` is null. Discuss your own portrait.
+//   - COMPATIBILITY — one per (user, friend) pair; `friendId` is the other user.
+// `friendId` is a plain user id (not a FK relation) — a compatibility chat is the
+// viewer's, scoped to a friend, and survives even if that friend later unfriends.
+// "Delete history" wipes the messages (cascade) but keeps the chat row.
+model Chat {
+  id        String        @id @default(cuid())
+  userId    String
+  kind      ChatKind
+  friendId  String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  ChatMessage[]
+
+  @@index([userId])
+}
+
+// One turn in a chat. Persisted as they complete — the user message before the
+// model runs, the assistant message once its stream finishes.
+model ChatMessage {
+  id        String   @id @default(cuid())
+  chatId    String
+  role      ChatRole
+  content   String
+  createdAt DateTime @default(now())
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId, createdAt])
 }

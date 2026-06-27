@@ -100,6 +100,38 @@ export class AiService {
     return { content, score };
   }
 
+  /**
+   * Reusable streaming primitive: yields the assistant's reply token-by-token for a
+   * full message history under one system prompt. Generic on purpose — the chat
+   * feature uses it now, and the portrait/compatibility syntheses can be migrated
+   * onto it later (they currently background-generate into a cache + poll). The
+   * caller is responsible for assembling the system prompt (instructions + context).
+   */
+  async *streamChat(
+    systemPrompt: string,
+    messages: { role: 'user' | 'assistant'; content: string }[],
+  ): AsyncGenerator<string, void, unknown> {
+    const client = await this.getClient();
+    const model = process.env.OPENROUTER_MODEL;
+    const maxTokens = Number(process.env.OPENROUTER_MAX_TOKENS);
+
+    const stream = await client.chat.send({
+      chatRequest: {
+        model,
+        temperature: 1,
+        maxTokens,
+        messages: [{ role: 'system', content: systemPrompt }, ...messages],
+        stream: true,
+      },
+    });
+
+    for await (const chunk of stream) {
+      if (chunk.error) throw new Error(chunk.error.message || 'OpenRouter stream error');
+      const delta = chunk.choices?.[0]?.delta?.content;
+      if (typeof delta === 'string' && delta) yield delta;
+    }
+  }
+
   /** Runs a completion and parses its body as JSON (defensively). */
   private async completeJson(systemPrompt: string, userPrompt: string): Promise<any> {
     const raw = await this.complete(systemPrompt, userPrompt, false);

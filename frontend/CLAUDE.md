@@ -33,12 +33,13 @@ Navigation uses **`react-router-dom` v7** (`BrowserRouter` is mounted in [src/ma
 | --- | --- |
 | `/` | redirect — `getInitialPath(user)` picks the landing route |
 | `/onboarding` `/register` `/login` `/forgot-password` `/survey` | top-level screens |
-| `/tests` `/portrait` `/match` `/reads` `/advice` | Dashboard tabs (all render `Dashboard`) |
+| `/tests` `/portrait` `/match` `/reads` `/chat` | Dashboard tabs (all render `Dashboard`) |
 | `/tests/:slug` · `/tests/:slug/result` | test runner / result (`:slug` is a friendly name — `logic`, `personality`, `values`, `attachment`, `stress`, `shadows`, … via `TYPE_SLUGS` in [tabs/Tests.jsx](src/pages/tabs/Tests.jsx), not the raw cuid) |
+| `/chat` · `/chat/:chatId` | AI chat: `/chat` is the chat list / empty state; `/chat/:chatId` is a conversation (immersive). Chats aren't created freely — opened from the "Discuss with AI" buttons on Portrait / Compatibility ([tabs/Chat.jsx](src/pages/tabs/Chat.jsx)). |
 | `/profile` · `/profile/{edit,password,liked,history}` | Dashboard with the Profile overlay open |
 | `*` | redirect to `/` |
 
-`/tests` and `/profile` are registered as `/tests/*` and `/profile/*` so their sub-routes match; `DASHBOARD_PREFIXES` / `isDashboardPath()` in [src/App.jsx](src/App.jsx) treat any path under those as the shared `'dashboard'` animation group.
+`/tests`, `/match`, `/chat` and `/profile` are registered as `/tests/*` etc. so their sub-routes match; `DASHBOARD_PREFIXES` / `isDashboardPath()` in [src/App.jsx](src/App.jsx) treat any path under those as the shared `'dashboard'` animation group.
 
 **Sub-state in the URL — two conventions:**
 - **Path segments** for things you navigate *into* (a distinct screen that survives refresh / is shareable): the test runner & result ([tabs/Tests.jsx](src/pages/tabs/Tests.jsx) derives `screen`/`selectedTest` from the path; the resume prompt is a transient dialog with *no* URL) and the Profile sub-pages ([Profile.jsx](src/pages/Profile.jsx) derives `view` from the last segment).

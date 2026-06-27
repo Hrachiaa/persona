@@ -29,5 +29,9 @@
     "notFound": "Recommendation not found",
     "notFoundOrSwiped": "Recommendation not found or already swiped",
     "invalidType": "Query param 'type' must be 'film' or 'book'"
+  },
+  "chat": {
+    "notFound": "Chat not found",
+    "streamFailed": "Something went wrong generating a reply. Please try again."
   }
 }
