@@ -2,14 +2,37 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiOutlineArrowPath, HiOutlineClipboardDocumentList, HiOutlineChevronDown, HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
+import { HiOutlineArrowPath, HiOutlineClipboardDocumentList, HiOutlineChevronDown, HiOutlineChatBubbleLeftRight, HiOutlineClock, HiOutlineXMark } from 'react-icons/hi2';
 import ReactMarkdown from 'react-markdown';
 import { portraitApi } from '../../api/portrait';
 import { chatApi } from '../../api/chat';
+import { testsApi } from '../../api/tests';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import { SIGILS } from '../../components/testSigils';
 
 const TOTAL_TESTS = 6;
+
+// Sigils whose orb opens an inline test-info card (the same panel the Tests tab shows
+// when a test is expanded). `slug` matches TYPE_SLUGS in Tests.jsx. Only Personality is
+// wired up for now — add more entries here to make other orbs clickable.
+const SIGIL_TEST_META = {
+  bigFive: { slug: 'personality' },
+};
+
+// The Tests list, fetched once and cached at module scope so opening an orb card
+// (and revisiting the tab) is instant. Shape per item: { id, testType, testName,
+// description, duration, totalQuestions, result }.
+let testsCache = null;
+let testsInFlight = null;
+function fetchTests() {
+  if (testsCache) return Promise.resolve(testsCache);
+  if (!testsInFlight) {
+    testsInFlight = testsApi.getAllTests()
+      .then((d) => { testsCache = d; return d; })
+      .finally(() => { testsInFlight = null; });
+  }
+  return testsInFlight;
+}
 
 // One shared in-flight request so StrictMode's double mount reuses a single
 // backend call instead of firing two generations.
@@ -48,7 +71,7 @@ const SIGIL_LAYOUT = [
 // completed but not yet in the portrait — a build is in flight) spin a loading ring.
 // When an orb transitions from not-lit to lit (a fresh interpretation landed) it gets
 // a one-shot celebratory burst so the moment reads as an event, not a quiet recolor.
-function PortraitConstellation({ basedOn, loadingTests }) {
+function PortraitConstellation({ basedOn, loadingTests, onSelectSigil }) {
   const { t } = useTranslation('portrait');
   const litArr = basedOn || [];
   const litSet = new Set(litArr);
@@ -141,14 +164,24 @@ function PortraitConstellation({ basedOn, loadingTests }) {
             const lit = litSet.has(s.type);
             const loading = !lit && loadingSet.has(s.type);
             const { color, Glyph } = SIGILS[s.type];
+            const clickable = !!onSelectSigil && !!SIGIL_TEST_META[s.type];
             return (
               <g key={s.type} transform={`translate(${s.x} ${s.y})`}>
                 <motion.g
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.25 + i * 0.08, type: 'spring', stiffness: 220, damping: 18 }}
+                  onClick={clickable ? () => onSelectSigil(s.type) : undefined}
+                  whileTap={clickable ? { scale: 0.92 } : undefined}
+                  role={clickable ? 'button' : undefined}
+                  tabIndex={clickable ? 0 : undefined}
+                  onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectSigil(s.type); } } : undefined}
+                  style={clickable ? { cursor: 'pointer' } : undefined}
                 >
                   <title>{t(`sigils.${s.type}`)} — {lit ? t('orbStatus.revealed') : loading ? t('orbStatus.revealing') : t('orbStatus.notTaken')}</title>
+
+                  {/* Transparent hit target so the whole orb (incl. the halo gap) is tappable */}
+                  {clickable && <circle r="36" fill="transparent" />}
 
                   {/* Lit halo */}
                   <motion.circle r="34" fill={color} filter="url(#portraitOrbGlow)" animate={{ opacity: lit ? 0.28 : 0 }} transition={{ duration: 0.6 }} />
@@ -248,6 +281,87 @@ function PortraitProgress({ count, total, onTakeTests }) {
   );
 }
 
+// The expanded test panel that opens inline above the constellation when an orb is
+// tapped (Duolingo-style — it surfaces in place rather than floating over the screen).
+// Two-phase reveal: the outer wrapper grows its height first, opening a gap that eases
+// the star down; then the inner bubble pops in (scale from the bottom), as if it rose
+// out of the orb like a message. Same content as the Tests tab's expanded card
+// (description, time, question count, start / view-result button). `test` is the
+// matching Tests-list entry (null while loading).
+function SigilInfoCard({ type, test, onStart, onView, onClose }) {
+  const { t, i18n } = useTranslation('tests');
+  const titleSize = i18n.language?.startsWith('ru') ? 'text-lg' : 'text-xl';
+  const completed = !!test?.result;
+
+  return (
+    <motion.div
+      className="w-full max-w-xs overflow-hidden flex-shrink-0"
+      initial={{ height: 0 }}
+      animate={{ height: 'auto' }}
+      exit={{ height: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 32 }}
+    >
+      <div className="pb-8">
+        {/* Phase 2 — the bubble pops up after the gap has opened above the star */}
+        <motion.div
+          className="surface-warm rounded-3xl p-6 border border-white/50"
+          initial={{ opacity: 0, scale: 0.7, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.7, y: 12 }}
+          transition={{ delay: 0.22, type: 'spring', stiffness: 420, damping: 26 }}
+          style={{ transformOrigin: 'center bottom' }}
+        >
+          {/* Header — title + close */}
+          <div className="flex items-start gap-3">
+            <h3 className={`flex-1 min-w-0 break-words font-display ${titleSize} font-semibold text-persona-dark`}>
+              {t(`names.${type}`, { defaultValue: test?.testName })}
+            </h3>
+            <button
+              onClick={onClose}
+              aria-label={t('common:close')}
+              className="flex-shrink-0 -mr-1 mt-0.5 text-persona-muted hover:text-persona-dark transition-colors"
+            >
+              <HiOutlineXMark className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Detail */}
+          <div className="pt-3">
+            <p className="text-persona-muted text-sm leading-relaxed mb-4">
+              {t(`descriptions.${type}`, { defaultValue: test?.description })}
+            </p>
+            <div className="flex flex-wrap items-center gap-2 mb-5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
+                <HiOutlineClock className="w-3.5 h-3.5" />
+                {test?.duration > 0 ? t('card.minutes', { n: test.duration }) : t('card.noTimeLimit')}
+              </span>
+              {test?.totalQuestions != null && (
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
+                  {t('card.questionsCount', { n: test.totalQuestions })}
+                </span>
+              )}
+            </div>
+            {completed ? (
+              <motion.button onClick={onView} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
+                {t('card.viewResult')}
+              </motion.button>
+            ) : (
+              <motion.button
+                onClick={onStart}
+                disabled={!test}
+                className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
+                whileTap={{ scale: 0.97 }}
+              >
+                {t('card.start')}
+              </motion.button>
+            )}
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
 // The portrait tab. Fetches GET /portrait — an AI synthesis of every test the user
 // has completed, regenerated server-side whenever a test is submitted. A cached
 // portrait is shown immediately; while a newer one is generating we keep the old one
@@ -262,6 +376,25 @@ export default function Portrait({ onOpenTests }) {
   const [errored, setErrored] = useState(false);
   const [nonce, setNonce] = useState(0); // bump to refetch
   const [openingChat, setOpeningChat] = useState(false);
+  // The Tests list (for the orb info card) + which sigil's card is currently open.
+  const [tests, setTests] = useState(testsCache);
+  const [selectedSigil, setSelectedSigil] = useState(null);
+  const selectedTest = selectedSigil ? tests?.find((t) => t.testType === selectedSigil) : null;
+
+  // Load the test list once so tapping an orb can show its info card instantly.
+  useEffect(() => { fetchTests().then(setTests).catch(() => {}); }, []);
+
+  // Tapping an orb opens its card; tapping the same orb again closes it.
+  const toggleSigil = (type) => setSelectedSigil((cur) => (cur === type ? null : type));
+
+  const startSigilTest = () => {
+    const slug = SIGIL_TEST_META[selectedSigil]?.slug;
+    if (slug) navigate(`/tests/${slug}`);
+  };
+  const viewSigilResult = () => {
+    const slug = SIGIL_TEST_META[selectedSigil]?.slug;
+    if (slug) navigate(`/tests/${slug}/result`);
+  };
 
   // Open (or resume) the portrait chat and drop the user straight into it.
   const discussWithAi = async () => {
@@ -338,21 +471,47 @@ export default function Portrait({ onOpenTests }) {
     >
       {showPager ? (
         <>
-          {/* Page 1 — the constellation, centered, alone */}
-          <section className="relative min-h-[100dvh] snap-start snap-always flex items-center justify-center px-6">
-            <PortraitConstellation basedOn={litBasedOn} loadingTests={loadingTests} />
+          {/* Page 1 — the constellation, centered. Tapping an orb opens its test card
+              inline above the star: the card grows in place and the centered column
+              reflows, easing the constellation down to make room (Duolingo-style). */}
+          <section className="relative min-h-[100dvh] snap-start snap-always flex flex-col items-center justify-center px-6">
+            <AnimatePresence>
+              {selectedSigil && (
+                <SigilInfoCard
+                  key={selectedSigil}
+                  type={selectedSigil}
+                  test={selectedTest}
+                  onStart={startSigilTest}
+                  onView={viewSigilResult}
+                  onClose={() => setSelectedSigil(null)}
+                />
+              )}
+            </AnimatePresence>
 
             <motion.div
-              className="absolute inset-x-0 bottom-24 lg:bottom-10 flex flex-col items-center gap-1.5 text-persona-muted pointer-events-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.1, duration: 0.6 }}
+              className="w-full flex justify-center flex-shrink-0"
+              animate={{ scale: selectedSigil ? 0.82 : 1 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 32 }}
             >
-              <span className="text-xs font-medium tracking-wide">{t('swipeDown')}</span>
-              <motion.span animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}>
-                <HiOutlineChevronDown className="w-5 h-5" />
-              </motion.span>
+              <PortraitConstellation basedOn={litBasedOn} loadingTests={loadingTests} onSelectSigil={toggleSigil} />
             </motion.div>
+
+            <AnimatePresence>
+              {!selectedSigil && (
+                <motion.div
+                  className="absolute inset-x-0 bottom-24 lg:bottom-10 flex flex-col items-center gap-1.5 text-persona-muted pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4, delay: selectedSigil ? 0 : 1.1 }}
+                >
+                  <span className="text-xs font-medium tracking-wide">{t('swipeDown')}</span>
+                  <motion.span animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}>
+                    <HiOutlineChevronDown className="w-5 h-5" />
+                  </motion.span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </section>
 
           {/* Page 2 — everything else, locked into place below. Fixed to one screen and
