@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useSpring, useMotionValue, useTransform, useMotionValueEvent } from 'framer-motion';
 import { HiOutlineArrowPath, HiOutlineClipboardDocumentList, HiOutlineChevronDown, HiOutlineChatBubbleLeftRight, HiOutlineClock, HiOutlineXMark } from 'react-icons/hi2';
 import ReactMarkdown from 'react-markdown';
 import { portraitApi } from '../../api/portrait';
@@ -13,10 +13,14 @@ import { SIGILS } from '../../components/testSigils';
 const TOTAL_TESTS = 6;
 
 // Sigils whose orb opens an inline test-info card (the same panel the Tests tab shows
-// when a test is expanded). `slug` matches TYPE_SLUGS in Tests.jsx. Only Personality is
-// wired up for now — add more entries here to make other orbs clickable.
+// when a test is expanded). `slug` matches TYPE_SLUGS in Tests.jsx.
 const SIGIL_TEST_META = {
   bigFive: { slug: 'personality' },
+  shcwartz: { slug: 'values' },
+  cope: { slug: 'stress' },
+  iq: { slug: 'logic' },
+  ecr: { slug: 'attachment' },
+  pid: { slug: 'shadows' },
 };
 
 // The Tests list, fetched once and cached at module scope so opening an orb card
@@ -67,17 +71,49 @@ const SIGIL_LAYOUT = [
   { type: 'pid',      x: -RING * 0.866, y: -RING * 0.5 },
 ];
 
+// The spring that spins the ring (and counter-spins each glyph upright) when an orb's
+// card opens. Shared by both so they cancel exactly and the glyphs never tilt mid-spin.
+const RING_SPIN = { type: 'spring', stiffness: 90, damping: 18 };
+
 // The hero: the symbolic self-portrait. `basedOn` lights orbs; `loadingTests` (tests
 // completed but not yet in the portrait — a build is in flight) spin a loading ring.
 // When an orb transitions from not-lit to lit (a fresh interpretation landed) it gets
 // a one-shot celebratory burst so the moment reads as an event, not a quiet recolor.
-function PortraitConstellation({ basedOn, loadingTests, onSelectSigil }) {
+function PortraitConstellation({ basedOn, loadingTests, onSelectSigil, selectedSigil }) {
   const { t } = useTranslation('portrait');
   const litArr = basedOn || [];
   const litSet = new Set(litArr);
   const loadingSet = new Set(loadingTests || []);
   const litCount = litArr.length;
   const progress = litCount / SIGIL_LAYOUT.length;
+
+  // Spin the selected orb up to 12 o'clock (right under the card). We keep a *continuous*
+  // rotation (a ref that accumulates) and step it by the shortest signed delta from where
+  // it already is — so switching e.g. Logic→Attachment turns one notch, not almost the
+  // whole way round (computing a fresh absolute angle each time would). Each orb rests at
+  // index×60° clockwise from the top; bigFive and the closed state both settle at 0 (mod
+  // 360). Re-renders with an unchanged selection are idempotent (delta resolves to 0).
+  const selectedIndex = selectedSigil ? SIGIL_LAYOUT.findIndex((s) => s.type === selectedSigil) : -1;
+  const rotationRef = useRef(0);
+  const desiredMod = selectedIndex > 0 ? -selectedIndex * 60 : 0;
+  const shortestDelta = (((desiredMod - rotationRef.current) % 360) + 540) % 360 - 180;
+  const ringRotation = rotationRef.current + shortestDelta;
+  rotationRef.current = ringRotation;
+
+  // Apply the spin as the SVG `rotate(angle)` transform *attribute*, which pivots about
+  // the group's local origin — exactly the centre (the group sits at translate(170,170)).
+  // framer's CSS `rotate` instead derives its pivot from the bounding box, which drifted
+  // a few px off-centre and made the rays miss the core at large angles. We spring the
+  // angle through a motion value and write the attribute on change; the glyphs read the
+  // negated value so they stay upright in perfect sync.
+  const ringRef = useRef(null);
+  const ringTarget = useMotionValue(0);
+  useEffect(() => { ringTarget.set(ringRotation); }, [ringRotation, ringTarget]);
+  const ringAngle = useSpring(ringTarget, RING_SPIN);
+  const negRingAngle = useTransform(ringAngle, (v) => -v);
+  useMotionValueEvent(ringAngle, 'change', (v) => {
+    ringRef.current?.setAttribute('transform', `rotate(${v})`);
+  });
 
   // One-shot bursts: type -> incrementing key. Only genuine not-lit→lit transitions
   // fire (the ref starts at the mount-time lit set, so revisiting the tab never
@@ -126,6 +162,9 @@ function PortraitConstellation({ basedOn, loadingTests, onSelectSigil }) {
         </defs>
 
         <g transform="translate(170 170)">
+          {/* The ring of rays + orbs spins so the selected orb rides up to the top; the
+              core λ is rendered after this group so it stays centered and upright. */}
+          <g ref={ringRef} transform="rotate(0)">
           {/* Rays from the core to each orb */}
           {SIGIL_LAYOUT.map((s) => {
             const lit = litSet.has(s.type);
@@ -142,22 +181,6 @@ function PortraitConstellation({ basedOn, loadingTests, onSelectSigil }) {
               />
             );
           })}
-
-          {/* Core "self" — a warm glow that brightens with progress, anchored by λ */}
-          <motion.g
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
-          >
-            <circle r="48" fill="url(#portraitCoreGlow)" opacity={0.22 + 0.7 * progress} />
-          </motion.g>
-          <circle r="22" fill="#FFFFFF" stroke="#E8E5DC" strokeWidth="1.5" />
-          <text
-            x="0" y="0" textAnchor="middle" dominantBaseline="central"
-            fontFamily="Fraunces, Georgia, serif" fontSize="22" fontWeight="600"
-            fill="#1A1A1A" opacity={0.35 + 0.65 * progress}
-          >
-            λ
-          </text>
 
           {/* Orbs — one per test */}
           {SIGIL_LAYOUT.map((s, i) => {
@@ -194,8 +217,13 @@ function PortraitConstellation({ basedOn, loadingTests, onSelectSigil }) {
                     transition={{ duration: 0.6 }}
                   />
 
-                  {/* Glyph */}
-                  <motion.g animate={{ opacity: lit ? 1 : loading ? 0.7 : 0.55 }} transition={{ duration: 0.5 }}>
+                  {/* Glyph — counter-spins the ring rotation (same motion value) so it
+                      stays upright in sync with the ring. */}
+                  <motion.g
+                    style={{ rotate: negRingAngle }}
+                    animate={{ opacity: lit ? 1 : loading ? 0.7 : 0.55 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     <g transform="scale(1.25)">
                       <Glyph c={lit ? '#1A1A1A' : '#A39E92'} />
                     </g>
@@ -223,6 +251,24 @@ function PortraitConstellation({ basedOn, loadingTests, onSelectSigil }) {
               </g>
             );
           })}
+          </g>
+
+          {/* Core "self" — a warm glow that brightens with progress, anchored by λ.
+              Rendered outside the spinning ring so λ stays centered and upright. */}
+          <motion.g
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
+          >
+            <circle r="48" fill="url(#portraitCoreGlow)" opacity={0.22 + 0.7 * progress} />
+          </motion.g>
+          <circle r="22" fill="#FFFFFF" stroke="#E8E5DC" strokeWidth="1.5" />
+          <text
+            x="0" y="0" textAnchor="middle" dominantBaseline="central"
+            fontFamily="Fraunces, Georgia, serif" fontSize="22" fontWeight="600"
+            fill="#1A1A1A" opacity={0.35 + 0.65 * progress}
+          >
+            λ
+          </text>
         </g>
       </svg>
     </motion.div>
@@ -288,14 +334,13 @@ function PortraitProgress({ count, total, onTakeTests }) {
 // out of the orb like a message. Same content as the Tests tab's expanded card
 // (description, time, question count, start / view-result button). `test` is the
 // matching Tests-list entry (null while loading).
-function SigilInfoCard({ type, test, onStart, onView, onClose }) {
+function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose }) {
   const { t, i18n } = useTranslation('tests');
   const titleSize = i18n.language?.startsWith('ru') ? 'text-lg' : 'text-xl';
-  const completed = !!test?.result;
 
   return (
     <motion.div
-      className="w-full max-w-xs overflow-hidden flex-shrink-0"
+      className="w-full max-w-xs overflow-hidden flex-shrink-0 pointer-events-auto"
       initial={{ height: 0 }}
       animate={{ height: 'auto' }}
       exit={{ height: 0 }}
@@ -325,35 +370,47 @@ function SigilInfoCard({ type, test, onStart, onView, onClose }) {
             </button>
           </div>
 
-          {/* Detail */}
+          {/* Detail — locked tests show why they're unavailable (mirrors the Tests tab);
+              the rest show the description, time/question chips, and a start/view button. */}
           <div className="pt-3">
-            <p className="text-persona-muted text-sm leading-relaxed mb-4">
-              {t(`descriptions.${type}`, { defaultValue: test?.description })}
-            </p>
-            <div className="flex flex-wrap items-center gap-2 mb-5">
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
-                <HiOutlineClock className="w-3.5 h-3.5" />
-                {test?.duration > 0 ? t('card.minutes', { n: test.duration }) : t('card.noTimeLimit')}
-              </span>
-              {test?.totalQuestions != null && (
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
-                  {t('card.questionsCount', { n: test.totalQuestions })}
-                </span>
-              )}
-            </div>
-            {completed ? (
-              <motion.button onClick={onView} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
-                {t('card.viewResult')}
-              </motion.button>
+            {locked ? (
+              <>
+                <p className="text-persona-muted text-sm leading-relaxed mb-4">{t('card.lockedHint')}</p>
+                <div className="w-full py-3.5 px-8 rounded-full font-medium text-center bg-persona-line text-persona-muted">
+                  {t('card.unavailable')}
+                </div>
+              </>
             ) : (
-              <motion.button
-                onClick={onStart}
-                disabled={!test}
-                className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
-                whileTap={{ scale: 0.97 }}
-              >
-                {t('card.start')}
-              </motion.button>
+              <>
+                <p className="text-persona-muted text-sm leading-relaxed mb-4">
+                  {t(`descriptions.${type}`, { defaultValue: test?.description })}
+                </p>
+                <div className="flex flex-wrap items-center gap-2 mb-5">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
+                    <HiOutlineClock className="w-3.5 h-3.5" />
+                    {test?.duration > 0 ? t('card.minutes', { n: test.duration }) : t('card.noTimeLimit')}
+                  </span>
+                  {test?.totalQuestions != null && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
+                      {t('card.questionsCount', { n: test.totalQuestions })}
+                    </span>
+                  )}
+                </div>
+                {completed ? (
+                  <motion.button onClick={onView} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
+                    {t('card.viewResult')}
+                  </motion.button>
+                ) : (
+                  <motion.button
+                    onClick={onStart}
+                    disabled={!test}
+                    className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    {t('card.start')}
+                  </motion.button>
+                )}
+              </>
             )}
           </div>
         </motion.div>
@@ -452,6 +509,16 @@ export default function Portrait({ onOpenTests }) {
   const buildingActive = isGenerating || isRefreshing;
   const loadingTests = buildingActive ? completedTests.filter((t) => !litBasedOn.includes(t)) : [];
 
+  // The selected orb's card mirrors the Tests tab's gate, but read from the SAME
+  // completion data that lights the orbs — so a lit orb always offers "View result" and
+  // locking follows ring order, instead of a separately-fetched list that can go stale.
+  const completedSet = new Set(completedTests);
+  const selectedCompleted = selectedSigil ? completedSet.has(selectedSigil) : false;
+  const selectedIdx = selectedSigil ? SIGIL_LAYOUT.findIndex((s) => s.type === selectedSigil) : -1;
+  const selectedLocked =
+    selectedIdx > 0 && !selectedCompleted &&
+    !SIGIL_LAYOUT.slice(0, selectedIdx).every((s) => completedSet.has(s.type));
+
   // The two-page pager appears as soon as we know which tests are done (ready, locked,
   // or a first build in flight). The bare centered screen is only the very first fetch
   // or a hard error with nothing to show.
@@ -472,28 +539,38 @@ export default function Portrait({ onOpenTests }) {
       {showPager ? (
         <>
           {/* Page 1 — the constellation, centered. Tapping an orb opens its test card
-              inline above the star: the card grows in place and the centered column
-              reflows, easing the constellation down to make room (Duolingo-style). */}
+              above the star and eases the star down to a single fixed open spot. The card
+              is absolutely positioned (out of flow), so its height never moves the star —
+              the star has exactly two resting places (centred when closed, one step down
+              when ANY card is open), no matter which test or how tall its card. */}
           <section className="relative min-h-[100dvh] snap-start snap-always flex flex-col items-center justify-center px-6">
-            <AnimatePresence>
-              {selectedSigil && (
-                <SigilInfoCard
-                  key={selectedSigil}
-                  type={selectedSigil}
-                  test={selectedTest}
-                  onStart={startSigilTest}
-                  onView={viewSigilResult}
-                  onClose={() => setSelectedSigil(null)}
-                />
-              )}
-            </AnimatePresence>
+            {/* Card layer — click-through wrapper so the orbs + swipe gesture stay live;
+                only the card itself (pointer-events-auto) catches taps. A COLUMN (not a
+                row): while AnimatePresence swaps one card for another, the two stack
+                vertically and grow/shrink in place — never slide sideways. */}
+            <div className="absolute inset-x-0 top-24 lg:top-12 px-6 flex flex-col items-center pointer-events-none">
+              <AnimatePresence>
+                {selectedSigil && (
+                  <SigilInfoCard
+                    key={selectedSigil}
+                    type={selectedSigil}
+                    test={selectedTest}
+                    completed={selectedCompleted}
+                    locked={selectedLocked}
+                    onStart={startSigilTest}
+                    onView={viewSigilResult}
+                    onClose={() => setSelectedSigil(null)}
+                  />
+                )}
+              </AnimatePresence>
+            </div>
 
             <motion.div
               className="w-full flex justify-center flex-shrink-0"
-              animate={{ scale: selectedSigil ? 0.82 : 1 }}
+              animate={{ y: selectedSigil ? 140 : 0, scale: selectedSigil ? 0.82 : 1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 32 }}
             >
-              <PortraitConstellation basedOn={litBasedOn} loadingTests={loadingTests} onSelectSigil={toggleSigil} />
+              <PortraitConstellation basedOn={litBasedOn} loadingTests={loadingTests} onSelectSigil={toggleSigil} selectedSigil={selectedSigil} />
             </motion.div>
 
             <AnimatePresence>
