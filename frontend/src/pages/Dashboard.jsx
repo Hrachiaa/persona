@@ -22,9 +22,9 @@ import Profile from './Profile';
 // `/tests/:slug[/result]` routes still render the Tests component (see activeTab below).
 const tabs = [
   { id: 'portrait', path: '/portrait', icon: HiOutlineSparkles },
+  { id: 'chat', path: '/chat', icon: HiOutlineChatBubbleLeftRight },
   { id: 'match', path: '/match', icon: HiOutlineUsers },
   { id: 'reads', path: '/reads', icon: HiOutlineBookOpen },
-  { id: 'chat', path: '/chat', icon: HiOutlineChatBubbleLeftRight },
 ];
 
 /** First letter of the user's name (or email) for the avatar button. */

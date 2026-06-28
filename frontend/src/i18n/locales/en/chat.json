@@ -1,6 +1,8 @@
 {
   "listTitle": "Chats",
   "listSubtitle": "Your conversations with the AI",
+  "searchPlaceholder": "Search Chats",
+  "searchEmpty": "No chats match your search",
   "noMessages": "No messages yet",
   "emptyTitle": "No chats yet",
   "emptyBody": "Start a conversation from your Portrait, a friend's Compatibility screen, or the + button below.",

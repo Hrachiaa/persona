@@ -14,6 +14,7 @@ import {
   HiOutlineChevronRight,
   HiOutlineChevronLeft,
   HiOutlineExclamationTriangle,
+  HiOutlineMagnifyingGlass,
 } from 'react-icons/hi2';
 import { chatApi } from '../../api/chat';
 import { friendsApi } from '../../api/friends';
@@ -45,6 +46,7 @@ function ChatList({ navigate }) {
   const title = useChatTitle();
   const [chats, setChats] = useState(null);
   const [showNew, setShowNew] = useState(false);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -70,6 +72,13 @@ function ChatList({ navigate }) {
     } catch { /* ignore */ }
   };
 
+  // Filter by chat title + last message (case-insensitive). The search row is only
+  // worth showing once there's something to search.
+  const q = query.trim().toLowerCase();
+  const filtered = chats?.filter(
+    (c) => !q || title(c).toLowerCase().includes(q) || (c.lastMessage || '').toLowerCase().includes(q),
+  );
+
   return (
     // Fixed full-screen (no page scroll); the dashboard's top bar + bottom nav float
     // over it. The input row is pinned just above the nav and never scrolls.
@@ -90,29 +99,49 @@ function ChatList({ navigate }) {
             <p className="text-sm text-persona-muted max-w-xs leading-relaxed">{t('emptyBody')}</p>
           </div>
         ) : (
-          <div className="space-y-2 overflow-y-auto">
-            {chats.map((c) => {
-              const Icon = c.kind === 'compatibility' ? HiOutlineUsers : HiOutlineSparkles;
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => navigate(`/chat/${c.id}`, { state: { chat: c } })}
-                  className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
-                >
-                  <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-peach/40 flex items-center justify-center text-persona-dark">
-                    <Icon className="w-5 h-5" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-persona-dark text-sm truncate">{title(c)}</p>
-                    <p className="text-xs text-persona-muted truncate">
-                      {c.lastMessage || t('noMessages')}
-                    </p>
-                  </div>
-                  <HiOutlineChevronRight className="w-5 h-5 text-persona-muted shrink-0" />
-                </button>
-              );
-            })}
-          </div>
+          <>
+            {/* Title + search — pinned above the scrolling list */}
+            <h1 className="font-display text-3xl font-semibold text-persona-dark mb-4 shrink-0">{t('listTitle')}</h1>
+            <div className="relative mb-4 shrink-0">
+              <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-persona-muted pointer-events-none" />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={t('searchPlaceholder')}
+                aria-label={t('searchPlaceholder')}
+                className="w-full rounded-full bg-persona-card border border-persona-line/60 pl-11 pr-4 py-3 text-[15px] text-persona-dark placeholder:text-persona-muted focus:outline-none focus:ring-2 focus:ring-persona-dark/30"
+              />
+            </div>
+
+            {filtered.length === 0 ? (
+              <p className="text-sm text-persona-muted px-1 pt-2">{t('searchEmpty')}</p>
+            ) : (
+              <div className="space-y-2 overflow-y-auto">
+                {filtered.map((c) => {
+                  const Icon = c.kind === 'compatibility' ? HiOutlineUsers : HiOutlineSparkles;
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => navigate(`/chat/${c.id}`, { state: { chat: c } })}
+                      className="w-full flex items-center gap-3 bg-persona-card rounded-2xl p-3.5 text-left card-hover"
+                    >
+                      <span className="w-11 h-11 shrink-0 rounded-full bg-persona-accent-peach/40 flex items-center justify-center text-persona-dark">
+                        <Icon className="w-5 h-5" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-persona-dark text-sm truncate">{title(c)}</p>
+                        <p className="text-xs text-persona-muted truncate">
+                          {c.lastMessage || t('noMessages')}
+                        </p>
+                      </div>
+                      <HiOutlineChevronRight className="w-5 h-5 text-persona-muted shrink-0" />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -524,7 +553,7 @@ function Conversation({ chatId, onBack, locationState }) {
             </p>
           </div>
         ) : (
-          <div className="mx-auto w-full max-w-2xl px-7 pt-20 pb-24 space-y-5">
+          <div className="mx-auto w-full max-w-2xl px-7 pt-20 pb-36 space-y-5">
             {messages.map((m) => (
               <div
                 key={m.id}

@@ -14,8 +14,8 @@ import {
 import { recommendationsApi } from '../../api/recommendations';
 
 const MODES = [
-  { id: 'film', labelKey: 'common:films', icon: HiOutlineFilm },
   { id: 'book', labelKey: 'common:books', icon: HiOutlineBookOpen },
+  { id: 'film', labelKey: 'common:films', icon: HiOutlineFilm },
 ];
 
 const TOTAL_TESTS = 6;
@@ -274,9 +274,9 @@ function ActionButton({ onClick, children, className = '', size = 'md', label })
 
 export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   const { t } = useTranslation('reco');
-  // `?type=film|book` drives which queue we show; defaults to film.
+  // `?type=film|book` drives which queue we show; defaults to book.
   const [searchParams, setSearchParams] = useSearchParams();
-  const mode = searchParams.get('type') === 'book' ? 'book' : 'film';
+  const mode = searchParams.get('type') === 'film' ? 'film' : 'book';
   const [cards, setCards] = useState([]);
   const [status, setStatus] = useState('loading'); // loading | locked | generating | ready | error
   const [lockInfo, setLockInfo] = useState({ completed: 0, required: TOTAL_TESTS });
