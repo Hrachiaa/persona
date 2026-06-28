@@ -343,7 +343,10 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
       className="w-full max-w-xs overflow-hidden flex-shrink-0 pointer-events-auto"
       initial={{ height: 0 }}
       animate={{ height: 'auto' }}
-      exit={{ height: 0 }}
+      // Close mirrors open in reverse: the bubble retracts first, then the gap closes —
+      // so the height collapse waits (delay) for the bubble to tuck away, just as opening
+      // the gap leads the bubble's pop-in.
+      exit={{ height: 0, transition: { type: 'spring', stiffness: 300, damping: 32, delay: 0.16 } }}
       transition={{ type: 'spring', stiffness: 300, damping: 32 }}
     >
       <div className="pb-8">
@@ -352,7 +355,9 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
           className="surface-warm rounded-3xl p-6 border border-white/50"
           initial={{ opacity: 0, scale: 0.7, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.7, y: 12 }}
+          // Retracts immediately on close (no delay), so it leads the height collapse —
+          // the reverse of the open, where it pops in after the gap opens.
+          exit={{ opacity: 0, scale: 0.7, y: 12, transition: { type: 'spring', stiffness: 420, damping: 26 } }}
           transition={{ delay: 0.22, type: 'spring', stiffness: 420, damping: 26 }}
           style={{ transformOrigin: 'center bottom' }}
         >
