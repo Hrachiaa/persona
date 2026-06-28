@@ -1,16 +1,42 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, useSpring, useMotionValue, useTransform, useMotionValueEvent } from 'framer-motion';
 import { HiOutlineArrowPath, HiOutlineClipboardDocumentList, HiOutlineChevronDown, HiOutlineChatBubbleLeftRight, HiOutlineClock, HiOutlineXMark } from 'react-icons/hi2';
 import ReactMarkdown from 'react-markdown';
 import { portraitApi } from '../../api/portrait';
 import { chatApi } from '../../api/chat';
-import { testsApi } from '../../api/tests';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import { SIGILS } from '../../components/testSigils';
+import { PART_SIZE } from './testParts';
+import { fetchTestsCached, getCachedTests } from './testsCache';
 
 const TOTAL_TESTS = 6;
+
+// ─── Segmented part-progress ring ────────────────────────────────────────────
+// For a chunked test left half-finished (see PART_SIZE in Tests.jsx), the orb
+// wears a ring of one arc per part, lit up to the number of completed parts.
+const polar = (r, deg) => { const a = (deg * Math.PI) / 180; return [r * Math.cos(a), r * Math.sin(a)]; };
+const arcPath = (r, a0, a1) => {
+  const [x0, y0] = polar(r, a0);
+  const [x1, y1] = polar(r, a1);
+  return `M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`;
+};
+
+// The segment ring for a chunked test's orb: `done` of `total` parts, from the
+// backend's `partsCompleted`. Returns null when the test isn't chunked or is
+// already finished (a finished test lights its orb instead). The empty (0-done)
+// ring shows only once the test is the next one to take — i.e. all previous tests
+// are done, or it's the very first test — so it reads as "ready", not noise.
+function partRingFor(test, completed, isNext) {
+  const size = test && PART_SIZE[test.testType];
+  if (!size || completed) return null;
+  const total = Math.ceil(test.totalQuestions / size);
+  const done = Math.min(test.partsCompleted || 0, total);
+  if (done >= total) return null;
+  if (done === 0 && !isNext) return null;
+  return { done, total };
+}
 
 // Sigils whose orb opens an inline test-info card (the same panel the Tests tab shows
 // when a test is expanded). `slug` matches TYPE_SLUGS in Tests.jsx.
@@ -23,20 +49,10 @@ const SIGIL_TEST_META = {
   pid: { slug: 'shadows' },
 };
 
-// The Tests list, fetched once and cached at module scope so opening an orb card
-// (and revisiting the tab) is instant. Shape per item: { id, testType, testName,
-// description, duration, totalQuestions, result }.
-let testsCache = null;
-let testsInFlight = null;
-function fetchTests() {
-  if (testsCache) return Promise.resolve(testsCache);
-  if (!testsInFlight) {
-    testsInFlight = testsApi.getAllTests()
-      .then((d) => { testsCache = d; return d; })
-      .finally(() => { testsInFlight = null; });
-  }
-  return testsInFlight;
-}
+// The Tests list is fetched once and cached in ./testsCache (module scope, shared
+// with the runner) so opening an orb card / revisiting the tab is instant. Shape
+// per item: { id, testType, testName, description, duration, totalQuestions,
+// result, partsCompleted, partsTotal }.
 
 // One shared in-flight request so StrictMode's double mount reuses a single
 // backend call instead of firing two generations.
@@ -75,15 +91,13 @@ const SIGIL_LAYOUT = [
 // card opens. Shared by both so they cancel exactly and the glyphs never tilt mid-spin.
 const RING_SPIN = { type: 'spring', stiffness: 90, damping: 18 };
 
-// The hero: the symbolic self-portrait. `basedOn` lights orbs; `loadingTests` (tests
-// completed but not yet in the portrait — a build is in flight) spin a loading ring.
-// When an orb transitions from not-lit to lit (a fresh interpretation landed) it gets
-// a one-shot celebratory burst so the moment reads as an event, not a quiet recolor.
-function PortraitConstellation({ basedOn, loadingTests, nextTest, onSelectSigil, selectedSigil }) {
+// The hero: the symbolic self-portrait. `basedOn` (every completed test) lights orbs;
+// the next-up test glows as a beacon. When an orb transitions from not-lit to lit it
+// gets a one-shot celebratory burst so the moment reads as an event, not a quiet recolor.
+function PortraitConstellation({ basedOn, nextTest, onSelectSigil, selectedSigil, partProgress, celebrate }) {
   const { t } = useTranslation('portrait');
   const litArr = basedOn || [];
   const litSet = new Set(litArr);
-  const loadingSet = new Set(loadingTests || []);
   const litCount = litArr.length;
   const progress = litCount / SIGIL_LAYOUT.length;
 
@@ -185,13 +199,14 @@ function PortraitConstellation({ basedOn, loadingTests, nextTest, onSelectSigil,
           {/* Orbs — one per test */}
           {SIGIL_LAYOUT.map((s, i) => {
             const lit = litSet.has(s.type);
-            const loading = !lit && loadingSet.has(s.type);
             // The next test to take glows like a completed one, but its halo pulses so it
             // reads as a "do this next" beacon rather than something already revealed.
-            const isNext = !lit && !loading && s.type === nextTest;
+            const isNext = !lit && s.type === nextTest;
             const glow = lit || isNext;
             const { color, Glyph } = SIGILS[s.type];
             const clickable = !!onSelectSigil && !!SIGIL_TEST_META[s.type];
+            // Half-finished chunked test → a segmented ring around the orb.
+            const seg = !lit ? partProgress?.[s.type] : null;
             return (
               <g key={s.type} transform={`translate(${s.x} ${s.y})`}>
                 <motion.g
@@ -205,7 +220,7 @@ function PortraitConstellation({ basedOn, loadingTests, nextTest, onSelectSigil,
                   onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectSigil(s.type); } } : undefined}
                   style={clickable ? { cursor: 'pointer' } : undefined}
                 >
-                  <title>{t(`sigils.${s.type}`)} — {lit ? t('orbStatus.revealed') : isNext ? t('orbStatus.next') : loading ? t('orbStatus.revealing') : t('orbStatus.notTaken')}</title>
+                  <title>{t(`sigils.${s.type}`)} — {lit ? t('orbStatus.revealed') : isNext ? t('orbStatus.next') : t('orbStatus.notTaken')}</title>
 
                   {/* Transparent hit target so the whole orb (incl. the halo gap) is tappable */}
                   {clickable && <circle r="36" fill="transparent" />}
@@ -221,32 +236,62 @@ function PortraitConstellation({ basedOn, loadingTests, nextTest, onSelectSigil,
                   <motion.circle
                     r="30"
                     strokeWidth="1.5"
-                    animate={{ fill: glow ? color : '#ECE9E1', fillOpacity: glow ? 0.95 : 0.5, stroke: glow ? color : loading ? color : '#E0DCD1' }}
+                    animate={{ fill: glow ? color : '#ECE9E1', fillOpacity: glow ? 0.95 : 0.5, stroke: glow ? color : '#E0DCD1' }}
                     transition={{ duration: 0.6 }}
                   />
+
+                  {/* Part-progress ring — one arc per part, lit up to `done`. Sits
+                      just outside the orb body; spins with the ring like everything else.
+                      When we arrive right after finishing a fragment, the just-filled
+                      segment animates from gray to its color (and pulses a burst). */}
+                  {seg && Array.from({ length: seg.total }).map((_, k) => {
+                    const span = 360 / seg.total;
+                    const gap = Math.min(14, span * 0.22);
+                    const a0 = -90 + k * span + gap / 2;
+                    const a1 = -90 + (k + 1) * span - gap / 2;
+                    const filled = k < seg.done;
+                    const d = arcPath(39, a0, a1);
+                    // The segment that just completed on this visit (1-based `parts`).
+                    const justFilled = filled && celebrate?.type === s.type && celebrate?.parts === k + 1;
+                    return (
+                      <g key={`seg-${k}`}>
+                        <motion.path
+                          d={d}
+                          fill="none"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          initial={justFilled ? { stroke: '#D8D3C8', opacity: 0.55 } : { opacity: 0 }}
+                          animate={{ stroke: filled ? color : '#D8D3C8', opacity: filled ? 0.95 : 0.55 }}
+                          transition={{ duration: justFilled ? 0.7 : 0.5, delay: justFilled ? 0.35 : 0.3 + k * 0.06 }}
+                        />
+                        {justFilled && (
+                          <motion.path
+                            d={d}
+                            fill="none"
+                            stroke={color}
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            initial={{ opacity: 0.9, scale: 1 }}
+                            animate={{ opacity: 0, scale: 1.5 }}
+                            transition={{ duration: 0.9, delay: 0.5, ease: 'easeOut' }}
+                            style={{ transformOrigin: 'center' }}
+                          />
+                        )}
+                      </g>
+                    );
+                  })}
 
                   {/* Glyph — counter-spins the ring rotation (same motion value) so it
                       stays upright in sync with the ring. */}
                   <motion.g
                     style={{ rotate: negRingAngle }}
-                    animate={{ opacity: glow ? 1 : loading ? 0.7 : 0.55 }}
+                    animate={{ opacity: glow ? 1 : 0.55 }}
                     transition={{ duration: 0.5 }}
                   >
                     <g transform="scale(1.25)">
                       <Glyph c={glow ? '#1A1A1A' : '#A39E92'} />
                     </g>
                   </motion.g>
-
-                  {/* Loading sweep — a single arc travelling the ring while the AI works */}
-                  {loading && (
-                    <motion.circle
-                      r="34" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round"
-                      strokeDasharray="50 164"
-                      initial={{ strokeDashoffset: 0 }}
-                      animate={{ strokeDashoffset: -214 }}
-                      transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                    />
-                  )}
 
                   {/* Celebratory burst — a flash + expanding ring, only on a real reveal */}
                   {bursts[s.type] ? (
@@ -346,6 +391,13 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
   const { t, i18n } = useTranslation('tests');
   const titleSize = i18n.language?.startsWith('ru') ? 'text-lg' : 'text-xl';
 
+  // For a chunked test the card describes one approach (e.g. ~5 min, 30 questions),
+  // not the whole test — the number of approaches is conveyed by the progress ring.
+  const chunk = PART_SIZE[type];
+  const partCount = chunk && test?.totalQuestions != null ? Math.ceil(test.totalQuestions / chunk) : 1;
+  const chunkMinutes = chunk && test?.duration > 0 ? Math.round(test.duration / partCount) : (test?.duration ?? 0);
+  const chunkQuestions = chunk ? chunk : (test?.totalQuestions ?? null);
+
   return (
     <motion.div
       className="w-full max-w-xs overflow-hidden flex-shrink-0 pointer-events-auto"
@@ -401,11 +453,11 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
                 <div className="flex flex-wrap items-center gap-2 mb-5">
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
                     <HiOutlineClock className="w-3.5 h-3.5" />
-                    {test?.duration > 0 ? t('card.minutes', { n: test.duration }) : t('card.noTimeLimit')}
+                    {chunkMinutes > 0 ? t('card.minutes', { n: chunkMinutes }) : t('card.noTimeLimit')}
                   </span>
-                  {test?.totalQuestions != null && (
+                  {chunkQuestions != null && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
-                      {t('card.questionsCount', { n: test.totalQuestions })}
+                      {t('card.questionsCount', { n: chunkQuestions })}
                     </span>
                   )}
                 </div>
@@ -441,6 +493,11 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
 export default function Portrait() {
   const { t } = useTranslation('portrait');
   const navigate = useNavigate();
+  const location = useLocation();
+  // Set when arriving straight from finishing a test fragment: { type, parts }.
+  // Captured once (useState initializer) so the just-filled progress segment plays
+  // its fill animation a single time, even as the constellation re-renders.
+  const [celebrate] = useState(() => location.state?.celebrate);
   // Scrolls the two-page pager back to page 1 (the constellation), where tests are
   // browsed and started — the home of the "take tests" CTAs now that the Tests tab is gone.
   const pagerRef = useRef(null);
@@ -451,12 +508,12 @@ export default function Portrait() {
   const [nonce, setNonce] = useState(0); // bump to refetch
   const [openingChat, setOpeningChat] = useState(false);
   // The Tests list (for the orb info card) + which sigil's card is currently open.
-  const [tests, setTests] = useState(testsCache);
+  const [tests, setTests] = useState(getCachedTests());
   const [selectedSigil, setSelectedSigil] = useState(null);
   const selectedTest = selectedSigil ? tests?.find((t) => t.testType === selectedSigil) : null;
 
   // Load the test list once so tapping an orb can show its info card instantly.
-  useEffect(() => { fetchTests().then(setTests).catch(() => {}); }, []);
+  useEffect(() => { fetchTestsCached().then(setTests).catch(() => {}); }, []);
 
   // Tapping an orb opens its card; tapping the same orb again closes it.
   const toggleSigil = (type) => setSelectedSigil((cur) => (cur === type ? null : type));
@@ -518,13 +575,13 @@ export default function Portrait() {
   const isGenerating = data?.status === 'generating';
   const isLocked = data?.status === 'locked';
 
-  // Which orbs light up vs. spin a loading ring. `completedTests` (every finished
-  // test) is a superset of `basedOn` (tests already in the portrait) while a build is
-  // in flight — the difference is what's currently "revealing".
+  // Tests already woven into the portrait — only used as a fallback for
+  // `completedTests` below (the constellation orbs light by completion).
   const litBasedOn = hasContent ? (data.basedOn ?? []) : [];
+  // Orbs light up by completion (every finished test), not by portrait inclusion —
+  // so a finished test's orb shows lit immediately, with no spinner while the AI
+  // portrait regenerates in the background.
   const completedTests = data?.completedTests ?? litBasedOn;
-  const buildingActive = isGenerating || isRefreshing;
-  const loadingTests = buildingActive ? completedTests.filter((t) => !litBasedOn.includes(t)) : [];
 
   // The selected orb's card mirrors the Tests tab's gate, but read from the SAME
   // completion data that lights the orbs — so a lit orb always offers "View result" and
@@ -533,6 +590,14 @@ export default function Portrait() {
   // The next test the user should take: the first orb in ring order that isn't done yet.
   // It glows like a completed one so the portrait always shows where to go next.
   const nextTest = SIGIL_LAYOUT.find((s) => !completedSet.has(s.type))?.type ?? null;
+  // Segmented progress rings for chunked tests (from the backend's partsCompleted).
+  // Shown while in progress, and on the next-up test even at zero (so it reads as
+  // "ready"). A finished test lights its orb instead, so it's skipped here.
+  const partProgress = {};
+  (tests || []).forEach((tst) => {
+    const ring = partRingFor(tst, completedSet.has(tst.testType), tst.testType === nextTest);
+    if (ring) partProgress[tst.testType] = ring;
+  });
   const selectedCompleted = selectedSigil ? completedSet.has(selectedSigil) : false;
   const selectedIdx = selectedSigil ? SIGIL_LAYOUT.findIndex((s) => s.type === selectedSigil) : -1;
   const selectedLocked =
@@ -591,7 +656,7 @@ export default function Portrait() {
               animate={{ y: selectedSigil ? 140 : 0, scale: selectedSigil ? 0.82 : 1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 32 }}
             >
-              <PortraitConstellation basedOn={litBasedOn} loadingTests={loadingTests} nextTest={nextTest} onSelectSigil={toggleSigil} selectedSigil={selectedSigil} />
+              <PortraitConstellation basedOn={completedTests} nextTest={nextTest} onSelectSigil={toggleSigil} selectedSigil={selectedSigil} partProgress={partProgress} celebrate={celebrate} />
             </motion.div>
 
             <AnimatePresence>

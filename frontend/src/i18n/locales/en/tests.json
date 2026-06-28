@@ -14,6 +14,9 @@
     "viewResult": "View result",
     "start": "Start test"
   },
+  "parts": {
+    "progress": "Approach {{part}} of {{parts}} · question {{n}} of {{total}}"
+  },
   "resume": {
     "title": "Continue where you left off?",
     "subtitle": "You have unfinished progress on this test. Continue, or start over from the first question?",
@@ -21,6 +24,7 @@
   },
   "questions": {
     "leaveConfirm": "Your progress will be saved. Leave this test?",
+    "leaveConfirmPart": "This approach's progress won't be saved. Leave?",
     "progress": "Question {{n}} of {{total}}",
     "imageAlt": "Question {{n}}",
     "prev": "← Prev",

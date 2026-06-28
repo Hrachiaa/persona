@@ -17,7 +17,9 @@
     "unknownTestType": "Неизвестный тип теста",
     "testTypeNotFound": "Тип теста не найден",
     "answersCount": "Количество ответов должно быть {{count}}",
-    "completePrevious": "Сначала пройдите предыдущие тесты: {{tests}}"
+    "completePrevious": "Сначала пройдите предыдущие тесты: {{tests}}",
+    "notChunked": "Этот тест не сдаётся по частям",
+    "fragmentOrder": "Неожиданный фрагмент: ожидался подход {expected}"
   },
   "friends": {
     "cannotAddYourself": "Нельзя добавить самого себя",

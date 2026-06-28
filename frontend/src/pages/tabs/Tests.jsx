@@ -16,6 +16,8 @@ import {
   HiOutlinePuzzlePiece,
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
+import { PART_SIZE } from './testParts';
+import { invalidateTestsCache } from './testsCache';
 import ImmersiveTopBar from './ImmersiveTopBar';
 import ShareResultBar from './ShareResultBar';
 import BigFiveResultScreen from './BigFiveResult';
@@ -284,69 +286,69 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
 }
 
 // ─── Questions Screen ────────────────────────────────────────────────────────
-function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
+// Two modes:
+//  • Single-pass (default): the whole questionnaire in one go, answers persisted
+//    to localStorage (resumable), finalized with an explicit Submit button.
+//  • Chunked (PART_SIZE tests, e.g. Personality): taken one "approach" at a time.
+//    Only the current part's questions are shown; answering the part's last
+//    question auto-submits that fragment to the backend (the source of truth for
+//    progress — no localStorage) and the parent returns to the Portrait, where the
+//    just-filled segment animates. `partsCompleted` (from the backend) decides
+//    which part is served next.
+function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete, onFragmentComplete, onBack }) {
   const { t } = useTranslation('tests');
   const Icon = meta.icon;
   const isIQ = test.testType === 'iq';
 
-  // Restore persisted answers
-  const [answers, setAnswers] = useState(() => LS.get(test.id, 'answers') || []);
-  const [questionIndex, setQuestionIndex] = useState(() => {
+  const partSize = PART_SIZE[test.testType] || questions.length || 1;
+  const partCount = Math.ceil(questions.length / partSize);
+  const isChunked = partCount > 1;
+
+  // The part to take now, and the slice of questions it covers.
+  const part = isChunked ? Math.min(partsCompleted, partCount - 1) : 0;
+  const partStart = part * partSize;
+  const partLength = Math.min(partSize, questions.length - partStart);
+
+  // Answers are LOCAL to the current part (indexed 0..partLength-1). For a single
+  // pass that's the whole test, so localStorage persistence is unchanged.
+  const [answers, setAnswers] = useState(() => (isChunked ? [] : LS.get(test.id, 'answers') || []));
+  const [qi, setQi] = useState(() => {
+    if (isChunked) return 0;
     const saved = LS.get(test.id, 'answers') || [];
-    return Math.min(saved.length, questions.length - 1);
+    return Math.min(saved.length, partLength - 1);
   });
   const [submitting, setSubmitting] = useState(false);
 
-  // Preload all question images
+  // Preload the current part's question images
   useEffect(() => {
-    questions.forEach((q) => {
-      if (q.image) {
-        const img = new Image();
-        img.src = q.image;
-      }
-    });
-  }, [questions]);
+    for (let i = partStart; i < partStart + partLength; i++) {
+      const q = questions[i];
+      if (q?.image) { const img = new Image(); img.src = q.image; }
+    }
+  }, [questions, partStart, partLength]);
 
-  // Persist answers
+  // Persist answers — only the single-pass path uses localStorage. A chunked test's
+  // progress lives on the backend (committed per fragment), so nothing local to keep.
   useEffect(() => {
-    LS.set(test.id, 'answers', answers);
-  }, [answers, test.id]);
+    if (!isChunked) LS.set(test.id, 'answers', answers);
+  }, [answers, test.id, isChunked]);
 
-  // Answers are indexed by question POSITION (not by questionId), so that two
-  // questions sharing the same backend questionId remain distinct entries.
-  // Functional updaters keep rapid clicks from clobbering each other under
-  // React's batching — every click writes to its own slot from a fresh `prev`.
-  const handleAnswer = (qIdx, questionId, optionId) => {
-    setAnswers((prev) => {
-      const next = prev.slice();
-      next[qIdx] = { questionId, optionId };
-      return next;
-    });
-    // Only advance when the user answered the question they're currently on —
-    // a re-pick via Prev should stay on that earlier question.
-    setQuestionIndex((prev) =>
-      qIdx === prev ? Math.min(prev + 1, questions.length - 1) : prev,
-    );
-  };
-
-  const handleSubmit = async (finalAnswers) => {
+  const submitCurrent = async (finalAnswers) => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      // Drop any skipped (sparse) slots while preserving order and duplicates.
-      const payload = finalAnswers.filter(Boolean);
-      if (REAL_API_TESTS.has(test.testType)) {
+      const payload = finalAnswers.filter(Boolean); // drop sparse slots, keep order
+      if (isChunked) {
+        const resp = await testsApi.submitFragment(test.id, part, payload);
+        onFragmentComplete(resp);
+      } else if (REAL_API_TESTS.has(test.testType)) {
         const result = await testsApi.submitTest(test.id, payload);
         LS.clearAll(test.id);
         onComplete(result);
       } else {
         // Mock submit for tests not yet wired to the backend
         LS.clearAll(test.id);
-        onComplete({
-          testId: test.id,
-          testType: test.testType,
-          result: MOCK_DATA[test.testType]?.result || {},
-        });
+        onComplete({ testId: test.id, testType: test.testType, result: MOCK_DATA[test.testType]?.result || {} });
       }
     } catch (err) {
       console.error('Submit failed:', err);
@@ -354,20 +356,38 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
     }
   };
 
-  const currentQ = questions[questionIndex];
-  const progress = ((questionIndex + 1) / questions.length) * 100;
-  const currentAnswer = answers[questionIndex];
+  // Answers are indexed by question POSITION within the part. Answering the
+  // current question advances; answering the part's LAST question auto-submits the
+  // fragment (chunked) — a single-pass test waits for the explicit Submit button.
+  const handleAnswer = (localIdx, questionId, optionId) => {
+    const next = answers.slice();
+    next[localIdx] = { questionId, optionId };
+    setAnswers(next);
+    if (localIdx !== qi) return; // re-pick via Prev: stay put
+    if (localIdx === partLength - 1) {
+      if (isChunked) submitCurrent(next);
+    } else {
+      setQi(localIdx + 1);
+    }
+  };
 
-  const isLastQuestion = questionIndex === questions.length - 1;
-  // Furthest question reached (the unanswered "frontier"). You can navigate back
-  // and forward freely up to here, but Next can't skip past an unanswered one.
-  const maxReachedIndex = Math.min(answers.filter(Boolean).length, questions.length - 1);
+  const currentQ = questions[partStart + qi];
+  const currentAnswer = answers[qi];
+  const answeredCount = answers.filter(Boolean).length;
+
+  const isLast = qi === partLength - 1;
+  // Single-pass tests finalize with a Submit button; chunked parts auto-submit.
+  const showSubmit = !isChunked && isLast;
+  // Furthest question reached within the part — Next can't skip past an unanswered one.
+  const frontier = Math.min(answeredCount, partLength - 1);
+  const progress = ((qi + 1) / partLength) * 100;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
       <ImmersiveTopBar
         onBack={() => {
-          if (answers.length > 0 && !window.confirm(t('questions.leaveConfirm'))) return;
+          const confirmKey = isChunked ? 'questions.leaveConfirmPart' : 'questions.leaveConfirm';
+          if (answeredCount > 0 && !window.confirm(t(confirmKey))) return;
           onBack();
         }}
       />
@@ -376,7 +396,11 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
       {/* Title */}
       <div className="mb-4">
         <h3 className="font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
-        <p className="text-sm text-persona-muted">{t('questions.progress', { n: questionIndex + 1, total: questions.length })}</p>
+        <p className="text-sm text-persona-muted">
+          {isChunked
+            ? t('parts.progress', { part: part + 1, parts: partCount, n: qi + 1, total: partLength })
+            : t('questions.progress', { n: qi + 1, total: partLength })}
+        </p>
       </div>
 
       {/* Progress */}
@@ -387,7 +411,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
       {/* Question — fade-only enter, no AnimatePresence so the swap never
           gates the answer-commit logic above. */}
       <motion.div
-        key={questionIndex}
+        key={qi}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.08 }}
@@ -399,7 +423,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
               <div className="bg-white rounded-2xl p-2 shadow-warm flex items-center justify-center">
                 <img
                   src={currentQ.image}
-                  alt={t('questions.imageAlt', { n: questionIndex + 1 })}
+                  alt={t('questions.imageAlt', { n: qi + 1 })}
                   className="w-full max-h-[50vh] object-contain rounded-xl"
                 />
               </div>
@@ -415,7 +439,8 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
               return (
                 <motion.button
                   key={opt.id}
-                  onClick={() => handleAnswer(questionIndex, currentQ.id, opt.id)}
+                  onClick={() => handleAnswer(qi, currentQ.id, opt.id)}
+                  disabled={submitting}
                   aria-pressed={isSelected}
                   className={`${isIQ
                     ? `w-12 h-12 rounded-xl flex items-center justify-center text-base font-medium tabular border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
@@ -448,18 +473,18 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
       {/* Navigation */}
       <div className="flex items-center justify-between mt-8 gap-3">
         <motion.button
-          onClick={() => setQuestionIndex((p) => Math.max(0, p - 1))}
-          disabled={questionIndex === 0}
+          onClick={() => setQi((p) => Math.max(0, p - 1))}
+          disabled={qi === 0 || submitting}
           className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
           whileTap={{ scale: 0.95 }}
         >
           {t('questions.prev')}
         </motion.button>
 
-        {isLastQuestion ? (
+        {showSubmit ? (
           <motion.button
-            onClick={() => handleSubmit(answers)}
-            disabled={submitting || answers.filter(Boolean).length !== questions.length}
+            onClick={() => submitCurrent(answers)}
+            disabled={submitting || answeredCount !== partLength}
             className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
             whileTap={{ scale: 0.97 }}
           >
@@ -471,12 +496,16 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
           </motion.button>
         ) : (
           <motion.button
-            onClick={() => setQuestionIndex((p) => Math.min(maxReachedIndex, p + 1))}
-            disabled={questionIndex >= maxReachedIndex}
+            onClick={() => setQi((p) => Math.min(frontier, p + 1))}
+            disabled={qi >= frontier || submitting}
             className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
             whileTap={{ scale: 0.95 }}
           >
-            {t('questions.next')}
+            {submitting ? (
+              <span className="inline-flex items-center gap-2"><span className="w-4 h-4 border-2 border-persona-line border-t-persona-dark rounded-full animate-spin" /> {t('questions.submitting')}</span>
+            ) : (
+              t('questions.next')
+            )}
           </motion.button>
         )}
       </div>
@@ -822,6 +851,20 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     navigate(`/tests/${testSlug(selectedTest)}/result`);
   };
 
+  // A chunked test just committed one fragment to the backend. The cache bust makes
+  // the Portrait refetch the new part count. The final fragment goes straight to the
+  // result (like a full submit); earlier fragments return to the Portrait and let
+  // the just-filled progress segment animate.
+  const handleFragmentComplete = (resp) => {
+    invalidateTestsCache();
+    localStorage.removeItem('activeTestId');
+    if (resp.completed) {
+      handleComplete(resp.result);
+    } else {
+      navigate('/portrait', { state: { celebrate: { type: selectedTest.testType, parts: resp.partsCompleted } } });
+    }
+  };
+
   // Open the runner without wiping progress: if an earlier retake was left
   // unfinished the resume prompt offers Continue / Start over; otherwise the
   // runner opens fresh (no saved answers → straight to the first question).
@@ -880,7 +923,9 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
         test={selectedTest}
         meta={meta}
         questions={questions}
+        partsCompleted={selectedTest.partsCompleted ?? 0}
         onComplete={handleComplete}
+        onFragmentComplete={handleFragmentComplete}
         onBack={handleBackToList}
       />
     );

@@ -17,7 +17,9 @@
     "unknownTestType": "Unknown test type",
     "testTypeNotFound": "Test type not found",
     "answersCount": "Count of answers has to be {{count}}",
-    "completePrevious": "Complete previous tests first: {{tests}}"
+    "completePrevious": "Complete previous tests first: {{tests}}",
+    "notChunked": "This test is not taken in parts",
+    "fragmentOrder": "Unexpected fragment: expected part {expected}"
   },
   "friends": {
     "cannotAddYourself": "Cannot add yourself",
