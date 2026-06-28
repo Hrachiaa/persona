@@ -7,8 +7,6 @@ import {
   HiOutlineEye,
   HiOutlineCpuChip,
   HiOutlineFingerPrint,
-  HiOutlineCheckCircle,
-  HiOutlineClock,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
   HiOutlineSparkles,
@@ -16,7 +14,6 @@ import {
   HiOutlineHeart,
   HiOutlineLifebuoy,
   HiOutlinePuzzlePiece,
-  HiOutlineLockClosed,
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
 import ImmersiveTopBar from './ImmersiveTopBar';
@@ -42,9 +39,6 @@ const TEST_META = {
 
 // Tests served by the real backend (real questions, real submit).
 const REAL_API_TESTS = new Set(['iq', 'bigFive', 'shcwartz', 'ecr', 'cope', 'pid']);
-
-// Order in which tests must be taken — each completed test unlocks the next.
-const TEST_ORDER = ['bigFive', 'shcwartz', 'cope', 'iq', 'ecr', 'pid'];
 
 // Human-readable URL slugs for the runner / result links (nicer than the raw cuid).
 const TYPE_SLUGS = {
@@ -249,110 +243,6 @@ function BellCurve({ score, showMarkerLabel = true, youLabel = 'You' }) {
         </g>
       ))}
     </svg>
-  );
-}
-
-// ─── Test Card ───────────────────────────────────────────────────────────────
-function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, onStart, onView }) {
-  const { t, i18n } = useTranslation('tests');
-  const Icon = meta.icon;
-  // Russian test names run longer than the English ones — nudge the title down a
-  // step so they sit comfortably next to the status badge.
-  const titleSize = i18n.language?.startsWith('ru') ? 'text-lg' : 'text-xl';
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      onClick={onToggle}
-      whileTap={{ scale: 0.99 }}
-      className={`surface-warm rounded-3xl p-6 border border-white/50 cursor-pointer ${expanded ? '' : 'card-hover'}`}
-    >
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className={`w-14 h-14 ${meta.color} rounded-2xl flex items-center justify-center flex-shrink-0`}>
-          <Icon className={`w-7 h-7 ${meta.iconColor}`} />
-        </div>
-        <h3 className={`flex-1 min-w-0 break-words font-display ${titleSize} font-semibold text-persona-dark`}>{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
-        {completed ? (
-          <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-dark bg-persona-accent-lime/50 px-2.5 py-1 rounded-md flex-shrink-0">
-            <HiOutlineCheckCircle className="w-4 h-4" /> {t('status.done')}
-          </span>
-        ) : locked ? (
-          <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md flex-shrink-0">
-            <HiOutlineLockClosed className="w-3.5 h-3.5" /> {t('status.locked')}
-          </span>
-        ) : (
-          <span className="text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md flex-shrink-0">
-            {t('status.notStarted')}
-          </span>
-        )}
-      </div>
-
-      {/* Expanded detail */}
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            key="detail"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="overflow-hidden"
-          >
-            <div className="pt-4">
-              {locked ? (
-                <>
-                  <p className="text-persona-muted text-sm leading-relaxed mb-4">
-                    {t('card.lockedHint')}
-                  </p>
-                  <div className="w-full py-3.5 px-8 rounded-full font-medium text-center bg-persona-line text-persona-muted">
-                    {t('card.unavailable')}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p className="text-persona-muted text-sm leading-relaxed mb-4">{t(`descriptions.${test.testType}`, { defaultValue: test.description })}</p>
-                  <div className="flex flex-wrap items-center gap-2 mb-5">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
-                      <HiOutlineClock className="w-3.5 h-3.5" />
-                      {test.duration > 0 ? t('card.minutes', { n: test.duration }) : t('card.noTimeLimit')}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
-                      {t('card.questionsCount', { n: test.totalQuestions })}
-                    </span>
-                  </div>
-                  {completed ? (
-                    <motion.button
-                      onClick={(e) => { e.stopPropagation(); onView(); }}
-                      className="btn-secondary w-full"
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      {t('card.viewResult')}
-                    </motion.button>
-                  ) : (
-                    <motion.button
-                      onClick={(e) => { e.stopPropagation(); onStart(); }}
-                      disabled={loading}
-                      className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      {loading ? (
-                        <span className="flex items-center gap-2">
-                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          {t('common:loading')}
-                        </span>
-                      ) : (
-                        t('card.start')
-                      )}
-                    </motion.button>
-                  )}
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
   );
 }
 
@@ -822,9 +712,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const [expandedId, setExpandedId] = useState(null);
   // Fresh result from the just-submitted test, tagged with its slug so we only
   // show it for the matching URL (otherwise we fall back to the stored result).
   const [result, setResult] = useState(null);
@@ -875,19 +763,17 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // Fetch test list
   const fetchTests = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
       const data = await testsApi.getAllTests();
       setTests(data);
       return data;
     } catch (err) {
       console.error('Failed to fetch tests:', err);
-      setError(t('list.loadError'));
       return [];
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, []);
 
   // On mount: fetch tests. We intentionally do NOT auto-route an in-progress
   // session back into the test — the resume prompt should only appear when the
@@ -916,25 +802,12 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
         localStorage.setItem('activeTestId', selectedTest.id);
       } catch (err) {
         console.error('Failed to fetch questions:', err);
-        if (active) setError(t('list.questionsError'));
       } finally {
         if (active) setQuestionsLoading(false);
       }
     })();
     return () => { active = false; };
-  }, [routeSlug, isResultRoute, selectedTest, t]);
-
-  const toggleExpand = (testId) => {
-    setExpandedId((prev) => (prev === testId ? null : testId));
-  };
-
-  const viewResult = (test) => {
-    if (!test?.result) return;
-    navigate(`/tests/${testSlug(test)}/result`);
-  };
-
-  // Begin a test: the questions-loading effect picks it up from the URL.
-  const beginTest = (test) => navigate(`/tests/${testSlug(test)}`);
+  }, [routeSlug, isResultRoute, selectedTest]);
 
   const handleResumeContinue = () => setResumeDecided(true);
 
@@ -954,88 +827,20 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // runner opens fresh (no saved answers → straight to the first question).
   const handleRetake = () => navigate(`/tests/${testSlug(selectedTest)}`);
 
+  // Leaving the runner / result returns to the Portrait (the test list is retired).
   const handleBackToList = () => {
     setResult(null);
     setQuestions([]);
     loadedQuestionsFor.current = null;
     localStorage.removeItem('activeTestId');
-    navigate('/tests');
+    navigate('/portrait');
   };
 
   // ─── Render ──────────────────────────────────────────────────────────────────
-  if (screen === SCREEN.LIST) {
-    if (loading) {
-      return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6">
-          <div className="grid gap-4 lg:grid-cols-2 items-start">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-persona-line/40 rounded-3xl p-6 animate-pulse">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-14 h-14 bg-persona-line rounded-2xl" />
-                  <div className="w-20 h-6 bg-persona-line rounded-md" />
-                </div>
-                <div className="h-6 bg-persona-line rounded-lg w-2/3 mb-2" />
-                <div className="h-4 bg-persona-line rounded-lg w-full mb-1" />
-                <div className="h-4 bg-persona-line rounded-lg w-4/5" />
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      );
-    }
-
-    if (error) {
-      return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6 text-center">
-          <p className="text-persona-danger mb-4">{error}</p>
-          <button onClick={fetchTests} className="btn-primary">{t('common:retry')}</button>
-        </motion.div>
-      );
-    }
-
-    if (tests.length === 0) {
-      return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-6 pt-2 pb-6 text-center">
-          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">{t('list.emptyTitle')}</h1>
-          <p className="text-persona-muted max-w-prose mx-auto">{t('list.emptyBody')}</p>
-        </motion.div>
-      );
-    }
-
-    const completedTypes = new Set(tests.filter((t) => t.result).map((t) => t.testType));
-    const orderedTests = [...tests].sort(
-      (a, b) => TEST_ORDER.indexOf(a.testType) - TEST_ORDER.indexOf(b.testType),
-    );
-
-    return (
-      <motion.section aria-label={t('aria')} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-2 pb-6">
-        <div className="grid gap-4 lg:grid-cols-2 items-start">
-          {orderedTests.map((test, i) => {
-            const m = TEST_META[test.testType] || TEST_META.iq;
-            const completed = !!test.result;
-            const idx = TEST_ORDER.indexOf(test.testType);
-            const unlocked = idx <= 0 || TEST_ORDER.slice(0, idx).every((t) => completedTypes.has(t));
-            const locked = !completed && !unlocked;
-            return (
-              <motion.div key={test.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                <TestCard
-                  test={test}
-                  meta={m}
-                  completed={completed}
-                  locked={locked}
-                  expanded={expandedId === test.id}
-                  loading={questionsLoading && expandedId === test.id}
-                  onToggle={() => toggleExpand(test.id)}
-                  onStart={() => beginTest(test)}
-                  onView={() => viewResult(test)}
-                />
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.section>
-    );
-  }
+  // The standalone test list is retired — tests are browsed and started from the Portrait
+  // now. Anyone reaching the bare /tests path (back button, stale link) is bounced there;
+  // the runner & result screens below are still reached from the Portrait.
+  if (screen === SCREEN.LIST) return <Navigate to="/portrait" replace />;
 
   // Past the list every screen needs a resolved test. While the list is still
   // loading (deep link / refresh) show a spinner; an id that doesn't exist once
@@ -1048,7 +853,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
         </motion.div>
       );
     }
-    return <Navigate to="/tests" replace />;
+    return <Navigate to="/portrait" replace />;
   }
 
   if (screen === SCREEN.RESUME) {
@@ -1085,7 +890,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     // Prefer the freshly submitted result; fall back to the test's stored result
     // (deep link / refresh). If neither exists, there's nothing to show.
     const shownResult = result && result.slug === routeSlug ? result.data : selectedTest.result;
-    if (!shownResult) return <Navigate to="/tests" replace />;
+    if (!shownResult) return <Navigate to="/portrait" replace />;
 
     return (
       <ResultView

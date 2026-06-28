@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  HiOutlineClipboardDocumentList,
   HiOutlineSparkles,
   HiOutlineUsers,
   HiOutlineBookOpen,
@@ -18,9 +17,10 @@ import Recommendations from './tabs/Recommendations';
 import Chat from './tabs/Chat';
 import Profile from './Profile';
 
-// Labels come from the `dashboard` namespace, keyed by id (nav.<id>).
+// Labels come from the `dashboard` namespace, keyed by id (nav.<id>). Tests is no
+// longer a tab — the per-test cards + runner/result are reached from the Portrait; its
+// `/tests/:slug[/result]` routes still render the Tests component (see activeTab below).
 const tabs = [
-  { id: 'tests', path: '/tests', icon: HiOutlineClipboardDocumentList },
   { id: 'portrait', path: '/portrait', icon: HiOutlineSparkles },
   { id: 'match', path: '/match', icon: HiOutlineUsers },
   { id: 'reads', path: '/reads', icon: HiOutlineBookOpen },
@@ -44,10 +44,12 @@ export default function Dashboard({ onLogout }) {
   const { pathname } = location;
   const showProfile = pathname === '/profile' || pathname.startsWith('/profile/');
   const matchedTab = tabs.find((t) => pathname === t.path || pathname.startsWith(t.path + '/'))?.id;
-  // The profile overlay (/profile*) has no tab of its own. Keep the tab the user
-  // opened it from rendered behind it (passed via location.state) so closing the
-  // overlay doesn't flash through the default tab.
-  const activeTab = matchedTab || location.state?.from || 'tests';
+  // The test runner / result live under /tests/* (opened from the Portrait) and render
+  // the Tests component even though Tests isn't a nav tab. The profile overlay (/profile*)
+  // has no tab of its own — keep the tab it was opened from (location.state) behind it so
+  // closing doesn't flash through the default tab.
+  const onTestsRoute = pathname === '/tests' || pathname.startsWith('/tests/');
+  const activeTab = (onTestsRoute ? 'tests' : matchedTab) || location.state?.from || 'portrait';
 
   const userName = user?.name || t('userFallback');
   const initial = avatarInitial(user);
@@ -59,11 +61,11 @@ export default function Dashboard({ onLogout }) {
   const renderTab = () => {
     switch (activeTab) {
       case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => navigate('/portrait')} />;
-      case 'portrait': return <Portrait key="portrait" onOpenTests={() => navigate('/tests')} />;
+      case 'portrait': return <Portrait key="portrait" />;
       case 'match': return <Compatibility key="match" onImmersiveChange={setImmersive} />;
-      case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/tests')} onImmersiveChange={setImmersive} />;
+      case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/portrait')} onImmersiveChange={setImmersive} />;
       case 'chat': return <Chat key="chat" onImmersiveChange={setImmersive} />;
-      default: return <Tests key="tests" onImmersiveChange={setImmersive} />;
+      default: return <Portrait key="portrait" />;
     }
   };
 
@@ -208,7 +210,7 @@ export default function Dashboard({ onLogout }) {
         {showProfile && (
           <Profile
             key="profile"
-            onBack={() => (location.key === 'default' ? navigate('/tests') : navigate(-1))}
+            onBack={() => (location.key === 'default' ? navigate('/portrait') : navigate(-1))}
             onLogout={onLogout}
           />
         )}

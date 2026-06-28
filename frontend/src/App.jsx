@@ -46,8 +46,8 @@ function getInitialPath(user) {
   const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
 
   if (user) {
-    // Authenticated — go to Survey or Dashboard
-    return isProfileComplete(user) ? '/tests' : '/survey';
+    // Authenticated — go to Survey or Dashboard (Portrait is the home tab now)
+    return isProfileComplete(user) ? '/portrait' : '/survey';
   }
 
   if (!hasSeenOnboarding) {
@@ -81,7 +81,7 @@ export default function App() {
         // Bug 2: skip Survey if profile already complete (replace so the
         // token-laden callback URL doesn't end up in history)
         navigate(
-          isProfileComplete(me) ? (hadInvite ? '/match' : '/tests') : '/survey',
+          isProfileComplete(me) ? (hadInvite ? '/match' : '/portrait') : '/survey',
           { replace: true },
         );
         setGoogleHandled(true);
@@ -108,14 +108,14 @@ export default function App() {
     const hadInvite = consumePendingInvite();
     // Use the fresh user data passed in, not the stale React state
     if (!isProfileComplete(me)) return navigate('/survey');
-    navigate(hadInvite ? '/match' : '/tests');
+    navigate(hadInvite ? '/match' : '/portrait');
   };
 
   /** Called after survey completes */
   const handleSurveyComplete = async () => {
     // Refresh user data so we have the latest profile
     await fetchMe();
-    navigate('/tests');
+    navigate('/portrait');
   };
 
   /** Onboarding finished — persist the flag and route on (Bug 3 / Bug 4) */
@@ -124,7 +124,7 @@ export default function App() {
     const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
     navigate(
       user
-        ? (isProfileComplete(user) ? '/tests' : '/survey')
+        ? (isProfileComplete(user) ? '/portrait' : '/survey')
         : (hasVisitedBefore ? '/login' : '/register')
     );
   };
@@ -182,6 +182,10 @@ export default function App() {
               path="/survey"
               element={requireAuth(<Survey onComplete={handleSurveyComplete} />)}
             />
+            {/* The standalone test list is retired — Portrait is the home/browse tab.
+                The runner & result still live under /tests/:slug[/result] (driven from
+                Portrait); only the bare list path redirects there. */}
+            <Route path="/tests" element={<Navigate to="/portrait" replace />} />
             {DASHBOARD_ROUTES.map((path) => (
               <Route
                 key={path}

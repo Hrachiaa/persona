@@ -60,7 +60,7 @@ export default function SharePage() {
   // result lists. Signed-in visitors get neither prompt — it isn't their result.
   const actions = user ? (
     <motion.button
-      onClick={() => navigate('/tests')}
+      onClick={() => navigate('/portrait')}
       className="btn-secondary w-full"
       whileTap={{ scale: 0.97 }}
     >

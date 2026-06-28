@@ -430,9 +430,13 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
 // visible (with a subtle "refreshing" hint) and swap in the fresh version with an
 // animation once it's ready. The dry per-test results live on the Tests tab;
 // interpretation lives here.
-export default function Portrait({ onOpenTests }) {
+export default function Portrait() {
   const { t } = useTranslation('portrait');
   const navigate = useNavigate();
+  // Scrolls the two-page pager back to page 1 (the constellation), where tests are
+  // browsed and started — the home of the "take tests" CTAs now that the Tests tab is gone.
+  const pagerRef = useRef(null);
+  const goToConstellation = () => pagerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   const [data, setData] = useState(cachedData); // backend response: { status, ... }
   const [loading, setLoading] = useState(!cachedData);
   const [errored, setErrored] = useState(false);
@@ -536,6 +540,7 @@ export default function Portrait({ onOpenTests }) {
   // it; `lg:left-64` clears the desktop sidebar.
   return (
     <motion.div
+      ref={pagerRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -603,7 +608,7 @@ export default function Portrait({ onOpenTests }) {
               Generous top/bottom padding clears the floating top bar and bottom nav. */}
           <section className="h-[100dvh] snap-start snap-always overflow-y-auto px-6 pt-24 pb-40 lg:pt-12 lg:pb-16 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div className="mx-auto w-full max-w-2xl">
-              {hasContent && <PortraitProgress count={data?.basedOn?.length ?? 0} total={TOTAL_TESTS} onTakeTests={onOpenTests} />}
+              {hasContent && <PortraitProgress count={data?.basedOn?.length ?? 0} total={TOTAL_TESTS} onTakeTests={goToConstellation} />}
 
               <AnimatePresence mode="wait">
                 {hasContent && (
@@ -675,11 +680,9 @@ export default function Portrait({ onOpenTests }) {
                     <p className="text-sm text-persona-muted leading-relaxed max-w-prose mx-auto">
                       {t('lockedBody')}
                     </p>
-                    {onOpenTests && (
-                      <motion.button onClick={onOpenTests} className="btn-primary mt-6" whileTap={{ scale: 0.97 }}>
-                        {t('firstTest')}
-                      </motion.button>
-                    )}
+                    <motion.button onClick={goToConstellation} className="btn-primary mt-6" whileTap={{ scale: 0.97 }}>
+                      {t('firstTest')}
+                    </motion.button>
                   </motion.div>
                 )}
               </AnimatePresence>
