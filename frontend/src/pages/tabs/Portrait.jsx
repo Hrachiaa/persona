@@ -79,7 +79,7 @@ const RING_SPIN = { type: 'spring', stiffness: 90, damping: 18 };
 // completed but not yet in the portrait — a build is in flight) spin a loading ring.
 // When an orb transitions from not-lit to lit (a fresh interpretation landed) it gets
 // a one-shot celebratory burst so the moment reads as an event, not a quiet recolor.
-function PortraitConstellation({ basedOn, loadingTests, onSelectSigil, selectedSigil }) {
+function PortraitConstellation({ basedOn, loadingTests, nextTest, onSelectSigil, selectedSigil }) {
   const { t } = useTranslation('portrait');
   const litArr = basedOn || [];
   const litSet = new Set(litArr);
@@ -165,18 +165,18 @@ function PortraitConstellation({ basedOn, loadingTests, onSelectSigil, selectedS
           {/* The ring of rays + orbs spins so the selected orb rides up to the top; the
               core λ is rendered after this group so it stays centered and upright. */}
           <g ref={ringRef} transform="rotate(0)">
-          {/* Rays from the core to each orb */}
+          {/* Rays from the core to each orb. The next test glows like a completed one. */}
           {SIGIL_LAYOUT.map((s) => {
-            const lit = litSet.has(s.type);
+            const glow = litSet.has(s.type) || s.type === nextTest;
             return (
               <motion.line
                 key={`ray-${s.type}`}
                 x1="0" y1="0" x2={s.x} y2={s.y}
-                strokeWidth={lit ? 2.4 : 1.4}
-                strokeDasharray={lit ? '0' : '2 6'}
+                strokeWidth={glow ? 2.4 : 1.4}
+                strokeDasharray={glow ? '0' : '2 6'}
                 strokeLinecap="round"
                 initial={{ opacity: 0 }}
-                animate={{ stroke: lit ? SIGILS[s.type].color : '#D8D3C8', opacity: lit ? 0.6 : 0.42 }}
+                animate={{ stroke: glow ? SIGILS[s.type].color : '#D8D3C8', opacity: glow ? 0.6 : 0.42 }}
                 transition={{ duration: 0.6, delay: 0.15 }}
               />
             );
@@ -186,6 +186,10 @@ function PortraitConstellation({ basedOn, loadingTests, onSelectSigil, selectedS
           {SIGIL_LAYOUT.map((s, i) => {
             const lit = litSet.has(s.type);
             const loading = !lit && loadingSet.has(s.type);
+            // The next test to take glows like a completed one, but its halo pulses so it
+            // reads as a "do this next" beacon rather than something already revealed.
+            const isNext = !lit && !loading && s.type === nextTest;
+            const glow = lit || isNext;
             const { color, Glyph } = SIGILS[s.type];
             const clickable = !!onSelectSigil && !!SIGIL_TEST_META[s.type];
             return (
@@ -201,19 +205,23 @@ function PortraitConstellation({ basedOn, loadingTests, onSelectSigil, selectedS
                   onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectSigil(s.type); } } : undefined}
                   style={clickable ? { cursor: 'pointer' } : undefined}
                 >
-                  <title>{t(`sigils.${s.type}`)} — {lit ? t('orbStatus.revealed') : loading ? t('orbStatus.revealing') : t('orbStatus.notTaken')}</title>
+                  <title>{t(`sigils.${s.type}`)} — {lit ? t('orbStatus.revealed') : isNext ? t('orbStatus.next') : loading ? t('orbStatus.revealing') : t('orbStatus.notTaken')}</title>
 
                   {/* Transparent hit target so the whole orb (incl. the halo gap) is tappable */}
                   {clickable && <circle r="36" fill="transparent" />}
 
-                  {/* Lit halo */}
-                  <motion.circle r="34" fill={color} filter="url(#portraitOrbGlow)" animate={{ opacity: lit ? 0.28 : 0 }} transition={{ duration: 0.6 }} />
+                  {/* Halo — steady when revealed, gently pulsing on the next-up test */}
+                  <motion.circle
+                    r="34" fill={color} filter="url(#portraitOrbGlow)"
+                    animate={isNext ? { opacity: [0.16, 0.42, 0.16] } : { opacity: lit ? 0.28 : 0 }}
+                    transition={isNext ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.6 }}
+                  />
 
                   {/* Orb body */}
                   <motion.circle
                     r="30"
                     strokeWidth="1.5"
-                    animate={{ fill: lit ? color : '#ECE9E1', fillOpacity: lit ? 0.95 : 0.5, stroke: lit ? color : loading ? color : '#E0DCD1' }}
+                    animate={{ fill: glow ? color : '#ECE9E1', fillOpacity: glow ? 0.95 : 0.5, stroke: glow ? color : loading ? color : '#E0DCD1' }}
                     transition={{ duration: 0.6 }}
                   />
 
@@ -221,11 +229,11 @@ function PortraitConstellation({ basedOn, loadingTests, onSelectSigil, selectedS
                       stays upright in sync with the ring. */}
                   <motion.g
                     style={{ rotate: negRingAngle }}
-                    animate={{ opacity: lit ? 1 : loading ? 0.7 : 0.55 }}
+                    animate={{ opacity: glow ? 1 : loading ? 0.7 : 0.55 }}
                     transition={{ duration: 0.5 }}
                   >
                     <g transform="scale(1.25)">
-                      <Glyph c={lit ? '#1A1A1A' : '#A39E92'} />
+                      <Glyph c={glow ? '#1A1A1A' : '#A39E92'} />
                     </g>
                   </motion.g>
 
@@ -522,6 +530,9 @@ export default function Portrait() {
   // completion data that lights the orbs — so a lit orb always offers "View result" and
   // locking follows ring order, instead of a separately-fetched list that can go stale.
   const completedSet = new Set(completedTests);
+  // The next test the user should take: the first orb in ring order that isn't done yet.
+  // It glows like a completed one so the portrait always shows where to go next.
+  const nextTest = SIGIL_LAYOUT.find((s) => !completedSet.has(s.type))?.type ?? null;
   const selectedCompleted = selectedSigil ? completedSet.has(selectedSigil) : false;
   const selectedIdx = selectedSigil ? SIGIL_LAYOUT.findIndex((s) => s.type === selectedSigil) : -1;
   const selectedLocked =
@@ -580,7 +591,7 @@ export default function Portrait() {
               animate={{ y: selectedSigil ? 140 : 0, scale: selectedSigil ? 0.82 : 1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 32 }}
             >
-              <PortraitConstellation basedOn={litBasedOn} loadingTests={loadingTests} onSelectSigil={toggleSigil} selectedSigil={selectedSigil} />
+              <PortraitConstellation basedOn={litBasedOn} loadingTests={loadingTests} nextTest={nextTest} onSelectSigil={toggleSigil} selectedSigil={selectedSigil} />
             </motion.div>
 
             <AnimatePresence>

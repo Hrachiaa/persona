@@ -3,6 +3,7 @@
   "orbStatus": {
     "revealed": "revealed",
     "revealing": "revealing…",
+    "next": "up next",
     "notTaken": "not taken yet"
   },
   "accuracy": "Portrait accuracy",
