@@ -23,14 +23,17 @@ const arcPath = (r, a0, a1) => {
   return `M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`;
 };
 
-// The segment ring for a chunked test's orb: `done` of `total` parts, from the
-// backend's `partsCompleted`. Returns null when the test isn't chunked or is
-// already finished (a finished test lights its orb instead). The empty (0-done)
-// ring shows only once the test is the next one to take — i.e. all previous tests
-// are done, or it's the very first test — so it reads as "ready", not noise.
+// The segment ring for a test's orb: `done` of `total` parts. A finished test
+// lights its orb instead, so a completed test never gets a ring (returns null) —
+// and once every test is done nothing lands on the first orb either. The empty
+// (0-done) ring only shows on the next test to take, so it reads as "ready", not
+// noise. A fragmentless test (no PART_SIZE — e.g. IQ) wears a single-arc ring,
+// shown the same way: only as the "ready" beacon when it's next.
 function partRingFor(test, completed, isNext) {
-  const size = test && PART_SIZE[test.testType];
-  if (!size || completed) return null;
+  if (!test || completed) return null;
+  const size = PART_SIZE[test.testType];
+  // Fragmentless tests: one arc, only when this is the next test to take.
+  if (!size) return isNext ? { done: 0, total: 1 } : null;
   const total = Math.ceil(test.totalQuestions / size);
   const done = Math.min(test.partsCompleted || 0, total);
   if (done >= total) return null;

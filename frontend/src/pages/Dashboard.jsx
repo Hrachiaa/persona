@@ -64,7 +64,7 @@ export default function Dashboard({ onLogout }) {
       case 'portrait': return <Portrait key="portrait" />;
       case 'match': return <Compatibility key="match" onImmersiveChange={setImmersive} />;
       case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/portrait')} onImmersiveChange={setImmersive} />;
-      case 'chat': return <Chat key="chat" onImmersiveChange={setImmersive} />;
+      case 'chat': return <Chat key="chat" onImmersiveChange={setImmersive} onOpenTests={() => navigate('/portrait')} />;
       default: return <Portrait key="portrait" />;
     }
   };

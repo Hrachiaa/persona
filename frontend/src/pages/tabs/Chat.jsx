@@ -20,6 +20,14 @@ import { chatApi } from '../../api/chat';
 import { friendsApi } from '../../api/friends';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import ProgressiveBlur from '../../components/ProgressiveBlur';
+import { fetchTestsCached } from './testsCache';
+
+// Chats are gated behind finishing every test (mirrors the Reads tab). Same total
+// as the Portrait / Recommendations gate, with the same IQ-invalid handling: an
+// "invalid" IQ result doesn't count as a completed test.
+const TOTAL_TESTS = 6;
+const isTestCompleted = (test) =>
+  !!test.result && !(test.testType === 'iq' && test.result?.reliability === 'invalid');
 
 // ─── Shared bits ────────────────────────────────────────────────────────────────
 
@@ -39,14 +47,65 @@ function useChatTitle() {
   };
 }
 
+// ─── Locked: tests not all done (mirrors the Reads tab's locked screen) ──────────
+
+function LockedScreen({ completed, required, onOpenTests }) {
+  const { t } = useTranslation('chat');
+  const pct = Math.round((completed / required) * 100);
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 lg:left-64 z-30 bg-persona-bg flex items-center justify-center px-6 pt-20 pb-24 lg:py-6"
+    >
+      <div className="surface-warm rounded-4xl p-8 text-center max-w-md w-full">
+        <div className="w-14 h-14 mx-auto mb-4 bg-persona-accent-lime/60 rounded-3xl flex items-center justify-center">
+          <HiOutlineSparkles className="w-7 h-7 text-persona-dark" />
+        </div>
+        <h2 className="font-display text-xl font-semibold text-persona-dark mb-1.5">{t('locked.title')}</h2>
+        <p className="text-sm text-persona-muted leading-relaxed mb-5">{t('locked.body')}</p>
+        <div className="relative h-2.5 bg-persona-line/60 rounded-full overflow-hidden mb-2">
+          <motion.div
+            className="absolute inset-y-0 left-0 bg-persona-accent-lime rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${pct}%` }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+          />
+        </div>
+        <p className="text-xs text-persona-muted mb-6 tabular">{t('locked.progress', { completed, required })}</p>
+        {onOpenTests && (
+          <motion.button onClick={onOpenTests} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
+            {completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
+          </motion.button>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Chat list (burger) / empty state ───────────────────────────────────────────
 
-function ChatList({ navigate }) {
+function ChatList({ navigate, onOpenTests }) {
   const { t } = useTranslation('chat');
   const title = useChatTitle();
   const [chats, setChats] = useState(null);
   const [showNew, setShowNew] = useState(false);
   const [query, setQuery] = useState('');
+  // null = still checking; { completed, required } = locked; false = unlocked.
+  const [lock, setLock] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    fetchTestsCached()
+      .then((tests) => {
+        if (!active) return;
+        const completed = (tests || []).filter(isTestCompleted).length;
+        setLock(completed >= TOTAL_TESTS ? false : { completed, required: TOTAL_TESTS });
+      })
+      .catch(() => active && setLock(false));
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -56,6 +115,9 @@ function ChatList({ navigate }) {
       .catch(() => active && setChats([]));
     return () => { active = false; };
   }, []);
+
+  if (lock === null) return null; // brief: avoid flashing the list before the gate resolves
+  if (lock) return <LockedScreen completed={lock.completed} required={lock.required} onOpenTests={onOpenTests} />;
 
   const startPortrait = async () => {
     setShowNew(false);
@@ -611,7 +673,7 @@ function Conversation({ chatId, onBack, locationState }) {
 
 // ─── Router: derive the sub-view from the URL ───────────────────────────────────
 
-export default function Chat({ onImmersiveChange }) {
+export default function Chat({ onImmersiveChange, onOpenTests }) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -639,5 +701,5 @@ export default function Chat({ onImmersiveChange }) {
       />
     );
   }
-  return <ChatList key="list" navigate={navigate} />;
+  return <ChatList key="list" navigate={navigate} onOpenTests={onOpenTests} />;
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { Response } from 'express';
 import { ChatRepository } from './chat.repository';
 import { AiService } from '../ai/ai.service';
@@ -41,12 +41,14 @@ export class ChatService {
 
   /** The user's portrait chat — one per user, created on first open. */
   async openPortraitChat(userId: string): Promise<ChatDetailDto> {
+    await this.assertTestsCompleted(userId);
     const chat = (await this.chatRepository.findPortrait(userId)) ?? (await this.chatRepository.createPortrait(userId));
     return this.toDetail(chat);
   }
 
   /** A chat about the user's compatibility with a friend — one per pair. */
   async openCompatibilityChat(userId: string, friendId: string): Promise<ChatDetailDto> {
+    await this.assertTestsCompleted(userId);
     await this.friendsService.assertFriends(userId, friendId);
     const chat =
       (await this.chatRepository.findCompatibility(userId, friendId)) ??
@@ -118,6 +120,23 @@ export class ChatService {
   }
 
   // ─── internals ────────────────────────────────────────────────────────────────
+
+  /** Chats are gated behind finishing every test — same rule as recommendations. */
+  private async assertTestsCompleted(userId: string): Promise<void> {
+    const results = await this.testResultRepository.getTestResults(userId);
+    if (this.resolveTargetTests(results).length < TEST_ORDER.length) {
+      throw new ForbiddenException(t('errors.chat.locked'));
+    }
+  }
+
+  /** Completed test types in canonical order; an "invalid" IQ result doesn't count
+   *  (mirrors RecommendationsService.resolveTargetTests / PortraitService). */
+  private resolveTargetTests(results: { testType: string; result: unknown }[]): string[] {
+    const iqResult = results.find((r) => r.testType === 'iq');
+    const iqInvalid = (iqResult?.result as { reliability?: string } | undefined)?.reliability === 'invalid';
+    const completed = new Set(results.filter((r) => !(r.testType === 'iq' && iqInvalid)).map((r) => r.testType));
+    return TEST_ORDER.filter((type) => completed.has(type));
+  }
 
   private async requireOwnedChat(userId: string, chatId: string): Promise<Chat> {
     const chat = await this.chatRepository.findById(chatId);

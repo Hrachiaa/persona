@@ -34,6 +34,7 @@
   },
   "chat": {
     "notFound": "Chat not found",
-    "streamFailed": "Something went wrong generating a reply. Please try again."
+    "streamFailed": "Something went wrong generating a reply. Please try again.",
+    "locked": "Finish all tests to unlock chats."
   }
 }
