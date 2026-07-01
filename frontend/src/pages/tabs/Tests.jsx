@@ -295,7 +295,7 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
 //    progress — no localStorage) and the parent returns to the Portrait, where the
 //    just-filled segment animates. `partsCompleted` (from the backend) decides
 //    which part is served next.
-function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete, onFragmentComplete, onBack }) {
+function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete, onFragmentComplete }) {
   const { t } = useTranslation('tests');
   const Icon = meta.icon;
   const isIQ = test.testType === 'iq';
@@ -384,15 +384,7 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
-      <ImmersiveTopBar
-        onBack={() => {
-          const confirmKey = isChunked ? 'questions.leaveConfirmPart' : 'questions.leaveConfirm';
-          if (answeredCount > 0 && !window.confirm(t(confirmKey))) return;
-          onBack();
-        }}
-      />
-
-      <div className="px-6 pt-2">
+      <div className="px-6 pt-8">
       {/* Title */}
       <div className="mb-4">
         <h3 className="font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
@@ -926,7 +918,6 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
         partsCompleted={selectedTest.partsCompleted ?? 0}
         onComplete={handleComplete}
         onFragmentComplete={handleFragmentComplete}
-        onBack={handleBackToList}
       />
     );
   }
