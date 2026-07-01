@@ -40,13 +40,23 @@ export class PortraitService {
       return PortraitDto.locked(0, 1);
     }
 
-    const refreshing = this.inFlight.has(this.cacheKey(userId, targetTests));
+    let refreshing = this.inFlight.has(this.cacheKey(userId, targetTests));
 
     // Always surface a cached portrait if we have one — even while a newer generation
     // is in flight. The client shows it immediately (no spinner on entry) and swaps in
     // the fresh version, with an animation, once `refreshing` clears.
     const existing = await this.portraitRepository.getByUserId(userId);
     if (existing) {
+      // Self-heal a stale portrait: if the cached one was built from a different set of
+      // tests than the user has now (a newer test completed, or an earlier regeneration
+      // failed and left the old one behind), kick a fresh build on read. Reads used to
+      // never retry once anything was cached, so a single failed generation could strand
+      // the user on an outdated portrait indefinitely.
+      const stale = !this.sameTests(existing.basedOn, targetTests);
+      if (stale && !refreshing) {
+        void this.dedupedGenerate(userId, targetTests, results, getLang());
+        refreshing = true;
+      }
       return PortraitDto.ready(existing.content, existing.basedOn, {
         updatedAt: existing.updatedAt,
         refreshing,
@@ -143,5 +153,12 @@ export class PortraitService {
 
   private cacheKey(userId: string, targetTests: readonly string[]): string {
     return `${userId}:${[...targetTests].join(',')}`;
+  }
+
+  /** Whether two test-type lists cover exactly the same set (order-independent). */
+  private sameTests(a: readonly string[], b: readonly string[]): boolean {
+    if (a.length !== b.length) return false;
+    const setB = new Set(b);
+    return a.every((t) => setB.has(t));
   }
 }
