@@ -17,7 +17,12 @@ export const LANG_KEY = 'persona:lang';
 
 function storedLanguage() {
   const stored = localStorage.getItem(LANG_KEY);
-  return SUPPORTED_LANGUAGES.some((l) => l.code === stored) ? stored : DEFAULT_LANGUAGE;
+  if (SUPPORTED_LANGUAGES.some((l) => l.code === stored)) return stored;
+  // Nothing chosen yet — fall back to the browser's language when we support it,
+  // so e.g. a Russian visitor's very first screen isn't English.
+  const browser = (navigator.language || '').slice(0, 2).toLowerCase();
+  if (SUPPORTED_LANGUAGES.some((l) => l.code === browser)) return browser;
+  return DEFAULT_LANGUAGE;
 }
 
 // Auto-discover every locale file: ./locales/<lng>/<namespace>.json.
@@ -40,6 +45,13 @@ i18n.use(initReactI18next).init({
   fallbackNS: 'common',
   interpolation: { escapeValue: false }, // React already escapes
   returnNull: false,
+});
+
+// Keep <html lang> in step with the UI language (index.html ships lang="en"),
+// so screen readers and the browser's translate prompt see the right language.
+document.documentElement.lang = i18n.language;
+i18n.on('languageChanged', (lng) => {
+  document.documentElement.lang = lng;
 });
 
 /**

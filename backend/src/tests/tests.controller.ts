@@ -2,8 +2,10 @@ import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/comm
 import { TestsService } from './tests.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SubmitTestDto } from './dtos/submit-test.dto';
+import { SubmitFragmentDto } from './dtos/submit-fragment.dto';
 import { ApiResponse } from '@nestjs/swagger';
 import { TestResultDto } from './dtos/test-result.dto';
+import { FragmentResultDto } from './dtos/fragment-result.dto';
 import { GetTestsDto } from './dtos/get-tests.dto';
 import { QuestionsDto } from './dtos/test-questions.dto';
 import { SharedResultDto } from './dtos/shared-result.dto';
@@ -45,5 +47,14 @@ export class TestsController {
     @Post('/:testId/submit')
     async submitTest(@Param('testId') testId: string, @Body() testAnswers: SubmitTestDto, @Req() req) {
         return this.testsService.submitTest(req.user.id, testId, testAnswers);
+    }
+
+    // Submit one fragment ("approach") of a chunked test. Returns how many parts
+    // are now done; the final fragment also scores and returns the result.
+    @UseGuards(JwtAuthGuard)
+    @ApiResponse({ status: 201, description: 'Fragment saved', type: FragmentResultDto })
+    @Post('/:testId/progress')
+    async submitFragment(@Param('testId') testId: string, @Body() fragment: SubmitFragmentDto, @Req() req) {
+        return this.testsService.submitFragment(req.user.id, testId, fragment);
     }
 }

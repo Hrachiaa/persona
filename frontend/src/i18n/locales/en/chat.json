@@ -1,6 +1,8 @@
 {
   "listTitle": "Chats",
   "listSubtitle": "Your conversations with the AI",
+  "searchPlaceholder": "Search Chats",
+  "searchEmpty": "No chats match your search",
   "noMessages": "No messages yet",
   "emptyTitle": "No chats yet",
   "emptyBody": "Start a conversation from your Portrait, a friend's Compatibility screen, or the + button below.",
@@ -25,5 +27,14 @@
   "deleteBody": "This permanently erases the entire conversation in this chat. It can't be undone.",
   "deleteConfirm": "Delete",
   "error": "Something went wrong. Please try again.",
-  "discuss": "Discuss with AI"
+  "openError": "Couldn't open the chat. Please try again.",
+  "discuss": "Discuss with AI",
+  "locked": {
+    "title": "Chat is locked",
+    "body": "Finish all tests to unlock AI chats about your portrait and your compatibility with friends.",
+    "progress": "{{completed}} of {{required}} tests done",
+    "firstTest": "Take your first test",
+    "continueTests": "Continue your tests",
+    "listHint": "New chats unlock once all tests are done ({{completed}} of {{required}}) — your existing conversations stay available."
+  }
 }

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authApi } from '../api/auth';
 import i18n, { LANG_KEY, SUPPORTED_LANGUAGES } from '../i18n';
+import { resetSessionCaches } from '../utils/sessionCaches';
 const AuthContext = createContext(null);
 
 // Apply a user's stored language preference to the UI (and remember it locally).
@@ -45,6 +46,8 @@ export function AuthProvider({ children }) {
   }, [fetchMe]);
 
   const persistAuth = useCallback((data) => {
+    // A new auth session begins — drop anything cached for the previous account.
+    resetSessionCaches();
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
     if (data.userId) {
@@ -95,6 +98,7 @@ export function AuthProvider({ children }) {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('userId');
+      resetSessionCaches();
       setUser(null);
       setError(null);
     }
@@ -132,6 +136,7 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+// eslint-disable-next-line react-refresh/only-export-components -- the provider and its hook belong together; fast-refresh reloading this file wholesale is fine
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

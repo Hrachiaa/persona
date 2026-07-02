@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  HiOutlineClipboardDocumentList,
   HiOutlineSparkles,
   HiOutlineUsers,
   HiOutlineBookOpen,
@@ -11,20 +10,24 @@ import {
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
 import ProgressiveBlur from '../components/ProgressiveBlur';
-import Tests from './tabs/Tests';
-import Portrait from './tabs/Portrait';
-import Compatibility from './tabs/Compatibility';
-import Recommendations from './tabs/Recommendations';
-import Chat from './tabs/Chat';
-import Profile from './Profile';
 
-// Labels come from the `dashboard` namespace, keyed by id (nav.<id>).
+// Each tab is its own chunk — react-markdown, the result-screen suite and the
+// swipe deck stay out of the initial bundle (which only needs the auth screens).
+const Tests = lazy(() => import('./tabs/Tests'));
+const Portrait = lazy(() => import('./tabs/Portrait'));
+const Compatibility = lazy(() => import('./tabs/Compatibility'));
+const Recommendations = lazy(() => import('./tabs/Recommendations'));
+const Chat = lazy(() => import('./tabs/Chat'));
+const Profile = lazy(() => import('./Profile'));
+
+// Labels come from the `dashboard` namespace, keyed by id (nav.<id>). Tests is no
+// longer a tab — the per-test cards + runner/result are reached from the Portrait; its
+// `/tests/:slug[/result]` routes still render the Tests component (see activeTab below).
 const tabs = [
-  { id: 'tests', path: '/tests', icon: HiOutlineClipboardDocumentList },
   { id: 'portrait', path: '/portrait', icon: HiOutlineSparkles },
+  { id: 'chat', path: '/chat', icon: HiOutlineChatBubbleLeftRight },
   { id: 'match', path: '/match', icon: HiOutlineUsers },
   { id: 'reads', path: '/reads', icon: HiOutlineBookOpen },
-  { id: 'chat', path: '/chat', icon: HiOutlineChatBubbleLeftRight },
 ];
 
 /** First letter of the user's name (or email) for the avatar button. */
@@ -44,10 +47,12 @@ export default function Dashboard({ onLogout }) {
   const { pathname } = location;
   const showProfile = pathname === '/profile' || pathname.startsWith('/profile/');
   const matchedTab = tabs.find((t) => pathname === t.path || pathname.startsWith(t.path + '/'))?.id;
-  // The profile overlay (/profile*) has no tab of its own. Keep the tab the user
-  // opened it from rendered behind it (passed via location.state) so closing the
-  // overlay doesn't flash through the default tab.
-  const activeTab = matchedTab || location.state?.from || 'tests';
+  // The test runner / result live under /tests/* (opened from the Portrait) and render
+  // the Tests component even though Tests isn't a nav tab. The profile overlay (/profile*)
+  // has no tab of its own — keep the tab it was opened from (location.state) behind it so
+  // closing doesn't flash through the default tab.
+  const onTestsRoute = pathname === '/tests' || pathname.startsWith('/tests/');
+  const activeTab = (onTestsRoute ? 'tests' : matchedTab) || location.state?.from || 'portrait';
 
   const userName = user?.name || t('userFallback');
   const initial = avatarInitial(user);
@@ -59,11 +64,11 @@ export default function Dashboard({ onLogout }) {
   const renderTab = () => {
     switch (activeTab) {
       case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => navigate('/portrait')} />;
-      case 'portrait': return <Portrait key="portrait" onOpenTests={() => navigate('/tests')} />;
+      case 'portrait': return <Portrait key="portrait" />;
       case 'match': return <Compatibility key="match" onImmersiveChange={setImmersive} />;
-      case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/tests')} onImmersiveChange={setImmersive} />;
-      case 'chat': return <Chat key="chat" onImmersiveChange={setImmersive} />;
-      default: return <Tests key="tests" onImmersiveChange={setImmersive} />;
+      case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/portrait')} onImmersiveChange={setImmersive} />;
+      case 'chat': return <Chat key="chat" onImmersiveChange={setImmersive} onOpenTests={() => navigate('/portrait')} />;
+      default: return <Portrait key="portrait" />;
     }
   };
 
@@ -151,9 +156,17 @@ export default function Dashboard({ onLogout }) {
         {/* Tab Content — full-width on mobile, centered & width-capped on desktop */}
         <section role="region" aria-label="Dashboard content" className="lg:py-6">
           <div className="mx-auto w-full lg:max-w-5xl">
-            <AnimatePresence mode="wait">
-              {renderTab()}
-            </AnimatePresence>
+            <Suspense
+              fallback={
+                <div className="min-h-[50vh] flex items-center justify-center">
+                  <div className="animate-pulse-soft text-persona-muted">{t('common:loading')}</div>
+                </div>
+              }
+            >
+              <AnimatePresence mode="wait">
+                {renderTab()}
+              </AnimatePresence>
+            </Suspense>
           </div>
         </section>
       </div>
@@ -204,15 +217,17 @@ export default function Dashboard({ onLogout }) {
       </motion.nav>
 
       {/* Profile overlay — full-screen, sits above the nav (z-[60]) */}
-      <AnimatePresence>
-        {showProfile && (
-          <Profile
-            key="profile"
-            onBack={() => (location.key === 'default' ? navigate('/tests') : navigate(-1))}
-            onLogout={onLogout}
-          />
-        )}
-      </AnimatePresence>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {showProfile && (
+            <Profile
+              key="profile"
+              onBack={() => (location.key === 'default' ? navigate('/portrait') : navigate(-1))}
+              onLogout={onLogout}
+            />
+          )}
+        </AnimatePresence>
+      </Suspense>
     </motion.div>
   );
 }

@@ -14,27 +14,30 @@
     "viewResult": "View result",
     "start": "Start test"
   },
+  "parts": {
+    "progress": "Approach {{part}} of {{parts}} · question {{n}} of {{total}}"
+  },
   "resume": {
     "title": "Continue where you left off?",
     "subtitle": "You have unfinished progress on this test. Continue, or start over from the first question?",
     "startOver": "Start over"
   },
   "questions": {
-    "leaveConfirm": "Your progress will be saved. Leave this test?",
     "progress": "Question {{n}} of {{total}}",
     "imageAlt": "Question {{n}}",
     "prev": "← Prev",
     "next": "Next →",
     "submit": "Submit test",
-    "submitting": "Submitting…"
+    "submitting": "Submitting…",
+    "submitError": "Couldn't submit your answers — check your connection and try again."
   },
   "iq": {
     "scoreTitleSelf": "Your IQ score",
     "scoreTitleOwner": "{{name}}'s IQ score",
     "you": "You",
     "average": "Average",
-    "percentileSelf": "Your IQ of <b>{{iq}}</b> is equivalent to the <b>{{pct}}th</b> percentile — higher than <b>{{pctPercent}}</b> of people, with a standard deviation of 15.",
-    "percentileOwner": "{{name}}'s IQ of <b>{{iq}}</b> is equivalent to the <b>{{pct}}th</b> percentile — higher than <b>{{pctPercent}}</b> of people, with a standard deviation of 15.",
+    "percentileSelf": "Your IQ of <b>{{iq}}</b> is higher than <b>{{pctPercent}}</b> of people ({{pct}}th percentile, standard deviation 15).",
+    "percentileOwner": "{{name}}'s IQ of <b>{{iq}}</b> is higher than <b>{{pctPercent}}</b> of people ({{pct}}th percentile, standard deviation 15).",
     "suspicious": "Your results show some unusual patterns. You may want to retake the test for more accurate results.",
     "viewPortrait": "View portrait",
     "retake": "Retake test",

@@ -41,8 +41,12 @@
     "checkCompatibility": "Check compatibility",
     "theirResults": "Their results",
     "noTests": "This friend hasn't completed any tests yet.",
-    "remove": "Remove from friends"
+    "remove": "Remove from friends",
+    "removeTitle": "Remove {{name}}?",
+    "removeBody": "You'll no longer see each other's results or compatibility. You can always add each other again later.",
+    "removeConfirm": "Remove"
   },
+  "actionError": "Couldn't complete that — please try again.",
   "compat": {
     "label": "Compatibility",
     "titleFallback": "Compatibility",

@@ -29,9 +29,10 @@ model User {
   // Stable personal invite token. Minted on first request and reused, so a link
   // the user already shared keeps working (mirrors TestResult.shareToken).
   inviteToken   String?       @unique
-  refreshToken  RefreshToken?
+  refreshTokens RefreshToken[]
   otpCode       OtpCode?
   testsResults  TestResult[]
+  testsProgress TestProgress[]
   portrait      Portrait?
   recommendations RecommendationItem[]
   sentFriendships     Friendship[]    @relation("SentFriendships")
@@ -41,17 +42,25 @@ model User {
   chats               Chat[]
 }
 
+// One row per active session (device/login). userId is intentionally NOT unique —
+// a user can hold several refresh tokens at once. `token` (the HMAC of the JWT) is
+// the unique lookup key; rotation/logout delete a single row by token.
 model RefreshToken {
   id     String @id @default(cuid())
-  userId String @unique
+  userId String
   token  String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model OtpCode {
   id        String   @id @default(cuid())
   userId    String   @unique
   code      String   @unique
+  // Failed verification attempts; the code is dropped once this hits the limit
+  // (see MailService) so a 6-digit code can't be brute-forced within its TTL.
+  attempts  Int      @default(0)
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -65,6 +74,7 @@ model Test {
   totalQuestions Int
   questions      TestQuestion?
   testResults    TestResult[]
+  testsProgress  TestProgress[]
 }
 
 model TestQuestion {
@@ -85,6 +95,25 @@ model TestResult {
   shareToken     String? @unique
   user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   test           Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, testId])
+}
+
+// In-progress answers for a test taken in fragments ("approaches") instead of one
+// submit — e.g. Personality's 4 parts of 30. Holds the cumulative answers from
+// the fragments completed so far and how many parts are done. The whole test is
+// still scored once, after the final fragment, at which point this row is deleted
+// and a TestResult is written. One row per (user, test) while in progress.
+model TestProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  testId    String
+  testType  String
+  answers   Json // cumulative AnswerDto[] across completed fragments
+  parts     Int      @default(0)
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  test      Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@unique([userId, testId])
 }

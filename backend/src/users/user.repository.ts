@@ -1,12 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma.service";
-import { AuthDto } from "./dtos/auth.dto";
 import { UserEntity } from "./models/user.entity";
 import { AddProfileInfoDto } from "../auth/dtos/add-profile-info.dto";
 
+// Server-side shape for creating a user. `googleId` / `emailVerified` are never
+// taken from the HTTP body (see AuthDto) — only set here by the OAuth flow.
+export interface CreateUserData {
+    email: string;
+    password: string;
+    googleId?: string;
+    emailVerified?: boolean;
+}
+
 export interface UserRepositoryInterface {
-    create(data: AuthDto): Promise<UserEntity>;
-    getAllUsers(): Promise<UserEntity[]>;
+    create(data: CreateUserData): Promise<UserEntity>;
     getUserByEmail(email: string): Promise<UserEntity | null>;
     getUserById(id: string): Promise<UserEntity | null>;
     getUserByInviteToken(inviteToken: string): Promise<UserEntity | null>;
@@ -21,12 +28,8 @@ export interface UserRepositoryInterface {
 export class UserRepository implements UserRepositoryInterface {
     constructor(private readonly prisma: PrismaService) { }
 
-    async create(data: AuthDto): Promise<UserEntity> {
+    async create(data: CreateUserData): Promise<UserEntity> {
         return await this.prisma.user.create({ data });
-    }
-
-    async getAllUsers(): Promise<UserEntity[]> {
-        return await this.prisma.user.findMany();
     }
 
     async getUserByEmail(email: string): Promise<UserEntity | null> {

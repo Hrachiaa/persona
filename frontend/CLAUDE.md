@@ -42,8 +42,8 @@ Navigation uses **`react-router-dom` v7** (`BrowserRouter` is mounted in [src/ma
 `/tests`, `/match`, `/chat` and `/profile` are registered as `/tests/*` etc. so their sub-routes match; `DASHBOARD_PREFIXES` / `isDashboardPath()` in [src/App.jsx](src/App.jsx) treat any path under those as the shared `'dashboard'` animation group.
 
 **Sub-state in the URL — two conventions:**
-- **Path segments** for things you navigate *into* (a distinct screen that survives refresh / is shareable): the test runner & result ([tabs/Tests.jsx](src/pages/tabs/Tests.jsx) derives `screen`/`selectedTest` from the path; the resume prompt is a transient dialog with *no* URL) and the Profile sub-pages ([Profile.jsx](src/pages/Profile.jsx) derives `view` from the last segment).
-- **Query params** for a filter/position *of* the current screen: `/reads?type=film|book`, `/advice?tip=N`, `/match?with=email` (via `useSearchParams`). These tabs hold no equivalent `useState` anymore — the URL is the source of truth.
+- **Path segments** for things you navigate *into* (a distinct screen that survives refresh / is shareable): the test runner & result ([tabs/Tests.jsx](src/pages/tabs/Tests.jsx) derives `screen`/`selectedTest` from the path; the resume prompt is a transient dialog with *no* URL), the Friends sub-screens (`/match/add`, `/match/requests`, `/match/:friendId[/compatibility]` — [tabs/Compatibility.jsx](src/pages/tabs/Compatibility.jsx) derives the sub-view from segments) and the Profile sub-pages ([Profile.jsx](src/pages/Profile.jsx) derives `view` from the last segment).
+- **Query params** for a filter/position *of* the current screen: `/reads?type=film|book` (via `useSearchParams`). These tabs hold no equivalent `useState` — the URL is the source of truth.
 
 The Profile overlay (`/profile*`) has no tab of its own, so the avatar button opens it with `navigate('/profile', { state: { from: activeTab } })` and [Dashboard.jsx](src/pages/Dashboard.jsx) renders that tab behind it — closing the overlay then doesn't flash through the default tab. Inside Profile, sub-views push history but the in-app back button *pops* (`navigate(-1)`), so it doesn't pile up `/profile` entries and loop the browser back button.
 
@@ -68,17 +68,24 @@ Read it via `useAuth()`.
 **All** HTTP requests go through [src/api/client.js](src/api/client.js) — a single axios instance with two interceptors:
 
 - **Request**: attaches `Authorization: Bearer <accessToken>` from `localStorage` (if present).
-- **Response**: on 401, calls `POST /auth/refresh` with the stored refresh token, queues any concurrent failing requests until the refresh resolves, retries them with the new token. On refresh failure: clears `accessToken` / `refreshToken` / `userId` from `localStorage` and bounces to `/`.
+- **Response**: on 401, refreshes via the exported `refreshAccessToken()` — one deduped `POST /auth/refresh` that every concurrent 401 awaits — then retries with the new token. On refresh failure: clears `accessToken` / `refreshToken` / `userId` from `localStorage` and bounces to `/`. `refreshAccessToken()` is exported precisely so requests that bypass axios (the SSE chat fetch) can reuse the same flow.
 
 Tokens live in `localStorage` under exactly these keys: `accessToken`, `refreshToken`, `userId`.
 
 ### Per-feature API modules
 Wrap `client` — never call axios inline from a component:
 
-- [src/api/auth.js](src/api/auth.js) — signup, login, logout, getMe, forgot-password flow, addProfileInfo, getGoogleLoginUrl
-- [src/api/tests.js](src/api/tests.js) — getAllTests, getTestQuestions, submitTest
+- [src/api/auth.js](src/api/auth.js) — signup, login, logout, getMe, forgot-password flow, addProfileInfo, updateLanguage, getGoogleLoginUrl
+- [src/api/tests.js](src/api/tests.js) — getAllTests, getTestQuestions, submitTest, submitFragment, shareTest, getSharedResult
+- [src/api/portrait.js](src/api/portrait.js) — getPortrait (status machine: locked / generating / ready / error)
+- [src/api/friends.js](src/api/friends.js) — friends list/search/requests, invite links, per-friend results & compatibility
+- [src/api/chat.js](src/api/chat.js) — AI chats; `sendMessage` streams over SSE via raw `fetch` (the one deliberate bypass of the axios client; on a 401 it calls `refreshAccessToken()` from `client.js` and retries once)
+- [src/api/recommendations.js](src/api/recommendations.js) — swipe queue, swipe/rate, history, reset
 
 New endpoints belong in a new (or existing) module under [src/api/](src/api/), in the same `(...) => client.<verb>(...).then(r => r.data)` shape.
+
+### Module-scope caches
+[tabs/testsCache.js](src/pages/tabs/testsCache.js) (test list), the portrait's `cachedData` and the reads tab's `swiped` sets live at module scope so they survive tab unmounts. **Any such cache must register a reset in [src/utils/sessionCaches.js](src/utils/sessionCaches.js)** — AuthContext fires `resetSessionCaches()` on login/logout so one account's data can't leak into the next session.
 
 ## Project layout
 
@@ -86,24 +93,31 @@ Type-based at the top, with feature subfolders inside `pages/`:
 
 ```
 src/
-├─ App.jsx                # screen state machine
+├─ App.jsx                # routes + auth routing decisions
 ├─ main.jsx               # React DOM entry
 ├─ index.css              # Tailwind layers + custom utility classes
 ├─ api/                   # axios client + per-feature API wrappers
+├─ components/            # shared UI (ProgressiveBlur, Toast, LockedCard,
+│                         #   ConfirmDialog, markdown renderers, test sigils)
 ├─ context/               # React context providers (AuthContext)
+├─ i18n/                  # i18next setup + locales/<lng>/<ns>.json
+├─ utils/                 # tScore math, shared constants, sessionCaches
 └─ pages/                 # top-level screens
-   ├─ Onboarding.jsx, Register.jsx, Login.jsx, ForgotPassword.jsx,
-   │  Survey.jsx, Dashboard.jsx
-   └─ tabs/               # Dashboard sub-views
-      └─ Tests.jsx, Analysis.jsx, Compatibility.jsx,
-         Recommendations.jsx, DailyAdvice.jsx
+   ├─ Onboarding.jsx, AuthScreen.jsx (+ Login/Register wrappers),
+   │  ForgotPassword.jsx, Survey.jsx, Dashboard.jsx, Profile.jsx,
+   │  SharePage.jsx, InvitePage.jsx
+   └─ tabs/               # Dashboard sub-views (lazy-loaded chunks)
+      └─ Portrait.jsx, Tests.jsx (+ result screens), Chat.jsx,
+         Compatibility.jsx, Recommendations.jsx
 ```
+
+Dashboard tabs and the public Share/Invite pages are `React.lazy` chunks — heavy deps (react-markdown, the result-screen suite, the swipe deck) stay out of the initial bundle. Keep new tabs lazy too.
 
 ## Styling
 
 [tailwind.config.js](tailwind.config.js) extends the theme with project-specific tokens — **use these, don't drop in raw hex values**:
 
-- **Colors** — `persona.bg` (#F5F5F0), `persona.card` (#FFFFFF), `persona.dark` (#1A1A1A), `persona.muted` (#6B7280), and `persona.accent.{yellow, lavender, lime, pink, blue, peach}`.
+- **Colors** — `persona.bg` (#F5F5F0), `persona.card` (#FFFFFF), `persona.dark` (#1A1A1A), `persona.muted` (#6B7280), `persona.line` (#E8E5DC), `persona.warn` / `persona.danger`, and `persona.accent.{yellow, lavender, lime, pink, blue, peach}`.
 - **Border radius** — `2xl`, `3xl`, `4xl` are extended (1rem / 1.5rem / 2rem).
 - **Animations** — `fade-in`, `slide-up`, `pulse-soft` (custom keyframes are defined in the config; use the utility names).
 - **Font** — `Inter`, with `system-ui` / `sans-serif` fallback.

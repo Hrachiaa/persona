@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { createHmac } from 'crypto'
+import { createHmac, randomBytes } from 'crypto'
 import { AuthDto } from '../users/dtos/auth.dto';
 import { UsersService } from '../users/users.service';
 import { UserEntity } from '../users/models/user.entity';
@@ -9,6 +9,8 @@ import { MailService } from '../mail/mail.service';
 import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
 import { RefreshTokenRepository } from './refresh-token.repository';
 import { t } from '../i18n/translate';
+import { BCRYPT_SALT_ROUNDS } from '../common/security';
+import { Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -24,11 +26,22 @@ export class AuthService {
         if(condidate){
             throw new HttpException(t('errors.userExists'), HttpStatus.BAD_REQUEST);
         }
-        const hashPassword = await bcrypt.hash(authDto.password, 8);
-        const user = await this.usersService.create({
-            ...authDto,
-            password: hashPassword,
-        });
+        const hashPassword = await bcrypt.hash(authDto.password, BCRYPT_SALT_ROUNDS);
+        let user: UserEntity;
+        try {
+            user = await this.usersService.create({
+                email: authDto.email,
+                password: hashPassword,
+            });
+        } catch (error) {
+            // Two concurrent signups can both pass the pre-check above; the DB
+            // unique constraint decides the winner — report the loser the same
+            // way as the pre-check instead of leaking a 500.
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+                throw new HttpException(t('errors.userExists'), HttpStatus.BAD_REQUEST);
+            }
+            throw error;
+        }
         const {accessToken, refreshToken} = await this.generateTokens(user);
         return {
             userId: user.id,
@@ -104,10 +117,15 @@ export class AuthService {
             expiresIn: '30m',
             secret: process.env.JWT_ACCESS_SECRET,
         });
-        const refreshToken = await this.jwtService.signAsync(payload, {
-            expiresIn: '7d',
-            secret: process.env.JWT_REFRESH_SECRET,
-        });
+        // jti makes each refresh token unique even if two are issued in the same
+        // second (multiple devices) — the stored hash column is unique.
+        const refreshToken = await this.jwtService.signAsync(
+            { ...payload, jti: randomBytes(16).toString('hex') },
+            {
+                expiresIn: '7d',
+                secret: process.env.JWT_REFRESH_SECRET,
+            },
+        );
 
         await this.saveRefreshToken(user.id, refreshToken);
 
@@ -118,67 +136,81 @@ export class AuthService {
     }
 
     private async validateUser(loginDto: AuthDto){
+        // One neutral error for every failure mode (unknown email, OAuth-only
+        // account with no password, wrong password) so login doesn't reveal which
+        // emails are registered. Kept at 400 (not 401) so the frontend's 401 refresh
+        // interceptor doesn't treat a bad-credentials login as an expired session.
+        const invalid = () => new HttpException(t('errors.invalidCredentials'), HttpStatus.BAD_REQUEST);
         const user = await this.usersService.getUserByEmail(loginDto.email);
-        if(!user){
-            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
-        }
-        if(user.password === '' || loginDto.password === ''){
-            throw new HttpException(t('errors.invalidPassword'), HttpStatus.BAD_REQUEST);
+        if(!user || !user.password){
+            throw invalid();
         }
         const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
         if(!isPasswordValid){
-            throw new HttpException(t('errors.invalidPassword'), HttpStatus.BAD_REQUEST);
+            throw invalid();
         }
         return user;
     }
 
-    private async saveRefreshToken(userId: string, token: string): Promise<void>{
-        const existingToken = await this.refreshTokenRepository.findByUserId(userId);
-        if(existingToken){
-            await this.refreshTokenRepository.deleteByUserId(userId);
-        }
-
-        const hashToken = createHmac('sha256', process.env.JWT_REFRESH_DB_SECRET!)
+    private hashRefreshToken(token: string): string {
+        return createHmac('sha256', process.env.JWT_REFRESH_DB_SECRET!)
             .update(token)
             .digest('hex');
-        await this.refreshTokenRepository.create(userId, hashToken);
+    }
+
+    // Store the token's hash as a new session row. Multiple rows per user are
+    // allowed (one per device/login); rotation and logout remove a single row.
+    private async saveRefreshToken(userId: string, token: string): Promise<void>{
+        await this.refreshTokenRepository.create(userId, this.hashRefreshToken(token));
     }
 
     async refreshTokens(refreshToken: string){
-        const hashToken = createHmac('sha256', process.env.JWT_REFRESH_DB_SECRET!)
-            .update(refreshToken)
-            .digest('hex');
+        // Verify signature + expiry — a surviving DB row alone isn't enough (the JWT
+        // itself could be expired or forged).
+        try {
+            this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
+        } catch {
+            throw new HttpException(t('errors.invalidRefreshToken'), HttpStatus.UNAUTHORIZED);
+        }
+
+        const hashToken = this.hashRefreshToken(refreshToken);
         const token = await this.refreshTokenRepository.findByToken(hashToken);
         if(!token){
-            throw new HttpException(t('errors.invalidRefreshToken'), HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.invalidRefreshToken'), HttpStatus.UNAUTHORIZED);
         }
         const user = await this.usersService.getUserById(token.userId);
         if(!user){
-            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
+            throw new HttpException(t('errors.invalidRefreshToken'), HttpStatus.UNAUTHORIZED);
         }
+        // Rotate: invalidate the presented token and issue a fresh pair.
+        await this.refreshTokenRepository.deleteByToken(hashToken);
         return this.generateTokens(user);
     }
 
     async logout (refreshToken: string){
-        const payload = this.jwtService.decode(refreshToken)
-        await this.refreshTokenRepository.deleteByUserId(payload.id);
+        // Idempotent: end only this session's row. An invalid/expired token has no
+        // valid session to end, so it's a no-op — never a 500.
+        try {
+            this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
+        } catch {
+            return;
+        }
+        await this.refreshTokenRepository.deleteByToken(this.hashRefreshToken(refreshToken));
     }
 
     async forgotPassword(email: string){
+        // Never reveal whether the email is registered — always return OK, and only
+        // actually send a code when a matching account exists.
         const user = await this.usersService.getUserByEmail(email);
-        if(!user){
-            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
+        if(user){
+            await this.mailService.sendCode(email, user.id);
         }
-        await this.mailService.sendCode(email, user.id);
         return
     }
 
     async forgotPasswordCode(email: string, code: string): Promise<Boolean>{
         const user = await this.usersService.getUserByEmail(email);
-        if(!user){
-            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
-        }
-        const checkCode = await this.mailService.checkCode(user.id, code);
+        const checkCode = user ? await this.mailService.checkCode(user.id, code) : false;
         if(!checkCode){
             throw new HttpException(t('errors.invalidCode'), HttpStatus.BAD_REQUEST);
         }
@@ -187,29 +219,30 @@ export class AuthService {
 
     async changeForgottenPassword(email: string, code: string, newPassword: string){
         const user = await this.usersService.getUserByEmail(email);
-        if(!user){
-            throw new HttpException(t('errors.userNotFound'), HttpStatus.BAD_REQUEST);
-        }
-        const checkCode = await this.mailService.checkCode(user.id, code);
-        if(!checkCode){
+        const checkCode = user ? await this.mailService.checkCode(user.id, code) : false;
+        if(!user || !checkCode){
             throw new HttpException(t('errors.invalidCode'), HttpStatus.BAD_REQUEST);
         }
         await this.mailService.deleteCode(user.id);
-        const hashPassword = await bcrypt.hash(newPassword, 8);
+        const hashPassword = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
         await this.usersService.resetPassword(user.id, hashPassword);
     }
 
-    async validateGoogleUser(googleUser: AuthDto): Promise<UserEntity>{
-        const user = await this.usersService.getUserByEmail(googleUser.email); 
+    async validateGoogleUser(googleUser: { email: string; googleId: string }): Promise<UserEntity>{
+        const user = await this.usersService.getUserByEmail(googleUser.email);
         if(user){
             if(user.googleId && user.emailVerified){
                 return user;
             }
-            const newUser = await this.usersService.addGoogleInfo(user.id, googleUser.googleId!);
-            return newUser;
-        } else {
-            const newUser = await this.usersService.create(googleUser);
-            return newUser;
+            return await this.usersService.addGoogleInfo(user.id, googleUser.googleId);
         }
+        // New OAuth user: emailVerified is asserted by Google here, never taken from
+        // a client request body.
+        return await this.usersService.create({
+            email: googleUser.email,
+            password: '',
+            googleId: googleUser.googleId,
+            emailVerified: true,
+        });
     }
 }

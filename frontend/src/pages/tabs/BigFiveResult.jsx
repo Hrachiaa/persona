@@ -57,7 +57,9 @@ function BigFiveRadar({ percentiles }) {
     <div className="relative">
       <svg
         viewBox={`0 0 ${size} ${size}`}
-        className="w-full max-w-md mx-auto"
+        // overflow-visible: long localized axis labels (e.g. ru «ДОБРОСОВЕСТНОСТЬ»)
+        // extend past the viewBox at the side vertices; the card's padding absorbs them.
+        className="w-full max-w-md mx-auto overflow-visible"
         preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label={t('bigFive.radarAria')}

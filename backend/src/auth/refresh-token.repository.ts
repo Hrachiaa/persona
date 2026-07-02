@@ -9,9 +9,9 @@ export interface RefreshToken {
 
 export interface RefreshTokenRepositoryInterface {
     create(userId: string, token: string): Promise<RefreshToken>;
-    findByUserId(userId: string): Promise<RefreshToken | null>;
     findByToken(token: string): Promise<RefreshToken | null>;
-    deleteByUserId(userId: string): Promise<void>;
+    deleteByToken(token: string): Promise<void>;
+    deleteAllForUser(userId: string): Promise<void>;
 }
 
 @Injectable()
@@ -22,15 +22,19 @@ export class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
         return await this.prisma.refreshToken.create({ data: { userId, token } });
     }
 
-    async findByUserId(userId: string): Promise<RefreshToken | null> {
-        return await this.prisma.refreshToken.findUnique({ where: { userId } });
-    }
-
     async findByToken(token: string): Promise<RefreshToken | null> {
         return await this.prisma.refreshToken.findUnique({ where: { token } });
     }
 
-    async deleteByUserId(userId: string): Promise<void> {
-        await this.prisma.refreshToken.delete({ where: { userId } });
+    // deleteMany (not delete) so logging out with an already-removed token is a
+    // no-op instead of throwing. `token` is unique, so this affects at most one row.
+    async deleteByToken(token: string): Promise<void> {
+        await this.prisma.refreshToken.deleteMany({ where: { token } });
+    }
+
+    // Ends every session for a user (e.g. after a password reset). The default
+    // logout ends only the current session (deleteByToken).
+    async deleteAllForUser(userId: string): Promise<void> {
+        await this.prisma.refreshToken.deleteMany({ where: { userId } });
     }
 }

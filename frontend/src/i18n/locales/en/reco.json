@@ -15,12 +15,13 @@
   },
   "locked": {
     "title": "Recommendations are locked",
-    "body": "Finish all {{required}} tests and Persona will hand-pick films and books for you — then you just swipe right on what you like and left on what you don't.",
+    "body": "Finish all tests and Persona will hand-pick films and books for you.",
     "progress": "{{completed}} of {{required}} tests done",
     "firstTest": "Take your first test",
     "continueTests": "Continue your tests"
   },
   "error": "Couldn't load recommendations right now.",
+  "swipeError": "Couldn't save your choice — it may show up again later.",
   "busy": {
     "loading": "Loading your picks…",
     "generating": "Hand-picking {{media}} for you — this can take a moment."

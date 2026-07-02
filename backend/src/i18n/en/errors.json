@@ -2,6 +2,7 @@
   "userNotFound": "User not found",
   "userExists": "User with this email already exists",
   "invalidPassword": "Invalid password",
+  "invalidCredentials": "Invalid email or password",
   "invalidRefreshToken": "Invalid refresh token",
   "invalidCode": "Invalid code",
   "noToken": "No token provided",
@@ -17,7 +18,10 @@
     "unknownTestType": "Unknown test type",
     "testTypeNotFound": "Test type not found",
     "answersCount": "Count of answers has to be {{count}}",
-    "completePrevious": "Complete previous tests first: {{tests}}"
+    "invalidAnswer": "Invalid answer",
+    "completePrevious": "Complete previous tests first: {{tests}}",
+    "notChunked": "This test is not taken in parts",
+    "fragmentOrder": "Unexpected fragment: expected part {expected}"
   },
   "friends": {
     "cannotAddYourself": "Cannot add yourself",
@@ -32,6 +36,7 @@
   },
   "chat": {
     "notFound": "Chat not found",
-    "streamFailed": "Something went wrong generating a reply. Please try again."
+    "streamFailed": "Something went wrong generating a reply. Please try again.",
+    "locked": "Finish all tests to unlock chats."
   }
 }

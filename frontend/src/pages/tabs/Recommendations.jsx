@@ -9,16 +9,18 @@ import {
   HiOutlineXMark,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
-  HiOutlineSparkles,
 } from 'react-icons/hi2';
 import { recommendationsApi } from '../../api/recommendations';
+import { showToast } from '../../components/Toast';
+import LockedCard from '../../components/LockedCard';
+import { registerSessionCache } from '../../utils/sessionCaches';
+import { TOTAL_TESTS } from '../../utils/constants';
 
 const MODES = [
-  { id: 'film', labelKey: 'common:films', icon: HiOutlineFilm },
   { id: 'book', labelKey: 'common:books', icon: HiOutlineBookOpen },
+  { id: 'film', labelKey: 'common:films', icon: HiOutlineFilm },
 ];
 
-const TOTAL_TESTS = 6;
 const LOW_WATER = 7; // keep the queue topped up once it drops to this many cards (matches backend)
 const POLL_INTERVAL_MS = 3500; // how often to check for a freshly generated batch
 const SWIPE_THRESHOLD = 100; // px drag past which a release counts as a swipe
@@ -26,8 +28,9 @@ const SWIPE_THRESHOLD = 100; // px drag past which a release counts as a swipe
 // Per-mode set of ids the user has already swiped this session. Guards the merge
 // on refetch: a card we optimistically removed must not reappear if the server
 // still lists it as PENDING (its swipe POST may be mid-flight). Module scope so it
-// survives the tab unmounting on every dashboard switch.
+// survives the tab unmounting on every dashboard switch; reset with the session.
 const swiped = { film: new Set(), book: new Set() };
+registerSessionCache(() => { swiped.film.clear(); swiped.book.clear(); });
 
 const swipeVariants = {
   // The resting/incoming top card sits at z-index 1 (above the scaled-down
@@ -274,14 +277,12 @@ function ActionButton({ onClick, children, className = '', size = 'md', label })
 
 export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   const { t } = useTranslation('reco');
-  // `?type=film|book` drives which queue we show; defaults to film.
+  // `?type=film|book` drives which queue we show; defaults to book.
   const [searchParams, setSearchParams] = useSearchParams();
-  const mode = searchParams.get('type') === 'book' ? 'book' : 'film';
+  const mode = searchParams.get('type') === 'film' ? 'film' : 'book';
   const [cards, setCards] = useState([]);
   const [status, setStatus] = useState('loading'); // loading | locked | generating | ready | error
   const [lockInfo, setLockInfo] = useState({ completed: 0, required: TOTAL_TESTS });
-  const [generatingMore, setGeneratingMore] = useState(false);
-  const [exhausted, setExhausted] = useState(false);
   const [dir, setDir] = useState(null); // last swipe direction — drives the exit animation
   const [info, setInfo] = useState(null); // item whose synopsis modal is open
   const [confirmReset, setConfirmReset] = useState(false);
@@ -309,21 +310,16 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
         }
         if (resp.status === 'generating') {
           setStatus('generating');
-          setGeneratingMore(true);
           if (!merge) setCards([]);
           return;
         }
         // ready
         setStatus('ready');
-        setGeneratingMore(!!resp.generating);
         const visible = (resp.items || []).filter((i) => !swiped[type].has(i.id));
         setCards((prev) => {
           const base = merge ? prev : [];
           const have = new Set(base.map((c) => c.id));
-          const next = [...base, ...visible.filter((i) => !have.has(i.id))];
-          // Nothing left and the server isn't building more — stop the refill poll.
-          if (!resp.generating && next.length === 0) setExhausted(true);
-          return next;
+          return [...base, ...visible.filter((i) => !have.has(i.id))];
         });
       })
       .catch(() => active && setStatus((s) => (s === 'ready' ? s : 'error')));
@@ -336,7 +332,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   // not *whether* we still need more, so it doesn't re-run this effect and reset the
   // pending timer. (Depending on cards.length directly meant fast swiping perpetually
   // cleared the timeout, so the fetch only fired once the stack hit zero.)
-  const needMore = !exhausted && (status === 'generating' || (status === 'ready' && cards.length <= LOW_WATER));
+  const needMore = status === 'generating' || (status === 'ready' && cards.length <= LOW_WATER);
   useEffect(() => {
     if (!needMore) return;
     const id = setTimeout(() => setPollTick((t) => t + 1), POLL_INTERVAL_MS);
@@ -356,8 +352,6 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
     setSearchParams({ type: next });
     setStatus('loading');
     setCards([]);
-    setExhausted(false);
-    setGeneratingMore(false);
   }
 
   function doSwipe(verdict) {
@@ -365,19 +359,18 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
     if (!card) return;
     setDir(verdict);
     swiped[mode].add(card.id);
-    setExhausted(false);
     setInfo(null);
     setCards((prev) => prev.slice(1));
-    recommendationsApi.swipe(card.id, verdict).catch(() => {});
+    // Optimistic: the card is already gone locally. On failure at least say so —
+    // the verdict won't be reflected in the history / future batches.
+    recommendationsApi.swipe(card.id, verdict).catch(() => showToast(t('swipeError')));
   }
 
   function handleReset() {
     setConfirmReset(false);
     swiped[mode] = new Set();
     setCards([]);
-    setExhausted(false);
     setStatus('generating');
-    setGeneratingMore(true);
     recommendationsApi
       .reset(mode)
       .then(() => setPollTick((t) => t + 1))
@@ -387,33 +380,23 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   // ─── Locked: tests not all done ────────────────────────────────────────────
   if (status === 'locked') {
     const { completed, required } = lockInfo;
-    const pct = Math.round((completed / required) * 100);
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 lg:left-64 z-30 bg-persona-bg flex items-center justify-center px-6 pt-20 pb-24 lg:py-6">
-        <div className="surface-warm rounded-4xl p-8 text-center max-w-md w-full">
-          <div className="w-14 h-14 mx-auto mb-4 bg-persona-accent-lime/60 rounded-3xl flex items-center justify-center">
-            <HiOutlineSparkles className="w-7 h-7 text-persona-dark" />
-          </div>
-          <h2 className="font-display text-xl font-semibold text-persona-dark mb-1.5">{t('locked.title')}</h2>
-          <p className="text-sm text-persona-muted leading-relaxed mb-5">
-            {t('locked.body', { required })}
-          </p>
-          <div className="relative h-2.5 bg-persona-line/60 rounded-full overflow-hidden mb-2">
-            <motion.div className="absolute inset-y-0 left-0 bg-persona-accent-lime rounded-full" initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8, ease: 'easeOut' }} />
-          </div>
-          <p className="text-xs text-persona-muted mb-6 tabular">{t('locked.progress', { completed, required })}</p>
-          {onOpenTests && (
-            <motion.button onClick={onOpenTests} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
-              {completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
-            </motion.button>
-          )}
-        </div>
-      </motion.div>
+      <LockedCard
+        title={t('locked.title')}
+        body={t('locked.body', { required })}
+        progressLabel={t('locked.progress', { completed, required })}
+        ctaLabel={completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
+        completed={completed}
+        required={required}
+        onOpenTests={onOpenTests}
+      />
     );
   }
 
   const empty = cards.length === 0;
-  const busy = status === 'loading' || status === 'generating' || (empty && generatingMore);
+  // An empty stack is never a dead end — the backend always has more coming, so we show
+  // the "picking more" spinner and keep polling rather than a bogus "all caught up".
+  const busy = status === 'loading' || status === 'generating' || empty;
   const mediaAcc = t(mode === 'film' ? 'media.filmsAcc' : 'media.booksAcc');
   const mediaGen = t(mode === 'film' ? 'media.filmsGen' : 'media.booksGen');
 
@@ -437,16 +420,6 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
               </motion.span>
               <p className="text-sm text-persona-muted leading-relaxed max-w-xs">
                 {status === 'loading' ? t('busy.loading') : t('busy.generating', { media: mediaAcc })}
-              </p>
-            </div>
-          ) : empty ? (
-            <div className="absolute inset-0 surface-warm rounded-4xl flex flex-col items-center justify-center text-center p-8">
-              <div className="w-12 h-12 mb-3 bg-persona-accent-peach/50 rounded-2xl flex items-center justify-center">
-                <HiOutlineSparkles className="w-6 h-6 text-persona-dark" />
-              </div>
-              <p className="text-sm text-persona-dark font-medium mb-1">{t('empty.title')}</p>
-              <p className="text-sm text-persona-muted leading-relaxed max-w-xs">
-                {t('empty.body')}
               </p>
             </div>
           ) : (

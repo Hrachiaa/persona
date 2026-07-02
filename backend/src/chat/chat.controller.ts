@@ -1,7 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UserThrottlerGuard } from '../common/user-throttler.guard';
 import { ChatService } from './chat.service';
 import { ChatDetailDto, ChatSummaryDto } from './dtos/chat.dto';
 import { SendMessageDto } from './dtos/send-message.dto';
@@ -45,6 +47,9 @@ export class ChatController {
   // Streams the assistant reply as Server-Sent Events. Uses @Res() directly so we can
   // write the stream and persist on completion; ownership/validation happen before any
   // bytes are written, so failures still return a normal JSON error.
+  // Every message is an LLM call — cap it per user (well above human typing speed).
+  @UseGuards(UserThrottlerGuard)
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
   @Post(':id/messages')
   async send(
     @Req() req,

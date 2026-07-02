@@ -4,11 +4,6 @@ import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineBolt,
-  HiOutlineEye,
-  HiOutlineCpuChip,
-  HiOutlineFingerPrint,
-  HiOutlineCheckCircle,
-  HiOutlineClock,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
   HiOutlineSparkles,
@@ -16,9 +11,12 @@ import {
   HiOutlineHeart,
   HiOutlineLifebuoy,
   HiOutlinePuzzlePiece,
-  HiOutlineLockClosed,
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
+import { showToast } from '../../components/Toast';
+import { normalCdf } from '../../utils/tScore';
+import { PART_SIZE } from './testParts';
+import { invalidateTestsCache } from './testsCache';
 import ImmersiveTopBar from './ImmersiveTopBar';
 import ShareResultBar from './ShareResultBar';
 import BigFiveResultScreen from './BigFiveResult';
@@ -29,22 +27,13 @@ import PidResultScreen from './PidResult';
 
 // ─── Static metadata the API doesn't provide ────────────────────────────────
 const TEST_META = {
-  iq:        { icon: HiOutlineBolt,        color: 'bg-persona-accent-yellow',   iconColor: 'text-persona-dark' },
-  bigFive:   { icon: HiOutlineSparkles,    color: 'bg-persona-accent-peach',    iconColor: 'text-persona-dark' },
-  szondi:    { icon: HiOutlineEye,         color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
-  archetype: { icon: HiOutlineCpuChip,     color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
-  mbti:      { icon: HiOutlineFingerPrint, color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
-  shcwartz:  { icon: HiOutlineScale,       color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
-  ecr:       { icon: HiOutlineHeart,       color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
-  cope:      { icon: HiOutlineLifebuoy,    color: 'bg-persona-accent-blue',     iconColor: 'text-persona-dark' },
-  pid:       { icon: HiOutlinePuzzlePiece, color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
+  iq:       { icon: HiOutlineBolt,        color: 'bg-persona-accent-yellow',   iconColor: 'text-persona-dark' },
+  bigFive:  { icon: HiOutlineSparkles,    color: 'bg-persona-accent-peach',    iconColor: 'text-persona-dark' },
+  shcwartz: { icon: HiOutlineScale,       color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
+  ecr:      { icon: HiOutlineHeart,       color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
+  cope:     { icon: HiOutlineLifebuoy,    color: 'bg-persona-accent-blue',     iconColor: 'text-persona-dark' },
+  pid:      { icon: HiOutlinePuzzlePiece, color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
 };
-
-// Tests served by the real backend (real questions, real submit).
-const REAL_API_TESTS = new Set(['iq', 'bigFive', 'shcwartz', 'ecr', 'cope', 'pid']);
-
-// Order in which tests must be taken — each completed test unlocks the next.
-const TEST_ORDER = ['bigFive', 'shcwartz', 'cope', 'iq', 'ecr', 'pid'];
 
 // Human-readable URL slugs for the runner / result links (nicer than the raw cuid).
 const TYPE_SLUGS = {
@@ -54,40 +43,12 @@ const TYPE_SLUGS = {
   ecr: 'attachment',
   cope: 'stress',
   pid: 'shadows',
-  szondi: 'drives',
-  archetype: 'archetype',
-  mbti: 'type',
 };
 const testSlug = (test) => (test ? TYPE_SLUGS[test.testType] || test.testType : null);
 
-// ─── Mocked questions / results for non-IQ tests ────────────────────────────
-const MOCK_DATA = {
-  szondi: {
-    questions: [
-      { id: 'sq1', text: 'Which image evokes the strongest emotion?', image: '', options: [{ id: '1', text: 'Image A' }, { id: '2', text: 'Image B' }, { id: '3', text: 'Image C' }, { id: '4', text: 'Image D' }] },
-      { id: 'sq2', text: 'Which face do you feel most drawn to?', image: '', options: [{ id: '1', text: 'Face 1' }, { id: '2', text: 'Face 2' }, { id: '3', text: 'Face 3' }, { id: '4', text: 'Face 4' }] },
-    ],
-    result: { label: 'The Explorer', detail: 'You possess a strong drive for discovery and understanding of yourself and the world.' },
-  },
-  archetype: {
-    questions: [
-      { id: 'aq1', text: 'When making important decisions, you rely more on:', image: '', options: [{ id: '1', text: 'Logic and analysis' }, { id: '2', text: 'Gut feeling' }, { id: '3', text: 'Past experience' }, { id: '4', text: 'Future possibilities' }] },
-      { id: 'aq2', text: 'In social situations, you tend to:', image: '', options: [{ id: '1', text: 'Observe first' }, { id: '2', text: 'Engage immediately' }, { id: '3', text: 'Find a close friend' }, { id: '4', text: 'Lead the group' }] },
-      { id: 'aq3', text: 'You recharge by:', image: '', options: [{ id: '1', text: 'Being alone' }, { id: '2', text: 'Being with people' }, { id: '3', text: 'Exploring new things' }, { id: '4', text: 'Creating something' }] },
-    ],
-    result: { label: 'Intuitive Thinker', detail: 'You combine visionary intuition with analytical precision to see the big picture.' },
-  },
-  mbti: {
-    questions: [
-      { id: 'mq1', text: 'At a party, you:', image: '', options: [{ id: '1', text: 'Talk to many people' }, { id: '2', text: 'Talk to a select few' }, { id: '3', text: 'Find a quiet spot' }, { id: '4', text: 'Leave early' }] },
-      { id: 'mq2', text: 'You prefer tasks that are:', image: '', options: [{ id: '1', text: 'Structured and clear' }, { id: '2', text: 'Open-ended and creative' }, { id: '3', text: 'Collaborative' }, { id: '4', text: 'Independent' }] },
-      { id: 'mq3', text: 'When faced with conflict, you:', image: '', options: [{ id: '1', text: 'Confront directly' }, { id: '2', text: 'Seek compromise' }, { id: '3', text: 'Avoid it' }, { id: '4', text: 'Analyze it' }] },
-    ],
-    result: { label: 'INTJ — The Strategist', detail: 'Imaginative and strategic thinker with a plan for everything.' },
-  },
-};
-
 // ─── LocalStorage helpers ────────────────────────────────────────────────────
+// Suffixes in use: `answers` (single-pass progress, drives the resume prompt)
+// and `part<N>_answers` (a chunked test's in-part progress, restored silently).
 const LS = {
   key: (testId, suffix) => `test_${testId}_${suffix}`,
   get: (testId, suffix) => {
@@ -96,8 +57,10 @@ const LS = {
   set: (testId, suffix, val) => localStorage.setItem(LS.key(testId, suffix), JSON.stringify(val)),
   remove: (testId, suffix) => localStorage.removeItem(LS.key(testId, suffix)),
   clearAll: (testId) => {
-    ['answers'].forEach((s) => localStorage.removeItem(`test_${testId}_${s}`));
-    localStorage.removeItem('activeTestId');
+    const prefix = `test_${testId}_`;
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith(prefix))
+      .forEach((k) => localStorage.removeItem(k));
   },
 };
 
@@ -109,21 +72,10 @@ const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', RESULT:
 const IQ_MEAN = 100;
 const IQ_SIGMA = 15;
 
-// Standard normal CDF via the Abramowitz-Stegun erf approximation.
-// Returns the share of the population scoring at or below `x`.
-function normalCdf(x, mean = IQ_MEAN, sigma = IQ_SIGMA) {
-  const z = (x - mean) / (sigma * Math.SQRT2);
-  const t = 1 / (1 + 0.3275911 * Math.abs(z));
-  const erf =
-    1 -
-    (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t) *
-      Math.exp(-z * z);
-  return 0.5 * (1 + (z >= 0 ? erf : -erf));
-}
-
 // Whole-number percentile, clamped to 1..99 (matches how Mensa reports it).
+// The normal CDF lives in utils/tScore (shared with the Big Five conversion).
 function iqPercentile(score) {
-  return Math.max(1, Math.min(99, Math.round(normalCdf(score) * 100)));
+  return Math.max(1, Math.min(99, Math.round(normalCdf((score - IQ_MEAN) / IQ_SIGMA) * 100)));
 }
 
 // Animate a value from 0 up to `target` on an ease-out curve (fast first, then
@@ -252,110 +204,6 @@ function BellCurve({ score, showMarkerLabel = true, youLabel = 'You' }) {
   );
 }
 
-// ─── Test Card ───────────────────────────────────────────────────────────────
-function TestCard({ test, meta, completed, locked, expanded, loading, onToggle, onStart, onView }) {
-  const { t, i18n } = useTranslation('tests');
-  const Icon = meta.icon;
-  // Russian test names run longer than the English ones — nudge the title down a
-  // step so they sit comfortably next to the status badge.
-  const titleSize = i18n.language?.startsWith('ru') ? 'text-lg' : 'text-xl';
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      onClick={onToggle}
-      whileTap={{ scale: 0.99 }}
-      className={`surface-warm rounded-3xl p-6 border border-white/50 cursor-pointer ${expanded ? '' : 'card-hover'}`}
-    >
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className={`w-14 h-14 ${meta.color} rounded-2xl flex items-center justify-center flex-shrink-0`}>
-          <Icon className={`w-7 h-7 ${meta.iconColor}`} />
-        </div>
-        <h3 className={`flex-1 min-w-0 break-words font-display ${titleSize} font-semibold text-persona-dark`}>{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
-        {completed ? (
-          <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-dark bg-persona-accent-lime/50 px-2.5 py-1 rounded-md flex-shrink-0">
-            <HiOutlineCheckCircle className="w-4 h-4" /> {t('status.done')}
-          </span>
-        ) : locked ? (
-          <span className="flex items-center gap-1 text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md flex-shrink-0">
-            <HiOutlineLockClosed className="w-3.5 h-3.5" /> {t('status.locked')}
-          </span>
-        ) : (
-          <span className="text-xs font-medium tracking-wide text-persona-muted bg-persona-line px-2.5 py-1 rounded-md flex-shrink-0">
-            {t('status.notStarted')}
-          </span>
-        )}
-      </div>
-
-      {/* Expanded detail */}
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            key="detail"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="overflow-hidden"
-          >
-            <div className="pt-4">
-              {locked ? (
-                <>
-                  <p className="text-persona-muted text-sm leading-relaxed mb-4">
-                    {t('card.lockedHint')}
-                  </p>
-                  <div className="w-full py-3.5 px-8 rounded-full font-medium text-center bg-persona-line text-persona-muted">
-                    {t('card.unavailable')}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p className="text-persona-muted text-sm leading-relaxed mb-4">{t(`descriptions.${test.testType}`, { defaultValue: test.description })}</p>
-                  <div className="flex flex-wrap items-center gap-2 mb-5">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
-                      <HiOutlineClock className="w-3.5 h-3.5" />
-                      {test.duration > 0 ? t('card.minutes', { n: test.duration }) : t('card.noTimeLimit')}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
-                      {t('card.questionsCount', { n: test.totalQuestions })}
-                    </span>
-                  </div>
-                  {completed ? (
-                    <motion.button
-                      onClick={(e) => { e.stopPropagation(); onView(); }}
-                      className="btn-secondary w-full"
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      {t('card.viewResult')}
-                    </motion.button>
-                  ) : (
-                    <motion.button
-                      onClick={(e) => { e.stopPropagation(); onStart(); }}
-                      disabled={loading}
-                      className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      {loading ? (
-                        <span className="flex items-center gap-2">
-                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          {t('common:loading')}
-                        </span>
-                      ) : (
-                        t('card.start')
-                      )}
-                    </motion.button>
-                  )}
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
 // ─── Immersive top bar (mobile "pushed screen" chrome) ───────────────────────
 
 // ─── Resume Prompt Screen ────────────────────────────────────────────────────
@@ -366,7 +214,7 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-8">
       <ImmersiveTopBar onBack={onBack} />
 
-      <div className="px-6 pt-2">
+      <div className="px-6 pt-2 mx-auto w-full max-w-md">
       <div className="text-center mb-10">
         <motion.div
           className={`w-20 h-20 ${meta.color} rounded-[1.5rem] flex items-center justify-center mx-auto mb-6`}
@@ -394,99 +242,114 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
 }
 
 // ─── Questions Screen ────────────────────────────────────────────────────────
-function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
+// Two modes:
+//  • Single-pass (default): the whole questionnaire in one go, answers persisted
+//    to localStorage (resumable), finalized with an explicit Submit button.
+//  • Chunked (PART_SIZE tests, e.g. Personality): taken one "approach" at a time.
+//    Only the current part's questions are shown; answering the part's last
+//    question auto-submits that fragment to the backend (the source of truth for
+//    progress — no localStorage) and the parent returns to the Portrait, where the
+//    just-filled segment animates. `partsCompleted` (from the backend) decides
+//    which part is served next.
+function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete, onFragmentComplete }) {
   const { t } = useTranslation('tests');
   const Icon = meta.icon;
   const isIQ = test.testType === 'iq';
 
-  // Restore persisted answers
-  const [answers, setAnswers] = useState(() => LS.get(test.id, 'answers') || []);
-  const [questionIndex, setQuestionIndex] = useState(() => {
-    const saved = LS.get(test.id, 'answers') || [];
-    return Math.min(saved.length, questions.length - 1);
+  const partSize = PART_SIZE[test.testType] || questions.length || 1;
+  const partCount = Math.ceil(questions.length / partSize);
+  const isChunked = partCount > 1;
+
+  // The part to take now, and the slice of questions it covers.
+  const part = isChunked ? Math.min(partsCompleted, partCount - 1) : 0;
+  const partStart = part * partSize;
+  const partLength = Math.min(partSize, questions.length - partStart);
+
+  // Answers are LOCAL to the current part (indexed 0..partLength-1). Single-pass
+  // progress persists under `answers` (drives the resume prompt); a chunked
+  // part's progress persists under its own `part<N>_answers` key so leaving
+  // mid-part (back button, refresh, closed tab) doesn't silently lose up to
+  // 29 answered questions — re-entering the part restores them.
+  const answersKey = isChunked ? `part${part}_answers` : 'answers';
+  const [answers, setAnswers] = useState(() => LS.get(test.id, answersKey) || []);
+  const [qi, setQi] = useState(() => {
+    const saved = LS.get(test.id, answersKey) || [];
+    return Math.min(saved.length, partLength - 1);
   });
   const [submitting, setSubmitting] = useState(false);
 
-  // Preload all question images
+  // Preload the current part's question images
   useEffect(() => {
-    questions.forEach((q) => {
-      if (q.image) {
-        const img = new Image();
-        img.src = q.image;
-      }
-    });
-  }, [questions]);
+    for (let i = partStart; i < partStart + partLength; i++) {
+      const q = questions[i];
+      if (q?.image) { const img = new Image(); img.src = q.image; }
+    }
+  }, [questions, partStart, partLength]);
 
-  // Persist answers
+  // Persist progress under the pass/part-specific key (see answersKey above).
   useEffect(() => {
-    LS.set(test.id, 'answers', answers);
-  }, [answers, test.id]);
+    LS.set(test.id, answersKey, answers);
+  }, [answers, test.id, answersKey]);
 
-  // Answers are indexed by question POSITION (not by questionId), so that two
-  // questions sharing the same backend questionId remain distinct entries.
-  // Functional updaters keep rapid clicks from clobbering each other under
-  // React's batching — every click writes to its own slot from a fresh `prev`.
-  const handleAnswer = (qIdx, questionId, optionId) => {
-    setAnswers((prev) => {
-      const next = prev.slice();
-      next[qIdx] = { questionId, optionId };
-      return next;
-    });
-    // Only advance when the user answered the question they're currently on —
-    // a re-pick via Prev should stay on that earlier question.
-    setQuestionIndex((prev) =>
-      qIdx === prev ? Math.min(prev + 1, questions.length - 1) : prev,
-    );
-  };
-
-  const handleSubmit = async (finalAnswers) => {
+  const submitCurrent = async (finalAnswers) => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      // Drop any skipped (sparse) slots while preserving order and duplicates.
-      const payload = finalAnswers.filter(Boolean);
-      if (REAL_API_TESTS.has(test.testType)) {
+      const payload = finalAnswers.filter(Boolean); // drop sparse slots, keep order
+      if (isChunked) {
+        const resp = await testsApi.submitFragment(test.id, part, payload);
+        LS.remove(test.id, answersKey); // the part is committed server-side now
+        onFragmentComplete(resp);
+      } else {
         const result = await testsApi.submitTest(test.id, payload);
         LS.clearAll(test.id);
         onComplete(result);
-      } else {
-        // Mock submit for tests not yet wired to the backend
-        LS.clearAll(test.id);
-        onComplete({
-          testId: test.id,
-          testType: test.testType,
-          result: MOCK_DATA[test.testType]?.result || {},
-        });
       }
     } catch (err) {
       console.error('Submit failed:', err);
+      showToast(t('questions.submitError'));
       setSubmitting(false);
     }
   };
 
-  const currentQ = questions[questionIndex];
-  const progress = ((questionIndex + 1) / questions.length) * 100;
-  const currentAnswer = answers[questionIndex];
+  // Answers are indexed by question POSITION within the part. Answering the
+  // current question advances; answering the part's LAST question auto-submits the
+  // fragment (chunked) — a single-pass test waits for the explicit Submit button.
+  const handleAnswer = (localIdx, questionId, optionId) => {
+    const next = answers.slice();
+    next[localIdx] = { questionId, optionId };
+    setAnswers(next);
+    if (localIdx !== qi) return; // re-pick via Prev: stay put
+    if (localIdx === partLength - 1) {
+      if (isChunked) submitCurrent(next);
+    } else {
+      setQi(localIdx + 1);
+    }
+  };
 
-  const isLastQuestion = questionIndex === questions.length - 1;
-  // Furthest question reached (the unanswered "frontier"). You can navigate back
-  // and forward freely up to here, but Next can't skip past an unanswered one.
-  const maxReachedIndex = Math.min(answers.filter(Boolean).length, questions.length - 1);
+  const currentQ = questions[partStart + qi];
+  const currentAnswer = answers[qi];
+  const answeredCount = answers.filter(Boolean).length;
+
+  const isLast = qi === partLength - 1;
+  // Single-pass tests finalize with a Submit button; chunked parts auto-submit.
+  const showSubmit = !isChunked && isLast;
+  // Furthest question reached within the part — Next can't skip past an unanswered one.
+  const frontier = Math.min(answeredCount, partLength - 1);
+  const progress = ((qi + 1) / partLength) * 100;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
-      <ImmersiveTopBar
-        onBack={() => {
-          if (answers.length > 0 && !window.confirm(t('questions.leaveConfirm'))) return;
-          onBack();
-        }}
-      />
-
-      <div className="px-6 pt-2">
+      {/* Width-capped so the answer buttons stay scannable on desktop. */}
+      <div className="px-6 pt-8 mx-auto w-full max-w-2xl">
       {/* Title */}
       <div className="mb-4">
         <h3 className="font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
-        <p className="text-sm text-persona-muted">{t('questions.progress', { n: questionIndex + 1, total: questions.length })}</p>
+        <p className="text-sm text-persona-muted">
+          {isChunked
+            ? t('parts.progress', { part: part + 1, parts: partCount, n: qi + 1, total: partLength })
+            : t('questions.progress', { n: qi + 1, total: partLength })}
+        </p>
       </div>
 
       {/* Progress */}
@@ -497,7 +360,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
       {/* Question — fade-only enter, no AnimatePresence so the swap never
           gates the answer-commit logic above. */}
       <motion.div
-        key={questionIndex}
+        key={qi}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.08 }}
@@ -509,7 +372,7 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
               <div className="bg-white rounded-2xl p-2 shadow-warm flex items-center justify-center">
                 <img
                   src={currentQ.image}
-                  alt={t('questions.imageAlt', { n: questionIndex + 1 })}
+                  alt={t('questions.imageAlt', { n: qi + 1 })}
                   className="w-full max-h-[50vh] object-contain rounded-xl"
                 />
               </div>
@@ -525,7 +388,8 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
               return (
                 <motion.button
                   key={opt.id}
-                  onClick={() => handleAnswer(questionIndex, currentQ.id, opt.id)}
+                  onClick={() => handleAnswer(qi, currentQ.id, opt.id)}
+                  disabled={submitting}
                   aria-pressed={isSelected}
                   className={`${isIQ
                     ? `w-12 h-12 rounded-xl flex items-center justify-center text-base font-medium tabular border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg ${
@@ -558,18 +422,18 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
       {/* Navigation */}
       <div className="flex items-center justify-between mt-8 gap-3">
         <motion.button
-          onClick={() => setQuestionIndex((p) => Math.max(0, p - 1))}
-          disabled={questionIndex === 0}
+          onClick={() => setQi((p) => Math.max(0, p - 1))}
+          disabled={qi === 0 || submitting}
           className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
           whileTap={{ scale: 0.95 }}
         >
           {t('questions.prev')}
         </motion.button>
 
-        {isLastQuestion ? (
+        {showSubmit ? (
           <motion.button
-            onClick={() => handleSubmit(answers)}
-            disabled={submitting || answers.filter(Boolean).length !== questions.length}
+            onClick={() => submitCurrent(answers)}
+            disabled={submitting || answeredCount !== partLength}
             className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
             whileTap={{ scale: 0.97 }}
           >
@@ -581,12 +445,16 @@ function QuestionsScreen({ test, meta, questions, onComplete, onBack }) {
           </motion.button>
         ) : (
           <motion.button
-            onClick={() => setQuestionIndex((p) => Math.min(maxReachedIndex, p + 1))}
-            disabled={questionIndex >= maxReachedIndex}
+            onClick={() => setQi((p) => Math.min(frontier, p + 1))}
+            disabled={qi >= frontier || submitting}
             className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-persona-line text-persona-dark disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
             whileTap={{ scale: 0.95 }}
           >
-            {t('questions.next')}
+            {submitting ? (
+              <span className="inline-flex items-center gap-2"><span className="w-4 h-4 border-2 border-persona-line border-t-persona-dark rounded-full animate-spin" /> {t('questions.submitting')}</span>
+            ) : (
+              t('questions.next')
+            )}
           </motion.button>
         )}
       </div>
@@ -822,9 +690,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const [expandedId, setExpandedId] = useState(null);
   // Fresh result from the just-submitted test, tagged with its slug so we only
   // show it for the matching URL (otherwise we fall back to the stored result).
   const [result, setResult] = useState(null);
@@ -875,19 +741,17 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // Fetch test list
   const fetchTests = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
       const data = await testsApi.getAllTests();
       setTests(data);
       return data;
     } catch (err) {
       console.error('Failed to fetch tests:', err);
-      setError(t('list.loadError'));
       return [];
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, []);
 
   // On mount: fetch tests. We intentionally do NOT auto-route an in-progress
   // session back into the test — the resume prompt should only appear when the
@@ -907,34 +771,19 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     setQuestionsLoading(true);
     (async () => {
       try {
-        const qs = REAL_API_TESTS.has(selectedTest.testType)
-          ? await testsApi.getTestQuestions(selectedTest.id)
-          : (MOCK_DATA[selectedTest.testType]?.questions || []);
+        const qs = await testsApi.getTestQuestions(selectedTest.id);
         if (!active) return;
         setQuestions(qs);
         loadedQuestionsFor.current = selectedTest.id;
-        localStorage.setItem('activeTestId', selectedTest.id);
       } catch (err) {
         console.error('Failed to fetch questions:', err);
-        if (active) setError(t('list.questionsError'));
+        if (active) showToast(t('list.questionsError'));
       } finally {
         if (active) setQuestionsLoading(false);
       }
     })();
     return () => { active = false; };
-  }, [routeSlug, isResultRoute, selectedTest, t]);
-
-  const toggleExpand = (testId) => {
-    setExpandedId((prev) => (prev === testId ? null : testId));
-  };
-
-  const viewResult = (test) => {
-    if (!test?.result) return;
-    navigate(`/tests/${testSlug(test)}/result`);
-  };
-
-  // Begin a test: the questions-loading effect picks it up from the URL.
-  const beginTest = (test) => navigate(`/tests/${testSlug(test)}`);
+  }, [routeSlug, isResultRoute, selectedTest]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleResumeContinue = () => setResumeDecided(true);
 
@@ -945,8 +794,24 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   const handleComplete = (res) => {
     setResult({ slug: testSlug(selectedTest), data: res });
-    fetchTests(); // Refresh list to get updated result status
+    // Both readers of the test list must see the new result: this component's
+    // own copy and the shared module cache (chat/reads gates, portrait rings).
+    invalidateTestsCache();
+    fetchTests();
     navigate(`/tests/${testSlug(selectedTest)}/result`);
+  };
+
+  // A chunked test just committed one fragment to the backend. The cache bust makes
+  // the Portrait refetch the new part count. The final fragment goes straight to the
+  // result (like a full submit); earlier fragments return to the Portrait and let
+  // the just-filled progress segment animate.
+  const handleFragmentComplete = (resp) => {
+    invalidateTestsCache();
+    if (resp.completed) {
+      handleComplete(resp.result);
+    } else {
+      navigate('/portrait', { state: { celebrate: { type: selectedTest.testType, parts: resp.partsCompleted } } });
+    }
   };
 
   // Open the runner without wiping progress: if an earlier retake was left
@@ -954,88 +819,19 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // runner opens fresh (no saved answers → straight to the first question).
   const handleRetake = () => navigate(`/tests/${testSlug(selectedTest)}`);
 
+  // Leaving the runner / result returns to the Portrait (the test list is retired).
   const handleBackToList = () => {
     setResult(null);
     setQuestions([]);
     loadedQuestionsFor.current = null;
-    localStorage.removeItem('activeTestId');
-    navigate('/tests');
+    navigate('/portrait');
   };
 
   // ─── Render ──────────────────────────────────────────────────────────────────
-  if (screen === SCREEN.LIST) {
-    if (loading) {
-      return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6">
-          <div className="grid gap-4 lg:grid-cols-2 items-start">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-persona-line/40 rounded-3xl p-6 animate-pulse">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-14 h-14 bg-persona-line rounded-2xl" />
-                  <div className="w-20 h-6 bg-persona-line rounded-md" />
-                </div>
-                <div className="h-6 bg-persona-line rounded-lg w-2/3 mb-2" />
-                <div className="h-4 bg-persona-line rounded-lg w-full mb-1" />
-                <div className="h-4 bg-persona-line rounded-lg w-4/5" />
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      );
-    }
-
-    if (error) {
-      return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pt-2 pb-6 text-center">
-          <p className="text-persona-danger mb-4">{error}</p>
-          <button onClick={fetchTests} className="btn-primary">{t('common:retry')}</button>
-        </motion.div>
-      );
-    }
-
-    if (tests.length === 0) {
-      return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-6 pt-2 pb-6 text-center">
-          <h1 className="font-display text-4xl font-semibold text-persona-dark mb-2">{t('list.emptyTitle')}</h1>
-          <p className="text-persona-muted max-w-prose mx-auto">{t('list.emptyBody')}</p>
-        </motion.div>
-      );
-    }
-
-    const completedTypes = new Set(tests.filter((t) => t.result).map((t) => t.testType));
-    const orderedTests = [...tests].sort(
-      (a, b) => TEST_ORDER.indexOf(a.testType) - TEST_ORDER.indexOf(b.testType),
-    );
-
-    return (
-      <motion.section aria-label={t('aria')} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="px-6 pt-2 pb-6">
-        <div className="grid gap-4 lg:grid-cols-2 items-start">
-          {orderedTests.map((test, i) => {
-            const m = TEST_META[test.testType] || TEST_META.iq;
-            const completed = !!test.result;
-            const idx = TEST_ORDER.indexOf(test.testType);
-            const unlocked = idx <= 0 || TEST_ORDER.slice(0, idx).every((t) => completedTypes.has(t));
-            const locked = !completed && !unlocked;
-            return (
-              <motion.div key={test.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                <TestCard
-                  test={test}
-                  meta={m}
-                  completed={completed}
-                  locked={locked}
-                  expanded={expandedId === test.id}
-                  loading={questionsLoading && expandedId === test.id}
-                  onToggle={() => toggleExpand(test.id)}
-                  onStart={() => beginTest(test)}
-                  onView={() => viewResult(test)}
-                />
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.section>
-    );
-  }
+  // The standalone test list is retired — tests are browsed and started from the Portrait
+  // now. Anyone reaching the bare /tests path (back button, stale link) is bounced there;
+  // the runner & result screens below are still reached from the Portrait.
+  if (screen === SCREEN.LIST) return <Navigate to="/portrait" replace />;
 
   // Past the list every screen needs a resolved test. While the list is still
   // loading (deep link / refresh) show a spinner; an id that doesn't exist once
@@ -1048,7 +844,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
         </motion.div>
       );
     }
-    return <Navigate to="/tests" replace />;
+    return <Navigate to="/portrait" replace />;
   }
 
   if (screen === SCREEN.RESUME) {
@@ -1075,8 +871,9 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
         test={selectedTest}
         meta={meta}
         questions={questions}
+        partsCompleted={selectedTest.partsCompleted ?? 0}
         onComplete={handleComplete}
-        onBack={handleBackToList}
+        onFragmentComplete={handleFragmentComplete}
       />
     );
   }
@@ -1085,7 +882,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     // Prefer the freshly submitted result; fall back to the test's stored result
     // (deep link / refresh). If neither exists, there's nothing to show.
     const shownResult = result && result.slug === routeSlug ? result.data : selectedTest.result;
-    if (!shownResult) return <Navigate to="/tests" replace />;
+    if (!shownResult) return <Navigate to="/portrait" replace />;
 
     return (
       <ResultView

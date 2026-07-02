@@ -46,6 +46,21 @@ export class ChatRepository {
     });
   }
 
+  /**
+   * The last `limit` messages in chronological order — the LLM context window
+   * (the full history stays in the DB and in getMessages). The negative take
+   * means "last N of this ordering"; id is the tie-breaker because a turn's two
+   * rows are createMany'd with the identical timestamp (cuids are monotonic
+   * within a process, so user precedes assistant).
+   */
+  getRecentMessages(chatId: string, limit: number) {
+    return this.prisma.chatMessage.findMany({
+      where: { chatId },
+      orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+      take: -limit,
+    });
+  }
+
   /** Append a turn (user + assistant) and bump the chat's activity timestamp. */
   async appendTurn(
     chatId: string,

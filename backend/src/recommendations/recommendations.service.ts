@@ -7,6 +7,7 @@ import { RecommendationRepository } from './recommendation.repository';
 import { buildProfileBlock, MediaKind } from '../ai/prompts/recommendations.prompt';
 import { RecommendationHistoryDto, RecommendationListDto, toHistoryItemDto, toItemDto } from './dtos/recommendation.dto';
 import { getLang, t } from '../i18n/translate';
+import { SingleFlight } from '../common/single-flight';
 
 const BATCH_REQUEST = 12; // titles asked of the model per generation (one call, no backfill)
 const PREFETCH_THRESHOLD = 17; // start the next batch once the queue drops to this many cards
@@ -20,7 +21,7 @@ export class RecommendationsService {
   private readonly logger = new Logger(RecommendationsService.name);
   // Dedupes concurrent generations per (user, mediaType). The combined cold-start
   // holds both type keys at once so neither type double-generates while it runs.
-  private readonly inFlight = new Map<string, Promise<void>>();
+  private readonly inFlight = new SingleFlight();
   // Last time a generation was kicked off from an empty queue, per (user, type).
   // Throttles re-generation when batches keep coming back empty (e.g. catalog keys
   // unset) so a polling client can't spin the LLM.
@@ -53,18 +54,19 @@ export class RecommendationsService {
       return RecommendationListDto.ready(mediaType, queue.map(toItemDto), this.isGenerating(userId, mediaType));
     }
 
-    // Empty queue: build a batch — combined on a truly cold start, else per-type.
+    // An empty queue is never a terminal "you've seen everything" state — there's always
+    // more the model can produce. So we always report `generating` and let the client keep
+    // polling; the cooldown now only throttles how often we actually re-hit the LLM (e.g.
+    // when generation keeps failing and the queue stays empty), instead of flipping the
+    // client into a dead-end empty screen.
     if (!this.isGenerating(userId, mediaType)) {
       const key = `${userId}:${mediaType}`;
-      // If we just generated from empty and it's still empty, the batch produced
-      // nothing usable — don't re-hit the LLM on every poll; report "no items".
-      if (Date.now() - (this.lastEmptyGen.get(key) ?? 0) < EMPTY_GEN_COOLDOWN_MS) {
-        return RecommendationListDto.ready(mediaType, [], false);
+      if (Date.now() - (this.lastEmptyGen.get(key) ?? 0) >= EMPTY_GEN_COOLDOWN_MS) {
+        this.lastEmptyGen.set(key, Date.now());
+        const total = await this.repo.countAll(userId);
+        if (total === 0) void this.dedupedGenerateCombined(userId, lang);
+        else void this.dedupedGenerate(userId, mediaType, lang);
       }
-      this.lastEmptyGen.set(key, Date.now());
-      const total = await this.repo.countAll(userId);
-      if (total === 0) void this.dedupedGenerateCombined(userId, lang);
-      else void this.dedupedGenerate(userId, mediaType, lang);
     }
     return RecommendationListDto.generating(mediaType);
   }
@@ -105,31 +107,19 @@ export class RecommendationsService {
   }
 
   private dedupedGenerate(userId: string, mediaType: MediaKind, lang: string): Promise<void> {
-    const key = `${userId}:${mediaType}`;
-    let inFlight = this.inFlight.get(key);
-    if (!inFlight) {
-      inFlight = this.generateBatch(userId, mediaType, lang)
-        .catch((e) => this.logger.error(`generate ${mediaType} failed for userId=${userId}`, e as Error))
-        .finally(() => this.inFlight.delete(key));
-      this.inFlight.set(key, inFlight);
-    }
-    return inFlight;
+    return this.inFlight.run(`${userId}:${mediaType}`, () =>
+      this.generateBatch(userId, mediaType, lang).catch((e) =>
+        this.logger.error(`generate ${mediaType} failed for userId=${userId}`, e as Error),
+      ),
+    );
   }
 
   private dedupedGenerateCombined(userId: string, lang: string): Promise<void> {
-    const filmKey = `${userId}:film`;
-    const bookKey = `${userId}:book`;
-    const existing = this.inFlight.get(filmKey) ?? this.inFlight.get(bookKey);
-    if (existing) return existing;
-    const inFlight = this.generateCombined(userId, lang)
-      .catch((e) => this.logger.error(`combined generate failed for userId=${userId}`, e as Error))
-      .finally(() => {
-        this.inFlight.delete(filmKey);
-        this.inFlight.delete(bookKey);
-      });
-    this.inFlight.set(filmKey, inFlight);
-    this.inFlight.set(bookKey, inFlight);
-    return inFlight;
+    return this.inFlight.runShared([`${userId}:film`, `${userId}:book`], () =>
+      this.generateCombined(userId, lang).catch((e) =>
+        this.logger.error(`combined generate failed for userId=${userId}`, e as Error),
+      ),
+    );
   }
 
   private async generateBatch(userId: string, mediaType: MediaKind, lang: string): Promise<void> {

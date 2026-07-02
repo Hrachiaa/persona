@@ -38,6 +38,14 @@ export class TestScoringService {
         return calculator(userId, testId, answers)
     }
 
+    // A single answer's numeric weight. Guards against a non-numeric optionId, which
+    // would otherwise turn a score into NaN and get persisted as a corrupt result.
+    private optionScore(optionId: string): number {
+        const n = Number(optionId)
+        if (!Number.isFinite(n)) throw new BadRequestException(t('errors.test.invalidAnswer'))
+        return n
+    }
+
     private calculateIQ = async (userId: string, testId: string, answers: AnswerDto[]): Promise<IqTestResult> => {
         const questions = await this.testRepository.getTestQuestions(testId) as TestQuestionsEntity | null
         if (!questions || !('scoring' in questions.questions) || !('results' in questions.questions)) throw new InternalServerErrorException(t('errors.test.optionsNotFound'))
@@ -127,8 +135,12 @@ export class TestScoringService {
         }
 
         answers.forEach((a)=> {
-            res[a.questionId].score += Number(a.optionId)
-            res[a.questionId[0]].score += Number(a.optionId)
+            const facet = res[a.questionId]
+            const domain = res[a.questionId[0]]
+            if (!facet || !domain) throw new BadRequestException(t('errors.test.invalidAnswer'))
+            const value = this.optionScore(a.optionId)
+            facet.score += value
+            domain.score += value
         })
 
         Object.keys(res).forEach(key => {
@@ -171,7 +183,9 @@ export class TestScoringService {
         }
 
         answers.forEach(a => {
-            res.values[a.questionId].score += Number(a.optionId)
+            const value = res.values[a.questionId]
+            if (!value) throw new BadRequestException(t('errors.test.invalidAnswer'))
+            value.score += this.optionScore(a.optionId)
         })
 
         let mediumScore = 0
@@ -202,7 +216,10 @@ export class TestScoringService {
         }
 
         answers.forEach(a => {
-            if(Number(a.questionId) < 19) {res.anxiety += Number(a.optionId)} else {res.avoidance += Number(a.optionId)}
+            const qid = Number(a.questionId)
+            if (!Number.isFinite(qid)) throw new BadRequestException(t('errors.test.invalidAnswer'))
+            const value = this.optionScore(a.optionId)
+            if(qid < 19) {res.anxiety += value} else {res.avoidance += value}
         })
 
         Object.keys(res).forEach(a => res[a] /= 18)
@@ -229,7 +246,9 @@ export class TestScoringService {
         }
 
         answers.forEach(a => {
-            res[a.questionId].score += Number(a.optionId)
+            const value = res[a.questionId]
+            if (!value) throw new BadRequestException(t('errors.test.invalidAnswer'))
+            value.score += this.optionScore(a.optionId)
         })
 
         Object.keys(res).forEach(a=> {
@@ -278,7 +297,9 @@ export class TestScoringService {
         }
 
         answers.forEach(a => {
-            res.values[a.questionId].score += Number(a.optionId)
+            const value = res.values[a.questionId]
+            if (!value) throw new BadRequestException(t('errors.test.invalidAnswer'))
+            value.score += this.optionScore(a.optionId)
         })
 
         Object.keys(res.values).forEach(a=> {

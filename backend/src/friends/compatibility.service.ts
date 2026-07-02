@@ -7,13 +7,14 @@ import { FriendsService } from './friends.service';
 import { CompatibilityRepository } from './compatibility.repository';
 import { CompatibilityDto } from './dtos/compatibility.dto';
 import { getLang } from '../i18n/translate';
+import { SingleFlight } from '../common/single-flight';
 
 @Injectable()
 export class CompatibilityService {
   private readonly logger = new Logger(CompatibilityService.name);
   // Dedupes concurrent generations for the same pair (StrictMode double-fetch,
   // both friends opening it, polling) so the LLM is called once per pair.
-  private readonly inFlight = new Map<string, Promise<unknown>>();
+  private readonly inFlight = new SingleFlight();
 
   constructor(
     private readonly testResultRepository: TestResultRepository,
@@ -49,13 +50,9 @@ export class CompatibilityService {
       return CompatibilityDto.ready(existing.content, existing.score, existing.updatedAt);
     }
 
-    const key = this.cacheKey(meId, friendId);
-    if (!this.inFlight.has(key)) {
-      const job = this.generateAndCache(meId, friendId, myResults, friendResults, getLang()).finally(() =>
-        this.inFlight.delete(key),
-      );
-      this.inFlight.set(key, job);
-    }
+    void this.inFlight.run(this.cacheKey(meId, friendId), () =>
+      this.generateAndCache(meId, friendId, myResults, friendResults, getLang()),
+    );
     return CompatibilityDto.generating();
   }
 
