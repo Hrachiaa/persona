@@ -13,7 +13,8 @@ export class AddProfileInfoDto {
     @ApiProperty({example: 2001, description: 'User Birth Date'})
     @IsInt()
     @Min(1900)
-    @Max(2026)
+    // Evaluated at module load — tracks the current year instead of a hardcoded one.
+    @Max(new Date().getFullYear())
     birthDate: number;
     @ApiProperty({example: 'en', description: 'User UI language', required: false})
     @IsOptional()

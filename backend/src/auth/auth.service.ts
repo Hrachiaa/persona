@@ -9,6 +9,8 @@ import { MailService } from '../mail/mail.service';
 import { AddProfileInfoDto } from './dtos/add-profile-info.dto';
 import { RefreshTokenRepository } from './refresh-token.repository';
 import { t } from '../i18n/translate';
+import { BCRYPT_SALT_ROUNDS } from '../common/security';
+import { Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -24,11 +26,22 @@ export class AuthService {
         if(condidate){
             throw new HttpException(t('errors.userExists'), HttpStatus.BAD_REQUEST);
         }
-        const hashPassword = await bcrypt.hash(authDto.password, 8);
-        const user = await this.usersService.create({
-            email: authDto.email,
-            password: hashPassword,
-        });
+        const hashPassword = await bcrypt.hash(authDto.password, BCRYPT_SALT_ROUNDS);
+        let user: UserEntity;
+        try {
+            user = await this.usersService.create({
+                email: authDto.email,
+                password: hashPassword,
+            });
+        } catch (error) {
+            // Two concurrent signups can both pass the pre-check above; the DB
+            // unique constraint decides the winner — report the loser the same
+            // way as the pre-check instead of leaking a 500.
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+                throw new HttpException(t('errors.userExists'), HttpStatus.BAD_REQUEST);
+            }
+            throw error;
+        }
         const {accessToken, refreshToken} = await this.generateTokens(user);
         return {
             userId: user.id,
@@ -211,7 +224,7 @@ export class AuthService {
             throw new HttpException(t('errors.invalidCode'), HttpStatus.BAD_REQUEST);
         }
         await this.mailService.deleteCode(user.id);
-        const hashPassword = await bcrypt.hash(newPassword, 8);
+        const hashPassword = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
         await this.usersService.resetPassword(user.id, hashPassword);
     }
 

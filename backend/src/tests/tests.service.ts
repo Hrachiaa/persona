@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { TestRepository } from './test.repository';
 import { TestResultRepository } from './test-result.repository';
 import { TestProgressRepository } from './test-progress.repository';
@@ -84,7 +84,7 @@ export class TestsService implements OnModuleInit {
 
     async submitTest(userId: string, testId: string, answers: SubmitTestDto): Promise<TestResultDto> {
         const test = await this.testRepository.getTestById(testId)
-        if(!test) throw new InternalServerErrorException(t('errors.test.testNotFound'))
+        if(!test) throw new NotFoundException(t('errors.test.testNotFound'))
 
         await this.ensurePreviousTestsCompleted(userId, test.testType)
 
@@ -117,7 +117,7 @@ export class TestsService implements OnModuleInit {
     // part is a no-op (idempotent), a gap is rejected.
     async submitFragment(userId: string, testId: string, dto: SubmitFragmentDto): Promise<FragmentResultDto> {
         const test = await this.testRepository.getTestById(testId)
-        if(!test) throw new InternalServerErrorException(t('errors.test.testNotFound'))
+        if(!test) throw new NotFoundException(t('errors.test.testNotFound'))
 
         const total = partsTotal(test.testType, test.totalQuestions)
         const size = PART_SIZE[test.testType]

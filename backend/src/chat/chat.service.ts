@@ -18,6 +18,12 @@ import { getLang, t } from '../i18n/translate';
 
 type Chat = { id: string; userId: string; kind: ChatKind; friendId: string | null };
 
+// How many of the latest messages go to the model with each reply (~15 turns).
+// The full history stays in the DB and in the UI — this only bounds the prompt,
+// so long chats don't grow the per-message token cost without limit or overflow
+// the model's context window.
+const CHAT_HISTORY_WINDOW = 30;
+
 @Injectable()
 export class ChatService {
   private readonly logger = new Logger(ChatService.name);
@@ -78,7 +84,7 @@ export class ChatService {
     const chat = await this.requireOwnedChat(userId, chatId);
     const lang = getLang();
     const systemPrompt = await this.buildSystemPrompt(chat, lang);
-    const history = await this.chatRepository.getMessages(chat.id);
+    const history = await this.chatRepository.getRecentMessages(chat.id, CHAT_HISTORY_WINDOW);
     const messages = [
       ...history.map((m) => ({
         role: m.role === ChatRole.USER ? ('user' as const) : ('assistant' as const),

@@ -5,6 +5,7 @@ import { UserEntity } from './models/user.entity';
 import { AddProfileInfoDto } from '../auth/dtos/add-profile-info.dto';
 import { UserRepository, CreateUserData } from './user.repository';
 import { t } from '../i18n/translate';
+import { BCRYPT_SALT_ROUNDS } from '../common/security';
 
 @Injectable()
 export class UsersService {
@@ -44,7 +45,7 @@ export class UsersService {
         if(!isPasswordValid){
             throw new HttpException(t('errors.invalidPassword'), HttpStatus.BAD_REQUEST);
         }
-        const hashPassword = await bcrypt.hash(newPassword, 8);
+        const hashPassword = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
         await this.userRepository.changePassword(userId, hashPassword);
     }
 

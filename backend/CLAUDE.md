@@ -7,9 +7,12 @@ NestJS 11 API for the Persona platform. See [../CLAUDE.md](../CLAUDE.md) for the
 - **Framework**: NestJS 11 (`@nestjs/common`, `@nestjs/core`, `@nestjs/platform-express`)
 - **ORM**: Prisma 7 (`@prisma/client` + `@prisma/adapter-pg`)
 - **Database**: PostgreSQL 18 (via Docker)
-- **Auth**: `@nestjs/jwt` + `@nestjs/passport` (passport-local, passport-jwt, passport-google-oauth20), refresh tokens persisted in DB, `bcryptjs` (salt rounds **8**)
+- **Auth**: `@nestjs/jwt` with a hand-rolled `JwtAuthGuard` (no passport-jwt/passport-local); `@nestjs/passport` is used only for Google OAuth (`passport-google-oauth20`). Refresh tokens persisted in DB (HMAC-hashed), `bcryptjs` (salt rounds from `BCRYPT_SALT_ROUNDS` in [src/common/security.ts](src/common/security.ts), currently **10**)
+- **Rate limiting**: `@nestjs/throttler` — global IP-keyed guard (`APP_GUARD`), tighter `@Throttle` on auth routes, and a per-user `UserThrottlerGuard` ([src/common/user-throttler.guard.ts](src/common/user-throttler.guard.ts)) on LLM-cost routes (chat send, recommendations reset)
 - **Validation**: `class-validator` + `class-transformer` through a custom pipe (see [src/pipes/validation.pipe.ts](src/pipes/validation.pipe.ts))
 - **Mail**: `@nestjs-modules/mailer` + `nodemailer` + Handlebars templates
+- **i18n**: `nestjs-i18n` (en/ru, resolved from `Accept-Language`; thin `t()`/`getLang()` wrappers in [src/i18n/translate.ts](src/i18n/translate.ts))
+- **AI**: OpenRouter via `@openrouter/sdk` ([src/ai/ai.service.ts](src/ai/ai.service.ts)); prompts live in [src/ai/prompts/](src/ai/prompts/)
 - **API docs**: Swagger at `/api/docs` (`@nestjs/swagger`)
 - **Runtime**: Node 22 (per [Dockerfile](Dockerfile)), TypeScript 5.7
 
@@ -22,7 +25,7 @@ From [package.json](package.json):
 | `npm run start:dev` | Watch mode. `cross-env` sets `NODE_ENV=development`, which makes `ConfigModule` load `.env.development`. |
 | `npm run start:prod` | Runs `dist/src/main` with `NODE_ENV=production` (loads `.env.production`). Build first. |
 | `npm run build` | `nest build` → `dist/` |
-| `npm test` / `npm run test:watch` / `npm run test:cov` | Jest. `rootDir: src`, `testRegex: .*\.spec\.ts$`. |
+| `npm test` / `npm run test:watch` / `npm run test:cov` | Jest. `rootDir: src`, `testRegex: .*\.spec\.ts$`. **No spec files exist yet** — `npm test` currently fails with "no tests found". |
 | `npm run test:e2e` | Jest with `./test/jest-e2e.json`. |
 | `npm run lint` | ESLint with `--fix`. |
 | `npm run format` | Prettier on `src/**/*.ts` and `test/**/*.ts`. |
@@ -40,22 +43,30 @@ Prisma config lives in [prisma.config.ts](prisma.config.ts). Schema and migratio
 ## Prisma — easy-to-miss details
 
 - **The generated client output is `generated/prisma/`, not `node_modules/@prisma/client`.** Imports inside the app come from the local `generated/` directory — don't change that without updating every importer.
-- Models in [prisma/schema.prisma](prisma/schema.prisma): `User`, `RefreshToken`, `OtpCode`, `Test`, `TestQuestion`, `TestResult`. `TestResult` has a unique constraint on `[userId, testId]` — one result per (user, test) pair.
-- `Test.questions` and `TestResult.result` are `Json` columns; the question shape is enforced at the application layer (see entities under [src/tests/entities/](src/tests/entities/)), not at the DB.
+- Models in [prisma/schema.prisma](prisma/schema.prisma): `User`, `RefreshToken`, `OtpCode`, `Test`, `TestQuestion`, `TestResult`, `TestProgress` (chunked-test progress), `Portrait`, `RecommendationItem`, `Friendship`, `Compatibility`, `Chat`, `ChatMessage`. `TestResult` has a unique constraint on `[userId, testId]` — one result per (user, test) pair.
+- `Test.questions` and `TestResult.result` are `Json` columns; the question shape is enforced at the application layer (see [src/tests/models/](src/tests/models/)), not at the DB.
+- The Schwartz values test's `testType` is the (load-bearing) typo `shcwartz` — see the quirks list in [../CLAUDE.md](../CLAUDE.md).
 
 ## Module layout
 
 Feature-based, under [src/](src/):
 
 - [src/auth/](src/auth/) — `auth.controller`, `auth.service`, `google.strategy.ts`, `refresh-token.repository.ts`, `guards/{jwt-auth,google-auth}.guard.ts`, DTOs, `config/google-oauth.config.ts`
-- [src/users/](src/users/) — `users.controller`, `users.service`, `user.repository.ts`, DTOs, `models/user.enity.ts` *(yes, the file name has a typo — see [../CLAUDE.md](../CLAUDE.md))*
-- [src/tests/](src/tests/) — `tests.controller`, `tests.service` (implements `OnModuleInit` to seed tests on boot), `test.repository.ts`, `test-result.repository.ts`, DTOs, entities, mappers, and **[src/tests/tests.seed.ts](src/tests/tests.seed.ts)** (~131 KB — the IQ/Szondi/Archetype/MBTI question banks; do not hand-edit lightly)
+- [src/users/](src/users/) — `users.service`, `user.repository.ts` (no controller — user routes live under `auth`), `models/user.entity.ts`
+- [src/tests/](src/tests/) — `tests.controller`, `tests.service` (implements `OnModuleInit` to seed tests on boot), `test-scoring.service.ts`, repositories (`test`, `test-result`, `test-progress`), DTOs, `models/`, mappers, and **[src/tests/tests.seed.ts](src/tests/tests.seed.ts)** (~11k lines — the six question banks: IQ, Big Five, Schwartz (`shcwartz`), ECR-R, COPE, PID-5; do not hand-edit lightly)
+- [src/portrait/](src/portrait/) — the AI cross-test portrait: status-machine `GET /portrait` (locked/generating/ready), background generation deduped via `SingleFlight`
+- [src/friends/](src/friends/) — friendships (requests/invite links) + the pair `Compatibility` analysis (`compatibility.service.ts`)
+- [src/recommendations/](src/recommendations/) — the film/book swipe queue: LLM batch generation + catalog enrichment ([catalog.service.ts](src/recommendations/catalog.service.ts): TMDB / Google Books / Open Library)
+- [src/chat/](src/chat/) — AI chats (portrait & compatibility kinds), replies stream over SSE; only the last `CHAT_HISTORY_WINDOW` messages go into the model prompt
+- [src/ai/](src/ai/) — `ai.service.ts` (OpenRouter client, completions + streaming) and all prompt builders under `prompts/`
 - [src/mail/](src/mail/) — `mail.service`, `otp-code.repository.ts` (interface) + `otp-code.prisma.repository.ts` (implementation), Handlebars templates, OTP signing
+- [src/common/](src/common/) — `single-flight.ts` (in-process dedup of concurrent generations), `user-throttler.guard.ts` (per-user rate limit for LLM routes), `security.ts` (`BCRYPT_SALT_ROUNDS`)
+- [src/i18n/](src/i18n/) — `translate.ts` (`t()`/`getLang()`) + `en`/`ru` dictionaries for errors and mail
 - [src/pipes/validation.pipe.ts](src/pipes/validation.pipe.ts) — custom `ValidationPipe`. Uses `plainToClass` + `validate` with `whitelist: true` and `forbidNonWhitelisted: true`. Use **this**, not the Nest built-in.
 - [src/exceptions/validation.exception.ts](src/exceptions/validation.exception.ts) — paired exception type
 - [src/prisma.service.ts](src/prisma.service.ts) — top-level Prisma client wrapper
 
-`AppModule` ([src/app.module.ts](src/app.module.ts)) only imports the four feature modules + `ConfigModule.forRoot({ isGlobal: true, envFilePath: \`.env.${process.env.NODE_ENV}\` })`.
+`AppModule` ([src/app.module.ts](src/app.module.ts)) imports the nine feature modules above plus `ConfigModule.forRoot({ isGlobal: true, envFilePath: \`.env.${process.env.NODE_ENV}\` })`, `ThrottlerModule` (global rate limit, bound as `APP_GUARD`) and `I18nModule`.
 
 ## Conventions
 
@@ -68,7 +79,7 @@ Feature-based, under [src/](src/):
 ## Auth model
 
 - Access JWT (`JWT_ACCESS_SECRET`) + refresh token (`JWT_REFRESH_SECRET`); refresh tokens are also persisted in the `RefreshToken` table and signed with a separate secret (`JWT_REFRESH_DB_SECRET`) before storage.
-- Passwords hashed with **bcryptjs, salt rounds 8**.
+- Passwords hashed with **bcryptjs**, salt rounds from `BCRYPT_SALT_ROUNDS` ([src/common/security.ts](src/common/security.ts), currently 10). Old hashes stay valid after a cost change — bcrypt embeds the cost in the hash.
 - Password reset OTP signed with HMAC-SHA256 using `RESET_CODE_SECRET`, sent via email.
 - Google OAuth via `GoogleStrategy` + `GoogleAuthGuard`. Callback URL configured by `GOOGLE_CALLBACK_URL`.
 
@@ -87,7 +98,14 @@ RESET_CODE_SECRET
 EMAIL_USER  EMAIL_PASSWORD
 GOOGLE_CLIENT_ID  GOOGLE_CLIENT_SECRET  GOOGLE_CALLBACK_URL
 FRONTEND_URL
+OPENROUTER_API_KEY  OPENROUTER_MODEL  OPENROUTER_MODEL_COMPLETE  OPENROUTER_MAX_TOKENS
+TMDB_API_KEY  GOOGLE_BOOKS_API_KEY
 ```
+
+Optional: `TRUST_PROXY=<hops>` (prod behind a reverse proxy — e.g. `1` for a single
+nginx). Makes `req.ip`, and therefore the rate limiter, see the real client IP.
+Leave unset when nothing proxies the API: trusting `X-Forwarded-For` without a
+proxy lets clients spoof their IP past the throttler (see [src/main.ts](src/main.ts)).
 
 ## TypeScript
 

@@ -1,6 +1,8 @@
 import { BadRequestException, Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UserThrottlerGuard } from '../common/user-throttler.guard';
 import { RecommendationsService } from './recommendations.service';
 import { RecommendationHistoryDto, RecommendationListDto } from './dtos/recommendation.dto';
 import { SwipeDto } from './dtos/swipe.dto';
@@ -42,7 +44,10 @@ export class RecommendationsController {
     return this.recommendationsService.rate(req.user.id, id, body.verdict);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // Reset wipes the queue and immediately triggers a fresh LLM generation — keep
+  // it rare per user so it can't be spammed to burn model credits.
+  @UseGuards(JwtAuthGuard, UserThrottlerGuard)
+  @Throttle({ default: { limit: 3, ttl: 60_000 } })
   @Post('reset')
   async reset(@Req() req, @Query('type') type: string) {
     await this.recommendationsService.reset(req.user.id, parseMediaType(type));

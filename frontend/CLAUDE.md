@@ -68,7 +68,7 @@ Read it via `useAuth()`.
 **All** HTTP requests go through [src/api/client.js](src/api/client.js) — a single axios instance with two interceptors:
 
 - **Request**: attaches `Authorization: Bearer <accessToken>` from `localStorage` (if present).
-- **Response**: on 401, calls `POST /auth/refresh` with the stored refresh token, queues any concurrent failing requests until the refresh resolves, retries them with the new token. On refresh failure: clears `accessToken` / `refreshToken` / `userId` from `localStorage` and bounces to `/`.
+- **Response**: on 401, refreshes via the exported `refreshAccessToken()` — one deduped `POST /auth/refresh` that every concurrent 401 awaits — then retries with the new token. On refresh failure: clears `accessToken` / `refreshToken` / `userId` from `localStorage` and bounces to `/`. `refreshAccessToken()` is exported precisely so requests that bypass axios (the SSE chat fetch) can reuse the same flow.
 
 Tokens live in `localStorage` under exactly these keys: `accessToken`, `refreshToken`, `userId`.
 
@@ -79,7 +79,7 @@ Wrap `client` — never call axios inline from a component:
 - [src/api/tests.js](src/api/tests.js) — getAllTests, getTestQuestions, submitTest, submitFragment, shareTest, getSharedResult
 - [src/api/portrait.js](src/api/portrait.js) — getPortrait (status machine: locked / generating / ready / error)
 - [src/api/friends.js](src/api/friends.js) — friends list/search/requests, invite links, per-friend results & compatibility
-- [src/api/chat.js](src/api/chat.js) — AI chats; `sendMessage` streams over SSE via raw `fetch` (the one deliberate bypass of the axios client)
+- [src/api/chat.js](src/api/chat.js) — AI chats; `sendMessage` streams over SSE via raw `fetch` (the one deliberate bypass of the axios client; on a 401 it calls `refreshAccessToken()` from `client.js` and retries once)
 - [src/api/recommendations.js](src/api/recommendations.js) — swipe queue, swipe/rate, history, reset
 
 New endpoints belong in a new (or existing) module under [src/api/](src/api/), in the same `(...) => client.<verb>(...).then(r => r.data)` shape.

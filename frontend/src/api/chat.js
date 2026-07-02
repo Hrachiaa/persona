@@ -1,4 +1,4 @@
-import client from './client';
+import client, { refreshAccessToken } from './client';
 import i18n from '../i18n';
 
 // AI chat. Chats can't be created freely — they're opened from the Portrait
@@ -31,17 +31,25 @@ export const chatApi = {
    * Pass an AbortSignal to cancel (e.g. leaving the screen).
    */
   async sendMessage(id, content, { onDelta, signal } = {}) {
-    const token = localStorage.getItem('accessToken');
-    const res = await fetch(`${API_URL}/chat/${id}/messages`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept-Language': i18n.language,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({ content }),
-      signal,
-    });
+    const doFetch = (token) =>
+      fetch(`${API_URL}/chat/${id}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': i18n.language,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ content }),
+        signal,
+      });
+
+    let res = await doFetch(localStorage.getItem('accessToken'));
+    // Raw fetch bypasses the axios 401-refresh interceptor — replicate it here:
+    // refresh once and retry, so a message sent with an expired access token
+    // still goes through instead of surfacing an error toast.
+    if (res.status === 401) {
+      res = await doFetch(await refreshAccessToken());
+    }
 
     if (!res.ok || !res.body) {
       throw new Error(`Chat request failed (${res.status})`);
