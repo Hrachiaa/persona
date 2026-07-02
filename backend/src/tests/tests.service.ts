@@ -39,16 +39,11 @@ export class TestsService implements OnModuleInit {
     ) {}
 
     async onModuleInit() {
-        const existing = await this.testRepository.getAllTests()
-        if(existing.length !== 6) {
-            const tests = await this.testRepository.createTests()
-            await this.testRepository.createQuestions(tests.iq.id, tests.bigFive.id, tests.schwartz.id, tests.ecr.id, tests.cope.id, tests.pid.id)
-            return
-        }
-
-        // Keep stored question banks in sync with the seed so edits (e.g. the
-        // bilingual BigFive text) propagate on restart without a manual reseed.
-        await this.testRepository.syncQuestions(existing)
+        // Idempotent seed: upsert the 6 tests by testType, then sync their question
+        // banks. Works from any state (fresh DB, partial, or fully seeded) and lets
+        // seed edits (e.g. the bilingual BigFive text) propagate on restart.
+        const seeded = await this.testRepository.upsertTests()
+        await this.testRepository.syncQuestions(seeded)
     }
 
     async getAllTests(userId: string): Promise<GetTestsDto[]> {

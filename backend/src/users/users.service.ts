@@ -2,9 +2,8 @@ import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { User } from '../../generated/prisma/client';
 import { UserEntity } from './models/user.entity';
-import { AuthDto } from './dtos/auth.dto';
 import { AddProfileInfoDto } from '../auth/dtos/add-profile-info.dto';
-import { UserRepository } from './user.repository';
+import { UserRepository, CreateUserData } from './user.repository';
 import { t } from '../i18n/translate';
 
 @Injectable()
@@ -13,12 +12,8 @@ export class UsersService {
         private readonly userRepository: UserRepository,
     ) { }
 
-    async create(authDto: AuthDto): Promise<User> {
-        return await this.userRepository.create(authDto);
-    }
-
-    async getAllUsers(): Promise<User[]> {
-        return await this.userRepository.getAllUsers();
+    async create(data: CreateUserData): Promise<User> {
+        return await this.userRepository.create(data);
     }
 
     async getUserByEmail(email: string): Promise<User | null> {

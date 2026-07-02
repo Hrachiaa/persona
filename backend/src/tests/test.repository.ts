@@ -6,54 +6,32 @@ import { tests, testQuestions } from "./tests.seed";
 export class TestRepository {
     constructor(private readonly prisma: PrismaService) {}
 
-    async createTests() {
-        const bigFive = await this.prisma.test.create({
-            data: tests.bigFive
-        })
-        const schwartz = await this.prisma.test.create({
-            data: tests.shcwartz
-        })
-        const cope = await this.prisma.test.create({
-            data: tests.cope
-        })
-        const iq = await this.prisma.test.create({
-            data: tests.iq
-        })
-        const ecr = await this.prisma.test.create({
-            data: tests.ecr
-        })
-        const pid = await this.prisma.test.create({
-            data: tests.pid
-        })
-        return { iq, bigFive, schwartz, ecr, cope, pid }
-    }
-    
-    async createQuestions(iqId, bigFiveId, archetypeId, ecrId, copeId, pidId) {
-        const iqQuestions = await this.prisma.testQuestion.createMany({
-            data: [
-                {testId: iqId, questions: testQuestions.iq.questions},
-                {testId: bigFiveId, questions: testQuestions.bigFive.questions},
-                {testId: archetypeId, questions: testQuestions.shcwartz.questions},
-                {testId: ecrId, questions: testQuestions.ecr.questions},
-                {testId: copeId, questions: testQuestions.cope.questions},
-                {testId: pidId, questions: testQuestions.pid.questions},
-            ]
-        })
-        return
+    // Idempotently seed the 6 tests, keyed by their unique testType. Safe to run on
+    // every boot and from any partial state (0, some, or all tests already present) —
+    // replaces the old "create exactly 6 or nothing" branch that could duplicate or
+    // throw when the row count was anything but 0 or 6. Returns the rows so the
+    // caller can sync each test's question bank.
+    async upsertTests(): Promise<{ id: string; testType: string }[]> {
+        const defs = [tests.iq, tests.bigFive, tests.shcwartz, tests.ecr, tests.cope, tests.pid]
+        const rows: { id: string; testType: string }[] = []
+        for (const def of defs) {
+            const row = await this.prisma.test.upsert({
+                where: { testType: def.testType },
+                update: {
+                    testName: def.testName,
+                    description: def.description,
+                    duration: def.duration,
+                    totalQuestions: def.totalQuestions,
+                },
+                create: def,
+            })
+            rows.push({ id: row.id, testType: row.testType })
+        }
+        return rows
     }
 
     async getAllTests() {
         return await this.prisma.test.findMany()
-    }
-
-    async getAllTestsWithResults(userId){
-        return await this.prisma.test.findMany({
-            include: {
-                testResults: {
-                    where: {userId}
-                }
-            }
-        })
     }
 
     async getTestById(id){

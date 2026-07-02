@@ -29,7 +29,7 @@ model User {
   // Stable personal invite token. Minted on first request and reused, so a link
   // the user already shared keeps working (mirrors TestResult.shareToken).
   inviteToken   String?       @unique
-  refreshToken  RefreshToken?
+  refreshTokens RefreshToken[]
   otpCode       OtpCode?
   testsResults  TestResult[]
   testsProgress TestProgress[]
@@ -42,17 +42,25 @@ model User {
   chats               Chat[]
 }
 
+// One row per active session (device/login). userId is intentionally NOT unique —
+// a user can hold several refresh tokens at once. `token` (the HMAC of the JWT) is
+// the unique lookup key; rotation/logout delete a single row by token.
 model RefreshToken {
   id     String @id @default(cuid())
-  userId String @unique
+  userId String
   token  String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model OtpCode {
   id        String   @id @default(cuid())
   userId    String   @unique
   code      String   @unique
+  // Failed verification attempts; the code is dropped once this hits the limit
+  // (see MailService) so a 6-digit code can't be brute-forced within its TTL.
+  attempts  Int      @default(0)
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

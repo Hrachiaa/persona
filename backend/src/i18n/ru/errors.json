@@ -2,6 +2,7 @@
   "userNotFound": "Пользователь не найден",
   "userExists": "Пользователь с такой почтой уже существует",
   "invalidPassword": "Неверный пароль",
+  "invalidCredentials": "Неверная почта или пароль",
   "invalidRefreshToken": "Недействительный токен обновления",
   "invalidCode": "Неверный код",
   "noToken": "Токен не предоставлен",
@@ -17,6 +18,7 @@
     "unknownTestType": "Неизвестный тип теста",
     "testTypeNotFound": "Тип теста не найден",
     "answersCount": "Количество ответов должно быть {{count}}",
+    "invalidAnswer": "Некорректный ответ",
     "completePrevious": "Сначала пройдите предыдущие тесты: {{tests}}",
     "notChunked": "Этот тест не сдаётся по частям",
     "fragmentOrder": "Неожиданный фрагмент: ожидался подход {expected}"

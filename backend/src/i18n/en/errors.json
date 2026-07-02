@@ -2,6 +2,7 @@
   "userNotFound": "User not found",
   "userExists": "User with this email already exists",
   "invalidPassword": "Invalid password",
+  "invalidCredentials": "Invalid email or password",
   "invalidRefreshToken": "Invalid refresh token",
   "invalidCode": "Invalid code",
   "noToken": "No token provided",
@@ -17,6 +18,7 @@
     "unknownTestType": "Unknown test type",
     "testTypeNotFound": "Test type not found",
     "answersCount": "Count of answers has to be {{count}}",
+    "invalidAnswer": "Invalid answer",
     "completePrevious": "Complete previous tests first: {{tests}}",
     "notChunked": "This test is not taken in parts",
     "fragmentOrder": "Unexpected fragment: expected part {expected}"

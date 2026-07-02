@@ -19,7 +19,9 @@ async function start() {
   SwaggerModule.setup('/api/docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
-  
+  // Let Nest run onModuleDestroy (Prisma $disconnect) on SIGTERM/SIGINT.
+  app.enableShutdownHooks();
+
   await app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });

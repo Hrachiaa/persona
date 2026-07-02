@@ -6,13 +6,14 @@ import { PortraitDto } from './dtos/portrait.dto';
 import { TEST_ORDER } from '../tests/test-order';
 import { TestResultType } from '../tests/models/test-result.entity';
 import { getLang } from '../i18n/translate';
+import { SingleFlight } from '../common/single-flight';
 
 @Injectable()
 export class PortraitService {
   private readonly logger = new Logger(PortraitService.name);
   // dedupes concurrent generations for the same user (StrictMode double-fetch,
   // multiple tabs, races) so the LLM is called only once per (user, test set)
-  private readonly inFlight = new Map<string, Promise<string | null>>();
+  private readonly inFlight = new SingleFlight();
 
   constructor(
     private readonly testResultRepository: TestResultRepository,
@@ -110,15 +111,9 @@ export class PortraitService {
     results: { testType: string; result: unknown }[],
     lang: string,
   ): Promise<string | null> {
-    const key = this.cacheKey(userId, targetTests);
-    let inFlight = this.inFlight.get(key);
-    if (!inFlight) {
-      inFlight = this.generateAndCache(userId, targetTests, results, lang).finally(() =>
-        this.inFlight.delete(key),
-      );
-      this.inFlight.set(key, inFlight);
-    }
-    return inFlight;
+    return this.inFlight.run(this.cacheKey(userId, targetTests), () =>
+      this.generateAndCache(userId, targetTests, results, lang),
+    );
   }
 
   /**

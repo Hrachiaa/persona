@@ -1,4 +1,5 @@
 import { Controller, HttpCode, HttpStatus, Post, Get, Body, Req, UseGuards, Res } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthDto } from '../users/dtos/auth.dto';
@@ -11,9 +12,9 @@ import { UpdateLanguageDto } from './dtos/update-language.dto';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { UserDto } from './dtos/user.dto';
 
-class IsProfileInfoAdded {
-    isProfileInfoAdded: boolean;
-}
+// Tighter rate limit for unauthenticated, abuse-prone endpoints (credential
+// stuffing, code brute force, signup spam) — 5 requests/minute per IP.
+const AUTH_THROTTLE = { default: { limit: 5, ttl: 60_000 } };
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -21,6 +22,7 @@ export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
     @Post('signup')
+    @Throttle(AUTH_THROTTLE)
     @HttpCode(HttpStatus.CREATED)
     @ApiOperation({ summary: 'Register a new user' })
     @ApiResponse({ status: 201, description: 'User registered successfully' })
@@ -61,6 +63,7 @@ export class AuthController {
     }
 
     @Post('login')
+    @Throttle(AUTH_THROTTLE)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Login' })
     @ApiResponse({ status: 200, description: 'User logged in successfully' })
@@ -100,6 +103,7 @@ export class AuthController {
     }
 
     @Post('forgot-password')
+    @Throttle(AUTH_THROTTLE)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Forgot password' })
     @ApiResponse({ status: 200, description: 'Password forgot successfully' })
@@ -109,6 +113,7 @@ export class AuthController {
     }
 
     @Post('forgot-password-code')
+    @Throttle(AUTH_THROTTLE)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Forgot password code' })
     @ApiResponse({ status: 200, description: 'Password forgot code successfully' })
@@ -118,6 +123,7 @@ export class AuthController {
     }
 
     @Post('change-forgotten-password')
+    @Throttle(AUTH_THROTTLE)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Change forgotten password' })
     @ApiResponse({ status: 200, description: 'Password changed successfully' })

@@ -24,6 +24,13 @@ export class OtpCodePrismaRepository implements OtpCodeRepository {
         });
     }
 
+    async incrementAttempts(id: string): Promise<void> {
+        await this.prisma.otpCode.update({
+            where: { id },
+            data: { attempts: { increment: 1 } },
+        });
+    }
+
     async deleteById(id: string): Promise<void> {
         await this.prisma.otpCode.delete({
             where: {
