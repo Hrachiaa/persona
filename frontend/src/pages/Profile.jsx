@@ -24,6 +24,7 @@ import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/auth';
 import { recommendationsApi } from '../api/recommendations';
 import i18n, { setLanguage, SUPPORTED_LANGUAGES } from '../i18n';
+import { GENDER_OPTIONS, BIRTH_YEAR_MIN, maxBirthYear } from '../utils/constants';
 
 const VIEWS = {
   MAIN: 'main',
@@ -32,14 +33,6 @@ const VIEWS = {
   LIKED: 'liked',
   HISTORY: 'history',
 };
-
-const GENDER_OPTIONS = [
-  { value: 'M', labelKey: 'gender.male', emoji: '♂' },
-  { value: 'F', labelKey: 'gender.female', emoji: '♀' },
-];
-
-const BIRTH_YEAR_MIN = 1900;
-const BIRTH_YEAR_MAX = 2026;
 
 const slide = {
   initial: { opacity: 0, x: 24 },
@@ -331,7 +324,7 @@ function EditProfileView({ onDone }) {
     name.trim().length > 0 &&
     (gender === 'M' || gender === 'F') &&
     year >= BIRTH_YEAR_MIN &&
-    year <= BIRTH_YEAR_MAX;
+    year <= maxBirthYear();
 
   const submit = async (e) => {
     e.preventDefault();
@@ -421,7 +414,7 @@ function EditProfileView({ onDone }) {
               onChange={(e) => { setBirthDate(e.target.value); setError(null); }}
               className="input-field pl-12 tabular"
               min={BIRTH_YEAR_MIN}
-              max={BIRTH_YEAR_MAX}
+              max={maxBirthYear()}
               required
             />
           </div>

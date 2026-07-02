@@ -4,9 +4,6 @@ import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineBolt,
-  HiOutlineEye,
-  HiOutlineCpuChip,
-  HiOutlineFingerPrint,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
   HiOutlineSparkles,
@@ -16,6 +13,8 @@ import {
   HiOutlinePuzzlePiece,
 } from 'react-icons/hi2';
 import { testsApi } from '../../api/tests';
+import { showToast } from '../../components/Toast';
+import { normalCdf } from '../../utils/tScore';
 import { PART_SIZE } from './testParts';
 import { invalidateTestsCache } from './testsCache';
 import ImmersiveTopBar from './ImmersiveTopBar';
@@ -28,19 +27,13 @@ import PidResultScreen from './PidResult';
 
 // ─── Static metadata the API doesn't provide ────────────────────────────────
 const TEST_META = {
-  iq:        { icon: HiOutlineBolt,        color: 'bg-persona-accent-yellow',   iconColor: 'text-persona-dark' },
-  bigFive:   { icon: HiOutlineSparkles,    color: 'bg-persona-accent-peach',    iconColor: 'text-persona-dark' },
-  szondi:    { icon: HiOutlineEye,         color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
-  archetype: { icon: HiOutlineCpuChip,     color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
-  mbti:      { icon: HiOutlineFingerPrint, color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
-  shcwartz:  { icon: HiOutlineScale,       color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
-  ecr:       { icon: HiOutlineHeart,       color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
-  cope:      { icon: HiOutlineLifebuoy,    color: 'bg-persona-accent-blue',     iconColor: 'text-persona-dark' },
-  pid:       { icon: HiOutlinePuzzlePiece, color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
+  iq:       { icon: HiOutlineBolt,        color: 'bg-persona-accent-yellow',   iconColor: 'text-persona-dark' },
+  bigFive:  { icon: HiOutlineSparkles,    color: 'bg-persona-accent-peach',    iconColor: 'text-persona-dark' },
+  shcwartz: { icon: HiOutlineScale,       color: 'bg-persona-accent-lavender', iconColor: 'text-persona-dark' },
+  ecr:      { icon: HiOutlineHeart,       color: 'bg-persona-accent-pink',     iconColor: 'text-persona-dark' },
+  cope:     { icon: HiOutlineLifebuoy,    color: 'bg-persona-accent-blue',     iconColor: 'text-persona-dark' },
+  pid:      { icon: HiOutlinePuzzlePiece, color: 'bg-persona-accent-lime',     iconColor: 'text-persona-dark' },
 };
-
-// Tests served by the real backend (real questions, real submit).
-const REAL_API_TESTS = new Set(['iq', 'bigFive', 'shcwartz', 'ecr', 'cope', 'pid']);
 
 // Human-readable URL slugs for the runner / result links (nicer than the raw cuid).
 const TYPE_SLUGS = {
@@ -50,40 +43,12 @@ const TYPE_SLUGS = {
   ecr: 'attachment',
   cope: 'stress',
   pid: 'shadows',
-  szondi: 'drives',
-  archetype: 'archetype',
-  mbti: 'type',
 };
 const testSlug = (test) => (test ? TYPE_SLUGS[test.testType] || test.testType : null);
 
-// ─── Mocked questions / results for non-IQ tests ────────────────────────────
-const MOCK_DATA = {
-  szondi: {
-    questions: [
-      { id: 'sq1', text: 'Which image evokes the strongest emotion?', image: '', options: [{ id: '1', text: 'Image A' }, { id: '2', text: 'Image B' }, { id: '3', text: 'Image C' }, { id: '4', text: 'Image D' }] },
-      { id: 'sq2', text: 'Which face do you feel most drawn to?', image: '', options: [{ id: '1', text: 'Face 1' }, { id: '2', text: 'Face 2' }, { id: '3', text: 'Face 3' }, { id: '4', text: 'Face 4' }] },
-    ],
-    result: { label: 'The Explorer', detail: 'You possess a strong drive for discovery and understanding of yourself and the world.' },
-  },
-  archetype: {
-    questions: [
-      { id: 'aq1', text: 'When making important decisions, you rely more on:', image: '', options: [{ id: '1', text: 'Logic and analysis' }, { id: '2', text: 'Gut feeling' }, { id: '3', text: 'Past experience' }, { id: '4', text: 'Future possibilities' }] },
-      { id: 'aq2', text: 'In social situations, you tend to:', image: '', options: [{ id: '1', text: 'Observe first' }, { id: '2', text: 'Engage immediately' }, { id: '3', text: 'Find a close friend' }, { id: '4', text: 'Lead the group' }] },
-      { id: 'aq3', text: 'You recharge by:', image: '', options: [{ id: '1', text: 'Being alone' }, { id: '2', text: 'Being with people' }, { id: '3', text: 'Exploring new things' }, { id: '4', text: 'Creating something' }] },
-    ],
-    result: { label: 'Intuitive Thinker', detail: 'You combine visionary intuition with analytical precision to see the big picture.' },
-  },
-  mbti: {
-    questions: [
-      { id: 'mq1', text: 'At a party, you:', image: '', options: [{ id: '1', text: 'Talk to many people' }, { id: '2', text: 'Talk to a select few' }, { id: '3', text: 'Find a quiet spot' }, { id: '4', text: 'Leave early' }] },
-      { id: 'mq2', text: 'You prefer tasks that are:', image: '', options: [{ id: '1', text: 'Structured and clear' }, { id: '2', text: 'Open-ended and creative' }, { id: '3', text: 'Collaborative' }, { id: '4', text: 'Independent' }] },
-      { id: 'mq3', text: 'When faced with conflict, you:', image: '', options: [{ id: '1', text: 'Confront directly' }, { id: '2', text: 'Seek compromise' }, { id: '3', text: 'Avoid it' }, { id: '4', text: 'Analyze it' }] },
-    ],
-    result: { label: 'INTJ — The Strategist', detail: 'Imaginative and strategic thinker with a plan for everything.' },
-  },
-};
-
 // ─── LocalStorage helpers ────────────────────────────────────────────────────
+// Suffixes in use: `answers` (single-pass progress, drives the resume prompt)
+// and `part<N>_answers` (a chunked test's in-part progress, restored silently).
 const LS = {
   key: (testId, suffix) => `test_${testId}_${suffix}`,
   get: (testId, suffix) => {
@@ -92,8 +57,10 @@ const LS = {
   set: (testId, suffix, val) => localStorage.setItem(LS.key(testId, suffix), JSON.stringify(val)),
   remove: (testId, suffix) => localStorage.removeItem(LS.key(testId, suffix)),
   clearAll: (testId) => {
-    ['answers'].forEach((s) => localStorage.removeItem(`test_${testId}_${s}`));
-    localStorage.removeItem('activeTestId');
+    const prefix = `test_${testId}_`;
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith(prefix))
+      .forEach((k) => localStorage.removeItem(k));
   },
 };
 
@@ -105,21 +72,10 @@ const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', RESULT:
 const IQ_MEAN = 100;
 const IQ_SIGMA = 15;
 
-// Standard normal CDF via the Abramowitz-Stegun erf approximation.
-// Returns the share of the population scoring at or below `x`.
-function normalCdf(x, mean = IQ_MEAN, sigma = IQ_SIGMA) {
-  const z = (x - mean) / (sigma * Math.SQRT2);
-  const t = 1 / (1 + 0.3275911 * Math.abs(z));
-  const erf =
-    1 -
-    (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t) *
-      Math.exp(-z * z);
-  return 0.5 * (1 + (z >= 0 ? erf : -erf));
-}
-
 // Whole-number percentile, clamped to 1..99 (matches how Mensa reports it).
+// The normal CDF lives in utils/tScore (shared with the Big Five conversion).
 function iqPercentile(score) {
-  return Math.max(1, Math.min(99, Math.round(normalCdf(score) * 100)));
+  return Math.max(1, Math.min(99, Math.round(normalCdf((score - IQ_MEAN) / IQ_SIGMA) * 100)));
 }
 
 // Animate a value from 0 up to `target` on an ease-out curve (fast first, then
@@ -258,7 +214,7 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-8">
       <ImmersiveTopBar onBack={onBack} />
 
-      <div className="px-6 pt-2">
+      <div className="px-6 pt-2 mx-auto w-full max-w-md">
       <div className="text-center mb-10">
         <motion.div
           className={`w-20 h-20 ${meta.color} rounded-[1.5rem] flex items-center justify-center mx-auto mb-6`}
@@ -309,12 +265,15 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
   const partStart = part * partSize;
   const partLength = Math.min(partSize, questions.length - partStart);
 
-  // Answers are LOCAL to the current part (indexed 0..partLength-1). For a single
-  // pass that's the whole test, so localStorage persistence is unchanged.
-  const [answers, setAnswers] = useState(() => (isChunked ? [] : LS.get(test.id, 'answers') || []));
+  // Answers are LOCAL to the current part (indexed 0..partLength-1). Single-pass
+  // progress persists under `answers` (drives the resume prompt); a chunked
+  // part's progress persists under its own `part<N>_answers` key so leaving
+  // mid-part (back button, refresh, closed tab) doesn't silently lose up to
+  // 29 answered questions — re-entering the part restores them.
+  const answersKey = isChunked ? `part${part}_answers` : 'answers';
+  const [answers, setAnswers] = useState(() => LS.get(test.id, answersKey) || []);
   const [qi, setQi] = useState(() => {
-    if (isChunked) return 0;
-    const saved = LS.get(test.id, 'answers') || [];
+    const saved = LS.get(test.id, answersKey) || [];
     return Math.min(saved.length, partLength - 1);
   });
   const [submitting, setSubmitting] = useState(false);
@@ -327,11 +286,10 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
     }
   }, [questions, partStart, partLength]);
 
-  // Persist answers — only the single-pass path uses localStorage. A chunked test's
-  // progress lives on the backend (committed per fragment), so nothing local to keep.
+  // Persist progress under the pass/part-specific key (see answersKey above).
   useEffect(() => {
-    if (!isChunked) LS.set(test.id, 'answers', answers);
-  }, [answers, test.id, isChunked]);
+    LS.set(test.id, answersKey, answers);
+  }, [answers, test.id, answersKey]);
 
   const submitCurrent = async (finalAnswers) => {
     if (submitting) return;
@@ -340,18 +298,16 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
       const payload = finalAnswers.filter(Boolean); // drop sparse slots, keep order
       if (isChunked) {
         const resp = await testsApi.submitFragment(test.id, part, payload);
+        LS.remove(test.id, answersKey); // the part is committed server-side now
         onFragmentComplete(resp);
-      } else if (REAL_API_TESTS.has(test.testType)) {
+      } else {
         const result = await testsApi.submitTest(test.id, payload);
         LS.clearAll(test.id);
         onComplete(result);
-      } else {
-        // Mock submit for tests not yet wired to the backend
-        LS.clearAll(test.id);
-        onComplete({ testId: test.id, testType: test.testType, result: MOCK_DATA[test.testType]?.result || {} });
       }
     } catch (err) {
       console.error('Submit failed:', err);
+      showToast(t('questions.submitError'));
       setSubmitting(false);
     }
   };
@@ -384,7 +340,8 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
-      <div className="px-6 pt-8">
+      {/* Width-capped so the answer buttons stay scannable on desktop. */}
+      <div className="px-6 pt-8 mx-auto w-full max-w-2xl">
       {/* Title */}
       <div className="mb-4">
         <h3 className="font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
@@ -814,21 +771,19 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     setQuestionsLoading(true);
     (async () => {
       try {
-        const qs = REAL_API_TESTS.has(selectedTest.testType)
-          ? await testsApi.getTestQuestions(selectedTest.id)
-          : (MOCK_DATA[selectedTest.testType]?.questions || []);
+        const qs = await testsApi.getTestQuestions(selectedTest.id);
         if (!active) return;
         setQuestions(qs);
         loadedQuestionsFor.current = selectedTest.id;
-        localStorage.setItem('activeTestId', selectedTest.id);
       } catch (err) {
         console.error('Failed to fetch questions:', err);
+        if (active) showToast(t('list.questionsError'));
       } finally {
         if (active) setQuestionsLoading(false);
       }
     })();
     return () => { active = false; };
-  }, [routeSlug, isResultRoute, selectedTest]);
+  }, [routeSlug, isResultRoute, selectedTest]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleResumeContinue = () => setResumeDecided(true);
 
@@ -839,7 +794,10 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   const handleComplete = (res) => {
     setResult({ slug: testSlug(selectedTest), data: res });
-    fetchTests(); // Refresh list to get updated result status
+    // Both readers of the test list must see the new result: this component's
+    // own copy and the shared module cache (chat/reads gates, portrait rings).
+    invalidateTestsCache();
+    fetchTests();
     navigate(`/tests/${testSlug(selectedTest)}/result`);
   };
 
@@ -849,7 +807,6 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // the just-filled progress segment animate.
   const handleFragmentComplete = (resp) => {
     invalidateTestsCache();
-    localStorage.removeItem('activeTestId');
     if (resp.completed) {
       handleComplete(resp.result);
     } else {
@@ -867,7 +824,6 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     setResult(null);
     setQuestions([]);
     loadedQuestionsFor.current = null;
-    localStorage.removeItem('activeTestId');
     navigate('/portrait');
   };
 

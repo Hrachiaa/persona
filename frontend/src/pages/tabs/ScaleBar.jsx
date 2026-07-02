@@ -34,18 +34,28 @@ export default function ScaleBar({ label, description, score, min, max, delay = 
   const color = percentileColor(valuePct);
   const title = [label, description].filter(Boolean).join(' — ');
 
+  const scoreText = formatScore(score, diverging);
+
+  // Mobile: label + score above the full-width bar, so long localized scale
+  // names (e.g. ru «Самостоятельность: действия») never truncate into
+  // indistinguishable rows. Desktop (sm+): the original dense single row.
   return (
     <motion.div
-      className="flex items-center gap-3 py-2"
+      className="py-2 sm:flex sm:items-center sm:gap-3"
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay }}
     >
-      <span className="text-sm text-persona-dark/80 w-36 sm:w-44 flex-shrink-0 truncate" title={title}>
-        {label}
-      </span>
+      <div className="flex items-baseline justify-between gap-3 mb-1.5 sm:mb-0 sm:block sm:w-44 sm:flex-shrink-0">
+        <span className="text-sm text-persona-dark/80 sm:block sm:truncate" title={title}>
+          {label}
+        </span>
+        <span className="text-sm font-medium text-persona-dark tabular flex-shrink-0 sm:hidden">
+          {scoreText}
+        </span>
+      </div>
 
-      <div className="relative flex-1 h-2.5 bg-persona-line/60 rounded-full overflow-hidden">
+      <div className="relative sm:flex-1 h-2.5 bg-persona-line/60 rounded-full overflow-hidden">
         <motion.div
           className={`absolute top-0 bottom-0 ${color.bar} rounded-full`}
           initial={{ width: 0, left: `${zeroPct}%` }}
@@ -54,8 +64,8 @@ export default function ScaleBar({ label, description, score, min, max, delay = 
         />
       </div>
 
-      <span className="text-sm font-medium text-persona-dark tabular w-12 text-right flex-shrink-0">
-        {formatScore(score, diverging)}
+      <span className="hidden sm:block text-sm font-medium text-persona-dark tabular w-12 text-right flex-shrink-0">
+        {scoreText}
       </span>
     </motion.div>
   );

@@ -9,16 +9,18 @@ import {
   HiOutlineXMark,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
-  HiOutlineSparkles,
 } from 'react-icons/hi2';
 import { recommendationsApi } from '../../api/recommendations';
+import { showToast } from '../../components/Toast';
+import LockedCard from '../../components/LockedCard';
+import { registerSessionCache } from '../../utils/sessionCaches';
+import { TOTAL_TESTS } from '../../utils/constants';
 
 const MODES = [
   { id: 'book', labelKey: 'common:books', icon: HiOutlineBookOpen },
   { id: 'film', labelKey: 'common:films', icon: HiOutlineFilm },
 ];
 
-const TOTAL_TESTS = 6;
 const LOW_WATER = 7; // keep the queue topped up once it drops to this many cards (matches backend)
 const POLL_INTERVAL_MS = 3500; // how often to check for a freshly generated batch
 const SWIPE_THRESHOLD = 100; // px drag past which a release counts as a swipe
@@ -26,8 +28,9 @@ const SWIPE_THRESHOLD = 100; // px drag past which a release counts as a swipe
 // Per-mode set of ids the user has already swiped this session. Guards the merge
 // on refetch: a card we optimistically removed must not reappear if the server
 // still lists it as PENDING (its swipe POST may be mid-flight). Module scope so it
-// survives the tab unmounting on every dashboard switch.
+// survives the tab unmounting on every dashboard switch; reset with the session.
 const swiped = { film: new Set(), book: new Set() };
+registerSessionCache(() => { swiped.film.clear(); swiped.book.clear(); });
 
 const swipeVariants = {
   // The resting/incoming top card sits at z-index 1 (above the scaled-down
@@ -358,7 +361,9 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
     swiped[mode].add(card.id);
     setInfo(null);
     setCards((prev) => prev.slice(1));
-    recommendationsApi.swipe(card.id, verdict).catch(() => {});
+    // Optimistic: the card is already gone locally. On failure at least say so —
+    // the verdict won't be reflected in the history / future batches.
+    recommendationsApi.swipe(card.id, verdict).catch(() => showToast(t('swipeError')));
   }
 
   function handleReset() {
@@ -375,28 +380,16 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   // ─── Locked: tests not all done ────────────────────────────────────────────
   if (status === 'locked') {
     const { completed, required } = lockInfo;
-    const pct = Math.round((completed / required) * 100);
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 lg:left-64 z-30 bg-persona-bg flex items-center justify-center px-6 pt-20 pb-24 lg:py-6">
-        <div className="surface-warm rounded-4xl p-8 text-center max-w-md w-full">
-          <div className="w-14 h-14 mx-auto mb-4 bg-persona-accent-lime/60 rounded-3xl flex items-center justify-center">
-            <HiOutlineSparkles className="w-7 h-7 text-persona-dark" />
-          </div>
-          <h2 className="font-display text-xl font-semibold text-persona-dark mb-1.5">{t('locked.title')}</h2>
-          <p className="text-sm text-persona-muted leading-relaxed mb-5">
-            {t('locked.body', { required })}
-          </p>
-          <div className="relative h-2.5 bg-persona-line/60 rounded-full overflow-hidden mb-2">
-            <motion.div className="absolute inset-y-0 left-0 bg-persona-accent-lime rounded-full" initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8, ease: 'easeOut' }} />
-          </div>
-          <p className="text-xs text-persona-muted mb-6 tabular">{t('locked.progress', { completed, required })}</p>
-          {onOpenTests && (
-            <motion.button onClick={onOpenTests} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
-              {completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
-            </motion.button>
-          )}
-        </div>
-      </motion.div>
+      <LockedCard
+        title={t('locked.title')}
+        body={t('locked.body', { required })}
+        progressLabel={t('locked.progress', { completed, required })}
+        ctaLabel={completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
+        completed={completed}
+        required={required}
+        onOpenTests={onOpenTests}
+      />
     );
   }
 

@@ -22,6 +22,8 @@ import { friendsApi } from '../../api/friends';
 import { chatApi } from '../../api/chat';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import { SIGILS } from '../../components/testSigils';
+import { showToast } from '../../components/Toast';
+import ConfirmDialog from '../../components/ConfirmDialog';
 import { ResultView } from './Tests';
 import ImmersiveTopBar from './ImmersiveTopBar';
 
@@ -243,8 +245,12 @@ function AddFriendView({ navigate, onBack }) {
   }, [email]);
 
   const handleAdd = async (targetId) => {
-    const { status } = await friendsApi.sendRequest(targetId);
-    setHit((h) => (h && h.id === targetId ? { ...h, relation: status } : h));
+    try {
+      const { status } = await friendsApi.sendRequest(targetId);
+      setHit((h) => (h && h.id === targetId ? { ...h, relation: status } : h));
+    } catch {
+      showToast(t('actionError'));
+    }
   };
 
   const inviteUrl = inviteToken ? `${window.location.origin}/invite/${inviteToken}` : '';
@@ -434,7 +440,11 @@ function RequestsView({ onBack }) {
   useEffect(() => load(), [load]);
 
   const act = async (fn, friendshipId) => {
-    await fn(friendshipId);
+    try {
+      await fn(friendshipId);
+    } catch {
+      showToast(t('actionError'));
+    }
     load();
   };
 
@@ -515,6 +525,7 @@ function FriendDetail({ friendId, navigate, locationState }) {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(true);
   const [openTest, setOpenTest] = useState(null); // { testType, testName, result }
+  const [confirmRemove, setConfirmRemove] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -536,8 +547,13 @@ function FriendDetail({ friendId, navigate, locationState }) {
   }, [friendId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRemove = async () => {
-    await friendsApi.remove(friendId);
-    navigate('/match');
+    setConfirmRemove(false);
+    try {
+      await friendsApi.remove(friendId);
+      navigate('/match');
+    } catch {
+      showToast(t('actionError'));
+    }
   };
 
   if (openTest) {
@@ -565,7 +581,9 @@ function FriendDetail({ friendId, navigate, locationState }) {
   return (
     <SubScreen label={t('detail.label')} title={title} onBack={() => navigate('/match')}>
       <motion.button
-        onClick={() => navigate(`/match/${friendId}/compatibility`)}
+        onClick={() =>
+          navigate(`/match/${friendId}/compatibility`, friend ? { state: { friend } } : undefined)
+        }
         className="btn-primary w-full mb-6 flex items-center justify-center gap-2"
         whileTap={{ scale: 0.98 }}
       >
@@ -582,7 +600,8 @@ function FriendDetail({ friendId, navigate, locationState }) {
           {results.map((r) => (
             <PersonRow
               key={r.testType}
-              person={{ name: r.testName, email: '' }}
+              // Localized test name; the backend's testName is English-only.
+              person={{ name: t(`tests:names.${r.testType}`, { defaultValue: r.testName }), email: '' }}
               leading={<TestSigilIcon testType={r.testType} className="w-11 h-11 shrink-0" />}
               onClick={() => setOpenTest(r)}
               trailing={<HiOutlineChevronRight className="w-5 h-5 text-persona-muted shrink-0" />}
@@ -592,11 +611,24 @@ function FriendDetail({ friendId, navigate, locationState }) {
       )}
 
       <button
-        onClick={handleRemove}
+        onClick={() => setConfirmRemove(true)}
         className="mt-8 w-full flex items-center justify-center gap-2 text-sm text-persona-muted hover:text-persona-dark transition-colors py-3"
       >
         <HiOutlineTrash className="w-4 h-4" /> {t('detail.remove')}
       </button>
+
+      <AnimatePresence>
+        {confirmRemove && (
+          <ConfirmDialog
+            title={t('detail.removeTitle', { name: title })}
+            body={t('detail.removeBody')}
+            confirmLabel={t('detail.removeConfirm')}
+            cancelLabel={t('common:cancel')}
+            onCancel={() => setConfirmRemove(false)}
+            onConfirm={handleRemove}
+          />
+        )}
+      </AnimatePresence>
     </SubScreen>
   );
 }
@@ -643,12 +675,24 @@ function CircleProgress({ percentage }) {
 
 function CompatibilityView({ friendId, navigate, locationState }) {
   const { t } = useTranslation('friends');
-  const friend = locationState?.friend || null;
+  const [friend, setFriend] = useState(locationState?.friend || null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState(false);
   const [nonce, setNonce] = useState(0);
   const [openingChat, setOpeningChat] = useState(false);
+
+  // Resolve the friend's name on a deep link / refresh (no navigation state).
+  useEffect(() => {
+    if (friend) return undefined;
+    let active = true;
+    friendsApi
+      .list()
+      .then((list) => active && setFriend(list.find((f) => f.id === friendId) || null))
+      .catch(() => {});
+    return () => { active = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [friendId]);
 
   // Open (or resume) the compatibility chat with this friend and jump into it.
   const discussWithAi = async () => {
@@ -658,6 +702,7 @@ function CompatibilityView({ friendId, navigate, locationState }) {
       const chat = await chatApi.openCompatibility(friendId);
       navigate(`/chat/${chat.id}`, { state: { chat } });
     } catch {
+      showToast(t('chat:openError'));
       setOpeningChat(false);
     }
   };

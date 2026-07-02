@@ -4,7 +4,6 @@ import {
   normalCdf,
   tScoreToPercentile,
   percentileBand,
-  interpretTrait,
   percentileColor,
 } from './tScore.js';
 
@@ -67,29 +66,6 @@ describe('percentileBand', () => {
     expect(percentileBand(84)).toBe('highAvg');
     expect(percentileBand(85)).toBe('high');
     expect(percentileBand(100)).toBe('high');
-  });
-});
-
-describe('interpretTrait — trait-aware copy', () => {
-  it('uses different language for high Neuroticism vs high Openness', () => {
-    const n = interpretTrait(90, 'N').oneLiner;
-    const o = interpretTrait(90, 'O').oneLiner;
-    expect(n).not.toBe(o);
-    expect(n.toLowerCase()).toContain('stress');
-    expect(o.toLowerCase()).toMatch(/open|ideas|experience/);
-  });
-  it('avoids jargon like z-score / sigma', () => {
-    for (const k of ['O', 'C', 'E', 'A', 'N']) {
-      for (const p of [5, 25, 50, 75, 95]) {
-        const { oneLiner } = interpretTrait(p, k);
-        expect(oneLiner.toLowerCase()).not.toMatch(/z-?score|sigma|σ|percentile/);
-      }
-    }
-  });
-  it('returns band + human label', () => {
-    const r = interpretTrait(50, 'E');
-    expect(r.band).toBe('avg');
-    expect(r.label).toBe('Average');
   });
 });
 

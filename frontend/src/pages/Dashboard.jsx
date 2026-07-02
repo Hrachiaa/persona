@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,12 +10,15 @@ import {
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
 import ProgressiveBlur from '../components/ProgressiveBlur';
-import Tests from './tabs/Tests';
-import Portrait from './tabs/Portrait';
-import Compatibility from './tabs/Compatibility';
-import Recommendations from './tabs/Recommendations';
-import Chat from './tabs/Chat';
-import Profile from './Profile';
+
+// Each tab is its own chunk — react-markdown, the result-screen suite and the
+// swipe deck stay out of the initial bundle (which only needs the auth screens).
+const Tests = lazy(() => import('./tabs/Tests'));
+const Portrait = lazy(() => import('./tabs/Portrait'));
+const Compatibility = lazy(() => import('./tabs/Compatibility'));
+const Recommendations = lazy(() => import('./tabs/Recommendations'));
+const Chat = lazy(() => import('./tabs/Chat'));
+const Profile = lazy(() => import('./Profile'));
 
 // Labels come from the `dashboard` namespace, keyed by id (nav.<id>). Tests is no
 // longer a tab — the per-test cards + runner/result are reached from the Portrait; its
@@ -153,9 +156,17 @@ export default function Dashboard({ onLogout }) {
         {/* Tab Content — full-width on mobile, centered & width-capped on desktop */}
         <section role="region" aria-label="Dashboard content" className="lg:py-6">
           <div className="mx-auto w-full lg:max-w-5xl">
-            <AnimatePresence mode="wait">
-              {renderTab()}
-            </AnimatePresence>
+            <Suspense
+              fallback={
+                <div className="min-h-[50vh] flex items-center justify-center">
+                  <div className="animate-pulse-soft text-persona-muted">{t('common:loading')}</div>
+                </div>
+              }
+            >
+              <AnimatePresence mode="wait">
+                {renderTab()}
+              </AnimatePresence>
+            </Suspense>
           </div>
         </section>
       </div>
@@ -206,15 +217,17 @@ export default function Dashboard({ onLogout }) {
       </motion.nav>
 
       {/* Profile overlay — full-screen, sits above the nav (z-[60]) */}
-      <AnimatePresence>
-        {showProfile && (
-          <Profile
-            key="profile"
-            onBack={() => (location.key === 'default' ? navigate('/portrait') : navigate(-1))}
-            onLogout={onLogout}
-          />
-        )}
-      </AnimatePresence>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {showProfile && (
+            <Profile
+              key="profile"
+              onBack={() => (location.key === 'default' ? navigate('/portrait') : navigate(-1))}
+              onLogout={onLogout}
+            />
+          )}
+        </AnimatePresence>
+      </Suspense>
     </motion.div>
   );
 }

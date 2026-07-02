@@ -13,21 +13,17 @@ import {
   HiOutlineUsers,
   HiOutlineChevronRight,
   HiOutlineChevronLeft,
-  HiOutlineExclamationTriangle,
   HiOutlineMagnifyingGlass,
 } from 'react-icons/hi2';
 import { chatApi } from '../../api/chat';
 import { friendsApi } from '../../api/friends';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import ProgressiveBlur from '../../components/ProgressiveBlur';
+import LockedCard from '../../components/LockedCard';
+import ConfirmDialog from '../../components/ConfirmDialog';
+import { showToast } from '../../components/Toast';
+import { TOTAL_TESTS, isTestCompleted } from '../../utils/constants';
 import { fetchTestsCached } from './testsCache';
-
-// Chats are gated behind finishing every test (mirrors the Reads tab). Same total
-// as the Portrait / Recommendations gate, with the same IQ-invalid handling: an
-// "invalid" IQ result doesn't count as a completed test.
-const TOTAL_TESTS = 6;
-const isTestCompleted = (test) =>
-  !!test.result && !(test.testType === 'iq' && test.result?.reliability === 'invalid');
 
 // ─── Shared bits ────────────────────────────────────────────────────────────────
 
@@ -45,43 +41,6 @@ function useChatTitle() {
       ? t('compatTitle', { name: chat.friendName || t('friendFallback') })
       : t('portraitTitle');
   };
-}
-
-// ─── Locked: tests not all done (mirrors the Reads tab's locked screen) ──────────
-
-function LockedScreen({ completed, required, onOpenTests }) {
-  const { t } = useTranslation('chat');
-  const pct = Math.round((completed / required) * 100);
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 lg:left-64 z-30 bg-persona-bg flex items-center justify-center px-6 pt-20 pb-24 lg:py-6"
-    >
-      <div className="surface-warm rounded-4xl p-8 text-center max-w-md w-full">
-        <div className="w-14 h-14 mx-auto mb-4 bg-persona-accent-lime/60 rounded-3xl flex items-center justify-center">
-          <HiOutlineSparkles className="w-7 h-7 text-persona-dark" />
-        </div>
-        <h2 className="font-display text-xl font-semibold text-persona-dark mb-1.5">{t('locked.title')}</h2>
-        <p className="text-sm text-persona-muted leading-relaxed mb-5">{t('locked.body')}</p>
-        <div className="relative h-2.5 bg-persona-line/60 rounded-full overflow-hidden mb-2">
-          <motion.div
-            className="absolute inset-y-0 left-0 bg-persona-accent-lime rounded-full"
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-          />
-        </div>
-        <p className="text-xs text-persona-muted mb-6 tabular">{t('locked.progress', { completed, required })}</p>
-        {onOpenTests && (
-          <motion.button onClick={onOpenTests} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
-            {completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
-          </motion.button>
-        )}
-      </div>
-    </motion.div>
-  );
 }
 
 // ─── Chat list (burger) / empty state ───────────────────────────────────────────
@@ -117,21 +76,42 @@ function ChatList({ navigate, onOpenTests }) {
   }, []);
 
   if (lock === null) return null; // brief: avoid flashing the list before the gate resolves
-  if (lock) return <LockedScreen completed={lock.completed} required={lock.required} onOpenTests={onOpenTests} />;
+  // The gate only blocks *starting* chats. Conversations that already exist (e.g.
+  // a test retake temporarily dropped the completed count) stay listed and
+  // openable — so wait for the chat list before showing the lock, and only lock
+  // the whole screen when there is truly nothing to show.
+  if (lock && chats === null) return null;
+  if (lock && chats.length === 0) {
+    return (
+      <LockedCard
+        title={t('locked.title')}
+        body={t('locked.body')}
+        progressLabel={t('locked.progress', { completed: lock.completed, required: lock.required })}
+        ctaLabel={lock.completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
+        completed={lock.completed}
+        required={lock.required}
+        onOpenTests={onOpenTests}
+      />
+    );
+  }
 
   const startPortrait = async () => {
     setShowNew(false);
     try {
       const chat = await chatApi.openPortrait();
       navigate(`/chat/${chat.id}`, { state: { chat } });
-    } catch { /* ignore */ }
+    } catch {
+      showToast(t('openError'));
+    }
   };
 
   const startCompat = async (friendId) => {
     try {
       const chat = await chatApi.openCompatibility(friendId);
       navigate(`/chat/${chat.id}`, { state: { chat } });
-    } catch { /* ignore */ }
+    } catch {
+      showToast(t('openError'));
+    }
   };
 
   // Filter by chat title + last message (case-insensitive). The search row is only
@@ -164,6 +144,11 @@ function ChatList({ navigate, onOpenTests }) {
           <>
             {/* Title + search — pinned above the scrolling list */}
             <h1 className="font-display text-3xl font-semibold text-persona-dark mb-4 shrink-0">{t('listTitle')}</h1>
+            {lock && (
+              <p className="text-xs text-persona-muted leading-relaxed mb-4 -mt-2 shrink-0">
+                {t('locked.listHint', { completed: lock.completed, required: lock.required })}
+              </p>
+            )}
             <div className="relative mb-4 shrink-0">
               <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-persona-muted pointer-events-none" />
               <input
@@ -207,16 +192,19 @@ function ChatList({ navigate, onOpenTests }) {
         )}
       </div>
 
-      {/* New-chat button — pinned above the bottom nav, doesn't scroll */}
+      {/* New-chat button — pinned above the bottom nav, doesn't scroll. Hidden
+          while the gate is on (existing chats stay, new ones can't be started). */}
       <div className="shrink-0 flex justify-end px-6 pt-2 pb-[6.5rem] lg:pb-9">
-        <motion.button
-          onClick={() => setShowNew(true)}
-          aria-label={t('startTitle')}
-          className="w-14 h-14 shrink-0 rounded-full bg-persona-dark text-white flex items-center justify-center shadow-warm-lg"
-          whileTap={{ scale: 0.9 }}
-        >
-          <HiOutlinePlus className="w-6 h-6" />
-        </motion.button>
+        {!lock && (
+          <motion.button
+            onClick={() => setShowNew(true)}
+            aria-label={t('startTitle')}
+            className="w-14 h-14 shrink-0 rounded-full bg-persona-dark text-white flex items-center justify-center shadow-warm-lg"
+            whileTap={{ scale: 0.9 }}
+          >
+            <HiOutlinePlus className="w-6 h-6" />
+          </motion.button>
+        )}
       </div>
 
       <AnimatePresence>
@@ -385,42 +373,6 @@ function TypingDots() {
   );
 }
 
-function DeleteConfirm({ onCancel, onConfirm }) {
-  const { t } = useTranslation('chat');
-  return (
-    <motion.div
-      className="fixed inset-0 z-[70] flex items-center justify-center px-6 bg-black/30"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={onCancel}
-    >
-      <motion.div
-        className="surface-warm rounded-3xl p-6 w-full max-w-sm text-center"
-        initial={{ scale: 0.92, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.92, opacity: 0 }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-persona-accent-pink/40 flex items-center justify-center">
-          <HiOutlineExclamationTriangle className="w-6 h-6 text-persona-dark" />
-        </div>
-        <h2 className="font-display text-lg font-semibold text-persona-dark mb-1.5">{t('deleteTitle')}</h2>
-        <p className="text-sm text-persona-muted leading-relaxed mb-6">{t('deleteBody')}</p>
-        <div className="flex gap-3">
-          <button onClick={onCancel} className="btn-secondary flex-1">{t('common:cancel')}</button>
-          <button
-            onClick={onConfirm}
-            className="flex-1 h-12 rounded-full bg-persona-accent-pink text-persona-dark font-medium shadow-warm hover:shadow-warm-lg transition-all"
-          >
-            {t('deleteConfirm')}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
 function Conversation({ chatId, onBack, locationState }) {
   const { t } = useTranslation('chat');
   const title = useChatTitle();
@@ -528,6 +480,9 @@ function Conversation({ chatId, onBack, locationState }) {
           m.id === assistantId ? { ...m, content: m.content || `_${t('error')}_`, pending: false } : m,
         ),
       );
+      // Give the failed message back to the input (unless they've typed anew),
+      // so the text isn't lost to a network blip.
+      setInput((cur) => cur || content);
     } finally {
       setSending(false);
     }
@@ -664,7 +619,14 @@ function Conversation({ chatId, onBack, locationState }) {
 
       <AnimatePresence>
         {confirmDelete && (
-          <DeleteConfirm onCancel={() => setConfirmDelete(false)} onConfirm={doDelete} />
+          <ConfirmDialog
+            title={t('deleteTitle')}
+            body={t('deleteBody')}
+            confirmLabel={t('deleteConfirm')}
+            cancelLabel={t('common:cancel')}
+            onCancel={() => setConfirmDelete(false)}
+            onConfirm={doDelete}
+          />
         )}
       </AnimatePresence>
     </motion.div>

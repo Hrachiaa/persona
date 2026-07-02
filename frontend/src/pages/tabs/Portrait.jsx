@@ -8,10 +8,11 @@ import { portraitApi } from '../../api/portrait';
 import { chatApi } from '../../api/chat';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import { SIGILS } from '../../components/testSigils';
+import { showToast } from '../../components/Toast';
+import { registerSessionCache } from '../../utils/sessionCaches';
+import { TOTAL_TESTS } from '../../utils/constants';
 import { PART_SIZE } from './testParts';
 import { fetchTestsCached, getCachedTests } from './testsCache';
-
-const TOTAL_TESTS = 6;
 
 // ─── Segmented part-progress ring ────────────────────────────────────────────
 // For a chunked test left half-finished (see PART_SIZE in Tests.jsx), the orb
@@ -68,6 +69,8 @@ function fetchPortrait() {
   if (!inFlight) inFlight = portraitApi.getPortrait().finally(() => { inFlight = null; });
   return inFlight;
 }
+// The cached portrait belongs to one account — never show it to the next.
+registerSessionCache(() => { cachedData = null; inFlight = null; });
 
 // How long to wait before re-checking while the portrait is still generating.
 const POLL_INTERVAL_MS = 4000;
@@ -501,6 +504,12 @@ export default function Portrait() {
   // Captured once (useState initializer) so the just-filled progress segment plays
   // its fill animation a single time, even as the constellation re-renders.
   const [celebrate] = useState(() => location.state?.celebrate);
+  // …and stripped from the history entry, so refreshing the page (which restores
+  // location.state) doesn't replay the celebration.
+  useEffect(() => {
+    if (location.state?.celebrate) navigate(location.pathname, { replace: true, state: null });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // Scrolls the two-page pager back to page 1 (the constellation), where tests are
   // browsed and started — the home of the "take tests" CTAs now that the Tests tab is gone.
   const pagerRef = useRef(null);
@@ -538,6 +547,7 @@ export default function Portrait() {
       const chat = await chatApi.openPortrait();
       navigate(`/chat/${chat.id}`, { state: { chat } });
     } catch {
+      showToast(t('chat:openError'));
       setOpeningChat(false);
     }
   };
@@ -671,7 +681,9 @@ export default function Portrait() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4, delay: selectedSigil ? 0 : 1.1 }}
                 >
-                  <span className="text-xs font-medium tracking-wide">{t('swipeDown')}</span>
+                  {/* A touch gesture on mobile, a scroll on desktop — different copy each. */}
+                  <span className="text-xs font-medium tracking-wide lg:hidden">{t('swipeDown')}</span>
+                  <span className="hidden lg:inline text-xs font-medium tracking-wide">{t('scrollDown')}</span>
                   <motion.span animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}>
                     <HiOutlineChevronDown className="w-5 h-5" />
                   </motion.span>

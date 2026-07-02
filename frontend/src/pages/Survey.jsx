@@ -4,12 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineUser, HiOutlineCalendarDays } from 'react-icons/hi2';
 import { authApi } from '../api/auth';
 import i18n, { setLanguage, SUPPORTED_LANGUAGES } from '../i18n';
-
-// Visual/structural config only — copy comes from the `survey` namespace by step id.
-const genderOptions = [
-  { value: 'M', labelKey: 'gender.male', emoji: '♂' },
-  { value: 'F', labelKey: 'gender.female', emoji: '♀' },
-];
+import { GENDER_OPTIONS, BIRTH_YEAR_MIN, maxBirthYear } from '../utils/constants';
 
 const steps = [
   { id: 'name', icon: HiOutlineUser, type: 'text', field: 'name' },
@@ -85,7 +80,7 @@ export default function Survey({ onComplete }) {
     if (!val) return false;
     if (currentStep.field === 'birthDate') {
       const yr = parseInt(val, 10);
-      return yr >= 1900 && yr <= 2026;
+      return yr >= BIRTH_YEAR_MIN && yr <= maxBirthYear();
     }
     return true;
   };
@@ -153,7 +148,7 @@ export default function Survey({ onComplete }) {
             {/* Input */}
             {currentStep.type === 'gender' ? (
               <div role="radiogroup" aria-label="Gender" className="flex gap-4 justify-center">
-                {genderOptions.map((opt) => (
+                {GENDER_OPTIONS.map((opt) => (
                   <motion.button
                     key={opt.value}
                     type="button"

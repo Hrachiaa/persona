@@ -21,6 +21,7 @@
     "continueTests": "Continue your tests"
   },
   "error": "Couldn't load recommendations right now.",
+  "swipeError": "Couldn't save your choice — it may show up again later.",
   "busy": {
     "loading": "Loading your picks…",
     "generating": "Hand-picking {{media}} for you — this can take a moment."

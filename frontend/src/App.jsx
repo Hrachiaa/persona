@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useAuth } from './context/AuthContext';
@@ -8,10 +8,14 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import Survey from './pages/Survey';
 import Dashboard from './pages/Dashboard';
-import SharePage from './pages/SharePage';
-import InvitePage from './pages/InvitePage';
 import { friendsApi } from './api/friends';
 import ProgressiveBlur from './components/ProgressiveBlur';
+import Toaster from './components/Toast';
+
+// Standalone public pages — split out of the main bundle (SharePage pulls in the
+// whole result-screen suite, which anonymous visitors of / never need).
+const SharePage = lazy(() => import('./pages/SharePage'));
+const InvitePage = lazy(() => import('./pages/InvitePage'));
 
 // Dashboard tab routes (+ the profile overlay) all render the same Dashboard
 // layout. They share a single AnimatePresence key so switching tabs doesn't
@@ -42,7 +46,7 @@ function consumePendingInvite() {
 
 /** Decide where a visitor hitting `/` should land (mirrors the old getInitialScreen) */
 function getInitialPath(user) {
-  // Bug 3: skip onboarding if user has already seen it
+  // Onboarding only plays once — the flag persists across sessions.
   const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
 
   if (user) {
@@ -54,41 +58,45 @@ function getInitialPath(user) {
     return '/onboarding';
   }
 
-  // Bug 4: returning users land on Sign In, first-timers on Sign Up
+  // Returning visitors land on Sign In, first-timers on Sign Up.
   const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
   return hasVisitedBefore ? '/login' : '/register';
 }
 
+/** Google OAuth callback tokens, if this load is the OAuth redirect. */
+function googleCallbackParams() {
+  const params = new URLSearchParams(window.location.search);
+  const accessToken = params.get('accessToken');
+  const refreshToken = params.get('refreshToken');
+  const userId = params.get('userId');
+  return accessToken && refreshToken && userId ? { accessToken, refreshToken, userId } : null;
+}
+
 export default function App() {
   const { user, loading, handleGoogleCallback, fetchMe, logout } = useAuth();
-  const [googleHandled, setGoogleHandled] = useState(false);
+  // False only while consuming a Google OAuth redirect (tokens in the URL) —
+  // initialized from the URL so the non-OAuth case needs no state update.
+  const [googleHandled, setGoogleHandled] = useState(() => !googleCallbackParams());
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Bug 1: Handle Google OAuth callback — extract tokens from URL
+  // Consume the Google OAuth callback: persist the tokens, fetch the profile,
+  // then route on (replace, so the token-laden URL doesn't end up in history).
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const accessToken = params.get('accessToken');
-    const refreshToken = params.get('refreshToken');
-    const userId = params.get('userId');
-
-    if (accessToken && refreshToken && userId) {
-      handleGoogleCallback({ accessToken, refreshToken, userId }).then((me) => {
-        // Mark as visited for Bug 4
-        localStorage.setItem('hasVisitedBefore', 'true');
-        localStorage.setItem('hasSeenOnboarding', 'true');
-        const hadInvite = consumePendingInvite();
-        // Bug 2: skip Survey if profile already complete (replace so the
-        // token-laden callback URL doesn't end up in history)
-        navigate(
-          isProfileComplete(me) ? (hadInvite ? '/match' : '/portrait') : '/survey',
-          { replace: true },
-        );
-        setGoogleHandled(true);
-      });
-    } else {
+    const params = googleCallbackParams();
+    if (!params) return;
+    handleGoogleCallback(params).then((me) => {
+      localStorage.setItem('hasVisitedBefore', 'true');
+      localStorage.setItem('hasSeenOnboarding', 'true');
+      const hadInvite = consumePendingInvite();
+      // Straight to the dashboard when the profile is already filled in;
+      // first-time Google users still get the survey.
+      navigate(
+        isProfileComplete(me) ? (hadInvite ? '/match' : '/portrait') : '/survey',
+        { replace: true },
+      );
       setGoogleHandled(true);
-    }
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Show loading spinner while auth is being resolved
@@ -149,6 +157,13 @@ export default function App() {
         {!isDashboardRoute && (
           <ProgressiveBlur direction="down" className="fixed top-0 inset-x-0 h-28 z-40" />
         )}
+        <Suspense
+          fallback={
+            <div className="min-h-dvh flex items-center justify-center">
+              <div className="animate-pulse-soft text-persona-muted">…</div>
+            </div>
+          }
+        >
         <AnimatePresence mode="wait">
           <Routes location={location} key={animKey}>
             <Route path="/" element={<Navigate to={getInitialPath(user)} replace />} />
@@ -203,7 +218,10 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AnimatePresence>
+        </Suspense>
       </main>
+      {/* Fire-and-forget action-failure toasts (see components/Toast). */}
+      <Toaster />
     </div>
   );
 }

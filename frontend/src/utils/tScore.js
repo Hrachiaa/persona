@@ -30,57 +30,6 @@ export function percentileBand(p) {
   return 'high';
 }
 
-const TRAIT_COPY = {
-  O: {
-    low: 'less open to new experiences than most',
-    lowAvg: 'somewhat traditional and practical',
-    avg: 'about as open to new ideas as average',
-    highAvg: 'more curious and imaginative than most',
-    high: 'remarkably open to new ideas and experiences',
-  },
-  C: {
-    low: 'less structured and goal-driven than most',
-    lowAvg: 'flexible, prefers improvisation to planning',
-    avg: 'about as organized as average',
-    highAvg: 'more disciplined and reliable than most',
-    high: 'highly organized, driven, and persistent',
-  },
-  E: {
-    low: 'more reserved and inward-facing than most',
-    lowAvg: 'prefers smaller settings and quieter time',
-    avg: 'about as outgoing as average',
-    highAvg: 'more sociable and energetic than most',
-    high: 'thrives on social energy and outward action',
-  },
-  A: {
-    low: 'more skeptical and self-focused than most',
-    lowAvg: 'direct, comfortable with disagreement',
-    avg: 'about as agreeable as average',
-    highAvg: 'warmer and more cooperative than most',
-    high: 'unusually warm, trusting, and giving',
-  },
-  N: {
-    low: 'calmer and more even-keel than most',
-    lowAvg: 'generally relaxed under pressure',
-    avg: 'about as emotionally reactive as average',
-    highAvg: 'more sensitive to stress than most',
-    high: 'highly reactive to stress and intense emotions',
-  },
-};
-
-export function interpretTrait(percentile, traitKey) {
-  const band = percentileBand(percentile);
-  const oneLiner = TRAIT_COPY[traitKey]?.[band] ?? '';
-  const label = {
-    low: 'Well below average',
-    lowAvg: 'Below average',
-    avg: 'Average',
-    highAvg: 'Above average',
-    high: 'Well above average',
-  }[band];
-  return { band, label, oneLiner };
-}
-
 // Returns Tailwind class fragments built on the existing persona.accent tokens.
 // `bar` is the filled-bar background, `chip` is a softer pill, `hex` is a
 // raw color usable in inline SVG fills.

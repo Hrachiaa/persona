@@ -1,6 +1,6 @@
 # Persona
 
-Personality / IQ testing platform. Users sign up (email + password or Google OAuth), fill out a profile, take psychological tests (IQ, Szondi, Archetype, MBTI), and view their results.
+Personality / IQ testing platform. Users sign up (email + password or Google OAuth), fill out a profile, take six psychological tests (IQ, Big Five, Schwartz values, ECR-R attachment, COPE, PID-5), and get an AI-generated portrait, friend compatibility, AI chats and book/film recommendations built from the results.
 
 ## Repo layout
 
