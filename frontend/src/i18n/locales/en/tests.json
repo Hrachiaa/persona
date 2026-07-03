@@ -21,12 +21,11 @@
   "parts": {
     "progress": "Part {{part}} of {{parts}} · question {{n}} of {{total}}"
   },
-  "partDone": {
-    "title": "Part {{part}} of {{parts}} done",
-    "subtitle_one": "Your answers are saved. One more part and this test reveals a new piece of your portrait.",
-    "subtitle_other": "Your answers are saved. {{count}} more parts and this test reveals a new piece of your portrait.",
-    "continue": "Continue · part {{part}} of {{parts}}",
-    "later": "Back to the constellation"
+  "celebrate": {
+    "title": "Nice work!",
+    "subtitle": "Answers saved — your portrait just got sharper.",
+    "continue": "Continue",
+    "menu": "Back to menu"
   },
   "resume": {
     "title": "Continue where you left off?",

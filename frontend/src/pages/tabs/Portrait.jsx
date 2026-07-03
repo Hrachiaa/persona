@@ -735,7 +735,7 @@ export default function Portrait() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="surface-warm rounded-4xl p-6 sm:p-8"
+                    className="pt-2 pb-4"
                   >
                     {isRefreshing && (
                       <div className="flex items-center gap-2 text-xs text-persona-muted mb-4">
@@ -750,9 +750,9 @@ export default function Portrait() {
                       </div>
                     )}
                     {/* The portrait is the product's centerpiece — read it like an essay,
-                        not a UI label: the chat's reading serif at essay size, with a
-                        drop cap opening the first paragraph (.portrait-prose). */}
-                    <div className="portrait-prose font-reading text-persona-dark [&_p]:text-[17px] [&_p]:leading-[1.75] [&_p]:text-persona-dark/90 [&_p]:mb-5 [&_li]:text-[17px] [&_li]:leading-[1.75] [&_li]:text-persona-dark/90">
+                        not a UI label: the chat's reading serif at essay size, straight on
+                        the warm background (no card), same as the compatibility essay. */}
+                    <div className="font-reading text-persona-dark [&_p]:text-[17px] [&_p]:leading-[1.75] [&_p]:text-persona-dark/90 [&_p]:mb-5 [&_li]:text-[17px] [&_li]:leading-[1.75] [&_li]:text-persona-dark/90">
                       <ReactMarkdown components={MARKDOWN_COMPONENTS}>{content}</ReactMarkdown>
                     </div>
 

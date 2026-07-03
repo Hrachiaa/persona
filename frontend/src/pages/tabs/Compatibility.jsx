@@ -812,7 +812,7 @@ function CompatibilityView({ friendId, navigate, locationState }) {
           </div>
           {/* Same editorial treatment as the portrait — this is the other long-form
               AI essay, so it reads in the same serif at essay size. */}
-          <div className="portrait-prose font-reading text-persona-dark [&_p]:text-[17px] [&_p]:leading-[1.75] [&_p]:text-persona-dark/90 [&_p]:mb-5 [&_li]:text-[17px] [&_li]:leading-[1.75] [&_li]:text-persona-dark/90">
+          <div className="font-reading text-persona-dark [&_p]:text-[17px] [&_p]:leading-[1.75] [&_p]:text-persona-dark/90 [&_p]:mb-5 [&_li]:text-[17px] [&_li]:leading-[1.75] [&_li]:text-persona-dark/90">
             <ReactMarkdown components={MARKDOWN_COMPONENTS}>{data.content}</ReactMarkdown>
           </div>
 

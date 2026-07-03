@@ -6,6 +6,7 @@ import {
   HiOutlineBolt,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
+  HiOutlineArrowLeft,
   HiOutlineSparkles,
   HiOutlineScale,
   HiOutlineHeart,
@@ -241,53 +242,134 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
   );
 }
 
-// ─── Part-complete break screen ──────────────────────────────────────────────
-// Shown between the parts of a chunked test. Confirms the just-committed part is
-// saved, shows how far along the whole test is, and offers to keep going right
-// away — returning to the constellation is the explicit alternative, not the
-// silent default it used to be.
-function PartDoneScreen({ meta, partsCompleted, partCount, onContinue, onExit }) {
+// ─── Fragment celebration screen ─────────────────────────────────────────────
+// Shown after committing a (non-final) chunk of a chunked test. A Duolingo-style
+// moment of celebration — confetti, a bursting sigil, the WHOLE test's progress
+// filling up — rather than a dry "part X of Y, continue?" that makes the test
+// feel chopped up. Two ways forward: keep going, or back to the menu.
+const CONFETTI_COLORS = ['#F0E68C', '#D8B4FE', '#BEF264', '#FBCFE8', '#93C5FD', '#FDBA74'];
+
+// Tiny deterministic PRNG (mulberry32-style), keyed by piece index — render
+// stays pure (no Math.random), yet 28 pieces spread irregularly enough to read
+// as random confetti.
+function confettiRand(seed) {
+  let t = (seed + 0x6d2b79f5) | 0;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+
+function ConfettiBurst({ count = 28 }) {
+  const pieces = Array.from({ length: count }, (_, i) => ({
+    x: confettiRand(i * 7 + 1) * 100,
+    delay: confettiRand(i * 7 + 2) * 0.5,
+    dur: 1.8 + confettiRand(i * 7 + 3) * 1.2,
+    size: 7 + confettiRand(i * 7 + 4) * 7,
+    rot: (confettiRand(i * 7 + 5) - 0.5) * 640,
+    drift: (confettiRand(i * 7 + 6) - 0.5) * 90,
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+    round: confettiRand(i * 7 + 7) > 0.6,
+  }));
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      {pieces.map((p, i) => (
+        <motion.span
+          key={i}
+          className={`absolute ${p.round ? 'rounded-full' : 'rounded-[2px]'}`}
+          style={{ left: `${p.x}%`, top: -18, width: p.size, height: p.size * (p.round ? 1 : 0.62), backgroundColor: p.color }}
+          initial={{ y: -24, x: 0, rotate: 0, opacity: 1 }}
+          animate={{ y: '108vh', x: p.drift, rotate: p.rot, opacity: [1, 1, 0.9, 0] }}
+          transition={{ duration: p.dur, delay: p.delay, ease: [0.3, 0.35, 0.6, 0.95] }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function FragmentCelebrationScreen({ test, meta, partsCompleted, partCount, onContinue, onExit }) {
   const { t } = useTranslation('tests');
   const Icon = meta.icon;
+  const pct = Math.round((partsCompleted / partCount) * 100);
+  const prevPct = Math.round(((partsCompleted - 1) / partCount) * 100);
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-8 pt-6">
-      <div className="px-6 pt-2 mx-auto w-full max-w-md min-h-[80dvh] flex flex-col justify-center">
-        <div className="text-center mb-8">
-          <motion.div
-            className={`w-20 h-20 ${meta.color} rounded-[1.5rem] flex items-center justify-center mx-auto mb-6`}
-            initial={{ scale: 0.7 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 16 }}
-          >
-            <Icon className={`w-10 h-10 ${meta.iconColor}`} />
-          </motion.div>
-          <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">
-            {t('partDone.title', { part: partsCompleted, parts: partCount })}
-          </h2>
-          <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
-            {t('partDone.subtitle', { count: partCount - partsCompleted })}
-          </p>
-        </div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative min-h-dvh">
+      <ConfettiBurst />
 
-        {/* One pill per part, filled up to the just-committed one. */}
-        <div className="flex items-center justify-center gap-2 mb-8" aria-hidden="true">
-          {Array.from({ length: partCount }).map((_, i) => (
+      <div className="px-6 mx-auto w-full max-w-md min-h-dvh flex flex-col justify-center py-12">
+        <div className="text-center mb-9">
+          {/* Sigil tile pops in; a ring of its color bursts outward behind it. */}
+          <div className="relative w-24 h-24 mx-auto mb-7">
             <motion.span
-              key={i}
-              className={`h-2 rounded-full ${i < partsCompleted ? 'bg-persona-dark' : 'bg-persona-line'}`}
-              initial={{ width: 20, opacity: 0 }}
-              animate={{ width: i < partsCompleted ? 36 : 20, opacity: 1 }}
-              transition={{ delay: 0.15 + i * 0.06 }}
+              className={`absolute inset-0 rounded-[2rem] ${meta.color}`}
+              initial={{ scale: 0.9, opacity: 0.75 }}
+              animate={{ scale: 2, opacity: 0 }}
+              transition={{ duration: 0.9, delay: 0.28, ease: 'easeOut' }}
             />
-          ))}
+            <motion.div
+              className={`relative w-24 h-24 ${meta.color} rounded-[2rem] flex items-center justify-center`}
+              initial={{ scale: 0.3, rotate: -14 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 15, delay: 0.05 }}
+            >
+              <Icon className={`w-12 h-12 ${meta.iconColor}`} />
+            </motion.div>
+          </div>
+
+          <motion.h2
+            className="font-display text-4xl font-semibold text-persona-dark mb-3"
+            initial={{ opacity: 0, y: 14, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.2 }}
+          >
+            {t('celebrate.title')}
+          </motion.h2>
+          <motion.p
+            className="text-persona-muted leading-relaxed max-w-prose mx-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            {t('celebrate.subtitle')}
+          </motion.p>
         </div>
 
-        <div className="space-y-3">
+        {/* Whole-test progress — one bar filling further, not "parts" bookkeeping. */}
+        <motion.div
+          className="surface-warm rounded-3xl p-5 mb-9"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="flex items-baseline justify-between mb-2.5">
+            <span className="text-sm font-medium text-persona-dark">
+              {t(`names.${test.testType}`, { defaultValue: test.testName })}
+            </span>
+            <span className="text-sm font-semibold text-persona-dark tabular">{pct}%</span>
+          </div>
+          <div className="relative h-2.5 bg-persona-line/60 rounded-full overflow-hidden">
+            <motion.div
+              className="absolute inset-y-0 left-0 bg-persona-accent-peach rounded-full"
+              initial={{ width: `${prevPct}%` }}
+              animate={{ width: `${pct}%` }}
+              transition={{ duration: 0.9, delay: 0.75, ease: 'easeOut' }}
+            />
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="space-y-3"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.65 }}
+        >
           <motion.button onClick={onContinue} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
-            {t('partDone.continue', { part: partsCompleted + 1, parts: partCount })}
+            {t('celebrate.continue')}
           </motion.button>
           <motion.button onClick={onExit} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
-            {t('partDone.later')}
+            {t('celebrate.menu')}
           </motion.button>
-        </div>
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -414,20 +496,29 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
-      {/* Always a way out: progress is safe to leave behind — a chunked part's
-          answers persist under its own key and single-pass runs get the resume
-          prompt — so exiting needs no confirmation. */}
-      <ImmersiveTopBar onBack={onExit} />
       {/* Width-capped so the answer buttons stay scannable on desktop. */}
-      <div className="px-6 pt-2 mx-auto w-full max-w-2xl">
-      {/* Title */}
-      <div className="mb-4">
-        <h3 className="font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
-        <p className="text-sm text-persona-muted">
-          {isChunked
-            ? t('parts.progress', { part: part + 1, parts: partCount, n: qi + 1, total: partLength })
-            : t('questions.progress', { n: qi + 1, total: partLength })}
-        </p>
+      <div className="px-6 pt-6 mx-auto w-full max-w-2xl">
+      {/* Title row — the exit arrow rides inside the block that already exists, so
+          long questions + five answers still fit a phone screen (no sticky bar).
+          Leaving is safe without confirmation: a chunked part's answers persist
+          under their own key and single-pass runs get the resume prompt. */}
+      <div className="mb-4 flex items-center gap-3">
+        <motion.button
+          onClick={onExit}
+          aria-label={t('common:back')}
+          className="w-9 h-9 -ml-1 shrink-0 rounded-full bg-white shadow-warm flex items-center justify-center text-persona-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+          whileTap={{ scale: 0.9 }}
+        >
+          <HiOutlineArrowLeft className="w-4 h-4" />
+        </motion.button>
+        <div className="min-w-0">
+          <h3 className="font-semibold text-persona-dark truncate">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
+          <p className="text-sm text-persona-muted">
+            {isChunked
+              ? t('parts.progress', { part: part + 1, parts: partCount, n: qi + 1, total: partLength })
+              : t('questions.progress', { n: qi + 1, total: partLength })}
+          </p>
+        </div>
       </div>
 
       {/* Progress */}
@@ -964,7 +1055,8 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   if (screen === SCREEN.PART_DONE) {
     return (
-      <PartDoneScreen
+      <FragmentCelebrationScreen
+        test={selectedTest}
         meta={meta}
         partsCompleted={partDone.partsCompleted}
         partCount={partDone.partCount}
