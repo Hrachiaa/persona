@@ -158,7 +158,7 @@ export default function PaywallModal({ user, onClose, onSubscribed }) {
                   {t('paywall.title')}
                 </h2>
                 <p className="text-sm text-persona-muted leading-relaxed mt-2">
-                  {t('paywall.subtitle', { count: config?.freeMessagesLimit ?? 2 })}
+                  {t('paywall.subtitle')}
                 </p>
 
                 <ProBenefits className="mt-5" />

@@ -405,7 +405,19 @@ function FragmentCelebrationScreen({ test, meta, partsCompleted, partCount, onCo
   }, []);
 
   // Per-character cascade for the headline (skipped under reduced motion).
-  const chars = Array.from(title);
+  // Characters are grouped into unbreakable word blocks: bare inline-block
+  // characters let the browser wrap ANYWHERE — on narrow phones the trailing
+  // "!" broke onto its own line. Words keep a running character offset so the
+  // stagger still flows through the whole line; the spaces between word blocks
+  // are plain text, so they stay the only wrap points.
+  const words = [];
+  {
+    let offset = 0;
+    for (const word of title.split(' ')) {
+      words.push({ word, offset });
+      offset += word.length + 1;
+    }
+  }
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative min-h-dvh">
@@ -451,22 +463,32 @@ function FragmentCelebrationScreen({ test, meta, partsCompleted, partCount, onCo
             {!reduceMotion && <IconSparkles />}
           </div>
 
-          {/* Headline — characters cascade in on springs. */}
+          {/* Headline — characters cascade in on springs, grouped into
+              unbreakable word blocks: bare inline-block characters let the
+              browser wrap ANYWHERE, so on narrow phones the trailing "!" broke
+              onto its own line. Spaces between the blocks are plain text — the
+              only legal wrap points. */}
           <h2 className="font-display text-4xl font-semibold text-persona-dark mb-3" aria-label={title}>
             {reduceMotion ? (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>{title}</motion.span>
             ) : (
-              chars.map((ch, i) => (
-                <motion.span
-                  key={`${ch}-${i}`}
-                  aria-hidden="true"
-                  className="inline-block"
-                  initial={{ opacity: 0, y: 22, scale: 0.6, rotate: -6 }}
-                  animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 380, damping: 16, delay: 0.24 + i * 0.032 }}
-                >
-                  {ch === ' ' ? ' ' : ch}
-                </motion.span>
+              words.map(({ word, offset }, wi) => (
+                <span key={`w-${wi}`} aria-hidden="true">
+                  <span className="inline-block whitespace-nowrap">
+                    {Array.from(word).map((ch, ci) => (
+                      <motion.span
+                        key={ci}
+                        className="inline-block"
+                        initial={{ opacity: 0, y: 22, scale: 0.6, rotate: -6 }}
+                        animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                        transition={{ type: 'spring', stiffness: 380, damping: 16, delay: 0.24 + (offset + ci) * 0.032 }}
+                      >
+                        {ch}
+                      </motion.span>
+                    ))}
+                  </span>
+                  {wi < words.length - 1 ? ' ' : ''}
+                </span>
               ))
             )}
           </h2>

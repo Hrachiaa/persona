@@ -3,8 +3,7 @@
   "paywall": {
     "title": "The conversation is just getting started",
     "messageSaved": "Your message isn't lost — it will send itself right after you upgrade.",
-    "subtitle_one": "Your free message was just the warm-up. Go Pro and talk to the AI that knows you — as much as you want.",
-    "subtitle_other": "Your {{count}} free messages were just the warm-up. Go Pro and talk to the AI that knows you — as much as you want."
+    "subtitle": "You've reached the message limit. Go Pro and talk to the AI that knows you — as much as you want."
   },
   "benefits": {
     "unlimited": "Unlimited messages in every chat",
