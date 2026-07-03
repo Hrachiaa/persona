@@ -17,10 +17,12 @@ import {
 } from 'react-icons/hi2';
 import { chatApi } from '../../api/chat';
 import { friendsApi } from '../../api/friends';
+import { useAuth } from '../../context/AuthContext';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import ProgressiveBlur from '../../components/ProgressiveBlur';
 import LockedCard from '../../components/LockedCard';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import PaywallModal from '../../components/PaywallModal';
 import { showToast } from '../../components/Toast';
 import { TOTAL_TESTS, isTestCompleted } from '../../utils/constants';
 import { fetchTestsCached } from './testsCache';
@@ -375,6 +377,7 @@ function TypingDots() {
 
 function Conversation({ chatId, onBack, locationState }) {
   const { t } = useTranslation('chat');
+  const { user } = useAuth();
   const title = useChatTitle();
   const [chat, setChat] = useState(locationState?.chat || null);
   const [messages, setMessages] = useState(locationState?.chat?.messages || []);
@@ -382,6 +385,9 @@ function Conversation({ chatId, onBack, locationState }) {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  // Set when a send bounced off the paywall (402): holds the cancelled message
+  // so it can re-send itself the moment Pro is confirmed.
+  const [paywall, setPaywall] = useState(null); // null | { content }
 
   const scrollRef = useRef(null);
   const abortRef = useRef(null);
@@ -448,10 +454,14 @@ function Conversation({ chatId, onBack, locationState }) {
     expectedTopRef.current = c.scrollTop;
   }, [messages]);
 
-  const send = async () => {
+  const send = () => {
     const content = input.trim();
     if (!content || sending) return;
     setInput('');
+    sendContent(content);
+  };
+
+  const sendContent = async (content) => {
     setSending(true);
 
     const userId = `u-${Date.now()}`;
@@ -475,6 +485,16 @@ function Conversation({ chatId, onBack, locationState }) {
       await chatApi.sendMessage(chatId, content, { onDelta: append, signal: abortRef.current.signal });
     } catch (err) {
       if (err.name === 'AbortError') return;
+      if (err.code === 'SUBSCRIPTION_REQUIRED') {
+        // The paywall: pretend the send never happened — pull both optimistic
+        // bubbles out of the thread, give the text back to the input, and raise
+        // the Pro sheet. Subscribing re-sends it; dismissing just leaves the
+        // text in the input.
+        setMessages((prev) => prev.filter((m) => m.id !== userId && m.id !== assistantId));
+        setInput((cur) => cur || content);
+        setPaywall({ content });
+        return;
+      }
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantId ? { ...m, content: m.content || `_${t('error')}_`, pending: false } : m,
@@ -603,13 +623,13 @@ function Conversation({ chatId, onBack, locationState }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder={t('inputPlaceholder')}
-            className="flex-1 resize-none overflow-y-auto rounded-3xl bg-white shadow-warm-lg px-5 py-3.5 text-[15px] leading-5 text-persona-dark placeholder:text-persona-muted focus:outline-none focus:ring-2 focus:ring-persona-dark/30"
+            className="flex-1 resize-none overflow-y-auto rounded-3xl bg-white shadow-warm-lg px-5 py-3.5 text-[15px] leading-5 text-persona-dark placeholder:text-persona-muted focus:outline-none"
           />
           <motion.button
             onClick={send}
             disabled={!input.trim() || sending}
             aria-label={t('send')}
-            className="w-12 h-12 shrink-0 rounded-full bg-persona-dark text-white flex items-center justify-center shadow-warm-lg disabled:opacity-40 transition-opacity"
+            className="w-12 h-12 shrink-0 rounded-full bg-persona-dark text-white flex items-center justify-center shadow-warm-lg"
             whileTap={{ scale: 0.9 }}
           >
             <HiOutlinePaperAirplane className="w-5 h-5" />
@@ -626,6 +646,23 @@ function Conversation({ chatId, onBack, locationState }) {
             cancelLabel={t('common:cancel')}
             onCancel={() => setConfirmDelete(false)}
             onConfirm={doDelete}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* The Pro paywall — raised when a send bounces with 402. Closing keeps the
+          text in the input; subscribing re-sends the held message automatically. */}
+      <AnimatePresence>
+        {paywall && (
+          <PaywallModal
+            user={user}
+            onClose={() => setPaywall(null)}
+            onSubscribed={() => {
+              const content = paywall.content;
+              setPaywall(null);
+              setInput(''); // the held text is about to send — don't leave a copy behind
+              sendContent(content);
+            }}
           />
         )}
       </AnimatePresence>

@@ -18,11 +18,14 @@ import {
   HiOutlineUser,
   HiOutlineCalendarDays,
   HiOutlinePencilSquare,
+  HiOutlineSparkles,
   HiHeart,
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/auth';
 import { recommendationsApi } from '../api/recommendations';
+import { subscriptionsApi } from '../api/subscriptions';
+import SubscriptionView from './ProfileSubscription';
 import i18n, { setLanguage, SUPPORTED_LANGUAGES } from '../i18n';
 import { GENDER_OPTIONS, BIRTH_YEAR_MIN, maxBirthYear } from '../utils/constants';
 
@@ -32,6 +35,7 @@ const VIEWS = {
   PASSWORD: 'password',
   LIKED: 'liked',
   HISTORY: 'history',
+  SUBSCRIPTION: 'subscription',
 };
 
 const slide = {
@@ -66,6 +70,20 @@ export default function Profile({ onBack, onLogout }) {
   const [history, setHistory] = useState(null); // null = not loaded yet
   const [historyLoading, setHistoryLoading] = useState(true);
   const [historyError, setHistoryError] = useState(null);
+
+  // Persona Pro entitlement — drives the status chip on the main list and the
+  // Subscription view. Owned here so cancel/subscribe updates both at once.
+  const [sub, setSub] = useState(null); // null = loading
+  const [subError, setSubError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    subscriptionsApi
+      .me()
+      .then((data) => { if (!cancelled) setSub(data); })
+      .catch(() => { if (!cancelled) setSubError(true); });
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -121,11 +139,18 @@ export default function Profile({ onBack, onLogout }) {
             <motion.div key="main" {...slide}>
               <MainView
                 user={user}
+                sub={sub}
                 likedCount={likedCount}
                 historyCount={historyCount}
                 onOpen={setView}
                 onLogout={onLogout}
               />
+            </motion.div>
+          )}
+
+          {view === VIEWS.SUBSCRIPTION && (
+            <motion.div key="subscription" {...slide}>
+              <SubscriptionView sub={sub} error={subError} onChanged={setSub} />
             </motion.div>
           )}
 
@@ -180,7 +205,18 @@ export default function Profile({ onBack, onLogout }) {
 
 /* ---------------------------------------------------------------- main view */
 
-function MainView({ user, likedCount, historyCount, onOpen, onLogout }) {
+/** Short status chip for the Pro row — mirrors SubscriptionView's pills. */
+function subStatusLabel(t, sub) {
+  if (!sub) return '';
+  if (sub.status === 'paused') return t('subscription:profile.statusPaused');
+  if (!sub.entitled) return t('subscription:profile.statusFree');
+  if (sub.status === 'past_due') return t('subscription:profile.statusPastDue');
+  if (sub.cancelAtPeriodEnd) return t('subscription:profile.statusCancelling');
+  if (sub.status === 'trialing') return t('subscription:profile.statusTrial');
+  return t('subscription:profile.statusActive');
+}
+
+function MainView({ user, sub, likedCount, historyCount, onOpen, onLogout }) {
   const { t } = useTranslation('profile');
   const [lang, setLang] = useState(i18n.language);
 
@@ -231,6 +267,16 @@ function MainView({ user, likedCount, historyCount, onOpen, onLogout }) {
           title={t('rows.history')}
           meta={historyCount === null ? '' : String(historyCount)}
           onClick={() => onOpen(VIEWS.HISTORY)}
+        />
+      </Section>
+
+      {/* Persona Pro — subscription status & management */}
+      <Section label={t('subscription:profile.section')}>
+        <Row
+          icon={HiOutlineSparkles}
+          title={t('subscription:profile.row')}
+          meta={subStatusLabel(t, sub)}
+          onClick={() => onOpen(VIEWS.SUBSCRIPTION)}
         />
       </Section>
 

@@ -36,7 +36,7 @@ Navigation uses **`react-router-dom` v7** (`BrowserRouter` is mounted in [src/ma
 | `/tests` `/portrait` `/match` `/reads` `/chat` | Dashboard tabs (all render `Dashboard`) |
 | `/tests/:slug` · `/tests/:slug/result` | test runner / result (`:slug` is a friendly name — `logic`, `personality`, `values`, `attachment`, `stress`, `shadows`, … via `TYPE_SLUGS` in [tabs/Tests.jsx](src/pages/tabs/Tests.jsx), not the raw cuid) |
 | `/chat` · `/chat/:chatId` | AI chat: `/chat` is the chat list / empty state; `/chat/:chatId` is a conversation (immersive). Chats aren't created freely — opened from the "Discuss with AI" buttons on Portrait / Compatibility ([tabs/Chat.jsx](src/pages/tabs/Chat.jsx)). |
-| `/profile` · `/profile/{edit,password,liked,history}` | Dashboard with the Profile overlay open |
+| `/profile` · `/profile/{edit,password,liked,history,subscription}` | Dashboard with the Profile overlay open (`subscription` = Persona Pro management, [pages/ProfileSubscription.jsx](src/pages/ProfileSubscription.jsx)) |
 | `*` | redirect to `/` |
 
 `/tests`, `/match`, `/chat` and `/profile` are registered as `/tests/*` etc. so their sub-routes match; `DASHBOARD_PREFIXES` / `isDashboardPath()` in [src/App.jsx](src/App.jsx) treat any path under those as the shared `'dashboard'` animation group.
@@ -79,8 +79,9 @@ Wrap `client` — never call axios inline from a component:
 - [src/api/tests.js](src/api/tests.js) — getAllTests, getTestQuestions, submitTest, submitFragment, shareTest, getSharedResult
 - [src/api/portrait.js](src/api/portrait.js) — getPortrait (status machine: locked / generating / ready / error)
 - [src/api/friends.js](src/api/friends.js) — friends list/search/requests, invite links, per-friend results & compatibility
-- [src/api/chat.js](src/api/chat.js) — AI chats; `sendMessage` streams over SSE via raw `fetch` (the one deliberate bypass of the axios client; on a 401 it calls `refreshAccessToken()` from `client.js` and retries once)
+- [src/api/chat.js](src/api/chat.js) — AI chats; `sendMessage` streams over SSE via raw `fetch` (the one deliberate bypass of the axios client; on a 401 it calls `refreshAccessToken()` from `client.js` and retries once). A **402** response throws an error with `code: 'SUBSCRIPTION_REQUIRED'` — the chat rolls the optimistic message back into the input and raises [components/PaywallModal.jsx](src/components/PaywallModal.jsx); after a confirmed purchase the held message re-sends itself
 - [src/api/recommendations.js](src/api/recommendations.js) — swipe queue, swipe/rate, history, reset
+- [src/api/subscriptions.js](src/api/subscriptions.js) — Persona Pro: Paddle bootstrap `config`, entitlement `me`, checkout confirmation `sync`, `cancel`/`resume`. Paddle.js itself is a lazy singleton in [src/utils/paddle.js](src/utils/paddle.js); the checkout state machine (`useProCheckout`) and price formatting live in [src/utils/proCheckout.js](src/utils/proCheckout.js); the shared plan cards/benefits in [src/components/ProPlans.jsx](src/components/ProPlans.jsx) (components only — fast refresh)
 
 New endpoints belong in a new (or existing) module under [src/api/](src/api/), in the same `(...) => client.<verb>(...).then(r => r.data)` shape.
 
@@ -139,7 +140,7 @@ Dashboard tabs and the public Share/Invite pages are `React.lazy` chunks — hea
 
 The app is bilingual via **react-i18next** (`i18next` + `react-i18next`). Setup lives in [src/i18n/index.js](src/i18n/index.js), imported once in [src/main.jsx](src/main.jsx) before `App`.
 
-- **Dictionaries** are namespaced JSON under `src/i18n/locales/<lng>/<namespace>.json` (`en` + `ru`). They're **auto-discovered** via `import.meta.glob('./locales/*/*.json')` — just drop a new file in, no config edit. One namespace per feature: `common`, `auth`, `onboarding`, `survey`, `dashboard`, `profile`, `tests`, `portrait`, `friends`, `reco`, `advice`, `results`, `share`, `invite`.
+- **Dictionaries** are namespaced JSON under `src/i18n/locales/<lng>/<namespace>.json` (`en` + `ru`). They're **auto-discovered** via `import.meta.glob('./locales/*/*.json')` — just drop a new file in, no config edit. One namespace per feature: `common`, `auth`, `onboarding`, `survey`, `dashboard`, `profile`, `tests`, `portrait`, `friends`, `reco`, `advice`, `results`, `share`, `invite`, `subscription`.
 - **`common`** is the `defaultNS` and `fallbackNS`. In a component, `useTranslation('profile')` makes `t('edit.title')` resolve in `profile`; cross-namespace keys use the prefix, e.g. `t('common:save')`.
 - **Interpolation** `t('key', { n: 3 })` with `{{n}}` in the JSON; **embedded markup** uses `<Trans i18nKey="..." components={{ b: <span/> }} />` (see [Profile.jsx](src/pages/Profile.jsx) password note, [BigFiveResult.jsx](src/pages/tabs/BigFiveResult.jsx) comparison line).
 - **Language resolution**: `localStorage['persona:lang']` (set pre-login on the survey/anonymous screens) → on `fetchMe`, the signed-in user's `user.language` from the backend becomes the source of truth and is mirrored into i18n ([AuthContext.jsx](src/context/AuthContext.jsx) `applyUserLanguage`). Change it with `setLanguage(code)` from [src/i18n/index.js](src/i18n/index.js); the Profile selector also persists it via `authApi.updateLanguage` (`POST /auth/language`), and the survey submits it with the rest of the profile.

@@ -6,6 +6,7 @@ import { TestResultRepository } from '../tests/test-result.repository';
 import { PortraitRepository } from '../portrait/portrait.repository';
 import { FriendsService } from '../friends/friends.service';
 import { CompatibilityRepository } from '../friends/compatibility.repository';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { TEST_ORDER } from '../tests/test-order';
 import { TestResultType } from '../tests/models/test-result.entity';
 import { ChatKind, ChatRole } from '../../generated/prisma/enums';
@@ -35,6 +36,7 @@ export class ChatService {
     private readonly portraitRepository: PortraitRepository,
     private readonly friendsService: FriendsService,
     private readonly compatibilityRepository: CompatibilityRepository,
+    private readonly subscriptionsService: SubscriptionsService,
   ) {}
 
   /** The user's chats for the burger list, with friend names resolved for titles. */
@@ -82,6 +84,9 @@ export class ChatService {
     // Resolve everything that can fail BEFORE writing any SSE bytes, so failures
     // surface as a normal JSON error response instead of a half-open stream.
     const chat = await this.requireOwnedChat(userId, chatId);
+    // The Pro paywall: past the free allowance this throws 402 before anything
+    // is persisted or streamed, so the client can roll the message back cleanly.
+    await this.subscriptionsService.assertCanSendMessage(userId);
     const lang = getLang();
     const systemPrompt = await this.buildSystemPrompt(chat, lang);
     const history = await this.chatRepository.getRecentMessages(chat.id, CHAT_HISTORY_WINDOW);

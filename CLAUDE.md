@@ -1,6 +1,6 @@
 # Persona
 
-Personality / IQ testing platform. Users sign up (email + password or Google OAuth), fill out a profile, take six psychological tests (IQ, Big Five, Schwartz values, ECR-R attachment, COPE, PID-5), and get an AI-generated portrait, friend compatibility, AI chats and book/film recommendations built from the results.
+Personality / IQ testing platform. Users sign up (email + password or Google OAuth), fill out a profile, take six psychological tests (IQ, Big Five, Schwartz values, ECR-R attachment, COPE, PID-5), and get an AI-generated portrait, friend compatibility, AI chats and book/film recommendations built from the results. AI chat is monetized: after 2 free messages (counted globally across all chats) the third send returns 402 and the frontend raises the **Persona Pro** paywall (Paddle Billing — weekly $5 with a 3-day trial, monthly $10).
 
 ## Repo layout
 

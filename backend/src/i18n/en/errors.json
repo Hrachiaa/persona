@@ -38,5 +38,13 @@
     "notFound": "Chat not found",
     "streamFailed": "Something went wrong generating a reply. Please try again.",
     "locked": "Finish all tests to unlock chats."
+  },
+  "subscription": {
+    "required": "You've used your free messages. Get Persona Pro to keep chatting.",
+    "notConfigured": "Payments aren't set up on the server yet. Please try again later.",
+    "none": "You don't have an active subscription.",
+    "syncFailed": "We couldn't confirm your purchase. Please try again in a moment.",
+    "checkoutMismatch": "This purchase belongs to a different account.",
+    "actionFailed": "We couldn't update your subscription. Please try again."
   }
 }

@@ -43,7 +43,7 @@ Prisma config lives in [prisma.config.ts](prisma.config.ts). Schema and migratio
 ## Prisma — easy-to-miss details
 
 - **The generated client output is `generated/prisma/`, not `node_modules/@prisma/client`.** Imports inside the app come from the local `generated/` directory — don't change that without updating every importer.
-- Models in [prisma/schema.prisma](prisma/schema.prisma): `User`, `RefreshToken`, `OtpCode`, `Test`, `TestQuestion`, `TestResult`, `TestProgress` (chunked-test progress), `Portrait`, `RecommendationItem`, `Friendship`, `Compatibility`, `Chat`, `ChatMessage`. `TestResult` has a unique constraint on `[userId, testId]` — one result per (user, test) pair.
+- Models in [prisma/schema.prisma](prisma/schema.prisma): `User`, `RefreshToken`, `OtpCode`, `Test`, `TestQuestion`, `TestResult`, `TestProgress` (chunked-test progress), `Portrait`, `RecommendationItem`, `Friendship`, `Compatibility`, `Chat`, `ChatMessage`, `Subscription` (Persona Pro / Paddle — one row per user). `TestResult` has a unique constraint on `[userId, testId]` — one result per (user, test) pair.
 - `Test.questions` and `TestResult.result` are `Json` columns; the question shape is enforced at the application layer (see [src/tests/models/](src/tests/models/)), not at the DB.
 - The Schwartz values test's `testType` is the (load-bearing) typo `shcwartz` — see the quirks list in [../CLAUDE.md](../CLAUDE.md).
 
@@ -57,7 +57,8 @@ Feature-based, under [src/](src/):
 - [src/portrait/](src/portrait/) — the AI cross-test portrait: status-machine `GET /portrait` (locked/generating/ready), background generation deduped via `SingleFlight`
 - [src/friends/](src/friends/) — friendships (requests/invite links) + the pair `Compatibility` analysis (`compatibility.service.ts`)
 - [src/recommendations/](src/recommendations/) — the film/book swipe queue: LLM batch generation + catalog enrichment ([catalog.service.ts](src/recommendations/catalog.service.ts): TMDB / Google Books / Open Library)
-- [src/chat/](src/chat/) — AI chats (portrait & compatibility kinds), replies stream over SSE; only the last `CHAT_HISTORY_WINDOW` messages go into the model prompt
+- [src/chat/](src/chat/) — AI chats (portrait & compatibility kinds), replies stream over SSE; only the last `CHAT_HISTORY_WINDOW` messages go into the model prompt. Sends are gated by `SubscriptionsService.assertCanSendMessage` — past `FREE_MESSAGE_LIMIT` (2, global across chats) a send returns **402 `SUBSCRIPTION_REQUIRED`** before anything streams or persists
+- [src/subscriptions/](src/subscriptions/) — Persona Pro (Paddle Billing): `GET config`/`GET me`, `POST sync` (confirms a finished checkout — verifies the transaction via the Paddle API when `PADDLE_API_KEY` is set; **sandbox without a key trusts the client**, production refuses), `POST cancel`/`resume` (scheduled change at period end), and the signature-verified `POST webhook` (HMAC over the raw body — `main.ts` boots with `rawBody: true`). Entitlement = status TRIALING/ACTIVE/PAST_DUE, with a lazy re-fetch from Paddle when the paid period lapses (covers no-webhook local setups)
 - [src/ai/](src/ai/) — `ai.service.ts` (OpenRouter client, completions + streaming) and all prompt builders under `prompts/`
 - [src/mail/](src/mail/) — `mail.service`, `otp-code.repository.ts` (interface) + `otp-code.prisma.repository.ts` (implementation), Handlebars templates, OTP signing
 - [src/common/](src/common/) — `single-flight.ts` (in-process dedup of concurrent generations), `user-throttler.guard.ts` (per-user rate limit for LLM routes), `security.ts` (`BCRYPT_SALT_ROUNDS`)
@@ -66,7 +67,7 @@ Feature-based, under [src/](src/):
 - [src/exceptions/validation.exception.ts](src/exceptions/validation.exception.ts) — paired exception type
 - [src/prisma.service.ts](src/prisma.service.ts) — top-level Prisma client wrapper
 
-`AppModule` ([src/app.module.ts](src/app.module.ts)) imports the nine feature modules above plus `ConfigModule.forRoot({ isGlobal: true, envFilePath: \`.env.${process.env.NODE_ENV}\` })`, `ThrottlerModule` (global rate limit, bound as `APP_GUARD`) and `I18nModule`.
+`AppModule` ([src/app.module.ts](src/app.module.ts)) imports the ten feature modules above plus `ConfigModule.forRoot({ isGlobal: true, envFilePath: \`.env.${process.env.NODE_ENV}\` })`, `ThrottlerModule` (global rate limit, bound as `APP_GUARD`) and `I18nModule`.
 
 ## Conventions
 
@@ -100,7 +101,10 @@ GOOGLE_CLIENT_ID  GOOGLE_CLIENT_SECRET  GOOGLE_CALLBACK_URL
 FRONTEND_URL
 OPENROUTER_API_KEY  OPENROUTER_MODEL  OPENROUTER_MODEL_COMPLETE  OPENROUTER_MAX_TOKENS
 TMDB_API_KEY  GOOGLE_BOOKS_API_KEY
+PADDLE_ENV  PADDLE_CLIENT_TOKEN  PADDLE_PRICE_WEEKLY  PADDLE_PRICE_MONTHLY
 ```
+
+Paddle server-side secrets (optional in sandbox — see [src/subscriptions/paddle.config.ts](src/subscriptions/paddle.config.ts)): `PADDLE_API_KEY` (checkout verification, cancel/resume; without it sandbox trusts the client and production refuses) and `PADDLE_WEBHOOK_SECRET` (signature check for `POST /subscriptions/webhook`).
 
 Optional: `TRUST_PROXY=<hops>` (prod behind a reverse proxy — e.g. `1` for a single
 nginx). Makes `req.ip`, and therefore the rate limiter, see the real client IP.

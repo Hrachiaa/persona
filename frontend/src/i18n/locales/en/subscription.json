@@ -1,0 +1,73 @@
+{
+  "badge": "Persona Pro",
+  "paywall": {
+    "title": "The conversation is just getting started",
+    "subtitle": "You've used your {{limit}} free messages. Go Pro and talk to the AI that knows you — as much as you want.",
+    "messageSaved": "Your message isn't lost — it will send itself right after you upgrade."
+  },
+  "benefits": {
+    "unlimited": "Unlimited messages in every chat",
+    "insight": "Dig deeper into your portrait and compatibility",
+    "cancel": "Cancel anytime — no questions asked"
+  },
+  "plans": {
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "perWeek": "week",
+    "perMonth": "month",
+    "perWeekShort": "wk",
+    "perMonthShort": "mo",
+    "trialBadge": "{{days}} days free",
+    "saveBadge": "Save 50%",
+    "weeklyNote": "then {{price}}/{{period}}, cancel anytime",
+    "monthlyNote": "billed monthly, cancel anytime"
+  },
+  "cta": {
+    "trial": "Start {{days}}-day free trial",
+    "subscribe": "Get Pro — {{price}}/{{period}}",
+    "opening": "Opening secure checkout…",
+    "confirming": "Confirming your subscription…"
+  },
+  "success": {
+    "title": "You're Pro now",
+    "body": "Unlimited conversations unlocked.",
+    "chat": "Sending your message…"
+  },
+  "syncError": {
+    "title": "Payment received",
+    "body": "We're still confirming it with Paddle — this can take a few seconds.",
+    "retry": "Check again"
+  },
+  "finePrint": "Secure payments by Paddle · Cancel anytime in your profile",
+  "errors": {
+    "checkout": "Couldn't open the checkout. Please try again.",
+    "config": "Couldn't load the plans. Please try again."
+  },
+  "profile": {
+    "row": "Persona Pro",
+    "section": "Membership",
+    "statusFree": "Free",
+    "statusTrial": "Trial",
+    "statusActive": "Active",
+    "statusCancelling": "Ends soon",
+    "statusPastDue": "Payment issue",
+    "statusPaused": "Paused",
+    "freeTitle": "Unlock the full conversation",
+    "freeSubtitle": "Reflect with an AI trained in psychology — as much as you want.",
+    "planWeekly": "Pro · Weekly",
+    "planMonthly": "Pro · Monthly",
+    "renewsOn": "Renews on {{date}}",
+    "endsOn": "Active until {{date}}",
+    "trialUntil": "Trial — first charge on {{date}}",
+    "pastDueNote": "We couldn't charge your payment method. Paddle will retry automatically.",
+    "cancelBtn": "Cancel subscription",
+    "resumeBtn": "Keep my subscription",
+    "cancelTitle": "Cancel Pro?",
+    "cancelBody": "Pro stays with you until {{date}}. After that, chats return to the free limit.",
+    "cancelConfirm": "Cancel it",
+    "cancelled": "Subscription cancelled — Pro stays until {{date}}.",
+    "resumed": "Welcome back — your subscription will keep renewing.",
+    "actionError": "Couldn't update the subscription. Please try again.",
+    "paddleNote": "Billing and receipts are handled securely by Paddle."
+  }
+}
