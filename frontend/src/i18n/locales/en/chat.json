@@ -1,11 +1,13 @@
 {
   "listTitle": "Chats",
-  "listSubtitle": "Your conversations with the AI",
-  "searchPlaceholder": "Search Chats",
+  "searchPlaceholder": "Search chats",
   "searchEmpty": "No chats match your search",
   "noMessages": "No messages yet",
   "emptyTitle": "No chats yet",
-  "emptyBody": "Start a conversation from your Portrait, a friend's Compatibility screen, or the + button below.",
+  "emptyBody": "Start a conversation about your portrait or your compatibility with a friend.",
+  "newChat": "New chat",
+  "selectTitle": "Pick a conversation",
+  "selectHint": "Open a chat on the left, or start a new one.",
   "startTitle": "Start a chat",
   "startPortrait": "About you",
   "startPortraitDesc": "Discuss your portrait",
@@ -17,12 +19,29 @@
   "portraitTitle": "About you",
   "compatTitle": "About {{name}}",
   "friendFallback": "your friend",
-  "allChats": "All chats",
   "inputPlaceholder": "Ask the AI…",
   "send": "Send",
+  "stop": "Stop generating",
+  "retry": "Retry",
+  "copy": "Copy",
+  "copied": "Copied",
+  "scrollLatest": "Scroll to latest",
   "hintPortrait": "Ask anything about yourself — your traits, patterns, what makes you tick.",
-  "disclaimer": "Persona is an AI for self-reflection, not mental-health care. In a crisis, please reach out to a professional.",
   "hintCompat": "Ask anything about your compatibility with {{name}}.",
+  "starters": {
+    "portrait": [
+      "What are my core strengths?",
+      "What holds me back in relationships?",
+      "How do I really handle stress?",
+      "What should I work on first?"
+    ],
+    "compat": [
+      "Where are we most alike?",
+      "Where could we clash?",
+      "How can we communicate better?"
+    ]
+  },
+  "disclaimer": "Persona is an AI for self-reflection, not mental-health care — it can make mistakes.",
   "deleteTitle": "Delete history?",
   "deleteBody": "This permanently erases the entire conversation in this chat. It can't be undone.",
   "deleteConfirm": "Delete",

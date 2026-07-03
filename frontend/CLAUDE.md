@@ -35,7 +35,7 @@ Navigation uses **`react-router-dom` v7** (`BrowserRouter` is mounted in [src/ma
 | `/onboarding` `/register` `/login` `/forgot-password` `/survey` | top-level screens |
 | `/tests` `/portrait` `/match` `/reads` `/chat` | Dashboard tabs (all render `Dashboard`) |
 | `/tests/:slug` · `/tests/:slug/result` | test runner / result (`:slug` is a friendly name — `logic`, `personality`, `values`, `attachment`, `stress`, `shadows`, … via `TYPE_SLUGS` in [tabs/Tests.jsx](src/pages/tabs/Tests.jsx), not the raw cuid) |
-| `/chat` · `/chat/:chatId` | AI chat: `/chat` is the chat list / empty state; `/chat/:chatId` is a conversation (immersive). Chats aren't created freely — opened from the "Discuss with AI" buttons on Portrait / Compatibility ([tabs/Chat.jsx](src/pages/tabs/Chat.jsx)). |
+| `/chat` · `/chat/:chatId` | AI chat: on mobile `/chat` is the full-screen list and `/chat/:chatId` a conversation (immersive, dashboard chrome hidden); on `lg+` both render a two-pane layout (chat list pane + conversation/empty state, sidebar stays). Chats aren't created freely — opened from the "Discuss with AI" buttons on Portrait / Compatibility or the "+" (gated until all tests done) ([tabs/Chat.jsx](src/pages/tabs/Chat.jsx)). |
 | `/profile` · `/profile/{edit,password,liked,history,subscription}` | Dashboard with the Profile overlay open (`subscription` = Persona Pro management, [pages/ProfileSubscription.jsx](src/pages/ProfileSubscription.jsx)) |
 | `*` | redirect to `/` |
 
