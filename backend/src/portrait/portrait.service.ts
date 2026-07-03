@@ -133,9 +133,11 @@ export class PortraitService {
         .filter((r): r is NonNullable<typeof r> => Boolean(r))
         .map((r) => ({ testType: r.testType, result: r.result as TestResultType }));
 
-      // All tests done → route the synthesis to the stronger model.
+      // Milestone routing: the FIRST portrait (one test — the hook) and the
+      // COMPLETE portrait (all tests — the payoff) can each use their own model.
       const complete = targetTests.length === TEST_ORDER.length;
-      const content = await this.aiService.interpretPortrait(ordered, { complete, lang });
+      const first = targetTests.length === 1;
+      const content = await this.aiService.interpretPortrait(ordered, { complete, first, lang });
       if (content) {
         await this.portraitRepository.upsert(userId, content, [...targetTests]);
       }

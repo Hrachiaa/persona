@@ -23,18 +23,26 @@ export class AiService {
 
   /**
    * Synthesizes a single cross-test "portrait" from several results, or `null`
-   * if nothing usable was passed in. When `complete` is set (every test in the
-   * battery is done), the synthesis is routed to a stronger model.
+   * if nothing usable was passed in. Model routing by milestone: the FIRST
+   * portrait (one test done — the hook moment) and the COMPLETE portrait (all
+   * tests done — the payoff) can each be routed to their own model via
+   * OPENROUTER_MODEL_FIRST / OPENROUTER_MODEL_COMPLETE; both fall back to
+   * OPENROUTER_MODEL when unset.
    */
   async interpretPortrait(
     results: { testType: string; result: TestResultType }[],
-    options: { complete?: boolean; lang?: string } = {},
+    options: { complete?: boolean; first?: boolean; lang?: string } = {},
   ): Promise<string | null> {
     if (!results.length) return null;
+    const model = options.complete
+      ? process.env.OPENROUTER_MODEL_COMPLETE
+      : options.first
+        ? process.env.OPENROUTER_MODEL_FIRST
+        : undefined;
     return this.complete(
       PORTRAIT_SYSTEM_PROMPT,
       buildPortraitUserPrompt(results, options.lang ?? 'en'),
-      options.complete ?? false,
+      model,
     );
   }
 
@@ -110,9 +118,10 @@ export class AiService {
   async *streamChat(
     systemPrompt: string,
     messages: { role: 'user' | 'assistant'; content: string }[],
+    options: { model?: string } = {},
   ): AsyncGenerator<string, void, unknown> {
     const client = await this.getClient();
-    const model = process.env.OPENROUTER_MODEL;
+    const model = options.model || process.env.OPENROUTER_MODEL;
     const maxTokens = Number(process.env.OPENROUTER_MAX_TOKENS);
 
     const stream = await client.chat.send({
@@ -134,7 +143,7 @@ export class AiService {
 
   /** Runs a completion and parses its body as JSON (defensively). */
   private async completeJson(systemPrompt: string, userPrompt: string): Promise<any> {
-    const raw = await this.complete(systemPrompt, userPrompt, false);
+    const raw = await this.complete(systemPrompt, userPrompt);
     return this.extractJson(raw);
   }
 
@@ -170,11 +179,11 @@ export class AiService {
     return out;
   }
 
-  private async complete(systemPrompt: string, userPrompt: string, complete: boolean): Promise<string> {
+  private async complete(systemPrompt: string, userPrompt: string, modelOverride?: string): Promise<string> {
     const client = await this.getClient();
-    // Full battery (all tests done) → the synthesis is the most valuable, so use
-    // the stronger model if one is configured; otherwise fall back to the default.
-    const model = (complete && process.env.OPENROUTER_MODEL_COMPLETE) || process.env.OPENROUTER_MODEL;
+    // Callers may route milestone syntheses to a specific model (see
+    // interpretPortrait); everything else runs on the default.
+    const model = modelOverride || process.env.OPENROUTER_MODEL;
     const maxTokens = Number(process.env.OPENROUTER_MAX_TOKENS);
 
     const completion = await client.chat.send({

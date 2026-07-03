@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   HiOutlineBolt,
   HiOutlineInformationCircle,
@@ -259,25 +259,33 @@ function confettiRand(seed) {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 }
 
-function ConfettiBurst({ count = 28 }) {
+/** Full-screen confetti rain from the top edge — the second, longer wave. */
+function ConfettiRain({ count = 26 }) {
   const pieces = Array.from({ length: count }, (_, i) => ({
     x: confettiRand(i * 7 + 1) * 100,
-    delay: confettiRand(i * 7 + 2) * 0.5,
-    dur: 1.8 + confettiRand(i * 7 + 3) * 1.2,
+    delay: 0.25 + confettiRand(i * 7 + 2) * 0.9,
+    dur: 2.1 + confettiRand(i * 7 + 3) * 1.4,
     size: 7 + confettiRand(i * 7 + 4) * 7,
-    rot: (confettiRand(i * 7 + 5) - 0.5) * 640,
-    drift: (confettiRand(i * 7 + 6) - 0.5) * 90,
+    rot: (confettiRand(i * 7 + 5) - 0.5) * 720,
+    drift: (confettiRand(i * 7 + 6) - 0.5) * 110,
     color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-    round: confettiRand(i * 7 + 7) > 0.6,
+    // three shapes: dot, square-ish chip, long streamer
+    shape: confettiRand(i * 7 + 7),
   }));
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
       {pieces.map((p, i) => (
         <motion.span
           key={i}
-          className={`absolute ${p.round ? 'rounded-full' : 'rounded-[2px]'}`}
-          style={{ left: `${p.x}%`, top: -18, width: p.size, height: p.size * (p.round ? 1 : 0.62), backgroundColor: p.color }}
-          initial={{ y: -24, x: 0, rotate: 0, opacity: 1 }}
+          className={`absolute ${p.shape > 0.7 ? 'rounded-full' : 'rounded-[2px]'}`}
+          style={{
+            left: `${p.x}%`,
+            top: -22,
+            width: p.shape < 0.25 ? p.size * 0.45 : p.size,
+            height: p.shape < 0.25 ? p.size * 1.9 : p.size * (p.shape > 0.7 ? 1 : 0.62),
+            backgroundColor: p.color,
+          }}
+          initial={{ y: -26, x: 0, rotate: 0, opacity: 1 }}
           animate={{ y: '108vh', x: p.drift, rotate: p.rot, opacity: [1, 1, 0.9, 0] }}
           transition={{ duration: p.dur, delay: p.delay, ease: [0.3, 0.35, 0.6, 0.95] }}
         />
@@ -286,82 +294,237 @@ function ConfettiBurst({ count = 28 }) {
   );
 }
 
+/**
+ * The first wave: pieces exploding radially out of the sigil tile, arcing up and
+ * then falling — rendered inside the icon's box so they originate from it.
+ */
+function RadialBurst({ count = 16 }) {
+  const pieces = Array.from({ length: count }, (_, i) => {
+    const angle = (i / count) * Math.PI * 2 + confettiRand(i * 5 + 1) * 0.6;
+    const dist = 90 + confettiRand(i * 5 + 2) * 150;
+    return {
+      dx: Math.cos(angle) * dist,
+      up: -(40 + confettiRand(i * 5 + 3) * 120),
+      down: 240 + confettiRand(i * 5 + 4) * 320,
+      size: 6 + confettiRand(i * 5 + 5) * 6,
+      rot: (confettiRand(i * 5 + 6) - 0.5) * 620,
+      dur: 1.25 + confettiRand(i * 5 + 7) * 0.6,
+      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+      round: confettiRand(i * 5 + 8) > 0.5,
+    };
+  });
+  return (
+    <div className="pointer-events-none absolute left-1/2 top-1/2" aria-hidden="true">
+      {pieces.map((p, i) => (
+        <motion.span
+          key={i}
+          className={`absolute ${p.round ? 'rounded-full' : 'rounded-[2px]'}`}
+          style={{ width: p.size, height: p.size * (p.round ? 1 : 0.65), backgroundColor: p.color }}
+          initial={{ x: 0, y: 0, rotate: 0, opacity: 0 }}
+          animate={{
+            x: [0, p.dx * 0.72, p.dx],
+            y: [0, p.up, p.down],
+            rotate: p.rot,
+            opacity: [0, 1, 1, 0],
+          }}
+          transition={{ duration: p.dur, delay: 0.12, ease: ['easeOut', 'easeIn'], times: [0, 0.32, 1] }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Little stars popping around the sigil, Duolingo-style. */
+const SPARKLES = [
+  { x: -50, y: -34, delay: 0.42, size: 17, color: '#FDBA74' },
+  { x: 54, y: -42, delay: 0.55, size: 13, color: '#D8B4FE' },
+  { x: -62, y: 26, delay: 0.68, size: 12, color: '#BEF264' },
+  { x: 52, y: 38, delay: 0.5, size: 15, color: '#93C5FD' },
+  { x: 2, y: -66, delay: 0.8, size: 11, color: '#FBCFE8' },
+];
+
+function IconSparkles() {
+  return (
+    <div className="pointer-events-none absolute left-1/2 top-1/2" aria-hidden="true">
+      {SPARKLES.map((s, i) => (
+        <motion.span
+          key={i}
+          className="absolute leading-none"
+          style={{ fontSize: s.size, color: s.color, left: s.x, top: s.y }}
+          initial={{ scale: 0, rotate: -30, opacity: 0 }}
+          animate={{ scale: [0, 1.25, 1, 0], rotate: 25, opacity: [0, 1, 1, 0] }}
+          transition={{ duration: 1.15, delay: s.delay, times: [0, 0.35, 0.7, 1], ease: 'easeOut' }}
+        >
+          ✦
+        </motion.span>
+      ))}
+    </div>
+  );
+}
+
+/** Counts prevPct → pct in sync with the bar fill (starts after `delayMs`). */
+function useDelayedCountUp(from, to, delayMs, durMs) {
+  const [v, setV] = useState(from);
+  useEffect(() => {
+    let raf;
+    const t0 = performance.now() + delayMs;
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+    const tick = (now) => {
+      const t = Math.min(1, Math.max(0, (now - t0) / durMs));
+      setV(from + (to - from) * easeOutCubic(t));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [from, to, delayMs, durMs]);
+  return Math.round(v);
+}
+
 function FragmentCelebrationScreen({ test, meta, partsCompleted, partCount, onContinue, onExit }) {
   const { t } = useTranslation('tests');
+  const reduceMotion = useReducedMotion();
   const Icon = meta.icon;
   const pct = Math.round((partsCompleted / partCount) * 100);
   const prevPct = Math.round(((partsCompleted - 1) / partCount) * 100);
 
+  // Bar fill starts at 0.8s and runs 0.9s; the number counts up in lockstep and
+  // "pops" when it lands.
+  const shownPct = useDelayedCountUp(prevPct, pct, reduceMotion ? 0 : 800, reduceMotion ? 0 : 900);
+
+  // The title rotates so back-to-back parts don't feel copy-pasted; the break
+  // before the final part gets its own "final stretch" line.
+  const titles = t('celebrate.titles', { returnObjects: true });
+  const isFinalBreak = partsCompleted === partCount - 1;
+  const title = isFinalBreak
+    ? t('celebrate.titleFinal')
+    : titles[(partsCompleted - 1) % titles.length];
+
+  // A soft double-tap of haptics on devices that support it.
+  useEffect(() => {
+    try { navigator.vibrate?.([14, 70, 20]); } catch { /* unsupported — fine */ }
+  }, []);
+
+  // Per-character cascade for the headline (skipped under reduced motion).
+  const chars = Array.from(title);
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative min-h-dvh">
-      <ConfettiBurst />
+      {!reduceMotion && <ConfettiRain />}
 
       <div className="px-6 mx-auto w-full max-w-md min-h-dvh flex flex-col justify-center py-12">
         <div className="text-center mb-9">
-          {/* Sigil tile pops in; a ring of its color bursts outward behind it. */}
+          {/* Sigil tile: color glow behind, spring pop with overshoot, a bursting
+              ring, radial confetti out of the tile and stars popping around it. */}
           <div className="relative w-24 h-24 mx-auto mb-7">
+            <div
+              aria-hidden="true"
+              className={`absolute -inset-10 rounded-full ${meta.color} opacity-40 blur-2xl`}
+            />
             <motion.span
               className={`absolute inset-0 rounded-[2rem] ${meta.color}`}
               initial={{ scale: 0.9, opacity: 0.75 }}
-              animate={{ scale: 2, opacity: 0 }}
-              transition={{ duration: 0.9, delay: 0.28, ease: 'easeOut' }}
+              animate={{ scale: 2.1, opacity: 0 }}
+              transition={{ duration: 0.9, delay: 0.26, ease: 'easeOut' }}
+            />
+            <motion.span
+              className={`absolute inset-0 rounded-[2rem] border-2 ${meta.color.replace('bg-', 'border-')}`}
+              initial={{ scale: 1, opacity: 0.9 }}
+              animate={{ scale: 2.7, opacity: 0 }}
+              transition={{ duration: 1.15, delay: 0.38, ease: 'easeOut' }}
             />
             <motion.div
-              className={`relative w-24 h-24 ${meta.color} rounded-[2rem] flex items-center justify-center`}
-              initial={{ scale: 0.3, rotate: -14 }}
+              className={`relative w-24 h-24 ${meta.color} rounded-[2rem] flex items-center justify-center shadow-warm-lg`}
+              initial={reduceMotion ? { scale: 1 } : { scale: 0.2, rotate: -18 }}
               animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 15, delay: 0.05 }}
+              transition={{ type: 'spring', stiffness: 240, damping: 12, delay: 0.05 }}
             >
-              <Icon className={`w-12 h-12 ${meta.iconColor}`} />
+              <motion.span
+                initial={reduceMotion ? {} : { scale: 0.6 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 11, delay: 0.22 }}
+                className="inline-flex"
+              >
+                <Icon className={`w-12 h-12 ${meta.iconColor}`} />
+              </motion.span>
             </motion.div>
+            {!reduceMotion && <RadialBurst />}
+            {!reduceMotion && <IconSparkles />}
           </div>
 
-          <motion.h2
-            className="font-display text-4xl font-semibold text-persona-dark mb-3"
-            initial={{ opacity: 0, y: 14, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.2 }}
-          >
-            {t('celebrate.title')}
-          </motion.h2>
+          {/* Headline — characters cascade in on springs. */}
+          <h2 className="font-display text-4xl font-semibold text-persona-dark mb-3" aria-label={title}>
+            {reduceMotion ? (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>{title}</motion.span>
+            ) : (
+              chars.map((ch, i) => (
+                <motion.span
+                  key={`${ch}-${i}`}
+                  aria-hidden="true"
+                  className="inline-block"
+                  initial={{ opacity: 0, y: 22, scale: 0.6, rotate: -6 }}
+                  animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 16, delay: 0.24 + i * 0.032 }}
+                >
+                  {ch === ' ' ? ' ' : ch}
+                </motion.span>
+              ))
+            )}
+          </h2>
           <motion.p
             className="text-persona-muted leading-relaxed max-w-prose mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
           >
             {t('celebrate.subtitle')}
           </motion.p>
         </div>
 
-        {/* Whole-test progress — one bar filling further, not "parts" bookkeeping. */}
+        {/* Whole-test progress — one bar filling further, not "parts" bookkeeping.
+            The number counts up with the fill and pops on landing; a shine sweeps
+            the filled bar right after. */}
         <motion.div
           className="surface-warm rounded-3xl p-5 mb-9"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.62, type: 'spring', stiffness: 260, damping: 24 }}
         >
           <div className="flex items-baseline justify-between mb-2.5">
             <span className="text-sm font-medium text-persona-dark">
               {t(`names.${test.testType}`, { defaultValue: test.testName })}
             </span>
-            <span className="text-sm font-semibold text-persona-dark tabular">{pct}%</span>
+            <motion.span
+              className="text-sm font-semibold text-persona-dark tabular"
+              animate={reduceMotion ? {} : { scale: [1, 1, 1.35, 1] }}
+              transition={{ duration: 2.05, times: [0, 0.83, 0.92, 1] }}
+            >
+              {shownPct}%
+            </motion.span>
           </div>
           <div className="relative h-2.5 bg-persona-line/60 rounded-full overflow-hidden">
             <motion.div
-              className="absolute inset-y-0 left-0 bg-persona-accent-peach rounded-full"
-              initial={{ width: `${prevPct}%` }}
+              className="absolute inset-y-0 left-0 bg-persona-accent-peach rounded-full overflow-hidden"
+              initial={{ width: `${reduceMotion ? pct : prevPct}%` }}
               animate={{ width: `${pct}%` }}
-              transition={{ duration: 0.9, delay: 0.75, ease: 'easeOut' }}
-            />
+              transition={{ duration: reduceMotion ? 0 : 0.9, delay: reduceMotion ? 0 : 0.8, ease: 'easeOut' }}
+            >
+              {!reduceMotion && (
+                <motion.span
+                  className="absolute inset-y-0 w-10 bg-gradient-to-r from-transparent via-white/70 to-transparent"
+                  initial={{ left: '-3rem' }}
+                  animate={{ left: '110%' }}
+                  transition={{ duration: 0.7, delay: 1.75, ease: 'easeInOut' }}
+                />
+              )}
+            </motion.div>
           </div>
         </motion.div>
 
         <motion.div
           className="space-y-3"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.65 }}
+          transition={{ delay: 0.75, type: 'spring', stiffness: 260, damping: 24 }}
         >
           <motion.button onClick={onContinue} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
             {t('celebrate.continue')}

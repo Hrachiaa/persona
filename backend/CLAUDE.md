@@ -59,7 +59,7 @@ Feature-based, under [src/](src/):
 - [src/recommendations/](src/recommendations/) — the film/book swipe queue: LLM batch generation + catalog enrichment ([catalog.service.ts](src/recommendations/catalog.service.ts): TMDB / Google Books / Open Library)
 - [src/chat/](src/chat/) — AI chats (portrait & compatibility kinds), replies stream over SSE; only the last `CHAT_HISTORY_WINDOW` messages go into the model prompt. Sends are gated by `SubscriptionsService.assertCanSendMessage` — past `FREE_MESSAGE_LIMIT` (2, global across chats) a send returns **402 `SUBSCRIPTION_REQUIRED`** before anything streams or persists
 - [src/subscriptions/](src/subscriptions/) — Persona Pro (Paddle Billing): `GET config`/`GET me`, `POST sync` (confirms a finished checkout — verifies the transaction via the Paddle API when `PADDLE_API_KEY` is set; **sandbox without a key trusts the client**, production refuses), `POST cancel`/`resume` (scheduled change at period end), and the signature-verified `POST webhook` (HMAC over the raw body — `main.ts` boots with `rawBody: true`). Entitlement = status TRIALING/ACTIVE/PAST_DUE, with a lazy re-fetch from Paddle when the paid period lapses (covers no-webhook local setups)
-- [src/ai/](src/ai/) — `ai.service.ts` (OpenRouter client, completions + streaming) and all prompt builders under `prompts/`
+- [src/ai/](src/ai/) — `ai.service.ts` (OpenRouter client, completions + streaming) and all prompt builders under `prompts/`. Model routing: `OPENROUTER_MODEL` everywhere, except the first-test portrait (`OPENROUTER_MODEL_FIRST`), the all-tests portrait (`OPENROUTER_MODEL_COMPLETE`) and chat replies within the free allowance (`OPENROUTER_MODEL_FREE`) — each falls back to `OPENROUTER_MODEL` when unset
 - [src/mail/](src/mail/) — `mail.service`, `otp-code.repository.ts` (interface) + `otp-code.prisma.repository.ts` (implementation), Handlebars templates, OTP signing
 - [src/common/](src/common/) — `single-flight.ts` (in-process dedup of concurrent generations), `user-throttler.guard.ts` (per-user rate limit for LLM routes), `security.ts` (`BCRYPT_SALT_ROUNDS`)
 - [src/i18n/](src/i18n/) — `translate.ts` (`t()`/`getLang()`) + `en`/`ru` dictionaries for errors and mail
@@ -100,6 +100,7 @@ EMAIL_USER  EMAIL_PASSWORD
 GOOGLE_CLIENT_ID  GOOGLE_CLIENT_SECRET  GOOGLE_CALLBACK_URL
 FRONTEND_URL
 OPENROUTER_API_KEY  OPENROUTER_MODEL  OPENROUTER_MODEL_COMPLETE  OPENROUTER_MAX_TOKENS
+OPENROUTER_MODEL_FIRST  OPENROUTER_MODEL_FREE
 TMDB_API_KEY  GOOGLE_BOOKS_API_KEY
 PADDLE_ENV  PADDLE_CLIENT_TOKEN  PADDLE_PRICE_WEEKLY  PADDLE_PRICE_MONTHLY
 ```

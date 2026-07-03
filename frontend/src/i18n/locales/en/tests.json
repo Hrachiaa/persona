@@ -22,10 +22,15 @@
     "progress": "Part {{part}} of {{parts}} · question {{n}} of {{total}}"
   },
   "celebrate": {
-    "title": "Nice work!",
     "subtitle": "Answers saved — your portrait just got sharper.",
     "continue": "Continue",
-    "menu": "Back to menu"
+    "menu": "Back to menu",
+    "titles": [
+      "Nice work!",
+      "Keep it up!",
+      "On a roll!"
+    ],
+    "titleFinal": "Final stretch!"
   },
   "resume": {
     "title": "Continue where you left off?",

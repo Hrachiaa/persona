@@ -2,8 +2,9 @@
   "badge": "Persona Pro",
   "paywall": {
     "title": "The conversation is just getting started",
-    "subtitle": "You've used your {{limit}} free messages. Go Pro and talk to the AI that knows you — as much as you want.",
-    "messageSaved": "Your message isn't lost — it will send itself right after you upgrade."
+    "messageSaved": "Your message isn't lost — it will send itself right after you upgrade.",
+    "subtitle_one": "Your free message was just the warm-up. Go Pro and talk to the AI that knows you — as much as you want.",
+    "subtitle_other": "Your {{count}} free messages were just the warm-up. Go Pro and talk to the AI that knows you — as much as you want."
   },
   "benefits": {
     "unlimited": "Unlimited messages in every chat",

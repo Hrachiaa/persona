@@ -90,11 +90,15 @@ export class SubscriptionsService {
    * the free allowance is spent and there is no live subscription — the
    * frontend catches exactly that shape to raise the paywall and roll the
    * message back.
+   *
+   * Returns whether the sender is entitled via a live subscription: `false`
+   * means this message rides the free allowance — the chat routes those to
+   * OPENROUTER_MODEL_FREE so the trial impression is configurable.
    */
-  async assertCanSendMessage(userId: string): Promise<void> {
-    if (this.isEntitled(await this.freshSubscription(userId))) return;
+  async assertCanSendMessage(userId: string): Promise<boolean> {
+    if (this.isEntitled(await this.freshSubscription(userId))) return true;
     const used = await this.repository.countUserMessages(userId);
-    if (used < FREE_MESSAGE_LIMIT) return;
+    if (used < FREE_MESSAGE_LIMIT) return false;
     throw new HttpException(
       {
         statusCode: HttpStatus.PAYMENT_REQUIRED,

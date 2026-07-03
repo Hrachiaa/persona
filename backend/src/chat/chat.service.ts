@@ -86,7 +86,10 @@ export class ChatService {
     const chat = await this.requireOwnedChat(userId, chatId);
     // The Pro paywall: past the free allowance this throws 402 before anything
     // is persisted or streamed, so the client can roll the message back cleanly.
-    await this.subscriptionsService.assertCanSendMessage(userId);
+    // `entitled: false` = a free-allowance message → route it to the (usually
+    // stronger) trial model so the first impression is configurable via env.
+    const entitled = await this.subscriptionsService.assertCanSendMessage(userId);
+    const freeModel = !entitled ? process.env.OPENROUTER_MODEL_FREE : undefined;
     const lang = getLang();
     const systemPrompt = await this.buildSystemPrompt(chat, lang);
     const history = await this.chatRepository.getRecentMessages(chat.id, CHAT_HISTORY_WINDOW);
@@ -109,7 +112,7 @@ export class ChatService {
 
     let reply = '';
     try {
-      for await (const delta of this.aiService.streamChat(systemPrompt, messages)) {
+      for await (const delta of this.aiService.streamChat(systemPrompt, messages, { model: freeModel })) {
         if (aborted) break;
         reply += delta;
         res.write(`data: ${JSON.stringify({ delta })}\n\n`);
