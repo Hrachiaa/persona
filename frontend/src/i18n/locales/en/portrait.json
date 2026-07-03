@@ -10,7 +10,7 @@
   "complete": "Drawn from all {{total}} tests — Persona has seen every side of you.",
   "incomplete1": "This portrait is built from {{count}} of {{total}} tests. With the rest still missing, Persona only knows you from one side and has to guess at the others — so it stays on the surface, short of the real depth of who you are.",
   "incomplete2": "The more tests you take, the more precisely your portrait describes the real you.",
-  "takeMore": "Take more tests",
+  "takeMore": "Take the next test",
   "swipeDown": "Swipe down for your portrait",
   "scrollDown": "Scroll down for your portrait",
   "refreshing": "Refreshing your portrait with your latest test…",

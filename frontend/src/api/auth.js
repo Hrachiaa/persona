@@ -1,8 +1,11 @@
 import client from './client';
 
 export const authApi = {
-  signup: (email, password) =>
-    client.post('/auth/signup', { email, password }).then((r) => r.data),
+  // `language` seeds the new account's UI language from the pre-signup choice
+  // (browser / survey toggle), so the first-run screens don't flip to the
+  // server default the moment /auth/me lands.
+  signup: (email, password, language) =>
+    client.post('/auth/signup', { email, password, ...(language ? { language } : {}) }).then((r) => r.data),
 
   login: (email, password) =>
     client.post('/auth/login', { email, password }).then((r) => r.data),

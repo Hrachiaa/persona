@@ -65,7 +65,7 @@ const LS = {
 };
 
 // ─── Screens ─────────────────────────────────────────────────────────────────
-const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', RESULT: 'result' };
+const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', PART_DONE: 'partDone', RESULT: 'result' };
 
 // ─── Bell Curve component ────────────────────────────────────────────────────
 
@@ -241,6 +241,58 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
   );
 }
 
+// ─── Part-complete break screen ──────────────────────────────────────────────
+// Shown between the parts of a chunked test. Confirms the just-committed part is
+// saved, shows how far along the whole test is, and offers to keep going right
+// away — returning to the constellation is the explicit alternative, not the
+// silent default it used to be.
+function PartDoneScreen({ meta, partsCompleted, partCount, onContinue, onExit }) {
+  const { t } = useTranslation('tests');
+  const Icon = meta.icon;
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-8 pt-6">
+      <div className="px-6 pt-2 mx-auto w-full max-w-md min-h-[80dvh] flex flex-col justify-center">
+        <div className="text-center mb-8">
+          <motion.div
+            className={`w-20 h-20 ${meta.color} rounded-[1.5rem] flex items-center justify-center mx-auto mb-6`}
+            initial={{ scale: 0.7 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 16 }}
+          >
+            <Icon className={`w-10 h-10 ${meta.iconColor}`} />
+          </motion.div>
+          <h2 className="font-display text-2xl font-semibold text-persona-dark mb-2">
+            {t('partDone.title', { part: partsCompleted, parts: partCount })}
+          </h2>
+          <p className="text-persona-muted text-sm leading-relaxed max-w-prose mx-auto">
+            {t('partDone.subtitle', { count: partCount - partsCompleted })}
+          </p>
+        </div>
+
+        {/* One pill per part, filled up to the just-committed one. */}
+        <div className="flex items-center justify-center gap-2 mb-8" aria-hidden="true">
+          {Array.from({ length: partCount }).map((_, i) => (
+            <motion.span
+              key={i}
+              className={`h-2 rounded-full ${i < partsCompleted ? 'bg-persona-dark' : 'bg-persona-line'}`}
+              initial={{ width: 20, opacity: 0 }}
+              animate={{ width: i < partsCompleted ? 36 : 20, opacity: 1 }}
+              transition={{ delay: 0.15 + i * 0.06 }}
+            />
+          ))}
+        </div>
+
+        <div className="space-y-3">
+          <motion.button onClick={onContinue} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
+            {t('partDone.continue', { part: partsCompleted + 1, parts: partCount })}
+          </motion.button>
+          <motion.button onClick={onExit} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
+            {t('partDone.later')}
+          </motion.button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Questions Screen ────────────────────────────────────────────────────────
 // Two modes:
 //  • Single-pass (default): the whole questionnaire in one go, answers persisted
@@ -251,7 +303,7 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
 //    progress — no localStorage) and the parent returns to the Portrait, where the
 //    just-filled segment animates. `partsCompleted` (from the backend) decides
 //    which part is served next.
-function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete, onFragmentComplete }) {
+function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete, onFragmentComplete, onExit }) {
   const { t } = useTranslation('tests');
   const Icon = meta.icon;
   const isIQ = test.testType === 'iq';
@@ -338,10 +390,36 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
   const frontier = Math.min(answeredCount, partLength - 1);
   const progress = ((qi + 1) / partLength) * 100;
 
+  // Desktop keyboard flow: 1–9 answers, ←/→ moves between answered questions.
+  // Re-attached every render on purpose — the handler closes over the current
+  // question/frontier, and a stale closure here would commit the wrong answer.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || submitting) return;
+      const tag = e.target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      const n = parseInt(e.key, 10);
+      if (n >= 1 && n <= currentQ.options.length) {
+        e.preventDefault();
+        handleAnswer(qi, currentQ.id, currentQ.options[n - 1].id);
+      } else if (e.key === 'ArrowLeft') {
+        setQi((p) => Math.max(0, p - 1));
+      } else if (e.key === 'ArrowRight') {
+        setQi((p) => Math.min(frontier, p + 1));
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
+      {/* Always a way out: progress is safe to leave behind — a chunked part's
+          answers persist under its own key and single-pass runs get the resume
+          prompt — so exiting needs no confirmation. */}
+      <ImmersiveTopBar onBack={onExit} />
       {/* Width-capped so the answer buttons stay scannable on desktop. */}
-      <div className="px-6 pt-8 mx-auto w-full max-w-2xl">
+      <div className="px-6 pt-2 mx-auto w-full max-w-2xl">
       {/* Title */}
       <div className="mb-4">
         <h3 className="font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
@@ -409,7 +487,14 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
                     opt.text
                   ) : (
                     <>
-                      <span className="text-persona-muted mr-3 tabular">{String.fromCharCode(65 + i)}.</span>
+                      {/* Scale answers aren't a quiz — no letter labels. The number is a
+                          desktop-only hint mirroring the 1–9 hotkeys. */}
+                      <span
+                        aria-hidden="true"
+                        className="hidden lg:inline-flex w-5 h-5 mr-3 -mt-0.5 rounded-md border border-persona-line text-persona-muted text-[11px] font-medium items-center justify-center tabular align-middle"
+                      >
+                        {i + 1}
+                      </span>
                       {opt.text}
                     </>
                   )}
@@ -458,6 +543,11 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
           </motion.button>
         )}
       </div>
+
+      {/* Hotkey hint — pointer-equipped screens only */}
+      <p className="hidden lg:block text-center text-xs text-persona-muted/70 mt-6">
+        {t('questions.keyHint', { n: currentQ.options.length })}
+      </p>
       </div>
     </motion.div>
   );
@@ -698,6 +788,9 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // The resume prompt is a transient dialog (no URL of its own); once the user
   // picks continue/restart we drop straight into the questions at /tests/:slug.
   const [resumeDecided, setResumeDecided] = useState(false);
+  // A chunked test just committed a (non-final) part: { partsCompleted, partCount }.
+  // Drives the between-parts break screen; transient like the resume prompt.
+  const [partDone, setPartDone] = useState(null);
   const loadedQuestionsFor = useRef(null);
 
   // The URL is the source of truth: /tests → list, /tests/:slug → runner,
@@ -712,12 +805,14 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   const selectedTest = routeSlug ? tests.find((t) => testSlug(t) === routeSlug) : null;
   const meta = selectedTest ? (TEST_META[selectedTest.testType] || TEST_META.iq) : null;
 
-  // Derive the current screen from the URL (+ the resume prompt's local decision).
+  // Derive the current screen from the URL (+ the transient resume / part-break states).
   let screen;
   if (!routeSlug) {
     screen = SCREEN.LIST;
   } else if (isResultRoute) {
     screen = SCREEN.RESULT;
+  } else if (partDone) {
+    screen = SCREEN.PART_DONE;
   } else {
     const saved = selectedTest ? LS.get(selectedTest.id, 'answers') : null;
     screen = saved && saved.length > 0 && !resumeDecided ? SCREEN.RESUME : SCREEN.QUESTIONS;
@@ -735,8 +830,9 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   // A fresh resume decision whenever we (re)enter a test's runner — either a new
   // test in the URL, or coming back from that test's result page (which keeps the
-  // same routeSlug, so we also key on isResultRoute).
-  useEffect(() => { setResumeDecided(false); }, [routeSlug, isResultRoute]);
+  // same routeSlug, so we also key on isResultRoute). The part-break screen is
+  // just as transient — it never survives leaving the runner.
+  useEffect(() => { setResumeDecided(false); setPartDone(null); }, [routeSlug, isResultRoute]);
 
   // Fetch test list
   const fetchTests = useCallback(async () => {
@@ -803,15 +899,23 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   // A chunked test just committed one fragment to the backend. The cache bust makes
   // the Portrait refetch the new part count. The final fragment goes straight to the
-  // result (like a full submit); earlier fragments return to the Portrait and let
-  // the just-filled progress segment animate.
+  // result (like a full submit); earlier fragments show the between-parts break
+  // screen — continue right away, or return to the Portrait and let the just-filled
+  // progress segment animate.
   const handleFragmentComplete = (resp) => {
     invalidateTestsCache();
     if (resp.completed) {
       handleComplete(resp.result);
-    } else {
-      navigate('/portrait', { state: { celebrate: { type: selectedTest.testType, parts: resp.partsCompleted } } });
+      return;
     }
+    // Our own list copy must reflect the new part count too — "continue now"
+    // serves the next part from selectedTest.partsCompleted.
+    setTests((prev) =>
+      prev.map((tst) => (tst.id === selectedTest.id ? { ...tst, partsCompleted: resp.partsCompleted } : tst)),
+    );
+    const partSize = PART_SIZE[selectedTest.testType] || 1;
+    const partCount = Math.max(1, Math.ceil((selectedTest.totalQuestions || 0) / partSize));
+    setPartDone({ partsCompleted: resp.partsCompleted, partCount });
   };
 
   // Open the runner without wiping progress: if an earlier retake was left
@@ -858,6 +962,22 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     );
   }
 
+  if (screen === SCREEN.PART_DONE) {
+    return (
+      <PartDoneScreen
+        meta={meta}
+        partsCompleted={partDone.partsCompleted}
+        partCount={partDone.partCount}
+        onContinue={() => setPartDone(null)}
+        onExit={() => {
+          const celebrate = { type: selectedTest.testType, parts: partDone.partsCompleted };
+          setPartDone(null);
+          navigate('/portrait', { state: { celebrate } });
+        }}
+      />
+    );
+  }
+
   if (screen === SCREEN.QUESTIONS) {
     if (questionsLoading || questions.length === 0) {
       return (
@@ -868,12 +988,16 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     }
     return (
       <QuestionsScreen
+        // Keyed by part: continuing after a break must remount so the local
+        // answers/index state re-initializes for the next part's storage key.
+        key={`${selectedTest.id}-${selectedTest.partsCompleted ?? 0}`}
         test={selectedTest}
         meta={meta}
         questions={questions}
         partsCompleted={selectedTest.partsCompleted ?? 0}
         onComplete={handleComplete}
         onFragmentComplete={handleFragmentComplete}
+        onExit={handleBackToList}
       />
     );
   }

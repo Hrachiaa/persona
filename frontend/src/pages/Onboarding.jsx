@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiOutlineSparkles, HiOutlinePuzzlePiece, HiOutlineUserGroup, HiOutlineRocketLaunch } from 'react-icons/hi2';
+import { HiOutlineSparkles, HiOutlinePuzzlePiece, HiOutlineUserGroup, HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
 
 // Visual config only — copy lives in the `onboarding` namespace, keyed by index.
 const slides = [
   { icon: HiOutlineSparkles, color: 'bg-persona-accent-lavender' },
   { icon: HiOutlinePuzzlePiece, color: 'bg-persona-accent-yellow' },
   { icon: HiOutlineUserGroup, color: 'bg-persona-accent-pink' },
-  { icon: HiOutlineRocketLaunch, color: 'bg-persona-accent-lime' },
+  { icon: HiOutlineChatBubbleLeftRight, color: 'bg-persona-accent-lime' },
 ];
 
 const slideVariants = {

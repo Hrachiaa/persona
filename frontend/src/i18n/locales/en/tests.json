@@ -9,13 +9,24 @@
     "lockedHint": "Complete the earlier tests first to unlock this one.",
     "unavailable": "Unavailable",
     "minutes": "~{{n}} min",
+    "minutesPerPart": "~{{n}} min per part",
     "noTimeLimit": "No time limit",
     "questionsCount": "{{n}} questions",
+    "partsMeta_one": "{{count}} part · {{n}} questions",
+    "partsMeta_other": "{{count}} parts · {{n}} questions each",
     "viewResult": "View result",
-    "start": "Start test"
+    "start": "Start test",
+    "continuePart": "Continue · part {{part}} of {{parts}}"
   },
   "parts": {
-    "progress": "Approach {{part}} of {{parts}} · question {{n}} of {{total}}"
+    "progress": "Part {{part}} of {{parts}} · question {{n}} of {{total}}"
+  },
+  "partDone": {
+    "title": "Part {{part}} of {{parts}} done",
+    "subtitle_one": "Your answers are saved. One more part and this test reveals a new piece of your portrait.",
+    "subtitle_other": "Your answers are saved. {{count}} more parts and this test reveals a new piece of your portrait.",
+    "continue": "Continue · part {{part}} of {{parts}}",
+    "later": "Back to the constellation"
   },
   "resume": {
     "title": "Continue where you left off?",
@@ -29,7 +40,8 @@
     "next": "Next →",
     "submit": "Submit test",
     "submitting": "Submitting…",
-    "submitError": "Couldn't submit your answers — check your connection and try again."
+    "submitError": "Couldn't submit your answers — check your connection and try again.",
+    "keyHint": "Keys 1–{{n}} to answer · ←/→ to move between questions"
   },
   "iq": {
     "scoreTitleSelf": "Your IQ score",

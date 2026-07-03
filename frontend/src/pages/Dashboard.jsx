@@ -66,8 +66,10 @@ export default function Dashboard({ onLogout }) {
       case 'tests': return <Tests key="tests" onImmersiveChange={setImmersive} onOpenPortrait={() => navigate('/portrait')} />;
       case 'portrait': return <Portrait key="portrait" />;
       case 'match': return <Compatibility key="match" onImmersiveChange={setImmersive} />;
-      case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/portrait')} onImmersiveChange={setImmersive} />;
-      case 'chat': return <Chat key="chat" onImmersiveChange={setImmersive} onOpenTests={() => navigate('/portrait')} />;
+      // `openNext: true` makes the Portrait open the next test's card on arrival, so
+      // these CTAs land one tap away from actually starting a test.
+      case 'reads': return <Recommendations key="reads" onOpenTests={() => navigate('/portrait', { state: { openNext: true } })} onImmersiveChange={setImmersive} />;
+      case 'chat': return <Chat key="chat" onImmersiveChange={setImmersive} onOpenTests={() => navigate('/portrait', { state: { openNext: true } })} />;
       default: return <Portrait key="portrait" />;
     }
   };

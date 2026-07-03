@@ -5,11 +5,14 @@ import { AddProfileInfoDto } from "../auth/dtos/add-profile-info.dto";
 
 // Server-side shape for creating a user. `googleId` / `emailVerified` are never
 // taken from the HTTP body (see AuthDto) — only set here by the OAuth flow.
+// `language` seeds the UI language from the signup screen (validated by SignupDto);
+// omitted → the column default applies.
 export interface CreateUserData {
     email: string;
     password: string;
     googleId?: string;
     emailVerified?: boolean;
+    language?: string;
 }
 
 export interface UserRepositoryInterface {

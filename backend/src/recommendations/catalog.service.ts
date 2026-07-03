@@ -138,14 +138,40 @@ export class CatalogService {
   private async searchBookVolume(rec: RawRecommendation, langRestrict?: string): Promise<any> {
     const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
     const q = `intitle:${rec.title}${rec.author ? `+inauthor:${rec.author}` : ''}`;
-    const params = new URLSearchParams({ q, maxResults: '5', printType: 'books' });
+    const params = new URLSearchParams({ q, maxResults: '8', printType: 'books' });
     if (langRestrict) params.set('langRestrict', langRestrict);
     if (apiKey) params.set('key', apiKey);
 
     const data = await this.fetchJson(`https://www.googleapis.com/books/v1/volumes?${params}`);
     const items: any[] = Array.isArray(data?.items) ? data.items : [];
-    // prefer a volume that already carries a cover; otherwise the first match.
-    return items.find((v) => v.volumeInfo?.imageLinks) ?? items[0] ?? null;
+    return this.pickBookVolume(items, langRestrict);
+  }
+
+  /**
+   * Picks the best volume among the candidates. Google Books metadata for
+   * non-Latin languages is often romanized ("Prestuplenie i nakazanie"), which
+   * looks broken in a localized UI — so a title in the language's native script
+   * outweighs everything, then cover art, then having a description.
+   */
+  private pickBookVolume(items: any[], langRestrict?: string): any {
+    if (items.length === 0) return null;
+    const nativeScript = langRestrict === 'ru' ? /[А-Яа-яЁё]/ : null;
+    const score = (v: any): number => {
+      const info = v.volumeInfo ?? {};
+      let s = 0;
+      if (nativeScript?.test(info.title || '')) s += 4;
+      if (info.imageLinks) s += 2;
+      if (info.description) s += 1;
+      return s;
+    };
+    // Stable: on ties the API's own relevance order wins.
+    let best = items[0];
+    let bestScore = score(items[0]);
+    for (const v of items.slice(1)) {
+      const s = score(v);
+      if (s > bestScore) { best = v; bestScore = s; }
+    }
+    return best;
   }
 
   /** Open Library cover fallback when Google Books has no image for a book. */

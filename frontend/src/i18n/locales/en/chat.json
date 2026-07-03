@@ -49,7 +49,7 @@
   "openError": "Couldn't open the chat. Please try again.",
   "discuss": "Discuss with AI",
   "locked": {
-    "title": "Chat is locked",
+    "title": "Chat unlocks after the tests",
     "body": "Finish all tests to unlock AI chats about your portrait and your compatibility with friends.",
     "progress": "{{completed}} of {{required}} tests done",
     "firstTest": "Take your first test",

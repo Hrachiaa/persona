@@ -109,6 +109,18 @@
   }
 }
 
+/* Editorial long-form (the AI portrait / compatibility essay): a drop cap opens
+   the first paragraph. Fraunces to match the display face; float sized so it
+   spans roughly two text lines. */
+.portrait-prose > p:first-of-type::first-letter {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 3.05em;
+  line-height: 0.85;
+  float: left;
+  padding: 0.04em 0.12em 0 0;
+}
+
 /* Grain overlay — fixed full-viewport noise for warmth/texture */
 .grain::before {
   content: '';

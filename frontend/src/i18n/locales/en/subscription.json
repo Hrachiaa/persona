@@ -19,8 +19,8 @@
     "perMonthShort": "mo",
     "trialBadge": "{{days}} days free",
     "saveBadge": "Save 50%",
-    "weeklyNote": "then {{price}}/{{period}}, cancel anytime",
-    "monthlyNote": "billed monthly, cancel anytime"
+    "weeklyNote": "then {{price}}/{{period}}",
+    "monthlyNote": "billed monthly"
   },
   "cta": {
     "trial": "Start {{days}}-day free trial",
@@ -53,7 +53,7 @@
     "statusPastDue": "Payment issue",
     "statusPaused": "Paused",
     "freeTitle": "Unlock the full conversation",
-    "freeSubtitle": "Reflect with an AI trained in psychology — as much as you want.",
+    "freeSubtitle": "Reflect with an AI companion that knows your results — as much as you want.",
     "planWeekly": "Pro · Weekly",
     "planMonthly": "Pro · Monthly",
     "renewsOn": "Renews on {{date}}",

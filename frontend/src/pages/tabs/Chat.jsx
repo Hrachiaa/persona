@@ -28,6 +28,7 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import PaywallModal from '../../components/PaywallModal';
 import { showToast } from '../../components/Toast';
 import { TOTAL_TESTS, isTestCompleted } from '../../utils/constants';
+import { partialTestCredit } from './testParts';
 import { fetchTestsCached } from './testsCache';
 
 // ─── Shared bits ────────────────────────────────────────────────────────────────
@@ -748,6 +749,7 @@ function ChatListScreen({ chats, lock, activeId, onOpen, onNew, onOpenTests }) {
         ctaLabel={lock.completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
         completed={lock.completed}
         required={lock.required}
+        partial={lock.partial}
         onOpenTests={onOpenTests}
       />
     );
@@ -1052,7 +1054,11 @@ export default function Chat({ onImmersiveChange, onOpenTests }) {
       .then((tests) => {
         if (!active) return;
         const completed = (tests || []).filter(isTestCompleted).length;
-        setLock(completed >= TOTAL_TESTS ? false : { completed, required: TOTAL_TESTS });
+        setLock(
+          completed >= TOTAL_TESTS
+            ? false
+            : { completed, required: TOTAL_TESTS, partial: partialTestCredit(tests, isTestCompleted) },
+        );
       })
       .catch(() => active && setLock(false));
     return () => { active = false; };
@@ -1145,6 +1151,7 @@ export default function Chat({ onImmersiveChange, onOpenTests }) {
           ctaLabel={lock.completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
           completed={lock.completed}
           required={lock.required}
+          partial={lock.partial}
           onOpenTests={onOpenTests}
         />
       );

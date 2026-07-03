@@ -5,8 +5,13 @@ import { resetSessionCaches } from '../utils/sessionCaches';
 const AuthContext = createContext(null);
 
 // Apply a user's stored language preference to the UI (and remember it locally).
+// While the profile survey is still pending, the account's language is just the
+// server default — the locally chosen pre-login language keeps priority until
+// the survey persists a real choice (fixes the RU signup → EN survey flip).
 function applyUserLanguage(user) {
   const code = user?.language;
+  const profilePending = user && !(user.name && user.gender && user.birthDate);
+  if (profilePending && localStorage.getItem(LANG_KEY)) return;
   if (code && SUPPORTED_LANGUAGES.some((l) => l.code === code) && i18n.language !== code) {
     localStorage.setItem(LANG_KEY, code);
     i18n.changeLanguage(code);
@@ -59,7 +64,11 @@ export function AuthProvider({ children }) {
   const signup = useCallback(async (email, password) => {
     try {
       setError(null);
-      const data = await authApi.signup(email, password);
+      // Seed the account with the language the signup screen was shown in
+      // (only ever a supported code — the backend rejects anything else).
+      const uiLang = i18n.language?.split('-')[0];
+      const language = SUPPORTED_LANGUAGES.some((l) => l.code === uiLang) ? uiLang : undefined;
+      const data = await authApi.signup(email, password, language);
       persistAuth(data);
       // Fetch full profile after signup
       const me = await fetchMe();

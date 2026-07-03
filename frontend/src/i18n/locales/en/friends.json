@@ -4,7 +4,12 @@
     "requests": "Friend requests",
     "yourFriends": "Your friends",
     "add": "Add",
-    "empty": "No friends yet. Tap “Add friends” to get started."
+    "emptyTitle": "See how you match with friends",
+    "emptyBody": "Invite a friend — once you've both finished the tests, Persona reads your relationship properly.",
+    "emptyPerk1": "A compatibility essay built from all six tests",
+    "emptyPerk2": "Each other's test results",
+    "emptyPerk3": "An AI chat about your relationship with this exact person",
+    "emptyCta": "Invite a friend"
   },
   "add": {
     "label": "Add friends",

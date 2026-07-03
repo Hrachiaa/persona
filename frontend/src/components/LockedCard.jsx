@@ -3,9 +3,11 @@ import { HiOutlineSparkles } from 'react-icons/hi2';
 
 // The "finish all tests first" gate screen shared by the Chat and Reads tabs.
 // Fixed full-screen (the dashboard chrome floats over it); copy comes from the
-// caller's namespace so each tab keeps its own wording.
-export default function LockedCard({ title, body, progressLabel, ctaLabel, completed, required, onOpenTests }) {
-  const pct = Math.round((completed / required) * 100);
+// caller's namespace so each tab keeps its own wording. `partial` is fractional
+// credit for half-finished chunked tests (see partialTestCredit) — the bar honors
+// answered parts even though the label counts whole tests.
+export default function LockedCard({ title, body, progressLabel, ctaLabel, completed, required, partial = 0, onOpenTests }) {
+  const pct = Math.min(100, Math.round(((completed + partial) / required) * 100));
   return (
     <motion.div
       initial={{ opacity: 0 }}

@@ -16,3 +16,18 @@ export const PART_SIZE = {
   ecr: 18,      // Attachment  — 36  → 2 × 18
   pid: 25,      // Shadows     — 100 → 4 × 25
 };
+
+// Fractional credit for tests still in progress: a chunked test with 2 of 4 parts
+// committed contributes 0.5. The gate bars (chat / reads) add this to the count of
+// finished tests so half an hour of answering never reads as zero progress.
+// `isCompleted` is passed in (utils/constants.isTestCompleted) to keep this module
+// dependency-free for the runner.
+export function partialTestCredit(tests, isCompleted) {
+  return (tests || []).reduce((acc, test) => {
+    if (isCompleted(test)) return acc;
+    const size = PART_SIZE[test.testType];
+    if (!size || !test.partsCompleted || !test.totalQuestions) return acc;
+    const total = Math.ceil(test.totalQuestions / size);
+    return acc + Math.min(test.partsCompleted, total) / total;
+  }, 0);
+}

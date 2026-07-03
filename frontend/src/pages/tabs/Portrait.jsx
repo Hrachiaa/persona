@@ -397,12 +397,14 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
   const { t, i18n } = useTranslation('tests');
   const titleSize = i18n.language?.startsWith('ru') ? 'text-lg' : 'text-xl';
 
-  // For a chunked test the card describes one approach (e.g. ~5 min, 30 questions),
-  // not the whole test — the number of approaches is conveyed by the progress ring.
+  // A chunked test is taken in several short parts: say so up front ("4 parts of
+  // 30 questions"), price one sitting (~5 min), and — when some parts are already
+  // committed — resume where the user left off instead of pretending to start over.
   const chunk = PART_SIZE[type];
   const partCount = chunk && test?.totalQuestions != null ? Math.ceil(test.totalQuestions / chunk) : 1;
   const chunkMinutes = chunk && test?.duration > 0 ? Math.round(test.duration / partCount) : (test?.duration ?? 0);
   const chunkQuestions = chunk ? chunk : (test?.totalQuestions ?? null);
+  const partsDone = !completed && partCount > 1 ? Math.min(test?.partsCompleted ?? 0, partCount - 1) : 0;
 
   return (
     <motion.div
@@ -459,11 +461,15 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
                 <div className="flex flex-wrap items-center gap-2 mb-5">
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md">
                     <HiOutlineClock className="w-3.5 h-3.5" />
-                    {chunkMinutes > 0 ? t('card.minutes', { n: chunkMinutes }) : t('card.noTimeLimit')}
+                    {chunkMinutes > 0
+                      ? (partCount > 1 ? t('card.minutesPerPart', { n: chunkMinutes }) : t('card.minutes', { n: chunkMinutes }))
+                      : t('card.noTimeLimit')}
                   </span>
                   {chunkQuestions != null && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium text-persona-dark bg-persona-line/70 px-2.5 py-1 rounded-md tabular">
-                      {t('card.questionsCount', { n: chunkQuestions })}
+                      {partCount > 1
+                        ? t('card.partsMeta', { count: partCount, n: chunkQuestions })
+                        : t('card.questionsCount', { n: chunkQuestions })}
                     </span>
                   )}
                 </div>
@@ -478,7 +484,9 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
                     className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
                     whileTap={{ scale: 0.97 }}
                   >
-                    {t('card.start')}
+                    {partsDone > 0
+                      ? t('card.continuePart', { part: partsDone + 1, parts: partCount })
+                      : t('card.start')}
                   </motion.button>
                 )}
               </>
@@ -504,10 +512,14 @@ export default function Portrait() {
   // Captured once (useState initializer) so the just-filled progress segment plays
   // its fill animation a single time, even as the constellation re-renders.
   const [celebrate] = useState(() => location.state?.celebrate);
-  // …and stripped from the history entry, so refreshing the page (which restores
-  // location.state) doesn't replay the celebration.
+  // Set when another tab's "take a test" CTA sent the user here: once the test list
+  // is known, the next test's card opens by itself instead of leaving the user to
+  // guess that the orbs are tappable.
+  const [pendingOpenNext, setPendingOpenNext] = useState(() => !!location.state?.openNext);
+  // …both stripped from the history entry, so refreshing the page (which restores
+  // location.state) doesn't replay the celebration / re-open the card.
   useEffect(() => {
-    if (location.state?.celebrate) navigate(location.pathname, { replace: true, state: null });
+    if (location.state?.celebrate || location.state?.openNext) navigate(location.pathname, { replace: true, state: null });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // Scrolls the two-page pager back to page 1 (the constellation), where tests are
@@ -617,6 +629,20 @@ export default function Portrait() {
     selectedIdx > 0 && !selectedCompleted &&
     !SIGIL_LAYOUT.slice(0, selectedIdx).every((s) => completedSet.has(s.type));
 
+  // Every "take a/your next test" CTA lands here: scroll home and open the next
+  // test's card, so the button is one tap from actually starting — not a dead end
+  // at the constellation.
+  const openNextTest = () => {
+    goToConstellation();
+    if (nextTest) setSelectedSigil(nextTest);
+  };
+  useEffect(() => {
+    if (pendingOpenNext && nextTest) {
+      setSelectedSigil(nextTest);
+      setPendingOpenNext(false);
+    }
+  }, [pendingOpenNext, nextTest]);
+
   // The two-page pager appears as soon as we know which tests are done (ready, locked,
   // or a first build in flight). The bare centered screen is only the very first fetch
   // or a hard error with nothing to show.
@@ -699,7 +725,7 @@ export default function Portrait() {
               Generous top/bottom padding clears the floating top bar and bottom nav. */}
           <section className="h-[100dvh] snap-start snap-always overflow-y-auto px-6 pt-24 pb-40 lg:pt-12 lg:pb-16 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div className="mx-auto w-full max-w-2xl">
-              {hasContent && <PortraitProgress count={data?.basedOn?.length ?? 0} total={TOTAL_TESTS} onTakeTests={goToConstellation} />}
+              {hasContent && <PortraitProgress count={data?.basedOn?.length ?? 0} total={TOTAL_TESTS} onTakeTests={openNextTest} />}
 
               <AnimatePresence mode="wait">
                 {hasContent && (
@@ -709,7 +735,7 @@ export default function Portrait() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="surface-warm rounded-4xl p-6"
+                    className="surface-warm rounded-4xl p-6 sm:p-8"
                   >
                     {isRefreshing && (
                       <div className="flex items-center gap-2 text-xs text-persona-muted mb-4">
@@ -723,7 +749,10 @@ export default function Portrait() {
                         {t('refreshing')}
                       </div>
                     )}
-                    <div className="text-persona-dark">
+                    {/* The portrait is the product's centerpiece — read it like an essay,
+                        not a UI label: the chat's reading serif at essay size, with a
+                        drop cap opening the first paragraph (.portrait-prose). */}
+                    <div className="portrait-prose font-reading text-persona-dark [&_p]:text-[17px] [&_p]:leading-[1.75] [&_p]:text-persona-dark/90 [&_p]:mb-5 [&_li]:text-[17px] [&_li]:leading-[1.75] [&_li]:text-persona-dark/90">
                       <ReactMarkdown components={MARKDOWN_COMPONENTS}>{content}</ReactMarkdown>
                     </div>
 
@@ -771,7 +800,7 @@ export default function Portrait() {
                     <p className="text-sm text-persona-muted leading-relaxed max-w-prose mx-auto">
                       {t('lockedBody')}
                     </p>
-                    <motion.button onClick={goToConstellation} className="btn-primary mt-6" whileTap={{ scale: 0.97 }}>
+                    <motion.button onClick={openNextTest} className="btn-primary mt-6" whileTap={{ scale: 0.97 }}>
                       {t('firstTest')}
                     </motion.button>
                   </motion.div>

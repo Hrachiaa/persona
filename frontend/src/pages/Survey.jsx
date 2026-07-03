@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiOutlineUser, HiOutlineCalendarDays } from 'react-icons/hi2';
+import { HiOutlineUser, HiOutlineIdentification, HiOutlineCalendarDays } from 'react-icons/hi2';
 import { authApi } from '../api/auth';
 import i18n, { setLanguage, SUPPORTED_LANGUAGES } from '../i18n';
 import { GENDER_OPTIONS, BIRTH_YEAR_MIN, maxBirthYear } from '../utils/constants';
 
 const steps = [
   { id: 'name', icon: HiOutlineUser, type: 'text', field: 'name' },
-  { id: 'gender', icon: HiOutlineUser, type: 'gender', field: 'gender' },
+  { id: 'gender', icon: HiOutlineIdentification, type: 'gender', field: 'gender' },
   { id: 'birthDate', icon: HiOutlineCalendarDays, type: 'number', field: 'birthDate' },
 ];
 
@@ -85,7 +85,9 @@ export default function Survey({ onComplete }) {
     return true;
   };
 
-  const progress = ((step + 1) / steps.length) * 100;
+  // Completed steps, not the step being shown — the bar shouldn't read 100%
+  // while the last question still awaits an answer.
+  const progress = (step / steps.length) * 100;
 
   return (
     <motion.section

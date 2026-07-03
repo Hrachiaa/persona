@@ -11,10 +11,11 @@
     "loading": "Loading preview…",
     "unavailableTitle": "No preview available",
     "unavailableBody": "This book has no readable preview.",
-    "openGoogle": "Open on Google Books"
+    "openGoogle": "Open on Google Books",
+    "viaGoogle": "Preview · Google Books"
   },
   "locked": {
-    "title": "Recommendations are locked",
+    "title": "Recommendations unlock after the tests",
     "body": "Finish all tests and Persona will hand-pick films and books for you.",
     "progress": "{{completed}} of {{required}} tests done",
     "firstTest": "Take your first test",
