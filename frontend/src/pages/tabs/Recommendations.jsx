@@ -278,6 +278,51 @@ function ActionButton({ onClick, children, className = '', size = 'md', label })
   );
 }
 
+/** Locked-gate vignette: a miniature of the swipe deck itself — film and book
+    cards fanned out, the top one already stamped with a like. */
+function ReadsLockedVignette() {
+  const { t } = useTranslation('reco');
+  const wings = [
+    { key: 'film', x: -62, r: -12, tint: 'bg-persona-accent-blue/60', Icon: HiOutlineFilm, delay: 0.12 },
+    { key: 'book', x: 62, r: 10, tint: 'bg-persona-accent-lavender/60', Icon: HiOutlineBookOpen, delay: 0.2 },
+  ];
+  return (
+    <div className="relative h-[8.25rem] mb-4" aria-hidden="true">
+      {wings.map(({ key, x, r, tint, Icon, delay }) => (
+        <motion.div
+          key={key}
+          className={`absolute left-1/2 top-1/2 w-[5.25rem] h-[7rem] -ml-[2.625rem] -mt-[3.5rem] rounded-2xl ${tint} shadow-warm flex items-center justify-center`}
+          initial={{ opacity: 0, x: 0, rotate: 0, scale: 0.7 }}
+          animate={{ opacity: 1, x, rotate: r, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 220, damping: 20, delay }}
+        >
+          <Icon className="w-7 h-7 text-persona-dark/70" />
+        </motion.div>
+      ))}
+      <motion.div
+        className="absolute left-1/2 top-1/2 w-[6.25rem] h-[8rem] -ml-[3.125rem] -mt-[4rem] rounded-2xl bg-persona-card shadow-warm-lg p-2.5"
+        initial={{ opacity: 0, y: 16, rotate: 6, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, rotate: -2, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 240, damping: 19, delay: 0.3 }}
+      >
+        <div className="h-16 rounded-xl bg-gradient-to-br from-persona-accent-peach/70 to-persona-accent-pink/70 mb-2 flex items-center justify-center">
+          <HiOutlineHeart className="w-6 h-6 text-persona-dark/60" />
+        </div>
+        <div className="h-1.5 rounded-full bg-persona-line mb-1.5" />
+        <div className="h-1.5 w-3/5 rounded-full bg-persona-line" />
+        <motion.span
+          className="absolute -top-2 -left-3 -rotate-12 border-[3px] border-emerald-400 text-emerald-400 rounded-xl px-2 py-0.5 text-base font-extrabold tracking-wider bg-persona-card/80"
+          initial={{ opacity: 0, scale: 1.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 16, delay: 0.55 }}
+        >
+          {t('stamps.like')}
+        </motion.span>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   const { t } = useTranslation('reco');
   // `?type=film|book` drives which queue we show; defaults to book.
@@ -400,8 +445,14 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
     const { completed, required, partial } = lockInfo;
     return (
       <LockedCard
+        vignette={<ReadsLockedVignette />}
         title={t('locked.title')}
         body={t('locked.body', { required })}
+        perks={[
+          { Icon: HiOutlineFilm, tint: 'bg-persona-accent-blue/60', text: t('locked.perk1') },
+          { Icon: HiOutlineBookOpen, tint: 'bg-persona-accent-lavender/60', text: t('locked.perk2') },
+          { Icon: HiOutlineHeart, tint: 'bg-persona-accent-pink/60', text: t('locked.perk3') },
+        ]}
         progressLabel={t('locked.progress', { completed, required })}
         ctaLabel={completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
         completed={completed}

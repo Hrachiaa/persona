@@ -17,6 +17,8 @@ import {
   HiOutlineArrowDown,
   HiOutlineSquare2Stack,
   HiOutlineCheck,
+  HiOutlineChatBubbleLeftRight,
+  HiOutlineLightBulb,
 } from 'react-icons/hi2';
 import { chatApi } from '../../api/chat';
 import { friendsApi } from '../../api/friends';
@@ -29,6 +31,7 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import PaywallModal from '../../components/PaywallModal';
 import { showToast } from '../../components/Toast';
 import { TOTAL_TESTS, isTestCompleted } from '../../utils/constants';
+import { SIGILS } from '../../components/testSigils';
 import { partialTestCredit } from './testParts';
 import { fetchTestsCached } from './testsCache';
 
@@ -737,6 +740,72 @@ function useFilteredChats(chats, query) {
   );
 }
 
+/** Locked-gate vignette: a two-line preview of what the chat actually does —
+    the AI answers *from your results* (the six sigils it "remembers"). */
+function ChatLockedVignette() {
+  const { t } = useTranslation('chat');
+  return (
+    <div className="flex flex-col gap-1.5 mb-4 text-left" aria-hidden="true">
+      <motion.div
+        className="self-end bg-persona-dark text-white rounded-3xl rounded-br-lg px-4 py-2 text-[13px] leading-relaxed max-w-[85%]"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
+      >
+        {t('locked.vignetteUser')}
+      </motion.div>
+      <motion.div
+        className="self-start bg-persona-bg rounded-3xl rounded-bl-lg px-4 py-2.5 max-w-[88%]"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: 'easeOut', delay: 0.28 }}
+      >
+        <span className="flex gap-1 mb-1.5">
+          {Object.entries(SIGILS).map(([type, { color, Glyph }], i) => (
+            <motion.span
+              key={type}
+              className="w-[18px] h-[18px] rounded-md flex items-center justify-center"
+              style={{ backgroundColor: color }}
+              initial={{ opacity: 0, scale: 0.4 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.45 + i * 0.06 }}
+            >
+              <svg viewBox="-14 -14 28 28" width="11" height="11">
+                <Glyph c="rgba(26,26,26,0.72)" />
+              </svg>
+            </motion.span>
+          ))}
+        </span>
+        <span className="block text-[13px] leading-relaxed text-persona-dark">{t('locked.vignetteAi')}</span>
+      </motion.div>
+    </div>
+  );
+}
+
+/** The full-tab gate while tests are unfinished — sells the chat, then routes
+    to the tests. Shared by the mobile list screen and the desktop two-pane. */
+function ChatLockedGate({ lock, onOpenTests }) {
+  const { t } = useTranslation('chat');
+  return (
+    <LockedCard
+      vignette={<ChatLockedVignette />}
+      title={t('locked.title')}
+      body={t('locked.body')}
+      perks={[
+        { Icon: HiOutlineSparkles, tint: 'bg-persona-accent-lavender/60', text: t('locked.perk1') },
+        { Icon: HiOutlineChatBubbleLeftRight, tint: 'bg-persona-accent-peach/60', text: t('locked.perk2') },
+        { Icon: HiOutlineLightBulb, tint: 'bg-persona-accent-yellow/60', text: t('locked.perk3') },
+      ]}
+      progressLabel={t('locked.progress', { completed: lock.completed, required: lock.required })}
+      ctaLabel={lock.completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
+      completed={lock.completed}
+      required={lock.required}
+      partial={lock.partial}
+      onOpenTests={onOpenTests}
+    />
+  );
+}
+
 /** Mobile: the full-screen chat list (the dashboard chrome floats over it). */
 function ChatListScreen({ chats, lock, activeId, onOpen, onNew, onOpenTests }) {
   const { t } = useTranslation('chat');
@@ -745,18 +814,7 @@ function ChatListScreen({ chats, lock, activeId, onOpen, onNew, onOpenTests }) {
   const ready = chats !== null && lock !== null;
 
   if (ready && lock && chats.length === 0) {
-    return (
-      <LockedCard
-        title={t('locked.title')}
-        body={t('locked.body')}
-        progressLabel={t('locked.progress', { completed: lock.completed, required: lock.required })}
-        ctaLabel={lock.completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
-        completed={lock.completed}
-        required={lock.required}
-        partial={lock.partial}
-        onOpenTests={onOpenTests}
-      />
-    );
+    return <ChatLockedGate lock={lock} onOpenTests={onOpenTests} />;
   }
 
   return (
@@ -1147,18 +1205,7 @@ export default function Chat({ onImmersiveChange, onOpenTests }) {
   if (isDesktop) {
     // Locked with nothing to show — the gate replaces the whole tab, like on mobile.
     if (lock && chats !== null && chats.length === 0) {
-      return (
-        <LockedCard
-          title={t('locked.title')}
-          body={t('locked.body')}
-          progressLabel={t('locked.progress', { completed: lock.completed, required: lock.required })}
-          ctaLabel={lock.completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
-          completed={lock.completed}
-          required={lock.required}
-          partial={lock.partial}
-          onOpenTests={onOpenTests}
-        />
-      );
+      return <ChatLockedGate lock={lock} onOpenTests={onOpenTests} />;
     }
     return (
       <motion.section

@@ -15,8 +15,11 @@
     "viaGoogle": "Preview · Google Books"
   },
   "locked": {
-    "title": "Recommendations unlock after the tests",
-    "body": "Finish all tests and Persona will hand-pick films and books for you.",
+    "title": "Films and books picked for your character",
+    "body": "Finish the tests — Persona will pick films and books from your results, not someone else's top lists.",
+    "perk1": "Films that fit your character, not the charts",
+    "perk2": "Books that actually land with you",
+    "perk3": "Swipe — every like sharpens the picks",
     "progress": "{{completed}} of {{required}} tests done",
     "firstTest": "Take your first test",
     "continueTests": "Continue your tests"
