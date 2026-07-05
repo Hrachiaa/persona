@@ -13,6 +13,7 @@ import { registerSessionCache } from '../../utils/sessionCaches';
 import { TOTAL_TESTS } from '../../utils/constants';
 import { PART_SIZE } from './testParts';
 import { fetchTestsCached, getCachedTests } from './testsCache';
+import posthog from 'posthog-js';
 
 // ─── Segmented part-progress ring ────────────────────────────────────────────
 // For a chunked test left half-finished (see PART_SIZE in Tests.jsx), the orb
@@ -544,7 +545,10 @@ export default function Portrait() {
 
   const startSigilTest = () => {
     const slug = SIGIL_TEST_META[selectedSigil]?.slug;
-    if (slug) navigate(`/tests/${slug}`);
+    if (slug) {
+      posthog.capture('test_started', { test_type: selectedSigil, slug });
+      navigate(`/tests/${slug}`);
+    }
   };
   const viewSigilResult = () => {
     const slug = SIGIL_TEST_META[selectedSigil]?.slug;
@@ -570,7 +574,10 @@ export default function Portrait() {
       .then((r) => {
         if (!active) return;
         setData(r);
-        if (r.status === 'ready') cachedData = r; // survive remounts within the session
+        if (r.status === 'ready') {
+          cachedData = r; // survive remounts within the session
+          posthog.capture('portrait_viewed');
+        }
       })
       .catch(() => active && setErrored(true))
       .finally(() => active && setLoading(false));

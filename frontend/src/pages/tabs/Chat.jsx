@@ -21,6 +21,7 @@ import {
 import { chatApi } from '../../api/chat';
 import { friendsApi } from '../../api/friends';
 import { useAuth } from '../../context/AuthContext';
+import posthog from 'posthog-js';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import ProgressiveBlur from '../../components/ProgressiveBlur';
 import LockedCard from '../../components/LockedCard';
@@ -355,6 +356,7 @@ function Conversation({ chatId, onBack, locationState, standalone, coarse, onPre
         if (!active) return;
         setChat(r);
         setMessages(r.messages);
+        posthog.capture('chat_opened', { chat_kind: r.kind });
         onLoaded?.(r);
       })
       .catch(() => {})
@@ -445,6 +447,7 @@ function Conversation({ chatId, onBack, locationState, standalone, coarse, onPre
         onDelta: append,
         signal: abortRef.current.signal,
       });
+      posthog.capture('chat_message_sent', { chat_kind: chat?.kind });
       if (full) onPreview?.(chatId, full);
     } catch (err) {
       if (err.name === 'AbortError') {
@@ -464,6 +467,7 @@ function Conversation({ chatId, onBack, locationState, standalone, coarse, onPre
         // text in the input.
         setMessages((prev) => prev.filter((m) => m.id !== userId && m.id !== assistantId));
         setInput((cur) => cur || content);
+        posthog.capture('paywall_shown', { chat_kind: chat?.kind });
         setPaywall({ content });
         onRefresh?.(); // the optimistic list preview never happened — refetch the truth
         return;

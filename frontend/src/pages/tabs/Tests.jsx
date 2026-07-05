@@ -19,6 +19,7 @@ import { normalCdf } from '../../utils/tScore';
 import { PART_SIZE } from './testParts';
 import { invalidateTestsCache } from './testsCache';
 import ImmersiveTopBar from './ImmersiveTopBar';
+import posthog from 'posthog-js';
 import ShareResultBar from './ShareResultBar';
 import BigFiveResultScreen from './BigFiveResult';
 import SchwartzResultScreen from './SchwartzResult';
@@ -1170,6 +1171,7 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     // own copy and the shared module cache (chat/reads gates, portrait rings).
     invalidateTestsCache();
     fetchTests();
+    posthog.capture('test_completed', { test_type: selectedTest?.testType, slug: testSlug(selectedTest) });
     navigate(`/tests/${testSlug(selectedTest)}/result`);
   };
 
@@ -1197,7 +1199,10 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // Open the runner without wiping progress: if an earlier retake was left
   // unfinished the resume prompt offers Continue / Start over; otherwise the
   // runner opens fresh (no saved answers → straight to the first question).
-  const handleRetake = () => navigate(`/tests/${testSlug(selectedTest)}`);
+  const handleRetake = () => {
+    posthog.capture('test_started', { test_type: selectedTest?.testType, slug: testSlug(selectedTest), retake: true });
+    navigate(`/tests/${testSlug(selectedTest)}`);
+  };
 
   // Leaving the runner / result returns to the Portrait (the test list is retired).
   const handleBackToList = () => {

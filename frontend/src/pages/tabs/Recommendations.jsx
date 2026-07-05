@@ -12,6 +12,7 @@ import {
 } from 'react-icons/hi2';
 import { recommendationsApi } from '../../api/recommendations';
 import { showToast } from '../../components/Toast';
+import posthog from 'posthog-js';
 import LockedCard from '../../components/LockedCard';
 import { registerSessionCache } from '../../utils/sessionCaches';
 import { TOTAL_TESTS, isTestCompleted } from '../../utils/constants';
@@ -377,6 +378,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
     swiped[mode].add(card.id);
     setInfo(null);
     setCards((prev) => prev.slice(1));
+    posthog.capture('recommendation_swiped', { verdict, content_type: mode });
     // Optimistic: the card is already gone locally. On failure at least say so —
     // the verdict won't be reflected in the history / future batches.
     recommendationsApi.swipe(card.id, verdict).catch(() => showToast(t('swipeError')));

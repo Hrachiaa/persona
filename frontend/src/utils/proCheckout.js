@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import i18n from '../i18n';
 import { subscriptionsApi } from '../api/subscriptions';
 import { openProCheckout, closeProCheckout } from './paddle';
+import posthog from 'posthog-js';
 
 // Non-component Pro helpers, shared by the chat paywall and the profile screen
 // (kept out of ProPlans.jsx so that file only exports components — fast refresh).
@@ -37,6 +38,7 @@ export function useProCheckout({ user, onConfirmed, onError }) {
         customerId: data?.customer?.id,
       });
       setPhase('success');
+      posthog.capture('subscription_confirmed', { plan: data?.items?.[0]?.price?.billing_cycle?.interval });
       onConfirmed?.(entitlement);
     } catch {
       setPhase('syncError');
@@ -45,6 +47,7 @@ export function useProCheckout({ user, onConfirmed, onError }) {
 
   const start = async (plan) => {
     setPhase('opening');
+    posthog.capture('subscription_checkout_started', { plan });
     try {
       await openProCheckout({
         plan,

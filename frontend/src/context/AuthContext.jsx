@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { authApi } from '../api/auth';
 import i18n, { LANG_KEY, SUPPORTED_LANGUAGES } from '../i18n';
 import { resetSessionCaches } from '../utils/sessionCaches';
+import posthog from 'posthog-js';
 const AuthContext = createContext(null);
 
 // Apply a user's stored language preference to the UI (and remember it locally).
@@ -44,7 +45,11 @@ export function AuthProvider({ children }) {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
     if (accessToken && refreshToken) {
-      fetchMe().finally(() => setLoading(false));
+      fetchMe()
+        .then((me) => {
+          if (me?.id) posthog.identify(me.id, { language: me.language });
+        })
+        .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
@@ -72,6 +77,10 @@ export function AuthProvider({ children }) {
       persistAuth(data);
       // Fetch full profile after signup
       const me = await fetchMe();
+      if (me?.id) {
+        posthog.identify(me.id, { language: me.language });
+        posthog.capture('user_signed_up', { method: 'email' });
+      }
       return me;
     } catch (err) {
       const message = err.response?.data?.message || i18n.t('auth:signupFailed');
@@ -87,6 +96,10 @@ export function AuthProvider({ children }) {
       persistAuth(data);
       // Fetch full profile after login
       const me = await fetchMe();
+      if (me?.id) {
+        posthog.identify(me.id, { language: me.language });
+        posthog.capture('user_logged_in', { method: 'email' });
+      }
       return me;
     } catch (err) {
       const message = err.response?.data?.message || i18n.t('auth:loginFailed');
@@ -104,6 +117,7 @@ export function AuthProvider({ children }) {
     } catch {
       // Ignore errors on logout — clear local state anyway
     } finally {
+      posthog.reset();
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('userId');
@@ -119,6 +133,10 @@ export function AuthProvider({ children }) {
       persistAuth({ accessToken, refreshToken, userId });
       // Fetch full profile after Google auth
       const me = await fetchMe();
+      if (me?.id) {
+        posthog.identify(me.id, { language: me.language });
+        posthog.capture('user_logged_in_google', { method: 'google' });
+      }
       return me;
     }
     return null;

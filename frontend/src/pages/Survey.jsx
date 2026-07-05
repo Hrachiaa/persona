@@ -5,6 +5,7 @@ import { HiOutlineUser, HiOutlineIdentification, HiOutlineCalendarDays } from 'r
 import { authApi } from '../api/auth';
 import i18n, { setLanguage, SUPPORTED_LANGUAGES } from '../i18n';
 import { GENDER_OPTIONS, BIRTH_YEAR_MIN, maxBirthYear } from '../utils/constants';
+import posthog from 'posthog-js';
 
 const steps = [
   { id: 'name', icon: HiOutlineUser, type: 'text', field: 'name' },
@@ -45,6 +46,10 @@ export default function Survey({ onComplete }) {
           name: profileData.name,
           gender: profileData.gender,
           birthDate: parseInt(profileData.birthDate, 10),
+          language: profileData.language,
+        });
+        posthog.capture('profile_completed', {
+          gender: profileData.gender,
           language: profileData.language,
         });
         onComplete();
