@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, useSpring, useMotionValue, useTransform, useMotionValueEvent } from 'framer-motion';
-import { HiOutlineArrowPath, HiOutlineClipboardDocumentList, HiOutlineChevronDown, HiOutlineChatBubbleLeftRight, HiOutlineClock, HiOutlineXMark } from 'react-icons/hi2';
+import { HiOutlineArrowPath, HiOutlineChevronDown, HiOutlineChatBubbleLeftRight, HiOutlineClock, HiOutlineXMark, HiOutlineSparkles, HiOutlineLightBulb } from 'react-icons/hi2';
 import ReactMarkdown from 'react-markdown';
 import { portraitApi } from '../../api/portrait';
 import { chatApi } from '../../api/chat';
@@ -505,6 +505,58 @@ function SigilInfoCard({ type, test, completed, locked, onStart, onView, onClose
 // visible (with a subtle "refreshing" hint) and swap in the fresh version with an
 // animation once it's ready. The dry per-test results live on the Tests tab;
 // interpretation lives here.
+// ─── Locked gate vignette ────────────────────────────────────────────────────
+// A miniature of the portrait sheet itself, waiting to be written: six sigil
+// slots on top (lit by real completion, the next one glowing), blank text lines
+// and a blinking caret below. Same visual family as the Chat/Reads gates.
+function LockedPortraitVignette({ completedSet, nextTest }) {
+  return (
+    <div className="relative mx-auto max-w-[16rem] mb-6" aria-hidden="true">
+      <motion.div
+        className="absolute inset-0 rotate-3 translate-x-3 rounded-3xl bg-persona-accent-lavender/40"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      />
+      <div className="relative rounded-3xl bg-persona-bg px-5 pt-4 pb-5 text-left">
+        <div className="flex gap-1.5 mb-4">
+          {SIGIL_LAYOUT.map(({ type }, i) => {
+            const { color, Glyph } = SIGILS[type];
+            const lit = completedSet.has(type);
+            const isNext = type === nextTest;
+            return (
+              <motion.span
+                key={type}
+                className={`w-8 h-8 rounded-lg flex items-center justify-center ${isNext && !lit ? 'animate-pulse-soft' : ''}`}
+                style={{ backgroundColor: lit || isNext ? color : 'rgba(26,26,26,0.06)' }}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: 'spring', stiffness: 280, damping: 20, delay: 0.15 + i * 0.05 }}
+              >
+                <svg viewBox="-14 -14 28 28" width="18" height="18">
+                  <Glyph c={lit || isNext ? 'rgba(26,26,26,0.72)' : 'rgba(26,26,26,0.22)'} />
+                </svg>
+              </motion.span>
+            );
+          })}
+        </div>
+        <div className="flex items-center gap-1.5 mb-2">
+          <motion.span
+            className="w-[2px] h-3.5 shrink-0 bg-persona-dark/60"
+            animate={{ opacity: [1, 0, 1] }}
+            transition={{ repeat: Infinity, duration: 1.1 }}
+          />
+          <div className="h-2 w-full rounded-full bg-persona-line" />
+        </div>
+        <div className="space-y-2">
+          <div className="h-2 rounded-full bg-persona-line" />
+          <div className="h-2 w-3/5 rounded-full bg-persona-line" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Portrait() {
   const { t } = useTranslation('portrait');
   const navigate = useNavigate();
@@ -798,17 +850,29 @@ export default function Portrait() {
                   <motion.div
                     key="locked"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    className="surface-warm rounded-4xl p-8 text-center"
+                    className="surface-warm rounded-4xl px-6 sm:px-8 pt-7 pb-7 text-center max-w-md mx-auto"
                   >
-                    <div className="w-14 h-14 mx-auto mb-4 bg-persona-accent-lavender/60 rounded-3xl flex items-center justify-center">
-                      <HiOutlineClipboardDocumentList className="w-7 h-7 text-persona-dark" />
-                    </div>
-                    <h2 className="font-display text-xl font-semibold text-persona-dark mb-1.5">{t('lockedTitle')}</h2>
-                    <p className="text-sm text-persona-muted leading-relaxed max-w-prose mx-auto">
+                    <LockedPortraitVignette completedSet={completedSet} nextTest={nextTest} />
+                    <h2 className="font-display text-[1.35rem] leading-snug font-semibold text-persona-dark mb-1.5">{t('lockedTitle')}</h2>
+                    <p className="text-sm text-persona-muted leading-relaxed max-w-prose mx-auto mb-5">
                       {t('lockedBody')}
                     </p>
-                    <motion.button onClick={openNextTest} className="btn-primary mt-6" whileTap={{ scale: 0.97 }}>
-                      {t('firstTest')}
+                    <ul className="text-left space-y-2.5 max-w-xs mx-auto mb-6">
+                      {[
+                        { Icon: HiOutlineSparkles, tint: 'bg-persona-accent-lavender/60', key: 'lockedPerk1' },
+                        { Icon: HiOutlineLightBulb, tint: 'bg-persona-accent-peach/60', key: 'lockedPerk2' },
+                        { Icon: HiOutlineArrowPath, tint: 'bg-persona-accent-lime/60', key: 'lockedPerk3' },
+                      ].map(({ Icon, tint, key }) => (
+                        <li key={key} className="flex items-start gap-3">
+                          <span className={`w-8 h-8 shrink-0 rounded-xl ${tint} flex items-center justify-center`}>
+                            <Icon className="w-4 h-4 text-persona-dark" />
+                          </span>
+                          <span className="text-sm text-persona-dark/85 leading-relaxed pt-1">{t(key)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <motion.button onClick={openNextTest} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
+                      {completedSet.size === 0 ? t('firstTest') : t('continueTests')}
                     </motion.button>
                   </motion.div>
                 )}

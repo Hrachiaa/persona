@@ -17,7 +17,11 @@
   "generating": "Drawing your portrait from your tests… the orb above will light up the moment it's ready.",
   "lockedTitle": "No portrait yet",
   "lockedBody": "Take your first test to light up the first piece of your portrait — each test you finish reveals another, until the whole picture of you comes together.",
+  "lockedPerk1": "An essay about who you are — drawn from all six tests",
+  "lockedPerk2": "Strengths, blind spots and hidden patterns",
+  "lockedPerk3": "Repainted after every new test you finish",
   "firstTest": "Take your first test",
+  "continueTests": "Continue your tests",
   "loading": "Building your portrait from your tests… this can take up to a minute.",
   "error": "Couldn't build your portrait right now.",
   "sigils": {
