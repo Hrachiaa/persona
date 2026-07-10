@@ -17,7 +17,7 @@
     "birthDate": {
       "title": "When were you born?",
       "subtitle": "This helps personalize your experience",
-      "placeholder": "Enter your birth year (e.g. 1995)"
+      "placeholder": "e.g. 1995"
     }
   },
   "gender": {

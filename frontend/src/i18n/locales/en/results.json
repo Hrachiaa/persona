@@ -10,11 +10,26 @@
     "comparisonSelf": "You're {{comparison}} <b>{{pct}}%</b> of people",
     "comparisonOwner": "{{name}} is {{comparison}} <b>{{pct}}%</b> of people",
     "traits": {
-      "O": { "long": "Openness", "comparison": "more curious than" },
-      "C": { "long": "Conscientiousness", "comparison": "more disciplined than" },
-      "E": { "long": "Extraversion", "comparison": "more outgoing than" },
-      "A": { "long": "Agreeableness", "comparison": "more agreeable than" },
-      "N": { "long": "Neuroticism", "comparison": "more anxious than" }
+      "O": {
+        "long": "Openness",
+        "comparison": "more curious than"
+      },
+      "C": {
+        "long": "Conscientiousness",
+        "comparison": "more disciplined than"
+      },
+      "E": {
+        "long": "Extraversion",
+        "comparison": "more outgoing than"
+      },
+      "A": {
+        "long": "Agreeableness",
+        "comparison": "more agreeable than"
+      },
+      "N": {
+        "long": "Neuroticism",
+        "comparison": "more anxious than"
+      }
     },
     "facets": {
       "E1": "Friendliness",
@@ -47,6 +62,38 @@
       "O4": "Adventurousness",
       "O5": "Intellect",
       "O6": "Liberalism"
+    },
+    "facetDescriptions": {
+      "O1": "How vivid and active the inner fantasy world is. High scorers use imagination to make life richer — daydreams, scenarios, invented worlds. Low scorers stay grounded and prefer facts to speculation.",
+      "O2": "Love of beauty, in art and in nature. High scorers get absorbed by music, painting, poetry and beautiful places — without necessarily creating anything themselves. Low scorers are largely indifferent to aesthetics.",
+      "O3": "Access to one's own feelings and how much they matter. High scorers are aware of their emotions and treat them as an important part of life. Low scorers experience feelings as muted and rarely worth attention.",
+      "O4": "The pull toward new experience: travel, unfamiliar food, changed routines. High scorers get bored by repetition and want to try things. Low scorers feel at home in the familiar and see little point in change for its own sake.",
+      "O5": "A thinking style: the love of ideas, puzzles and abstract play. This is not the same as intelligence — it is the appetite for playing with ideas. Low scorers prefer concrete, practical matters.",
+      "O6": "Readiness to re-examine authority, rules and tradition (psychological, not party-political, liberalism). High scorers are skeptical of \"because that's how it's done\". Low scorers value the stability of the proven order.",
+      "C1": "Confidence in one's own ability to cope — the sense of having the intelligence, drive and self-control needed to succeed. Low scorers doubt that what they plan will actually work out.",
+      "C2": "The inclination toward order and organization. High scorers live by schedules, lists and things in their places. Low scorers are comfortable with mess and improvised organization.",
+      "C3": "How heavily a given word weighs. High scorers treat agreements, rules and obligations as binding duties. Low scorers experience promises and norms more as guidelines.",
+      "C4": "Willingness to invest heavily for results and recognition. High scorers are ambitious and directed, sometimes to the point of workaholism. Low scorers are content doing enough, with no hunger for more.",
+      "C5": "The capacity to carry a task through boredom and distraction to the finish. High scorers start without procrastinating and finish what they start. Low scorers struggle to begin and drop things midway.",
+      "C6": "The habit of thinking before acting. High scorers weigh options and consequences. Low scorers act and speak on the spur of the moment.",
+      "E1": "Genuine liking for people, openly shown. High scorers warm up quickly and form close bonds easily. Low scorers keep a certain distance — reserve, not hostility.",
+      "E2": "The pull of company and crowded places. High scorers are energized by crowds and buzz. Low scorers need solitude, and noisy gatherings drain them.",
+      "E3": "Willingness to speak up, take charge and lead. High scorers gladly take the wheel and direct others. Low scorers prefer not to command and stay out of the spotlight.",
+      "E4": "The tempo of life. High scorers pack the day, move fast and stay busy. Low scorers keep an unhurried, measured pace.",
+      "E5": "The need for stimulation, risk and thrill. High scorers can't stand boredom and chase brightness and adrenaline. Low scorers are comfortable with quiet predictability.",
+      "E6": "The tendency to feel and express joy, enthusiasm and optimism. High scorers laugh often and run on high spirits. Low scorers keep an even, reserved emotional tone — which is not sadness.",
+      "A1": "The default assumption about people. High scorers presume most people honest and decent. Low scorers stay wary until a person proves otherwise.",
+      "A2": "Candor and sincerity in dealing with others. High scorers see no need for manipulation or double meanings. Low scorers believe a little guile is necessary and are comfortable holding things back.",
+      "A3": "The reward of helping. High scorers find helping genuinely pleasant and requests easy to meet. Low scorers experience requests for help as an imposition on their time.",
+      "A4": "Willingness to yield for the sake of peace. High scorers value compromise over winning the argument. Low scorers push back and accept confrontation to get their way.",
+      "A5": "Reluctance to claim superiority. High scorers find bragging and standing out awkward, sometimes out of modest self-regard. Low scorers quietly believe they are better — which others may read as arrogance.",
+      "A6": "Tender-heartedness and compassion. High scorers feel others' pain and put mercy above \"objectivity\". Low scorers decide with the head: reason and fairness above pity.",
+      "N1": "How easily the inner alarm system trips. High scorers often sense threat and worry about what could go wrong. Low scorers stay calm and fearless in most situations.",
+      "N2": "Readiness to flare up at unfairness or obstruction. High scorers heat up quickly — whether they show it is another matter. Low scorers are hard to provoke.",
+      "N3": "Proneness to dejection and low energy. High scorers often lack the spark and find it hard to get going. Low scorers keep a steady mood without long slumps.",
+      "N4": "Sensitivity to others' judgment. High scorers embarrass easily, fear looking foolish and feel awkward in the spotlight. Low scorers feel largely free of social unease.",
+      "N5": "The force of cravings and the pull of instant gratification. High scorers find temptation hard to resist, and urges override plans. Low scorers keep their desires on a leash.",
+      "N6": "Composure under pressure. High scorers are easily hit by panic, confusion and helplessness when stress strikes. Low scorers keep a clear head exactly when it is hardest."
     }
   },
   "schwartz": {
@@ -86,31 +133,31 @@
       "4": "Conservation"
     },
     "valueDescriptions": {
-      "1": "Freedom to cultivate one's own ideas",
-      "2": "Freedom to determine one's own actions",
-      "3": "Excitement, novelty, and change",
-      "4": "Pleasure or sensuous gratification",
-      "5": "Success according to social standards",
-      "6": "Dominance over people",
-      "7": "Wealth and material resources",
-      "8": "Maintaining public image",
-      "9": "Security in the wider society",
-      "10": "Security of self and one's immediate environment",
-      "11": "Maintaining and preserving cultural, family and/or religious traditions",
-      "12": "Compliance with rules, laws and formal obligations",
-      "13": "Avoidance of upsetting or harming others",
-      "14": "Recognizing one's insignificance in the larger scheme of things",
-      "15": "Trustworthy and reliable",
-      "16": "Devotion to the needs of the in-group",
-      "17": "Equality, justice and protection for the weak in society",
-      "18": "Preservation of the natural environment",
-      "19": "Acceptance and understanding of those who differ from oneself"
+      "1": "The freedom to form your own views: thinking for yourself, cultivating your own ideas and abilities, trusting your own reading of the world instead of received interpretations.",
+      "2": "The freedom to determine your own actions: choosing goals, pursuits and a path without asking permission. When this value leads, depending on others' decisions is especially hard to bear.",
+      "3": "The need for novelty, change and challenge so life doesn't go stale. Prioritizing stimulation means chasing fresh experience and shaking up the settled.",
+      "4": "Pleasure and the sensory joys of living: good food, rest, savoring the moment. Prioritizing hedonism means treating enjoyment as reason enough.",
+      "5": "Personal success by social standards: being competent, delivering results, earning recognition. When it leads, it matters not just to do things but to do them visibly well.",
+      "6": "The drive to influence people and events — to decide how things will be. When it leads, leading feels far more natural than following, and control is a value in itself.",
+      "7": "The value of material footing: money, property and resources as the base of one's position. When it leads, wealth reads as the foundation of security and status.",
+      "8": "Guarding your public image: keeping face, maintaining respect, allowing no humiliation. When it leads, how you look to others shapes many decisions.",
+      "9": "The need for a stable, safe society: order, working institutions, a protected country. When it leads, public turmoil is felt almost as a personal threat.",
+      "10": "Safety in your own world: health, home, no threats to you and yours. When it leads, risky places and situations are avoided and a predictable environment is prized.",
+      "11": "Respecting and maintaining cultural, family or religious customs. When it leads, continuity and \"the way it's done\" carry value of their own, not mere habit.",
+      "12": "Following rules, laws and formal obligations — even when no one is watching. When it leads, breaking a norm is uncomfortable in itself.",
+      "13": "Taking care not to upset or hurt others: smoothing edges, not provoking, behaving \"properly\". When it leads, others' discomfort at your actions is felt keenly.",
+      "14": "Recognizing one's smallness in the larger scheme: claiming no more than one's share, not placing oneself above others. When it leads, unpretentiousness beats self-promotion.",
+      "15": "Being someone others can count on: loyalty, dependability, commitments to your people kept. When it leads, letting a close person down is the worst thing one can do.",
+      "16": "Active care for the wellbeing of those close to you: helping, supporting, investing in your people. When it leads, the inner circle's needs often outrank your own plans.",
+      "17": "Justice and equality for everyone, strangers included: protecting the weak, social fairness. When it leads, injustice to outsiders stings like injustice to your own.",
+      "18": "Preserving the natural world: protecting the environment and fitting into it rather than breaking it. When it leads, harm to nature feels unacceptable even when convenient.",
+      "19": "Accepting and seeking to understand those who differ: other views, cultures, ways of life. When it leads, difference reads as interesting rather than dangerous."
     },
     "higherDescriptions": {
-      "1": "Mean of universalism-nature, universalism-concern, universalism-tolerance, benevolence-care and benevolence-dependability",
-      "2": "Mean of achievement, power-dominance and power-resources",
-      "3": "Mean of self-direction thought, self-direction action, stimulation and hedonism",
-      "4": "Mean of security-personal, security-societal, tradition, conformity-rules and conformity-interpersonal"
+      "1": "How much the wellbeing of others — from close people to society and nature — outweighs self-interest. Built from benevolence (caring, dependability) and universalism (concern, nature, tolerance).",
+      "2": "The orientation toward one's own success and influence: achievement plus both faces of power. A high priority casts life as a competition worth winning.",
+      "3": "Readiness for the new and the independent: self-direction in thought and action, stimulation, hedonism. A high priority puts freedom and novelty above stability.",
+      "4": "The bet on stability and order: security, tradition, conformity. A high priority puts predictability and continuity above change."
     }
   },
   "cope": {
@@ -138,21 +185,21 @@
       "15": "Planning"
     },
     "scaleDescriptions": {
-      "1": "Making the best of the situation by growing from it, or viewing it in a more favorable light.",
-      "2": "Psychological disengagement from the goal with which the stressor is interfering, through daydreaming, sleep, or distraction.",
-      "3": "An increased awareness of one's emotional distress, and a concomitant tendency to ventilate or discharge those feelings.",
-      "4": "Seeking assistance, information, or advice about what to do.",
-      "5": "Taking action or exerting efforts to remove or circumvent the stressor.",
-      "6": "An attempt to reject the reality of the stressful event.",
-      "7": "Increased engagement in religious activities.",
-      "8": "",
-      "9": "Giving up, or withdrawing effort from, the attempt to attain the goal with which the stressor is interfering.",
-      "10": "Coping passively by holding back one's coping attempts until they can be of use.",
-      "11": "Getting sympathy or emotional support from someone.",
-      "12": "",
-      "13": "Accepting the fact that the stressful event has occurred and is real.",
-      "14": "Suppressing attention to other activities in which one might engage, in order to concentrate more completely on dealing with the stressor.",
-      "15": "Thinking about how to confront the stressor, planning one's active coping efforts."
+      "1": "Reframing the situation in a better light: finding the benefit, the lesson, the growth in it. One of the most constructive strategies — it changes the meaning, not the problem.",
+      "2": "Escaping the problem in your head: daydreams, sleep, shows, any distraction. It buys a breather, but leaned on constantly it leaves the problem standing.",
+      "3": "Dwelling on feelings and letting them out: talking it out, crying it out, giving emotion room. It releases pressure, though in large doses it pulls you into feeling instead of solving.",
+      "4": "Turning to people for practical input: advice, information, concrete help. A pragmatic move — borrowing others' experience and resources instead of hauling everything alone.",
+      "5": "Direct action against the source of stress: remove it, weaken it, work around it. The classic \"healthy\" strategy — energy goes at the cause itself.",
+      "6": "Refusing to believe the stressful thing happened, living as if it hadn't. It softens the first blow but delays acting in time.",
+      "7": "Leaning on faith: prayer, spiritual practice, trust in a larger design. For many it is both a source of meaning and a way to discharge emotion.",
+      "8": "Joking about what's happening and seeing the absurd in it. Humor takes the heat out and returns a sense of control — as long as it doesn't become a way to take nothing seriously.",
+      "9": "Giving up: reducing effort or abandoning the goal the stressor blocks. It usually appears when the outcome feels hopeless, hand in hand with helplessness.",
+      "10": "Waiting for the right moment: holding off until acting becomes appropriate and likely to work. An active pause — a strategy, not passivity, however similar it looks.",
+      "11": "Turning to people for sympathy, understanding and moral support. Needing to be heard is not weakness — it is processing emotion through contact.",
+      "12": "Using alcohol or other substances to dull the distress or step away from it. It brings fast relief, solves nothing, and settles in easily as the default exit.",
+      "13": "Accepting the reality of what happened: it did, and life now includes it. The first step of adaptation where the situation cannot be changed.",
+      "14": "Setting everything secondary aside to concentrate fully on the problem. Tunnel focus: other tasks and pleasures wait until the main thing is handled.",
+      "15": "Thinking the response through: which steps to take, from which angle, and when. Working the problem in your head before working it with your hands."
     }
   },
   "pid": {
@@ -192,31 +239,31 @@
       "25": "Withdrawal"
     },
     "facetDescriptions": {
-      "1": "Lack of interest or pleasure in activities, diminished capacity to experience joy.",
-      "2": "Frequent feelings of tension, worry, and apprehension.",
-      "3": "Actively seeking attention and validation from others, often at the expense of others' needs.",
-      "4": "Lack of empathy or concern for others' feelings, showing indifference to their suffering.",
-      "5": "Dishonesty, tendency to deceive or manipulate others for personal gain.",
-      "6": "Frequent feelings of sadness, hopelessness, and low mood.",
-      "7": "Difficulty in maintaining focus and easily getting distracted by external stimuli.",
-      "8": "Unconventional and idiosyncratic behaviours or beliefs.",
-      "9": "Rapid shifts in emotions, with intense mood swings.",
-      "10": "Exaggerated sense of self-importance, arrogance, and a belief in one's superiority.",
-      "11": "Frequent feelings of anger, resentment, and a tendency to be hostile towards others.",
-      "12": "Acting on urges and desires without considering potential consequences.",
-      "13": "Avoiding or feeling uncomfortable in close relationships, maintaining emotional distance.",
-      "14": "Lack of reliability and failure to fulfil obligations and commitments.",
-      "15": "Using others for personal gain, manipulating or exploiting their emotions.",
-      "16": "Distorted perception of reality, experiencing unusual sensory experiences or hallucinations.",
-      "17": "Repeating thoughts, behaviours, or actions excessively and having difficulty changing focus.",
-      "18": "Limited range of emotional expression, appearing emotionally distant or cold.",
-      "19": "Setting high standards for oneself and others, with a tendency towards inflexibility.",
-      "20": "Seeking out or engaging in potentially dangerous or risky activities.",
-      "21": "Fear of abandonment or rejection, often leading to clingy behaviours in relationships.",
-      "22": "Tendency to submit to others' demands or authority, often at the expense of one's own needs.",
-      "23": "Mistrust and suspicion of others' intentions, feeling easily threatened.",
-      "24": "Holding beliefs or experiences that are unconventional or at odds with societal norms.",
-      "25": "Avoiding social interactions, preferring to be alone or isolated from others."
+      "1": "A dulled capacity for joy: pursuits that used to engage bring little pleasure, and interest in the world runs low. High scores often feel like everything has gone flat.",
+      "2": "A tense expectation of the bad: worry, nerves, a sense of threat without a clear source. Unlike fear, it attaches to life's background rather than a specific danger.",
+      "3": "The need to be noticed: behaving so that people watch, admire and talk about you. At the extreme, others' attention becomes fuel that is hard to run without.",
+      "4": "Indifference to others' feelings and troubles, with little guilt over harm done. High scores mean other people's pain finds almost no echo.",
+      "5": "A flexible relationship with truth: from convenient versions of events to outright lies for advantage. Truth adapts to the goal, not the other way around.",
+      "6": "Frequent feelings of being down, hopeless and of little worth. A stable coloring of mood — a trait, not a diagnosis of depression.",
+      "7": "Difficulty holding attention: thoughts scatter, and any outside event steals the focus. Work moves in fits and often stays unfinished.",
+      "8": "Oddness of thought, speech or behavior — as others see it. High scores: ideas and associations that strike people as peculiar or from another planet.",
+      "9": "Fast, strong emotional swings, often out of proportion to the trigger. Mood can turn around in minutes — exhausting for the person and for those close by.",
+      "10": "A felt sense of one's own exceptionality and entitlement to special treatment. High scores bring condescension toward \"ordinary\" people and the sense that rules are written for others.",
+      "11": "A short path to anger: irritability, touchiness, readiness to answer a small jab with aggression. The world often reads as a field of skirmishes.",
+      "12": "Acting on the first urge, without the pause where consequences get weighed. Decisions are made instantly — and sometimes instantly regretted.",
+      "13": "Discomfort with close, deep relationships: emotional and romantic closeness burdens more than it draws. Distance feels safer than contact.",
+      "14": "A light grip on obligations: promises, debts and agreements get broken without much inner resistance. Hard to rely on.",
+      "15": "Using others as instruments: charm, flattery or pressure in service of one's own ends. Relationships organize around \"what's in it for me\".",
+      "16": "Unusual sensations and distortions of perception: a sense of unreality, strange bodily feelings, a blurred line between dream and waking. Shows up most under stress.",
+      "17": "Getting stuck: continuing the same strategy or thought even when it visibly is not working. Switching approaches is hard even while knowing it is time.",
+      "18": "A narrow band of expressed emotion: reserve, coolness, faint response even to what matters. There may be more inside than shows.",
+      "19": "A rigid demand for flawlessness — from oneself and from others: everything must be done right and only right. Flexibility reads as sloppiness, a mistake as failure.",
+      "20": "The pull of dangerous, intense pursuits with little regard for consequences: speed, extremes, gambles. Boredom and limits chafe more than risk does.",
+      "21": "Fear of losing the person who matters: rejection or separation feels like catastrophe. Hence clinging, jealousy of a partner's independence, and the need for constant reassurance.",
+      "22": "Bending to others' wishes — even against one's own interests and without real need. One's own view yields easily to pressure or authority.",
+      "23": "Expecting the catch: others' intentions read as hostile or self-serving by default. Trust comes hard and breaks easily.",
+      "24": "Beliefs and experiences that depart from the shared picture of the world: telepathy, signs, mystical coincidences, special powers. The line of the possible is drawn differently than for most.",
+      "25": "A preference for solitude: avoiding gatherings, saying little, living at a distance from people. Unlike shyness, it is low desire for contact rather than fear of it."
     },
     "domainNames": {
       "1": "Negative Affectivity",
@@ -226,11 +273,11 @@
       "5": "Psychoticism"
     },
     "domainDescriptions": {
-      "1": "The tendency to experience a range of negative emotions, such as anxiety, sadness, and irritability, with difficulty regulating them.",
-      "2": "Emotional and social withdrawal, difficulty connecting with others, and a preference for solitude.",
-      "3": "Interpersonal hostility, manipulation, and callousness, with a lack of empathy or concern for others.",
-      "4": "Impulsivity and lack of self-control, with reckless behaviour and difficulty resisting temptations.",
-      "5": "Unusual or eccentric patterns of thinking and perceiving reality."
+      "1": "A tendency to feel negative emotions often and intensely — anxiety, sadness, irritation — and to struggle to settle back down. Its core: anxiousness, emotional lability and separation insecurity.",
+      "2": "Pulling away from people and from feeling: social isolation, avoided intimacy, a muted emotional response. Its core: withdrawal, anhedonia and intimacy avoidance.",
+      "3": "Setting oneself above and against others: manipulation, deceit, callousness, grandiosity. The domain is about how much other people's interests exist for the person.",
+      "4": "Weak self-control: impulsivity, distractibility, irresponsibility, appetite for risk. Behavior follows the stimulus of the moment rather than the plan.",
+      "5": "Unusual ways of thinking and perceiving: eccentricity, odd beliefs, perceptual distortions. High values mean an unconventional picture of the world, not a diagnosis."
     }
   },
   "ecr": {

@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   HiOutlineBolt,
   HiOutlineInformationCircle,
   HiOutlineArrowPath,
+  HiOutlineArrowLeft,
   HiOutlineSparkles,
   HiOutlineScale,
   HiOutlineHeart,
@@ -18,6 +19,7 @@ import { normalCdf } from '../../utils/tScore';
 import { PART_SIZE } from './testParts';
 import { invalidateTestsCache } from './testsCache';
 import ImmersiveTopBar from './ImmersiveTopBar';
+import posthog from 'posthog-js';
 import ShareResultBar from './ShareResultBar';
 import BigFiveResultScreen from './BigFiveResult';
 import SchwartzResultScreen from './SchwartzResult';
@@ -65,7 +67,7 @@ const LS = {
 };
 
 // ─── Screens ─────────────────────────────────────────────────────────────────
-const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', RESULT: 'result' };
+const SCREEN = { LIST: 'list', RESUME: 'resume', QUESTIONS: 'questions', PART_DONE: 'partDone', RESULT: 'result' };
 
 // ─── Bell Curve component ────────────────────────────────────────────────────
 
@@ -241,6 +243,324 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
   );
 }
 
+// ─── Fragment celebration screen ─────────────────────────────────────────────
+// Shown after committing a (non-final) chunk of a chunked test. A Duolingo-style
+// moment of celebration — confetti, a bursting sigil, the WHOLE test's progress
+// filling up — rather than a dry "part X of Y, continue?" that makes the test
+// feel chopped up. Two ways forward: keep going, or back to the menu.
+const CONFETTI_COLORS = ['#F0E68C', '#D8B4FE', '#BEF264', '#FBCFE8', '#93C5FD', '#FDBA74'];
+
+// Tiny deterministic PRNG (mulberry32-style), keyed by piece index — render
+// stays pure (no Math.random), yet 28 pieces spread irregularly enough to read
+// as random confetti.
+function confettiRand(seed) {
+  let t = (seed + 0x6d2b79f5) | 0;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+
+/** Full-screen confetti rain from the top edge — the second, longer wave. */
+function ConfettiRain({ count = 26 }) {
+  const pieces = Array.from({ length: count }, (_, i) => ({
+    x: confettiRand(i * 7 + 1) * 100,
+    delay: 0.25 + confettiRand(i * 7 + 2) * 0.9,
+    dur: 2.1 + confettiRand(i * 7 + 3) * 1.4,
+    size: 7 + confettiRand(i * 7 + 4) * 7,
+    rot: (confettiRand(i * 7 + 5) - 0.5) * 720,
+    drift: (confettiRand(i * 7 + 6) - 0.5) * 110,
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+    // three shapes: dot, square-ish chip, long streamer
+    shape: confettiRand(i * 7 + 7),
+  }));
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      {pieces.map((p, i) => (
+        <motion.span
+          key={i}
+          className={`absolute ${p.shape > 0.7 ? 'rounded-full' : 'rounded-[2px]'}`}
+          style={{
+            left: `${p.x}%`,
+            top: -22,
+            width: p.shape < 0.25 ? p.size * 0.45 : p.size,
+            height: p.shape < 0.25 ? p.size * 1.9 : p.size * (p.shape > 0.7 ? 1 : 0.62),
+            backgroundColor: p.color,
+          }}
+          initial={{ y: -26, x: 0, rotate: 0, opacity: 1 }}
+          animate={{ y: '108vh', x: p.drift, rotate: p.rot, opacity: [1, 1, 0.9, 0] }}
+          transition={{ duration: p.dur, delay: p.delay, ease: [0.3, 0.35, 0.6, 0.95] }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * The first wave: pieces exploding radially out of the sigil tile, arcing up and
+ * then falling — rendered inside the icon's box so they originate from it.
+ */
+function RadialBurst({ count = 16 }) {
+  const pieces = Array.from({ length: count }, (_, i) => {
+    const angle = (i / count) * Math.PI * 2 + confettiRand(i * 5 + 1) * 0.6;
+    const dist = 90 + confettiRand(i * 5 + 2) * 150;
+    return {
+      dx: Math.cos(angle) * dist,
+      up: -(40 + confettiRand(i * 5 + 3) * 120),
+      down: 240 + confettiRand(i * 5 + 4) * 320,
+      size: 6 + confettiRand(i * 5 + 5) * 6,
+      rot: (confettiRand(i * 5 + 6) - 0.5) * 620,
+      dur: 1.25 + confettiRand(i * 5 + 7) * 0.6,
+      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+      round: confettiRand(i * 5 + 8) > 0.5,
+    };
+  });
+  return (
+    <div className="pointer-events-none absolute left-1/2 top-1/2" aria-hidden="true">
+      {pieces.map((p, i) => (
+        <motion.span
+          key={i}
+          className={`absolute ${p.round ? 'rounded-full' : 'rounded-[2px]'}`}
+          style={{ width: p.size, height: p.size * (p.round ? 1 : 0.65), backgroundColor: p.color }}
+          initial={{ x: 0, y: 0, rotate: 0, opacity: 0 }}
+          animate={{
+            x: [0, p.dx * 0.72, p.dx],
+            y: [0, p.up, p.down],
+            rotate: p.rot,
+            opacity: [0, 1, 1, 0],
+          }}
+          transition={{ duration: p.dur, delay: 0.12, ease: ['easeOut', 'easeIn'], times: [0, 0.32, 1] }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Little stars popping around the sigil, Duolingo-style. */
+const SPARKLES = [
+  { x: -50, y: -34, delay: 0.42, size: 17, color: '#FDBA74' },
+  { x: 54, y: -42, delay: 0.55, size: 13, color: '#D8B4FE' },
+  { x: -62, y: 26, delay: 0.68, size: 12, color: '#BEF264' },
+  { x: 52, y: 38, delay: 0.5, size: 15, color: '#93C5FD' },
+  { x: 2, y: -66, delay: 0.8, size: 11, color: '#FBCFE8' },
+];
+
+function IconSparkles() {
+  return (
+    <div className="pointer-events-none absolute left-1/2 top-1/2" aria-hidden="true">
+      {SPARKLES.map((s, i) => (
+        <motion.span
+          key={i}
+          className="absolute leading-none"
+          style={{ fontSize: s.size, color: s.color, left: s.x, top: s.y }}
+          initial={{ scale: 0, rotate: -30, opacity: 0 }}
+          animate={{ scale: [0, 1.25, 1, 0], rotate: 25, opacity: [0, 1, 1, 0] }}
+          transition={{ duration: 1.15, delay: s.delay, times: [0, 0.35, 0.7, 1], ease: 'easeOut' }}
+        >
+          ✦
+        </motion.span>
+      ))}
+    </div>
+  );
+}
+
+/** Counts prevPct → pct in sync with the bar fill (starts after `delayMs`). */
+function useDelayedCountUp(from, to, delayMs, durMs) {
+  const [v, setV] = useState(from);
+  useEffect(() => {
+    let raf;
+    const t0 = performance.now() + delayMs;
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+    const tick = (now) => {
+      const t = Math.min(1, Math.max(0, (now - t0) / durMs));
+      setV(from + (to - from) * easeOutCubic(t));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [from, to, delayMs, durMs]);
+  return Math.round(v);
+}
+
+function FragmentCelebrationScreen({ test, meta, partsCompleted, partCount, onContinue, onExit }) {
+  const { t } = useTranslation('tests');
+  const reduceMotion = useReducedMotion();
+  const Icon = meta.icon;
+  const pct = Math.round((partsCompleted / partCount) * 100);
+  const prevPct = Math.round(((partsCompleted - 1) / partCount) * 100);
+
+  // Bar fill starts at 0.8s and runs 0.9s; the number counts up in lockstep and
+  // "pops" when it lands.
+  const shownPct = useDelayedCountUp(prevPct, pct, reduceMotion ? 0 : 800, reduceMotion ? 0 : 900);
+
+  // The title rotates so back-to-back parts don't feel copy-pasted; the break
+  // before the final part gets its own "final stretch" line.
+  const titles = t('celebrate.titles', { returnObjects: true });
+  const isFinalBreak = partsCompleted === partCount - 1;
+  const title = isFinalBreak
+    ? t('celebrate.titleFinal')
+    : titles[(partsCompleted - 1) % titles.length];
+
+  // A soft double-tap of haptics on devices that support it.
+  useEffect(() => {
+    try { navigator.vibrate?.([14, 70, 20]); } catch { /* unsupported — fine */ }
+  }, []);
+
+  // Per-character cascade for the headline (skipped under reduced motion).
+  // Characters are grouped into unbreakable word blocks: bare inline-block
+  // characters let the browser wrap ANYWHERE — on narrow phones the trailing
+  // "!" broke onto its own line. Words keep a running character offset so the
+  // stagger still flows through the whole line; the spaces between word blocks
+  // are plain text, so they stay the only wrap points.
+  const words = [];
+  {
+    let offset = 0;
+    for (const word of title.split(' ')) {
+      words.push({ word, offset });
+      offset += word.length + 1;
+    }
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative min-h-dvh">
+      {!reduceMotion && <ConfettiRain />}
+
+      <div className="px-6 mx-auto w-full max-w-md min-h-dvh flex flex-col justify-center py-12">
+        <div className="text-center mb-9">
+          {/* Sigil tile: color glow behind, spring pop with overshoot, a bursting
+              ring, radial confetti out of the tile and stars popping around it. */}
+          <div className="relative w-24 h-24 mx-auto mb-7">
+            <div
+              aria-hidden="true"
+              className={`absolute -inset-10 rounded-full ${meta.color} opacity-40 blur-2xl`}
+            />
+            <motion.span
+              className={`absolute inset-0 rounded-[2rem] ${meta.color}`}
+              initial={{ scale: 0.9, opacity: 0.75 }}
+              animate={{ scale: 2.1, opacity: 0 }}
+              transition={{ duration: 0.9, delay: 0.26, ease: 'easeOut' }}
+            />
+            <motion.span
+              className={`absolute inset-0 rounded-[2rem] border-2 ${meta.color.replace('bg-', 'border-')}`}
+              initial={{ scale: 1, opacity: 0.9 }}
+              animate={{ scale: 2.7, opacity: 0 }}
+              transition={{ duration: 1.15, delay: 0.38, ease: 'easeOut' }}
+            />
+            <motion.div
+              className={`relative w-24 h-24 ${meta.color} rounded-[2rem] flex items-center justify-center shadow-warm-lg`}
+              initial={reduceMotion ? { scale: 1 } : { scale: 0.2, rotate: -18 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 240, damping: 12, delay: 0.05 }}
+            >
+              <motion.span
+                initial={reduceMotion ? {} : { scale: 0.6 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 11, delay: 0.22 }}
+                className="inline-flex"
+              >
+                <Icon className={`w-12 h-12 ${meta.iconColor}`} />
+              </motion.span>
+            </motion.div>
+            {!reduceMotion && <RadialBurst />}
+            {!reduceMotion && <IconSparkles />}
+          </div>
+
+          {/* Headline — characters cascade in on springs, grouped into
+              unbreakable word blocks: bare inline-block characters let the
+              browser wrap ANYWHERE, so on narrow phones the trailing "!" broke
+              onto its own line. Spaces between the blocks are plain text — the
+              only legal wrap points. */}
+          <h2 className="font-display text-4xl font-semibold text-persona-dark mb-3" aria-label={title}>
+            {reduceMotion ? (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>{title}</motion.span>
+            ) : (
+              words.map(({ word, offset }, wi) => (
+                <span key={`w-${wi}`} aria-hidden="true">
+                  <span className="inline-block whitespace-nowrap">
+                    {Array.from(word).map((ch, ci) => (
+                      <motion.span
+                        key={ci}
+                        className="inline-block"
+                        initial={{ opacity: 0, y: 22, scale: 0.6, rotate: -6 }}
+                        animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                        transition={{ type: 'spring', stiffness: 380, damping: 16, delay: 0.24 + (offset + ci) * 0.032 }}
+                      >
+                        {ch}
+                      </motion.span>
+                    ))}
+                  </span>
+                  {wi < words.length - 1 ? ' ' : ''}
+                </span>
+              ))
+            )}
+          </h2>
+          <motion.p
+            className="text-persona-muted leading-relaxed max-w-prose mx-auto"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
+          >
+            {t('celebrate.subtitle')}
+          </motion.p>
+        </div>
+
+        {/* Whole-test progress — one bar filling further, not "parts" bookkeeping.
+            The number counts up with the fill and pops on landing; a shine sweeps
+            the filled bar right after. */}
+        <motion.div
+          className="surface-warm rounded-3xl p-5 mb-9"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.62, type: 'spring', stiffness: 260, damping: 24 }}
+        >
+          <div className="flex items-baseline justify-between mb-2.5">
+            <span className="text-sm font-medium text-persona-dark">
+              {t(`names.${test.testType}`, { defaultValue: test.testName })}
+            </span>
+            <motion.span
+              className="text-sm font-semibold text-persona-dark tabular"
+              animate={reduceMotion ? {} : { scale: [1, 1, 1.35, 1] }}
+              transition={{ duration: 2.05, times: [0, 0.83, 0.92, 1] }}
+            >
+              {shownPct}%
+            </motion.span>
+          </div>
+          <div className="relative h-2.5 bg-persona-line/60 rounded-full overflow-hidden">
+            <motion.div
+              className="absolute inset-y-0 left-0 bg-persona-accent-peach rounded-full overflow-hidden"
+              initial={{ width: `${reduceMotion ? pct : prevPct}%` }}
+              animate={{ width: `${pct}%` }}
+              transition={{ duration: reduceMotion ? 0 : 0.9, delay: reduceMotion ? 0 : 0.8, ease: 'easeOut' }}
+            >
+              {!reduceMotion && (
+                <motion.span
+                  className="absolute inset-y-0 w-10 bg-gradient-to-r from-transparent via-white/70 to-transparent"
+                  initial={{ left: '-3rem' }}
+                  animate={{ left: '110%' }}
+                  transition={{ duration: 0.7, delay: 1.75, ease: 'easeInOut' }}
+                />
+              )}
+            </motion.div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="space-y-3"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.75, type: 'spring', stiffness: 260, damping: 24 }}
+        >
+          <motion.button onClick={onContinue} className="btn-primary w-full" whileTap={{ scale: 0.97 }}>
+            {t('celebrate.continue')}
+          </motion.button>
+          <motion.button onClick={onExit} className="btn-secondary w-full" whileTap={{ scale: 0.97 }}>
+            {t('celebrate.menu')}
+          </motion.button>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Questions Screen ────────────────────────────────────────────────────────
 // Two modes:
 //  • Single-pass (default): the whole questionnaire in one go, answers persisted
@@ -251,7 +571,7 @@ function ResumePromptScreen({ meta, onContinue, onRestart, onBack }) {
 //    progress — no localStorage) and the parent returns to the Portrait, where the
 //    just-filled segment animates. `partsCompleted` (from the backend) decides
 //    which part is served next.
-function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete, onFragmentComplete }) {
+function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete, onFragmentComplete, onExit }) {
   const { t } = useTranslation('tests');
   const Icon = meta.icon;
   const isIQ = test.testType === 'iq';
@@ -338,18 +658,53 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
   const frontier = Math.min(answeredCount, partLength - 1);
   const progress = ((qi + 1) / partLength) * 100;
 
+  // Desktop keyboard flow: 1–9 answers, ←/→ moves between answered questions.
+  // Re-attached every render on purpose — the handler closes over the current
+  // question/frontier, and a stale closure here would commit the wrong answer.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || submitting) return;
+      const tag = e.target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      const n = parseInt(e.key, 10);
+      if (n >= 1 && n <= currentQ.options.length) {
+        e.preventDefault();
+        handleAnswer(qi, currentQ.id, currentQ.options[n - 1].id);
+      } else if (e.key === 'ArrowLeft') {
+        setQi((p) => Math.max(0, p - 1));
+      } else if (e.key === 'ArrowRight') {
+        setQi((p) => Math.min(frontier, p + 1));
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
       {/* Width-capped so the answer buttons stay scannable on desktop. */}
-      <div className="px-6 pt-8 mx-auto w-full max-w-2xl">
-      {/* Title */}
-      <div className="mb-4">
-        <h3 className="font-semibold text-persona-dark">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
-        <p className="text-sm text-persona-muted">
-          {isChunked
-            ? t('parts.progress', { part: part + 1, parts: partCount, n: qi + 1, total: partLength })
-            : t('questions.progress', { n: qi + 1, total: partLength })}
-        </p>
+      <div className="px-6 pt-6 mx-auto w-full max-w-2xl">
+      {/* Title row — the exit arrow rides inside the block that already exists, so
+          long questions + five answers still fit a phone screen (no sticky bar).
+          Leaving is safe without confirmation: a chunked part's answers persist
+          under their own key and single-pass runs get the resume prompt. */}
+      <div className="mb-4 flex items-center gap-3">
+        <motion.button
+          onClick={onExit}
+          aria-label={t('common:back')}
+          className="w-9 h-9 -ml-1 shrink-0 rounded-full bg-white shadow-warm flex items-center justify-center text-persona-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+          whileTap={{ scale: 0.9 }}
+        >
+          <HiOutlineArrowLeft className="w-4 h-4" />
+        </motion.button>
+        <div className="min-w-0">
+          <h3 className="font-semibold text-persona-dark truncate">{t(`names.${test.testType}`, { defaultValue: test.testName })}</h3>
+          <p className="text-sm text-persona-muted">
+            {isChunked
+              ? t('parts.progress', { part: part + 1, parts: partCount, n: qi + 1, total: partLength })
+              : t('questions.progress', { n: qi + 1, total: partLength })}
+          </p>
+        </div>
       </div>
 
       {/* Progress */}
@@ -409,7 +764,14 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
                     opt.text
                   ) : (
                     <>
-                      <span className="text-persona-muted mr-3 tabular">{String.fromCharCode(65 + i)}.</span>
+                      {/* Scale answers aren't a quiz — no letter labels. The number is a
+                          desktop-only hint mirroring the 1–9 hotkeys. */}
+                      <span
+                        aria-hidden="true"
+                        className="hidden lg:inline-flex w-5 h-5 mr-3 -mt-0.5 rounded-md border border-persona-line text-persona-muted text-[11px] font-medium items-center justify-center tabular align-middle"
+                      >
+                        {i + 1}
+                      </span>
                       {opt.text}
                     </>
                   )}
@@ -458,6 +820,11 @@ function QuestionsScreen({ test, meta, questions, partsCompleted = 0, onComplete
           </motion.button>
         )}
       </div>
+
+      {/* Hotkey hint — pointer-equipped screens only */}
+      <p className="hidden lg:block text-center text-xs text-persona-muted/70 mt-6">
+        {t('questions.keyHint', { n: currentQ.options.length })}
+      </p>
       </div>
     </motion.div>
   );
@@ -698,6 +1065,9 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // The resume prompt is a transient dialog (no URL of its own); once the user
   // picks continue/restart we drop straight into the questions at /tests/:slug.
   const [resumeDecided, setResumeDecided] = useState(false);
+  // A chunked test just committed a (non-final) part: { partsCompleted, partCount }.
+  // Drives the between-parts break screen; transient like the resume prompt.
+  const [partDone, setPartDone] = useState(null);
   const loadedQuestionsFor = useRef(null);
 
   // The URL is the source of truth: /tests → list, /tests/:slug → runner,
@@ -712,12 +1082,14 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   const selectedTest = routeSlug ? tests.find((t) => testSlug(t) === routeSlug) : null;
   const meta = selectedTest ? (TEST_META[selectedTest.testType] || TEST_META.iq) : null;
 
-  // Derive the current screen from the URL (+ the resume prompt's local decision).
+  // Derive the current screen from the URL (+ the transient resume / part-break states).
   let screen;
   if (!routeSlug) {
     screen = SCREEN.LIST;
   } else if (isResultRoute) {
     screen = SCREEN.RESULT;
+  } else if (partDone) {
+    screen = SCREEN.PART_DONE;
   } else {
     const saved = selectedTest ? LS.get(selectedTest.id, 'answers') : null;
     screen = saved && saved.length > 0 && !resumeDecided ? SCREEN.RESUME : SCREEN.QUESTIONS;
@@ -735,8 +1107,9 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
 
   // A fresh resume decision whenever we (re)enter a test's runner — either a new
   // test in the URL, or coming back from that test's result page (which keeps the
-  // same routeSlug, so we also key on isResultRoute).
-  useEffect(() => { setResumeDecided(false); }, [routeSlug, isResultRoute]);
+  // same routeSlug, so we also key on isResultRoute). The part-break screen is
+  // just as transient — it never survives leaving the runner.
+  useEffect(() => { setResumeDecided(false); setPartDone(null); }, [routeSlug, isResultRoute]);
 
   // Fetch test list
   const fetchTests = useCallback(async () => {
@@ -798,26 +1171,38 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     // own copy and the shared module cache (chat/reads gates, portrait rings).
     invalidateTestsCache();
     fetchTests();
+    posthog.capture('test_completed', { test_type: selectedTest?.testType, slug: testSlug(selectedTest) });
     navigate(`/tests/${testSlug(selectedTest)}/result`);
   };
 
   // A chunked test just committed one fragment to the backend. The cache bust makes
   // the Portrait refetch the new part count. The final fragment goes straight to the
-  // result (like a full submit); earlier fragments return to the Portrait and let
-  // the just-filled progress segment animate.
+  // result (like a full submit); earlier fragments show the between-parts break
+  // screen — continue right away, or return to the Portrait and let the just-filled
+  // progress segment animate.
   const handleFragmentComplete = (resp) => {
     invalidateTestsCache();
     if (resp.completed) {
       handleComplete(resp.result);
-    } else {
-      navigate('/portrait', { state: { celebrate: { type: selectedTest.testType, parts: resp.partsCompleted } } });
+      return;
     }
+    // Our own list copy must reflect the new part count too — "continue now"
+    // serves the next part from selectedTest.partsCompleted.
+    setTests((prev) =>
+      prev.map((tst) => (tst.id === selectedTest.id ? { ...tst, partsCompleted: resp.partsCompleted } : tst)),
+    );
+    const partSize = PART_SIZE[selectedTest.testType] || 1;
+    const partCount = Math.max(1, Math.ceil((selectedTest.totalQuestions || 0) / partSize));
+    setPartDone({ partsCompleted: resp.partsCompleted, partCount });
   };
 
   // Open the runner without wiping progress: if an earlier retake was left
   // unfinished the resume prompt offers Continue / Start over; otherwise the
   // runner opens fresh (no saved answers → straight to the first question).
-  const handleRetake = () => navigate(`/tests/${testSlug(selectedTest)}`);
+  const handleRetake = () => {
+    posthog.capture('test_started', { test_type: selectedTest?.testType, slug: testSlug(selectedTest), retake: true });
+    navigate(`/tests/${testSlug(selectedTest)}`);
+  };
 
   // Leaving the runner / result returns to the Portrait (the test list is retired).
   const handleBackToList = () => {
@@ -858,6 +1243,23 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     );
   }
 
+  if (screen === SCREEN.PART_DONE) {
+    return (
+      <FragmentCelebrationScreen
+        test={selectedTest}
+        meta={meta}
+        partsCompleted={partDone.partsCompleted}
+        partCount={partDone.partCount}
+        onContinue={() => setPartDone(null)}
+        onExit={() => {
+          const celebrate = { type: selectedTest.testType, parts: partDone.partsCompleted };
+          setPartDone(null);
+          navigate('/portrait', { state: { celebrate } });
+        }}
+      />
+    );
+  }
+
   if (screen === SCREEN.QUESTIONS) {
     if (questionsLoading || questions.length === 0) {
       return (
@@ -868,12 +1270,16 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
     }
     return (
       <QuestionsScreen
+        // Keyed by part: continuing after a break must remount so the local
+        // answers/index state re-initializes for the next part's storage key.
+        key={`${selectedTest.id}-${selectedTest.partsCompleted ?? 0}`}
         test={selectedTest}
         meta={meta}
         questions={questions}
         partsCompleted={selectedTest.partsCompleted ?? 0}
         onComplete={handleComplete}
         onFragmentComplete={handleFragmentComplete}
+        onExit={handleBackToList}
       />
     );
   }

@@ -7,7 +7,9 @@ import { ValidationPipe } from './pipes/validation.pipe';
 
 async function start() {
   const PORT = process.env.PORT || 5000;
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // rawBody keeps the unparsed request bytes available (req.rawBody) — the
+  // Paddle webhook signature is an HMAC over the exact raw payload.
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
   app.enableCors();
 
   // Behind a reverse proxy set TRUST_PROXY to the number of hops (1 for a single

@@ -12,9 +12,12 @@ import {
 } from 'react-icons/hi2';
 import { recommendationsApi } from '../../api/recommendations';
 import { showToast } from '../../components/Toast';
+import posthog from 'posthog-js';
 import LockedCard from '../../components/LockedCard';
 import { registerSessionCache } from '../../utils/sessionCaches';
-import { TOTAL_TESTS } from '../../utils/constants';
+import { TOTAL_TESTS, isTestCompleted } from '../../utils/constants';
+import { partialTestCredit } from './testParts';
+import { fetchTestsCached } from './testsCache';
 
 const MODES = [
   { id: 'book', labelKey: 'common:books', icon: HiOutlineBookOpen },
@@ -275,6 +278,51 @@ function ActionButton({ onClick, children, className = '', size = 'md', label })
   );
 }
 
+/** Locked-gate vignette: a miniature of the swipe deck itself — film and book
+    cards fanned out, the top one already stamped with a like. */
+function ReadsLockedVignette() {
+  const { t } = useTranslation('reco');
+  const wings = [
+    { key: 'film', x: -62, r: -12, tint: 'bg-persona-accent-blue/60', Icon: HiOutlineFilm, delay: 0.12 },
+    { key: 'book', x: 62, r: 10, tint: 'bg-persona-accent-lavender/60', Icon: HiOutlineBookOpen, delay: 0.2 },
+  ];
+  return (
+    <div className="relative h-[8.25rem] mb-4" aria-hidden="true">
+      {wings.map(({ key, x, r, tint, Icon, delay }) => (
+        <motion.div
+          key={key}
+          className={`absolute left-1/2 top-1/2 w-[5.25rem] h-[7rem] -ml-[2.625rem] -mt-[3.5rem] rounded-2xl ${tint} shadow-warm flex items-center justify-center`}
+          initial={{ opacity: 0, x: 0, rotate: 0, scale: 0.7 }}
+          animate={{ opacity: 1, x, rotate: r, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 220, damping: 20, delay }}
+        >
+          <Icon className="w-7 h-7 text-persona-dark/70" />
+        </motion.div>
+      ))}
+      <motion.div
+        className="absolute left-1/2 top-1/2 w-[6.25rem] h-[8rem] -ml-[3.125rem] -mt-[4rem] rounded-2xl bg-persona-card shadow-warm-lg p-2.5"
+        initial={{ opacity: 0, y: 16, rotate: 6, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, rotate: -2, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 240, damping: 19, delay: 0.3 }}
+      >
+        <div className="h-16 rounded-xl bg-gradient-to-br from-persona-accent-peach/70 to-persona-accent-pink/70 mb-2 flex items-center justify-center">
+          <HiOutlineHeart className="w-6 h-6 text-persona-dark/60" />
+        </div>
+        <div className="h-1.5 rounded-full bg-persona-line mb-1.5" />
+        <div className="h-1.5 w-3/5 rounded-full bg-persona-line" />
+        <motion.span
+          className="absolute -top-2 -left-3 -rotate-12 border-[3px] border-emerald-400 text-emerald-400 rounded-xl px-2 py-0.5 text-base font-extrabold tracking-wider bg-persona-card/80"
+          initial={{ opacity: 0, scale: 1.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 16, delay: 0.55 }}
+        >
+          {t('stamps.like')}
+        </motion.span>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   const { t } = useTranslation('reco');
   // `?type=film|book` drives which queue we show; defaults to book.
@@ -327,6 +375,20 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
     return () => { active = false; };
   }, [mode, pollTick]);
 
+  // While locked, credit half-finished chunked tests on the gate bar (the lock
+  // response itself only counts whole tests).
+  useEffect(() => {
+    if (status !== 'locked') return;
+    let active = true;
+    fetchTestsCached()
+      .then((tests) => {
+        if (!active) return;
+        setLockInfo((prev) => ({ ...prev, partial: partialTestCredit(tests, isTestCompleted) }));
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [status]);
+
   // Keep the queue topped up: poll while building, or while the local stack is low.
   // `needMore` is a boolean dependency on purpose — swiping changes cards.length but
   // not *whether* we still need more, so it doesn't re-run this effect and reset the
@@ -361,6 +423,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
     swiped[mode].add(card.id);
     setInfo(null);
     setCards((prev) => prev.slice(1));
+    posthog.capture('recommendation_swiped', { verdict, content_type: mode });
     // Optimistic: the card is already gone locally. On failure at least say so —
     // the verdict won't be reflected in the history / future batches.
     recommendationsApi.swipe(card.id, verdict).catch(() => showToast(t('swipeError')));
@@ -379,15 +442,22 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
 
   // ─── Locked: tests not all done ────────────────────────────────────────────
   if (status === 'locked') {
-    const { completed, required } = lockInfo;
+    const { completed, required, partial } = lockInfo;
     return (
       <LockedCard
+        vignette={<ReadsLockedVignette />}
         title={t('locked.title')}
         body={t('locked.body', { required })}
+        perks={[
+          { Icon: HiOutlineFilm, tint: 'bg-persona-accent-blue/60', text: t('locked.perk1') },
+          { Icon: HiOutlineBookOpen, tint: 'bg-persona-accent-lavender/60', text: t('locked.perk2') },
+          { Icon: HiOutlineHeart, tint: 'bg-persona-accent-pink/60', text: t('locked.perk3') },
+        ]}
         progressLabel={t('locked.progress', { completed, required })}
         ctaLabel={completed === 0 ? t('locked.firstTest') : t('locked.continueTests')}
         completed={completed}
         required={required}
+        partial={partial}
         onOpenTests={onOpenTests}
       />
     );
@@ -433,6 +503,18 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
             </>
           )}
 
+          {/* Reset — tucked in the corner, away from the swipe actions: it clears the
+              whole queue and history, so it must not sit a thumb-slip from "dislike". */}
+          <motion.button
+            onClick={() => setConfirmReset(true)}
+            aria-label={t('actions.reset')}
+            title={t('actions.reset')}
+            whileTap={{ scale: 0.9 }}
+            className="absolute top-3 right-0 z-20 w-11 h-11 rounded-full bg-white/85 backdrop-blur-md shadow-warm-lg flex items-center justify-center text-persona-muted hover:text-persona-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach focus-visible:ring-offset-2 focus-visible:ring-offset-persona-bg"
+          >
+            <HiOutlineArrowPath className="w-5 h-5" />
+          </motion.button>
+
           {/* Films / Books — floating on the poster */}
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex p-1 bg-white/85 backdrop-blur-md rounded-full shadow-warm-lg">
             {MODES.map((m) => {
@@ -451,11 +533,8 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
             })}
           </div>
 
-          {/* Action bar — floating on the poster */}
+          {/* Action bar — swipe verdicts + details only (reset lives in the corner above) */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center gap-3.5">
-            <ActionButton onClick={() => setConfirmReset(true)} size="md" label={t('actions.reset')} className="text-persona-muted hover:text-persona-dark">
-              <HiOutlineArrowPath className="w-5 h-5" />
-            </ActionButton>
             <ActionButton onClick={() => doSwipe('DISLIKED')} size="lg" label={t('actions.dislike')} className="text-rose-500">
               <HiOutlineXMark className="w-8 h-8" />
             </ActionButton>
@@ -485,7 +564,21 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
             >
               {info.mediaType === 'book' ? (
                 <>
-                  {/* Book: no header — give the reader as much room as possible. */}
+                  {/* A slim app-styled header keeps the raw Google viewer from feeling
+                      like a foreign page dropped into the app. */}
+                  <div className="flex items-center justify-between gap-3 px-2 pb-3 shrink-0">
+                    <div className="min-w-0">
+                      <p className="font-display text-base font-semibold text-persona-dark truncate">{info.title}</p>
+                      <p className="text-xs text-persona-muted">{t('preview.viaGoogle')}</p>
+                    </div>
+                    <button
+                      onClick={() => setInfo(null)}
+                      aria-label={t('common:close')}
+                      className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-persona-muted hover:text-persona-dark hover:bg-persona-dark/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach"
+                    >
+                      <HiOutlineXMark className="w-5 h-5" />
+                    </button>
+                  </div>
                   <div className="flex-1 min-h-0">
                     <BookPreview item={info} />
                   </div>

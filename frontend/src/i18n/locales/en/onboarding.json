@@ -1,24 +1,37 @@
 {
-  "slides": [
+  "steps": [
     {
-      "title": "Discover Who You Are",
-      "description": "Take scientifically-inspired personality tests and uncover the traits that make you unique."
+      "chip": "Six tests",
+      "title": "Six tests. One you.",
+      "description": "Logic, character, values, attachment, stress and shadows — real methodologies instead of horoscopes and guesswork."
     },
     {
-      "title": "Deep Personality Insights",
-      "description": "Get detailed analysis of your strengths, risk zones, and behavioral patterns."
+      "chip": "Your portrait",
+      "title": "A text you'll recognize yourself in",
+      "description": "AI reads all six results and writes them into one coherent portrait: strengths, blind spots, and patterns you can't see from the inside."
     },
     {
-      "title": "Check Compatibility",
-      "description": "See how well you match with friends, partners, or colleagues based on personality type."
+      "chip": "Compatibility",
+      "title": "See where you match — and where you'll spark",
+      "description": "Invite a friend. Persona compares your results and tells you honestly what holds your bond together and where the conflicts hide."
     },
     {
-      "title": "Grow Every Day",
-      "description": "Receive personalized book & film recommendations and daily advice tailored to your personality."
+      "chip": "AI chat",
+      "title": "Reflect with someone who has studied you",
+      "description": "The AI studies your personality across all six tests — reflect with it on yourself, your relationships and your choices. It'll also pick books and films to match your character."
     }
   ],
-  "goToSlide": "Go to slide {{n}}",
+  "scene": {
+    "portraitQuote": "“You're the kind of person who watches closely first — and only then trusts…”",
+    "you": "You",
+    "friend": "Friend",
+    "match": "match",
+    "chatUser": "Why is it hard for me to ask for help?",
+    "chatAi": "Your attachment results explain a lot. Look…"
+  },
+  "goToSlide": "Go to step {{n}}",
+  "back": "Back",
   "next": "Next",
-  "getStarted": "Get started",
+  "createPortrait": "Create my portrait",
   "skip": "Skip"
 }

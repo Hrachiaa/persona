@@ -2,7 +2,7 @@ import { Controller, HttpCode, HttpStatus, Post, Get, Body, Req, UseGuards, Res 
 import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { AuthDto } from '../users/dtos/auth.dto';
+import { AuthDto, SignupDto } from '../users/dtos/auth.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ChangeForgottenPasswordDto, ForgotPasswordCodeDto, ForgotPasswordDto } from './dtos/forgot-password.dto';
@@ -27,7 +27,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Register a new user' })
     @ApiResponse({ status: 201, description: 'User registered successfully' })
     @ApiResponse({ status: 400, description: 'Invalid request' })
-    async signup(@Body() authDto: AuthDto){
+    async signup(@Body() authDto: SignupDto){
         return await this.authService.signup(authDto);
     }
 

@@ -64,7 +64,7 @@ export const PORTRAIT_SYSTEM_PROMPT = `
 
 Тёплый, но не сентиментальный. Умный, но не заумный. Ты как очень наблюдательный друг, который видит тебя насквозь и говорит правду, потому что уважает. Глубина без претенциозности.
 
-Длина соразмерна объёму данных: чем больше инструментов, тем полнее портрет. Без воды.
+Длина соразмерна объёму данных: чем больше инструментов, тем полнее портрет. Точный лимит слов приходит вместе с данными — соблюдай его строго. Без воды.
 `;
 
 // Reuse the per-test formatters so the portrait sees each test rendered exactly
@@ -89,6 +89,18 @@ export const TEST_LABELS: Record<string, string> = {
 };
 
 /**
+ * Hard word budget for the portrait, keyed by how many tests are present.
+ * Scales the output with the amount of data so a one-test portrait stays a
+ * sketch and only the full six-test portrait gets the long-form synthesis.
+ */
+const WORD_LIMITS: Record<number, number> = { 1: 150, 2: 225, 3: 300, 4: 375, 5: 450, 6: 600 };
+
+function wordLimitDirective(testCount: number): string {
+  const limit = WORD_LIMITS[Math.min(Math.max(testCount, 1), 6)];
+  return `ОГРАНИЧЕНИЕ ДЛИНЫ: пройдено тестов — ${testCount}, поэтому портрет должен уложиться максимум в ${limit} слов. Это жёсткий потолок, не цель: лучше короче, чем раздуто.`;
+}
+
+/**
  * Final instruction forcing the output language. The prompts are authored in
  * Russian and default to Russian output, so English users need an explicit
  * override.
@@ -110,6 +122,7 @@ export function buildPortraitUserPrompt(results: { testType: string; result: any
     '',
     ...sections,
     '',
+    wordLimitDirective(sections.length),
     outputLanguageDirective(lang),
   ].join('\n\n');
 }

@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { createHmac, randomBytes } from 'crypto'
-import { AuthDto } from '../users/dtos/auth.dto';
+import { AuthDto, SignupDto } from '../users/dtos/auth.dto';
 import { UsersService } from '../users/users.service';
 import { UserEntity } from '../users/models/user.entity';
 import { MailService } from '../mail/mail.service';
@@ -21,7 +21,7 @@ export class AuthService {
                 private readonly refreshTokenRepository: RefreshTokenRepository,
     ) {}
 
-    async signup(authDto: AuthDto){
+    async signup(authDto: SignupDto){
         const condidate = await this.usersService.getUserByEmail(authDto.email);
         if(condidate){
             throw new HttpException(t('errors.userExists'), HttpStatus.BAD_REQUEST);
@@ -32,6 +32,7 @@ export class AuthService {
             user = await this.usersService.create({
                 email: authDto.email,
                 password: hashPassword,
+                language: authDto.language,
             });
         } catch (error) {
             // Two concurrent signups can both pass the pre-check above; the DB

@@ -51,6 +51,19 @@ export const chatApi = {
       res = await doFetch(await refreshAccessToken());
     }
 
+    // Free allowance spent — the backend rejected the message BEFORE persisting
+    // or streaming anything. Surface a typed error so the UI can roll the
+    // optimistic message back and raise the Pro paywall.
+    if (res.status === 402) {
+      const err = new Error('Subscription required');
+      err.code = 'SUBSCRIPTION_REQUIRED';
+      try {
+        const data = await res.json();
+        if (data?.message) err.message = data.message;
+      } catch { /* keep the fallback message */ }
+      throw err;
+    }
+
     if (!res.ok || !res.body) {
       throw new Error(`Chat request failed (${res.status})`);
     }

@@ -171,10 +171,42 @@ function FriendsHome({ navigate }) {
       {loading ? (
         <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
       ) : friends.length === 0 ? (
-        <div className="text-center text-persona-muted py-10">
-          <HiOutlineUserPlus className="w-10 h-10 mx-auto mb-3 opacity-50" />
-          <p className="text-sm">{t('home.empty')}</p>
-        </div>
+        // No friends yet — this screen's job is to sell what compatibility gives,
+        // not to shrug. Value bullets + a prominent invite CTA.
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="surface-warm rounded-4xl p-8 text-center"
+        >
+          <div className="w-16 h-16 mx-auto mb-5 bg-persona-accent-pink/60 rounded-3xl flex items-center justify-center">
+            <HiOutlineUsers className="w-8 h-8 text-persona-dark" />
+          </div>
+          <h3 className="font-display text-xl font-semibold text-persona-dark mb-2">{t('home.emptyTitle')}</h3>
+          <p className="text-sm text-persona-muted leading-relaxed max-w-prose mx-auto mb-6">{t('home.emptyBody')}</p>
+
+          <ul className="text-left space-y-3 max-w-xs mx-auto mb-7">
+            {[
+              { icon: HiOutlineSparkles, tint: 'bg-persona-accent-lavender/60', key: 'home.emptyPerk1' },
+              { icon: HiOutlineUsers, tint: 'bg-persona-accent-lime/60', key: 'home.emptyPerk2' },
+              { icon: HiOutlineChatBubbleLeftRight, tint: 'bg-persona-accent-peach/60', key: 'home.emptyPerk3' },
+            ].map(({ icon: PerkIcon, tint, key }) => (
+              <li key={key} className="flex items-start gap-3">
+                <span className={`w-8 h-8 shrink-0 rounded-xl ${tint} flex items-center justify-center`}>
+                  <PerkIcon className="w-4 h-4 text-persona-dark" />
+                </span>
+                <span className="text-sm text-persona-dark/85 leading-relaxed pt-1">{t(key)}</span>
+              </li>
+            ))}
+          </ul>
+
+          <motion.button
+            onClick={() => navigate('/match/add')}
+            className="btn-primary w-full flex items-center justify-center gap-2"
+            whileTap={{ scale: 0.97 }}
+          >
+            <HiOutlineLink className="w-5 h-5" /> {t('home.emptyCta')}
+          </motion.button>
+        </motion.div>
       ) : (
         <div className="space-y-2">
           {friends.map((f) => (
@@ -778,7 +810,9 @@ function CompatibilityView({ friendId, navigate, locationState }) {
           <div className="flex justify-center mb-8">
             <CircleProgress percentage={data.score} />
           </div>
-          <div className="text-persona-dark">
+          {/* Same editorial treatment as the portrait — this is the other long-form
+              AI essay, so it reads in the same serif at essay size. */}
+          <div className="font-reading text-persona-dark [&_p]:text-[17px] [&_p]:leading-[1.75] [&_p]:text-persona-dark/90 [&_p]:mb-5 [&_li]:text-[17px] [&_li]:leading-[1.75] [&_li]:text-persona-dark/90">
             <ReactMarkdown components={MARKDOWN_COMPONENTS}>{data.content}</ReactMarkdown>
           </div>
 

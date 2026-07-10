@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useTranslation, Trans } from 'react-i18next';
 import { HiOutlineArrowPath } from 'react-icons/hi2';
 import { tScoreToPercentile, percentileColor } from '../../utils/tScore.js';
+import ScaleBar from './ScaleBar';
 
 // O at top, going clockwise → C → E → A → N (the OCEAN acronym order).
 // Display names + comparison phrases come from the `results` namespace (bigFive.traits).
@@ -165,33 +166,9 @@ function BigFiveRadar({ percentiles }) {
   );
 }
 
-// ─── Facet bar row ───────────────────────────────────────────────────────────
-function FacetRow({ name, percentile, delay }) {
-  const color = percentileColor(percentile);
-  return (
-    <motion.div
-      className="flex items-center gap-3 py-2"
-      initial={{ opacity: 0, x: -8 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay }}
-    >
-      <span className="text-sm text-persona-dark/80 w-36 sm:w-44 flex-shrink-0">{name}</span>
-      <div className="flex-1 h-2.5 bg-persona-line/60 rounded-full overflow-hidden">
-        <motion.div
-          className={`h-full ${color.bar} rounded-full`}
-          initial={{ width: 0 }}
-          animate={{ width: `${percentile}%` }}
-          transition={{ duration: 0.7, delay, ease: 'easeOut' }}
-        />
-      </div>
-      <span className="text-sm font-medium text-persona-dark tabular w-9 text-right flex-shrink-0">
-        {percentile}
-      </span>
-    </motion.div>
-  );
-}
-
 // ─── Per-trait facet group ───────────────────────────────────────────────────
+// Facet rows use the shared ScaleBar (same responsive layout as the other facet
+// tests) with integer percentiles and an expandable per-facet explainer.
 function FacetGroup({ trait, traitPercentile, facets, delay, ownerName }) {
   const { t } = useTranslation('results');
   return (
@@ -221,10 +198,14 @@ function FacetGroup({ trait, traitPercentile, facets, delay, ownerName }) {
 
       <div className="divide-y divide-persona-line/60">
         {facets.map((f, i) => (
-          <FacetRow
+          <ScaleBar
             key={f.key}
-            name={t(`bigFive.facets.${f.key}`)}
-            percentile={f.percentile}
+            label={t(`bigFive.facets.${f.key}`)}
+            description={t(`bigFive.facetDescriptions.${f.key}`)}
+            score={f.percentile}
+            min={0}
+            max={100}
+            integer
             delay={delay + 0.05 + i * 0.04}
           />
         ))}

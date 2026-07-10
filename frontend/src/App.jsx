@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useAuth } from './context/AuthContext';
+import Landing from './pages/Landing';
 import Onboarding from './pages/Onboarding';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -46,7 +47,8 @@ function consumePendingInvite() {
 
 /** Decide where a visitor hitting `/` should land (mirrors the old getInitialScreen) */
 function getInitialPath(user) {
-  // Onboarding only plays once — the flag persists across sessions.
+  // Set once the intro has been seen (onboarding completed / Google OAuth);
+  // until then anonymous visitors land on the marketing page.
   const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
 
   if (user) {
@@ -55,7 +57,7 @@ function getInitialPath(user) {
   }
 
   if (!hasSeenOnboarding) {
-    return '/onboarding';
+    return '/welcome';
   }
 
   // Returning visitors land on Sign In, first-timers on Sign Up.
@@ -153,8 +155,9 @@ export default function App() {
       </a>
       <main id="main" className="relative">
         {/* Top progressive blur — matches the Dashboard. Dashboard renders its own
-            (immersive-aware) instance, so skip it on dashboard routes. */}
-        {!isDashboardRoute && (
+            (immersive-aware) instance, so skip it on dashboard routes; the landing
+            has its own sticky glass header instead. */}
+        {!isDashboardRoute && location.pathname !== '/welcome' && (
           <ProgressiveBlur direction="down" className="fixed top-0 inset-x-0 h-28 z-40" />
         )}
         <Suspense
@@ -167,6 +170,8 @@ export default function App() {
         <AnimatePresence mode="wait">
           <Routes location={location} key={animKey}>
             <Route path="/" element={<Navigate to={getInitialPath(user)} replace />} />
+            {/* Public marketing page — the front door for new anonymous visitors. */}
+            <Route path="/welcome" element={<Landing />} />
             {/* Public shared result — viewable without an account. */}
             <Route path="/share/:token" element={<SharePage />} />
             {/* Personal invite link — adds the opener as a friend (auth-gated inside). */}
