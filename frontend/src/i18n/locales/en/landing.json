@@ -1,0 +1,126 @@
+{
+  "nav": {
+    "how": "How it works",
+    "tests": "The tests",
+    "pricing": "Pricing",
+    "login": "Sign in",
+    "startShort": "Start",
+    "openApp": "Open app"
+  },
+  "hero": {
+    "chip": "Six assessments · one portrait",
+    "title": "You're more <hl>interesting</hl> than you think",
+    "subtitle": "Persona builds your portrait from six real assessments — logic, personality, values, attachment, stress and shadows. No horoscopes, no guesswork: only what can actually be measured.",
+    "cta": "Create my portrait",
+    "ctaNote": "Free · no card required",
+    "haveAccount": "I already have an account"
+  },
+  "stage": {
+    "portraitLabel": "Your portrait",
+    "portraitText": "You're the kind of person who watches first — and only then trusts…"
+  },
+  "how": {
+    "chip": "The path",
+    "title": "Three steps to your portrait",
+    "s1": {
+      "title": "Take six tests",
+      "text": "Classic instruments — from IQ matrices to the PID-5. At your own pace: progress is saved, so you can come back anytime."
+    },
+    "s2": {
+      "title": "Get your portrait",
+      "text": "The AI reads all six results together and writes one coherent text about you: strengths, blind spots, and patterns you can't see from the inside."
+    },
+    "s3": {
+      "title": "Go deeper",
+      "text": "Compare compatibility with friends, reflect with an AI that knows you, and build a shelf of books and films matched to your character."
+    }
+  },
+  "tests": {
+    "chip": "Six dimensions",
+    "title": "What the portrait is made of",
+    "subtitle": "Not \"which color are you\" — instruments backed by decades of research.",
+    "items": {
+      "iq": { "name": "Logic", "tag": "IQ", "desc": "Patterns, abstractions, and how fast you think." },
+      "bigFive": { "name": "Personality", "tag": "Big Five", "desc": "The five traits your character is built from." },
+      "shcwartz": { "name": "Values", "tag": "Schwartz values", "desc": "What actually drives you." },
+      "ecr": { "name": "Attachment", "tag": "ECR-R", "desc": "How you build closeness — and what scares you in it." },
+      "cope": { "name": "Stress", "tag": "COPE", "desc": "What you do when things go sideways." },
+      "pid": { "name": "Shadows", "tag": "PID-5", "desc": "The sharp edges people usually keep quiet about." }
+    }
+  },
+  "portrait": {
+    "chip": "The portrait",
+    "title": "A text you'll recognize yourself in",
+    "subtitle": "Not a pile of scores and charts. The AI reads all six results together and writes one connected text — about how it all fits together in you.",
+    "p1": "Strengths — and where they work for you",
+    "p2": "Blind spots you can't see from the inside",
+    "p3": "Patterns in relationships, work, and decisions",
+    "cardLabel": "Portrait · excerpt",
+    "excerpt": "You're the kind of person who watches for a long time first — and only then trusts. In an unfamiliar group you don't rush to speak: you read the rules of the game and the balance of power, and you join the conversation once you can see right through it."
+  },
+  "match": {
+    "chip": "Compatibility",
+    "title": "Where you match — and where it sparks",
+    "subtitle": "Invite a friend or partner. Persona compares your results across all six dimensions and tells you honestly what your bond is built on and where the conflicts hide.",
+    "you": "You",
+    "friend": "Friend",
+    "matchLabel": "match",
+    "bars": {
+      "values": "Values",
+      "attachment": "Attachment",
+      "stress": "Stress"
+    }
+  },
+  "chat": {
+    "chip": "AI chat",
+    "title": "Reflect with someone who has studied you",
+    "subtitle": "This chat remembers your results. Ask about yourself — and get an answer about you, not generic advice from the internet.",
+    "userMsg": "Why is it so hard for me to ask for help?",
+    "aiMsg": "Look: your attachment test shows high avoidance — it feels safer to cope alone. And here's what your COPE results add to that…",
+    "memory": "Remembers all six results"
+  },
+  "reads": {
+    "chip": "Recommendations",
+    "title": "Books and films that will actually land",
+    "subtitle": "Swipe through a queue built from your portrait: not bestseller lists — matches for your character.",
+    "book": "Book",
+    "film": "Film"
+  },
+  "pricing": {
+    "chip": "Pricing",
+    "title": "Everything essential is free",
+    "subtitle": "Pro exists for one thing: unlimited AI chat.",
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "f1": "All six tests with results",
+      "f2": "AI-written portrait",
+      "f3": "Compatibility with friends",
+      "f4": "Book & film recommendations",
+      "f5": "2 messages with the AI",
+      "cta": "Start free"
+    },
+    "pro": {
+      "desc": "Unlimited chat with an AI that knows your portrait, tests, and compatibility.",
+      "weeklySub": "first 3 days free",
+      "weeklyPrice": "$5",
+      "weeklyPer": "wk",
+      "monthlySub": "save 50%",
+      "monthlyPrice": "$10",
+      "monthlyPer": "mo",
+      "cta": "Try 3 days free",
+      "note": "Activated inside the app · payments by Paddle · cancel anytime"
+    }
+  },
+  "final": {
+    "title": "Your portrait is waiting",
+    "subtitle": "Start with the first test — Persona will assemble the rest.",
+    "cta": "Create my portrait"
+  },
+  "footer": {
+    "tagline": "Six real assessments, an AI portrait, and conversations about you.",
+    "login": "Sign in",
+    "register": "Create account",
+    "rights": "© 2026 Persona"
+  }
+}

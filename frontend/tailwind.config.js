@@ -52,6 +52,7 @@ export default {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up': 'slideUp 0.5s ease-out',
         'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+        marquee: 'marquee 36s linear infinite',
       },
       keyframes: {
         fadeIn: {
@@ -65,6 +66,12 @@ export default {
         pulseSoft: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.7' },
+        },
+        // Seamless loop: the track holds two identical copies, so -50% lands
+        // exactly on the seam (items carry their own trailing margin, no gap).
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
     },
