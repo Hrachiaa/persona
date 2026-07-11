@@ -4,15 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, useSpring, useMotionValue, useTransform, useMotionValueEvent } from 'framer-motion';
 import { HiOutlineArrowPath, HiOutlineChevronDown, HiOutlineChatBubbleLeftRight, HiOutlineClock, HiOutlineXMark, HiOutlineSparkles, HiOutlineLightBulb } from 'react-icons/hi2';
 import ReactMarkdown from 'react-markdown';
-import { portraitApi } from '../../api/portrait';
 import { chatApi } from '../../api/chat';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import { SIGILS } from '../../components/testSigils';
 import { showToast } from '../../components/Toast';
-import { registerSessionCache } from '../../utils/sessionCaches';
 import { TOTAL_TESTS } from '../../utils/constants';
 import { PART_SIZE } from './testParts';
 import { fetchTestsCached, getCachedTests } from './testsCache';
+import { fetchPortrait, getCachedPortrait } from './portraitCache';
 import posthog from 'posthog-js';
 
 // ─── Segmented part-progress ring ────────────────────────────────────────────
@@ -59,19 +58,9 @@ const SIGIL_TEST_META = {
 // per item: { id, testType, testName, description, duration, totalQuestions,
 // result, partsCompleted, partsTotal }.
 
-// One shared in-flight request so StrictMode's double mount reuses a single
-// backend call instead of firing two generations.
-let inFlight = null;
-// Last successful `ready` response, kept at module scope so switching away from the
-// tab and back re-renders the existing portrait *instantly* (the tab unmounts on
-// switch — see Dashboard.renderTab) while we revalidate in the background.
-let cachedData = null;
-function fetchPortrait() {
-  if (!inFlight) inFlight = portraitApi.getPortrait().finally(() => { inFlight = null; });
-  return inFlight;
-}
-// The cached portrait belongs to one account — never show it to the next.
-registerSessionCache(() => { cachedData = null; inFlight = null; });
+// The portrait itself is cached the same way in ./portraitCache (shared with the
+// session prefetch): revisits re-render the last `ready` response instantly while
+// we revalidate in the background.
 
 // How long to wait before re-checking while the portrait is still generating.
 const POLL_INTERVAL_MS = 4000;
@@ -579,8 +568,8 @@ export default function Portrait() {
   // browsed and started — the home of the "take tests" CTAs now that the Tests tab is gone.
   const pagerRef = useRef(null);
   const goToConstellation = () => pagerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-  const [data, setData] = useState(cachedData); // backend response: { status, ... }
-  const [loading, setLoading] = useState(!cachedData);
+  const [data, setData] = useState(getCachedPortrait()); // backend response: { status, ... }
+  const [loading, setLoading] = useState(!getCachedPortrait());
   const [errored, setErrored] = useState(false);
   const [nonce, setNonce] = useState(0); // bump to refetch
   const [openingChat, setOpeningChat] = useState(false);
@@ -622,14 +611,11 @@ export default function Portrait() {
 
   useEffect(() => {
     let active = true;
-    fetchPortrait()
+    fetchPortrait() // a `ready` response is cached inside portraitCache
       .then((r) => {
         if (!active) return;
         setData(r);
-        if (r.status === 'ready') {
-          cachedData = r; // survive remounts within the session
-          posthog.capture('portrait_viewed');
-        }
+        if (r.status === 'ready') posthog.capture('portrait_viewed');
       })
       .catch(() => active && setErrored(true))
       .finally(() => active && setLoading(false));

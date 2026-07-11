@@ -17,7 +17,7 @@ import { testsApi } from '../../api/tests';
 import { showToast } from '../../components/Toast';
 import { normalCdf } from '../../utils/tScore';
 import { PART_SIZE } from './testParts';
-import { invalidateTestsCache } from './testsCache';
+import { fetchTestsCached, getCachedTests, invalidateTestsCache } from './testsCache';
 import ImmersiveTopBar from './ImmersiveTopBar';
 import posthog from 'posthog-js';
 import ShareResultBar from './ShareResultBar';
@@ -1055,8 +1055,10 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [tests, setTests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // Seeded from the shared module cache: arriving from the Portrait (which just
+  // used the same list) renders the runner/result without a loading screen.
+  const [tests, setTests] = useState(() => getCachedTests() || []);
+  const [loading, setLoading] = useState(() => !getCachedTests());
   const [questions, setQuestions] = useState([]);
   // Fresh result from the just-submitted test, tagged with its slug so we only
   // show it for the matching URL (otherwise we fall back to the stored result).
@@ -1111,11 +1113,12 @@ export default function Tests({ onImmersiveChange, onOpenPortrait }) {
   // just as transient — it never survives leaving the runner.
   useEffect(() => { setResumeDecided(false); setPartDone(null); }, [routeSlug, isResultRoute]);
 
-  // Fetch test list
+  // Fetch the test list through the shared cache — instant when the Portrait
+  // already loaded it, a real fetch after a submit invalidates it.
   const fetchTests = useCallback(async () => {
-    setLoading(true);
+    if (!getCachedTests()) setLoading(true);
     try {
-      const data = await testsApi.getAllTests();
+      const data = await fetchTestsCached();
       setTests(data);
       return data;
     } catch (err) {

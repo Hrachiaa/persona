@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,6 +25,8 @@ import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/auth';
 import { recommendationsApi } from '../api/recommendations';
 import { subscriptionsApi } from '../api/subscriptions';
+import { useResource } from '../utils/resourceCache';
+import { RECO_HISTORY_KEY, SUBSCRIPTION_KEY } from '../utils/resourceKeys';
 import SubscriptionView from './ProfileSubscription';
 import i18n, { setLanguage, SUPPORTED_LANGUAGES } from '../i18n';
 import { GENDER_OPTIONS, BIRTH_YEAR_MIN, maxBirthYear } from '../utils/constants';
@@ -66,46 +68,36 @@ export default function Profile({ onBack, onLogout }) {
   const view = Object.values(VIEWS).includes(segment) ? segment : VIEWS.MAIN;
   const setView = (next) => navigate(viewToPath(next));
 
-  // History (liked + disliked) is fetched once and shared by the Liked and History views.
-  const [history, setHistory] = useState(null); // null = not loaded yet
-  const [historyLoading, setHistoryLoading] = useState(true);
-  const [historyError, setHistoryError] = useState(null);
+  // History (liked + disliked) is shared by the Liked and History views, and the
+  // Pro entitlement drives the status chip + Subscription view. Both are cached
+  // (resourceCache) so reopening the profile shows counts and status instantly
+  // and just revalidates in the background; the reads tab mirrors swipes into
+  // the history cache so it stays truthful between fetches.
+  const { data: historyData, loading: historyLoading, error: historyErrored, mutate: mutateHistory } =
+    useResource(RECO_HISTORY_KEY, recommendationsApi.history);
+  const history = historyData?.items ?? null;
+  const historyError = historyErrored && !history ? t('historyLoadError') : null;
 
-  // Persona Pro entitlement — drives the status chip on the main list and the
-  // Subscription view. Owned here so cancel/subscribe updates both at once.
-  const [sub, setSub] = useState(null); // null = loading
-  const [subError, setSubError] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    subscriptionsApi
-      .me()
-      .then((data) => { if (!cancelled) setSub(data); })
-      .catch(() => { if (!cancelled) setSubError(true); });
-    return () => { cancelled = true; };
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    recommendationsApi
-      .history()
-      .then((data) => { if (!cancelled) setHistory(data.items || []); })
-      .catch(() => { if (!cancelled) setHistoryError(t('historyLoadError')); })
-      .finally(() => { if (!cancelled) setHistoryLoading(false); });
-    return () => { cancelled = true; };
-  }, [t]);
+  const { data: subData, error: subErrored, mutate: mutateSub } = useResource(SUBSCRIPTION_KEY, subscriptionsApi.me);
+  const sub = subData ?? null;
+  const subError = subErrored && !sub;
 
   const likedCount = history ? history.filter((i) => i.verdict === 'liked').length : null;
   const historyCount = history ? history.length : null;
 
-  // Like toggle for the Liked / History views. Optimistic — flips locally, reverts on error.
+  // Like toggle for the Liked / History views. Optimistic — flips locally (and in
+  // the cache), reverts on error.
+  const setVerdict = (id, verdict) =>
+    mutateHistory((prev) =>
+      prev ? { ...prev, items: prev.items.map((i) => (i.id === id ? { ...i, verdict } : i)) } : prev,
+    );
   const toggleVerdict = async (item) => {
     const next = item.verdict === 'liked' ? 'disliked' : 'liked';
-    setHistory((prev) => prev.map((i) => (i.id === item.id ? { ...i, verdict: next } : i)));
+    setVerdict(item.id, next);
     try {
       await recommendationsApi.rate(item.id, next.toUpperCase());
     } catch {
-      setHistory((prev) => prev.map((i) => (i.id === item.id ? { ...i, verdict: item.verdict } : i)));
+      setVerdict(item.id, item.verdict);
     }
   };
 
@@ -150,7 +142,7 @@ export default function Profile({ onBack, onLogout }) {
 
           {view === VIEWS.SUBSCRIPTION && (
             <motion.div key="subscription" {...slide}>
-              <SubscriptionView sub={sub} error={subError} onChanged={setSub} />
+              <SubscriptionView sub={sub} error={subError} onChanged={mutateSub} />
             </motion.div>
           )}
 
