@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineXMark, HiOutlineCheckCircle, HiOutlineLockClosed } from 'react-icons/hi2';
 import { getProConfig } from '../utils/paddle';
 import { formatPlanPrice, periodShort, useProCheckout } from '../utils/proCheckout';
+import { writeResource } from '../utils/resourceCache';
+import { SUBSCRIPTION_KEY } from '../utils/resourceKeys';
 import { showToast } from './Toast';
 import { PlanPicker, ProBadge, ProBenefits } from './ProPlans';
 
@@ -24,6 +26,9 @@ export default function PaywallModal({ user, onClose, onSubscribed }) {
     user,
     onConfirmed: (entitlement) => {
       entitlementRef.current = entitlement;
+      // The profile's cached entitlement is now stale — it must show Pro
+      // without waiting for its next background refresh.
+      writeResource(SUBSCRIPTION_KEY, entitlement);
     },
     onError: () => showToast(t('errors.checkout')),
   });

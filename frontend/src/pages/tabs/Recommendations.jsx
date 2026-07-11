@@ -11,13 +11,15 @@ import {
   HiOutlineArrowPath,
 } from 'react-icons/hi2';
 import { recommendationsApi } from '../../api/recommendations';
+import { updateResource } from '../../utils/resourceCache';
 import { showToast } from '../../components/Toast';
 import posthog from 'posthog-js';
 import LockedCard from '../../components/LockedCard';
-import { registerSessionCache } from '../../utils/sessionCaches';
 import { TOTAL_TESTS, isTestCompleted } from '../../utils/constants';
 import { partialTestCredit } from './testParts';
 import { fetchTestsCached } from './testsCache';
+import { decks, swiped, mergeDeckResponse } from './recoCache';
+import { RECO_HISTORY_KEY } from '../../utils/resourceKeys';
 
 const MODES = [
   { id: 'book', labelKey: 'common:books', icon: HiOutlineBookOpen },
@@ -28,12 +30,9 @@ const LOW_WATER = 7; // keep the queue topped up once it drops to this many card
 const POLL_INTERVAL_MS = 3500; // how often to check for a freshly generated batch
 const SWIPE_THRESHOLD = 100; // px drag past which a release counts as a swipe
 
-// Per-mode set of ids the user has already swiped this session. Guards the merge
-// on refetch: a card we optimistically removed must not reappear if the server
-// still lists it as PENDING (its swipe POST may be mid-flight). Module scope so it
-// survives the tab unmounting on every dashboard switch; reset with the session.
-const swiped = { film: new Set(), book: new Set() };
-registerSessionCache(() => { swiped.film.clear(); swiped.book.clear(); });
+// The swipe guards (`swiped`) and per-mode deck cache (`decks`) live in
+// ./recoCache — module scope shared with the session prefetch, so both a tab
+// revisit and a fresh sign-in render the deck without a "loading" fill.
 
 const swipeVariants = {
   // The resting/incoming top card sits at z-index 1 (above the scaled-down
@@ -328,51 +327,57 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   // `?type=film|book` drives which queue we show; defaults to book.
   const [searchParams, setSearchParams] = useSearchParams();
   const mode = searchParams.get('type') === 'film' ? 'film' : 'book';
-  const [cards, setCards] = useState([]);
-  const [status, setStatus] = useState('loading'); // loading | locked | generating | ready | error
-  const [lockInfo, setLockInfo] = useState({ completed: 0, required: TOTAL_TESTS });
+  // The on-screen deck mirrors decks[mode] (the module cache): a revisit renders
+  // the cached stack instantly and the fetch below merges fresh cards into it.
+  const [cards, setCards] = useState(() => decks[mode]?.cards ?? []);
+  const [status, setStatus] = useState(() => decks[mode]?.status ?? 'loading'); // + 'loading' | 'error' (transient, never cached)
+  const [lockInfo, setLockInfo] = useState(() => ({ completed: 0, required: TOTAL_TESTS, ...decks[mode]?.lockInfo }));
   const [dir, setDir] = useState(null); // last swipe direction — drives the exit animation
   const [info, setInfo] = useState(null); // item whose synopsis modal is open
   const [confirmReset, setConfirmReset] = useState(false);
   const [pollTick, setPollTick] = useState(0);
 
-  const loadedModeRef = useRef(null);
+  // Single writer for a mode's deck: updates the module cache, and mirrors the
+  // change into this component's state when it's the mode on screen.
+  const commit = (type, next) => {
+    decks[type] = next;
+    if (type === mode) {
+      setStatus(next.status);
+      setCards(next.cards);
+      if (next.lockInfo) setLockInfo((p) => ({ ...p, ...next.lockInfo }));
+    }
+  };
 
-  // Load (mode switch) / refresh (poll) the queue. On a mode switch we replace the
-  // stack; on a poll for the same mode we merge in any freshly generated cards.
+  // Keep the on-screen state in lockstep with the URL-driven mode — covers
+  // back/forward navigation, which changes `mode` without going through
+  // selectMode. Idempotent on mount (the initializers above already did this).
+  useEffect(() => {
+    const d = decks[mode];
+    setCards(d?.cards ?? []);
+    setStatus(d?.status ?? 'loading');
+    if (d?.lockInfo) setLockInfo((p) => ({ ...p, ...d.lockInfo }));
+  }, [mode]);
+
+  // Load (mount / mode switch) or refresh (poll) the queue, merging fresh cards
+  // into whatever stack survives in the cache (minus locally swiped ones).
   useEffect(() => {
     let active = true;
     const type = mode;
-    const merge = loadedModeRef.current === type;
 
     recommendationsApi
       .get(type)
       .then((resp) => {
         if (!active) return;
-        loadedModeRef.current = type;
-
-        if (resp.status === 'locked') {
-          setStatus('locked');
-          setLockInfo({ completed: resp.completed ?? 0, required: resp.required ?? TOTAL_TESTS });
-          return;
-        }
-        if (resp.status === 'generating') {
-          setStatus('generating');
-          if (!merge) setCards([]);
-          return;
-        }
-        // ready
-        setStatus('ready');
-        const visible = (resp.items || []).filter((i) => !swiped[type].has(i.id));
-        setCards((prev) => {
-          const base = merge ? prev : [];
-          const have = new Set(base.map((c) => c.id));
-          return [...base, ...visible.filter((i) => !have.has(i.id))];
-        });
+        commit(type, mergeDeckResponse(type, resp));
       })
-      .catch(() => active && setStatus((s) => (s === 'ready' ? s : 'error')));
+      .catch(() => {
+        // With a cached deck on screen, a failed refresh stays invisible (the
+        // needMore poll retries); only a first load with nothing to show errors.
+        if (active && !decks[type]) setStatus((s) => (s === 'ready' ? s : 'error'));
+      });
 
     return () => { active = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, pollTick]);
 
   // While locked, credit half-finished chunked tests on the gate bar (the lock
@@ -412,8 +417,12 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   function selectMode(next) {
     if (next === mode) return;
     setSearchParams({ type: next });
-    setStatus('loading');
-    setCards([]);
+    // Render the target mode's cached deck on this same interaction — the
+    // [mode] sync effect above covers the popstate path.
+    const d = decks[next];
+    setCards(d?.cards ?? []);
+    setStatus(d?.status ?? 'loading');
+    if (d?.lockInfo) setLockInfo((p) => ({ ...p, ...d.lockInfo }));
   }
 
   function doSwipe(verdict) {
@@ -422,7 +431,15 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
     setDir(verdict);
     swiped[mode].add(card.id);
     setInfo(null);
-    setCards((prev) => prev.slice(1));
+    const cur = decks[mode];
+    if (cur) commit(mode, { ...cur, cards: cur.cards.filter((c) => c.id !== card.id) });
+    else setCards((prev) => prev.slice(1));
+    // The profile's Liked/History views read the same swipe — mirror it into
+    // their cache (if loaded) so they stay truthful without a refetch.
+    updateResource(RECO_HISTORY_KEY, (h) => ({
+      ...h,
+      items: [{ ...card, verdict: verdict.toLowerCase(), swipedAt: new Date().toISOString() }, ...(h.items || [])],
+    }));
     posthog.capture('recommendation_swiped', { verdict, content_type: mode });
     // Optimistic: the card is already gone locally. On failure at least say so —
     // the verdict won't be reflected in the history / future batches.
@@ -432,8 +449,10 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
   function handleReset() {
     setConfirmReset(false);
     swiped[mode] = new Set();
-    setCards([]);
-    setStatus('generating');
+    commit(mode, { status: 'generating', cards: [] });
+    // Reset wipes this mode's swipe history server-side too — mirror that in
+    // the profile's cached copy.
+    updateResource(RECO_HISTORY_KEY, (h) => ({ ...h, items: (h.items || []).filter((i) => i.mediaType !== mode) }));
     recommendationsApi
       .reset(mode)
       .then(() => setPollTick((t) => t + 1))
@@ -479,7 +498,7 @@ export default function Recommendations({ onOpenTests, onImmersiveChange }) {
           {status === 'error' ? (
             <div className="absolute inset-0 surface-warm rounded-4xl flex flex-col items-center justify-center text-center p-8">
               <p className="text-sm text-persona-muted mb-4">{t('error')}</p>
-              <motion.button onClick={() => { loadedModeRef.current = null; setPollTick((n) => n + 1); }} className="btn-secondary inline-flex items-center gap-2" whileTap={{ scale: 0.97 }}>
+              <motion.button onClick={() => { setStatus('loading'); setPollTick((n) => n + 1); }} className="btn-secondary inline-flex items-center gap-2" whileTap={{ scale: 0.97 }}>
                 <HiOutlineArrowPath className="w-4 h-4" /> {t('common:retry')}
               </motion.button>
             </div>

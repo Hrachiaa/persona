@@ -33,7 +33,31 @@ import { showToast } from '../../components/Toast';
 import { TOTAL_TESTS, isTestCompleted } from '../../utils/constants';
 import { SIGILS } from '../../components/testSigils';
 import { partialTestCredit } from './testParts';
-import { fetchTestsCached } from './testsCache';
+import { fetchTestsCached, getCachedTests } from './testsCache';
+import { peekResource, writeResource, useResource } from '../../utils/resourceCache';
+import { CHATS_KEY, chatKey, FRIENDS_KEY } from '../../utils/resourceKeys';
+
+// The chat list and each conversation's messages live in the resourceCache, so
+// revisits render instantly and refresh in the background.
+// Stable fallback for an errored first load (a fresh [] per render would churn effect deps).
+const NO_CHATS = [];
+
+// What of a conversation goes into the cache: only settled messages (an
+// optimistic placeholder that never got an answer, or a failed exchange, is
+// not server truth), stripped of the transient flags that drive animations
+// and retry state.
+const persistableMessages = (messages) =>
+  messages.filter((m) => !m.pending && !m.error).map(({ id, role, content }) => ({ id, role, content }));
+
+// The chat gate, derived from the (cached) tests list: null = still unknown,
+// false = unlocked, { completed, required, partial } = locked.
+const lockFromTests = (tests) => {
+  if (!tests) return null;
+  const completed = tests.filter(isTestCompleted).length;
+  return completed >= TOTAL_TESTS
+    ? false
+    : { completed, required: TOTAL_TESTS, partial: partialTestCredit(tests, isTestCompleted) };
+};
 
 // ─── Shared bits ────────────────────────────────────────────────────────────────
 
@@ -326,9 +350,15 @@ function Conversation({ chatId, onBack, locationState, standalone, coarse, onPre
   const { t } = useTranslation('chat');
   const { user } = useAuth();
   const title = useChatTitle();
-  const [chat, setChat] = useState(locationState?.chat || null);
-  const [messages, setMessages] = useState(locationState?.chat?.messages || []);
-  const [loading, setLoading] = useState(!locationState?.chat?.messages);
+  // Freshly opened chats arrive with their messages in navigation state; a
+  // reopened chat renders its cached history instantly. Either way the server
+  // copy is fetched in the background and reconciled below — the skeleton only
+  // shows when we know nothing at all (first open of a session via the list).
+  const [chat, setChat] = useState(() => locationState?.chat || peekResource(chatKey(chatId)) || null);
+  const [messages, setMessages] = useState(
+    () => locationState?.chat?.messages || peekResource(chatKey(chatId))?.messages || [],
+  );
+  const [loading, setLoading] = useState(!locationState?.chat?.messages && !peekResource(chatKey(chatId)));
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -358,7 +388,10 @@ function Conversation({ chatId, onBack, locationState, standalone, coarse, onPre
       .then((r) => {
         if (!active) return;
         setChat(r);
-        setMessages(r.messages);
+        // Server truth replaces whatever we rendered from cache/state — unless an
+        // optimistic exchange is already on screen (a send racing this fetch);
+        // dropping it mid-stream would eat the user's message.
+        setMessages((prev) => (prev.some((m) => m.isNew) ? prev : r.messages));
         posthog.capture('chat_opened', { chat_kind: r.kind });
         onLoaded?.(r);
       })
@@ -370,6 +403,13 @@ function Conversation({ chatId, onBack, locationState, standalone, coarse, onPre
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
+
+  // Write the conversation through to the module cache (settled messages only)
+  // so leaving the tab and coming back re-renders it without a skeleton.
+  useEffect(() => {
+    if (!chat) return;
+    writeResource(chatKey(chatId), { ...chat, messages: persistableMessages(messages) });
+  }, [chat, chatId, messages]);
 
   // Follow the stream downward, but only until the start of the reply reaches the top —
   // then stop, so a long answer can be read from the beginning. Never scrolls up, and
@@ -978,14 +1018,12 @@ function EmptyPane({ lock, onNew }) {
 function NewChatSheet({ onClose, onPortrait, onFriend, onGoToFriends }) {
   const { t } = useTranslation('chat');
   const [step, setStep] = useState('root'); // 'root' | 'friends'
-  const [friends, setFriends] = useState(null);
+  // Shares the friends tab's cache — if it was visited this session the list
+  // shows instantly (and still refreshes in the background).
+  const { data, error } = useResource(FRIENDS_KEY, friendsApi.list, { enabled: step === 'friends' });
+  const friends = data ?? (error ? [] : null);
 
-  const openFriends = () => {
-    setStep('friends');
-    if (friends === null) {
-      friendsApi.list().then(setFriends).catch(() => setFriends([]));
-    }
-  };
+  const openFriends = () => setStep('friends');
 
   return createPortal(
     <motion.div
@@ -1101,43 +1139,37 @@ export default function Chat({ onImmersiveChange, onOpenTests }) {
   useEffect(() => () => onImmersiveChange?.(false), [onImmersiveChange]);
 
   // The chat list + tests gate live here so the desktop pane and the mobile screen
-  // share one copy that survives switching between conversations.
-  const [chats, setChats] = useState(null);
+  // share one copy that survives switching between conversations. Both are cached
+  // (resourceCache / testsCache): a revisit renders the last known list and gate
+  // instantly, while fresh copies load in the background — the skeletons only
+  // ever show on the first visit of a session.
+  const { data: chatsData, error: chatsError, refresh, mutate } = useResource(CHATS_KEY, chatApi.list, {
+    enabled: onChatRoute,
+  });
+  // Downstream code renders on null (loading) / [] (confirmed empty) — keep that
+  // contract: an errored first load falls back to [] like the old catch did.
+  const chats = chatsData ?? (chatsError ? NO_CHATS : null);
   const chatsRef = useRef(null);
   useEffect(() => { chatsRef.current = chats; }, [chats]);
   // null = still checking; { completed, required } = locked; false = unlocked.
-  const [lock, setLock] = useState(null);
+  const [lock, setLock] = useState(() => lockFromTests(getCachedTests()));
   const [showNew, setShowNew] = useState(false);
 
   useEffect(() => {
     if (!onChatRoute) return;
     let active = true;
     fetchTestsCached()
-      .then((tests) => {
-        if (!active) return;
-        const completed = (tests || []).filter(isTestCompleted).length;
-        setLock(
-          completed >= TOTAL_TESTS
-            ? false
-            : { completed, required: TOTAL_TESTS, partial: partialTestCredit(tests, isTestCompleted) },
-        );
-      })
+      .then((tests) => active && setLock(lockFromTests(tests || [])))
       .catch(() => active && setLock(false));
     return () => { active = false; };
   }, [onChatRoute]);
 
-  const refreshChats = useCallback(
-    () => chatApi.list().then(setChats).catch(() => setChats((prev) => prev ?? [])),
-    [],
-  );
-  useEffect(() => {
-    if (onChatRoute) refreshChats();
-  }, [onChatRoute, refreshChats]);
+  const refreshChats = useCallback(() => refresh().catch(() => {}), [refresh]);
 
   // Keep the list fresh without refetching: bump a chat's preview + move it up when
   // a message is sent / a reply lands (mirrors the backend's 140-char snippet).
   const previewChat = useCallback((id, lastMessage) => {
-    setChats((prev) => {
+    mutate((prev) => {
       if (!prev) return prev;
       const hit = prev.find((c) => c.id === id);
       if (!hit) return prev;
@@ -1148,7 +1180,7 @@ export default function Chat({ onImmersiveChange, onOpenTests }) {
       };
       return [updated, ...prev.filter((c) => c.id !== id)];
     });
-  }, []);
+  }, [mutate]);
 
   // A conversation opened by deep link (or fresh from the Portrait button) may not be
   // in the list yet — fetch the list again so the pane shows it.

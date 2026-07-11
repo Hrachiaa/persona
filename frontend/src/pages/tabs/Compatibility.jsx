@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,6 +20,15 @@ import {
 } from 'react-icons/hi2';
 import { friendsApi } from '../../api/friends';
 import { chatApi } from '../../api/chat';
+import { fetchResource, updateResource, invalidateResource, useResource } from '../../utils/resourceCache';
+import {
+  CHATS_KEY,
+  FRIENDS_KEY,
+  FRIEND_REQUESTS_KEY as REQUESTS_KEY,
+  FRIEND_INVITE_KEY as INVITE_KEY,
+  friendResultsKey as resultsKey,
+  friendCompatKey as compatKey,
+} from '../../utils/resourceKeys';
 import { MARKDOWN_COMPONENTS } from '../../components/markdownComponents';
 import { SIGILS } from '../../components/testSigils';
 import { showToast } from '../../components/Toast';
@@ -28,6 +37,19 @@ import { ResultView } from './Tests';
 import ImmersiveTopBar from './ImmersiveTopBar';
 
 const POLL_INTERVAL_MS = 3000;
+
+// Everything here renders through the resourceCache (keys in utils/resourceKeys):
+// switching to this tab re-renders the last known lists instantly and refreshes
+// them in the background — the loading states below only ever show on the first
+// visit of a session (and the prefetch usually beats even that).
+
+// Friend actions changed the lists server-side: refresh both caches in the
+// background so every screen (home list, requests, chat's friend picker)
+// agrees without ever flashing a spinner.
+function refreshFriendLists() {
+  fetchResource(FRIENDS_KEY, friendsApi.list, { force: true }).catch(() => {});
+  fetchResource(REQUESTS_KEY, friendsApi.requests, { force: true }).catch(() => {});
+}
 
 // ─── Shared bits ──────────────────────────────────────────────────────────────
 
@@ -123,19 +145,11 @@ function SubScreen({ title, onBack, label, children }) {
 
 function FriendsHome({ navigate }) {
   const { t } = useTranslation('friends');
-  const [friends, setFriends] = useState([]);
-  const [incomingCount, setIncomingCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([friendsApi.list(), friendsApi.requests()])
-      .then(([list, reqs]) => {
-        setFriends(list);
-        setIncomingCount(reqs.incoming.length);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  // Cached + revalidated in the background: revisits render the last known
+  // lists instantly; `loading` is true only before the very first response.
+  const { data: friends, loading } = useResource(FRIENDS_KEY, friendsApi.list);
+  const { data: requests } = useResource(REQUESTS_KEY, friendsApi.requests);
+  const incomingCount = requests?.incoming.length ?? 0;
 
   return (
     <ScreenShell label={t('home.label')}>
@@ -168,7 +182,7 @@ function FriendsHome({ navigate }) {
           <HiOutlineUserPlus className="w-4 h-4" /> {t('home.add')}
         </motion.button>
       </div>
-      {loading ? (
+      {loading || !friends ? (
         <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
       ) : friends.length === 0 ? (
         // No friends yet — this screen's job is to sell what compatibility gives,
@@ -234,12 +248,11 @@ function AddFriendView({ navigate, onBack }) {
   const [hit, setHit] = useState(null); // search result FriendDto | null
   const [notFound, setNotFound] = useState(false);
 
-  const [inviteToken, setInviteToken] = useState(null);
+  // The invite token is stable per account — cached so reopening this screen
+  // shows the link immediately.
+  const { data: invite } = useResource(INVITE_KEY, friendsApi.getInviteToken);
+  const inviteToken = invite?.token ?? null;
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    friendsApi.getInviteToken().then((r) => setInviteToken(r.token)).catch(() => {});
-  }, []);
 
   // Live search: debounce the input and only hit the API once it's a full email,
   // so results appear as you type without a separate "search" press. All state
@@ -280,6 +293,8 @@ function AddFriendView({ navigate, onBack }) {
     try {
       const { status } = await friendsApi.sendRequest(targetId);
       setHit((h) => (h && h.id === targetId ? { ...h, relation: status } : h));
+      // An outgoing request appeared (or a pending-in one became a friendship).
+      refreshFriendLists();
     } catch {
       showToast(t('actionError'));
     }
@@ -458,18 +473,7 @@ function SearchAction({ hit, onAdd, navigate }) {
 
 function RequestsView({ onBack }) {
   const { t } = useTranslation('friends');
-  const [data, setData] = useState({ incoming: [], outgoing: [] });
-  const [loading, setLoading] = useState(true);
-
-  const load = useCallback(() => {
-    friendsApi
-      .requests()
-      .then(setData)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => load(), [load]);
+  const { data, loading, refresh } = useResource(REQUESTS_KEY, friendsApi.requests);
 
   const act = async (fn, friendshipId) => {
     try {
@@ -477,12 +481,14 @@ function RequestsView({ onBack }) {
     } catch {
       showToast(t('actionError'));
     }
-    load();
+    refresh().catch(() => {});
+    // An accepted request lands in the friends list too.
+    fetchResource(FRIENDS_KEY, friendsApi.list, { force: true }).catch(() => {});
   };
 
   return (
     <SubScreen label={t('requests.label')} title={t('requests.title')} onBack={onBack}>
-      {loading ? (
+      {loading || !data ? (
         <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
       ) : (
         <>
@@ -554,25 +560,18 @@ function RequestsView({ onBack }) {
 function FriendDetail({ friendId, navigate, locationState }) {
   const { t } = useTranslation('friends');
   const [friend, setFriend] = useState(locationState?.friend || null);
-  const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data: results, loading } = useResource(resultsKey(friendId), () => friendsApi.getResults(friendId));
   const [openTest, setOpenTest] = useState(null); // { testType, testName, result }
   const [confirmRemove, setConfirmRemove] = useState(false);
 
+  // Resolve the friend's name if we arrived without navigation state (deep link);
+  // the cached friends list answers instantly on a revisit.
   useEffect(() => {
+    if (friend) return undefined;
     let active = true;
-    friendsApi
-      .getResults(friendId)
-      .then((r) => active && setResults(r))
-      .catch(() => active && setResults([]))
-      .finally(() => active && setLoading(false));
-    // Resolve the friend's name if we arrived without navigation state (deep link).
-    if (!friend) {
-      friendsApi
-        .list()
-        .then((list) => active && setFriend(list.find((f) => f.id === friendId) || null))
-        .catch(() => {});
-    }
+    fetchResource(FRIENDS_KEY, friendsApi.list)
+      .then((list) => active && setFriend(list.find((f) => f.id === friendId) || null))
+      .catch(() => {});
     return () => {
       active = false;
     };
@@ -582,6 +581,11 @@ function FriendDetail({ friendId, navigate, locationState }) {
     setConfirmRemove(false);
     try {
       await friendsApi.remove(friendId);
+      // Take them out of the cached list right away and drop their per-friend
+      // data; the chat list may have lost its compatibility chat — refresh it.
+      updateResource(FRIENDS_KEY, (list) => list.filter((f) => f.id !== friendId));
+      invalidateResource(resultsKey(friendId), compatKey(friendId));
+      fetchResource(CHATS_KEY, chatApi.list, { force: true }).catch(() => {});
       navigate('/match');
     } catch {
       showToast(t('actionError'));
@@ -708,18 +712,18 @@ function CircleProgress({ percentage }) {
 function CompatibilityView({ friendId, navigate, locationState }) {
   const { t } = useTranslation('friends');
   const [friend, setFriend] = useState(locationState?.friend || null);
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [errored, setErrored] = useState(false);
-  const [nonce, setNonce] = useState(0);
+  // A ready analysis renders instantly on revisit; locked/generating statuses
+  // are cached too, so returning mid-generation resumes the poll seamlessly.
+  const { data, loading, error: errored, refresh } = useResource(compatKey(friendId), () =>
+    friendsApi.getCompatibility(friendId),
+  );
   const [openingChat, setOpeningChat] = useState(false);
 
   // Resolve the friend's name on a deep link / refresh (no navigation state).
   useEffect(() => {
     if (friend) return undefined;
     let active = true;
-    friendsApi
-      .list()
+    fetchResource(FRIENDS_KEY, friendsApi.list)
       .then((list) => active && setFriend(list.find((f) => f.id === friendId) || null))
       .catch(() => {});
     return () => { active = false; };
@@ -739,36 +743,24 @@ function CompatibilityView({ friendId, navigate, locationState }) {
     }
   };
 
-  useEffect(() => {
-    let active = true;
-    friendsApi
-      .getCompatibility(friendId)
-      .then((r) => active && setData(r))
-      .catch(() => active && setErrored(true))
-      .finally(() => active && setLoading(false));
-    return () => {
-      active = false;
-    };
-  }, [friendId, nonce]);
-
   // Poll while the server is building the analysis.
   useEffect(() => {
     if (data?.status !== 'generating') return;
-    const id = setTimeout(() => setNonce((n) => n + 1), POLL_INTERVAL_MS);
+    const id = setTimeout(() => refresh().catch(() => {}), POLL_INTERVAL_MS);
     return () => clearTimeout(id);
-  }, [data, nonce]);
+  }, [data, refresh]);
 
   const onBack = () => navigate(`/match/${friendId}`, friend ? { state: { friend } } : undefined);
   const title = friend?.name || t('compat.titleFallback');
 
   return (
     <SubScreen label={t('compat.label')} title={title} onBack={onBack}>
-      {loading && !data ? (
+      {loading ? (
         <p className="text-sm text-persona-muted px-1">{t('common:loading')}</p>
-      ) : errored || data?.status === 'error' ? (
+      ) : (errored && !data) || data?.status === 'error' ? (
         <div className="text-center text-persona-muted py-10">
           <p className="text-sm mb-4">{t('compat.error')}</p>
-          <button onClick={() => setNonce((n) => n + 1)} className="btn-secondary">
+          <button onClick={() => refresh().catch(() => {})} className="btn-secondary">
             {t('common:retry')}
           </button>
         </div>

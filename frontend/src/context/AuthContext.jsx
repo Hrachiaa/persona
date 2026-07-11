@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { authApi } from '../api/auth';
 import i18n, { LANG_KEY, SUPPORTED_LANGUAGES } from '../i18n';
 import { resetSessionCaches } from '../utils/sessionCaches';
+import { prefetchSessionData } from '../utils/prefetchSession';
 import posthog from 'posthog-js';
 const AuthContext = createContext(null);
 
@@ -54,6 +55,14 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   }, [fetchMe]);
+
+  // A session just started (sign-in, sign-up, Google callback, or a restored
+  // session on load): warm every screen's cache so first tab visits render
+  // instantly. Keyed on the user id — profile edits don't re-fire it, and the
+  // prefetch itself dedupes per account.
+  useEffect(() => {
+    if (user?.id) prefetchSessionData(user.id);
+  }, [user?.id]);
 
   const persistAuth = useCallback((data) => {
     // A new auth session begins — drop anything cached for the previous account.

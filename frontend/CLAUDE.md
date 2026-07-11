@@ -10,7 +10,7 @@ Vite + React SPA for the Persona platform. See [../CLAUDE.md](../CLAUDE.md) for 
 - **HTTP**: axios (single instance with interceptors — see [src/api/client.js](src/api/client.js))
 - **Animation**: framer-motion (`AnimatePresence` wraps screen transitions in `App.jsx`)
 - **Icons**: react-icons
-- **State**: React Context only ([src/context/AuthContext.jsx](src/context/AuthContext.jsx)). **No** Redux / Zustand / React Query / SWR.
+- **State**: React Context only ([src/context/AuthContext.jsx](src/context/AuthContext.jsx)). **No** Redux / Zustand / React Query / SWR libraries — screen data caching is the in-house stale-while-revalidate layer, [src/utils/resourceCache.js](src/utils/resourceCache.js) (see [Module-scope caches](#module-scope-caches-stale-while-revalidate)).
 - **Forms**: none (no React Hook Form, no Formik — plain controlled inputs).
 - **UI library**: none (no shadcn, Headless UI, MUI — components are written from scratch using Tailwind).
 
@@ -85,8 +85,14 @@ Wrap `client` — never call axios inline from a component:
 
 New endpoints belong in a new (or existing) module under [src/api/](src/api/), in the same `(...) => client.<verb>(...).then(r => r.data)` shape.
 
-### Module-scope caches
-[tabs/testsCache.js](src/pages/tabs/testsCache.js) (test list), the portrait's `cachedData` and the reads tab's `swiped` sets live at module scope so they survive tab unmounts. **Any such cache must register a reset in [src/utils/sessionCaches.js](src/utils/sessionCaches.js)** — AuthContext fires `resetSessionCaches()` on login/logout so one account's data can't leak into the next session.
+### Module-scope caches (stale-while-revalidate)
+The dashboard unmounts a tab on every switch, so screen data is cached at module scope and **revisits must render instantly** — loading UI is only for a screen with nothing cached yet; every mount still refetches in the background and swaps fresh data in silently.
+
+- **[src/utils/resourceCache.js](src/utils/resourceCache.js)** is the standard for backend GET resources: `useResource(key, fetcher)` in components (`{ data, loading, error, refresh, mutate }`), plus imperative `peekResource` / `writeResource` / `updateResource` / `fetchResource(…, { force: true })` / `invalidateResource`. Key literals live in **[src/utils/resourceKeys.js](src/utils/resourceKeys.js)** (one module owns them so screens and the prefetch can't drift apart). New screen fetches should go through it.
+- **Session prefetch**: [src/utils/prefetchSession.js](src/utils/prefetchSession.js) warms every tab's data (tests, portrait, chats, friends + requests + invite token, both reco decks, history, entitlement) the moment a session starts — fired by AuthContext on `user.id` (sign-in, sign-up, Google, restored session), deduped per account, best-effort. So even *first* visits render instantly. Per-friend and per-conversation data intentionally load on entry. The module is imported eagerly — it must never import the lazy tab components, only api + cache modules.
+- **After a mutation, keep the caches truthful**: `mutate`/`updateResource` in place (chat previews, verdict toggles, friend removal) or a forced background refetch (`fetchResource(…, { force: true })` after accepting a request). Avoid `invalidateResource` for anything with a loading state — it brings the spinner back, which this layer exists to prevent. Cross-feature writes matter too: a reads-tab swipe mirrors into `reco-history`, a Paddle purchase writes `subscription`.
+- Bespoke caches with non-GET-mirror semantics are hand-rolled small modules under `pages/tabs/`, shared by their tab and the prefetch: [testsCache.js](src/pages/tabs/testsCache.js) (test list; the runner busts it after a submit), [portraitCache.js](src/pages/tabs/portraitCache.js) (last non-error /portrait response), [recoCache.js](src/pages/tabs/recoCache.js) (`decks`/`swiped` merge-based queue).
+- **Every cache must register a reset in [src/utils/sessionCaches.js](src/utils/sessionCaches.js)** (`resourceCache` already does) — AuthContext fires `resetSessionCaches()` on login/logout so one account's data can't leak into the next session.
 
 ## Project layout
 
