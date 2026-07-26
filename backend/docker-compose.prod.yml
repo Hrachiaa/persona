@@ -28,6 +28,7 @@ services:
       - .env.development
     command: npx prisma migrate deploy
     restart: "no"
+    networks: [coolify]
 
   api:
     build:
@@ -60,8 +61,12 @@ services:
       start_period: 40s
       retries: 3
     restart: unless-stopped
+    networks: [coolify]
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
+networks:
+  coolify:
+    external: true

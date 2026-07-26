@@ -118,9 +118,26 @@ proxy lets clients spoof their IP past the throttler (see [src/main.ts](src/main
 
 ## Docker
 
-[docker-compose.yml](docker-compose.yml) defines two services:
+### Local — [docker-compose.yml](docker-compose.yml) + [Dockerfile](Dockerfile)
+
+Two services:
 
 - **`main`** — built from [Dockerfile](Dockerfile) (node:22-alpine). Reads `.env.development`. Mounts `.:/app` (with an anonymous volume on `node_modules`) for hot reload, runs `npm run start:dev`. Exposes `5000:5000`. Depends on `postgres`.
 - **`postgres`** — `postgres:18`. Reads `.env.development`. `5432:5432`. Volume `pgdata:/var/lib/postgresql`.
 
 Both restart on failure.
+
+### Server — [docker-compose.prod.yml](docker-compose.prod.yml) + [Dockerfile.prod](Dockerfile.prod)
+
+```sh
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+**No Postgres container** — the DB is external, `DATABASE_URL` from the env file points at it. Services:
+
+- **`migrate`** — one-shot `npx prisma migrate deploy`, built from the `builder` **stage** of [Dockerfile.prod](Dockerfile.prod) (the runtime stage has no Prisma CLI of its own). `api` waits on it via `condition: service_completed_successfully`.
+- **`api`** — the runtime stage: `node dist/src/main` as the unprivileged `node` user, `PORT` pinned to 5000 in-container and published as `${APP_PORT:-5000}`. Healthcheck GETs `/api/docs`.
+
+[Dockerfile.prod](Dockerfile.prod) build order is `npm ci` → `npx prisma generate` → `npm run build`; **generate must precede build** because the Nest sources import the client from `generated/prisma`. Easy to miss: the runtime stage also copies `src/i18n` and `src/mail/templates`, because both are loaded from `process.cwd() + '/src/...'` at runtime (see [src/app.module.ts](src/app.module.ts) and [src/mail/mail.module.ts](src/mail/mail.module.ts)) and are therefore *not* part of `dist/`.
+
+Both compose files read the same `.env.development` (gitignored — create it on the server; `.env.production` is stale). Test seeding still happens on boot via `TestsService.onModuleInit`, so there's no separate seed step.
