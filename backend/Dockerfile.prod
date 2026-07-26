@@ -1,0 +1,52 @@
+# Production image for the Persona API.
+#
+# Differs from the dev [Dockerfile]: the app is compiled at build time and the
+# container runs the compiled output (`dist/`) — no source mount, no watch mode.
+# Used by docker-compose.prod.yml.
+
+# ---------------------------------------------------------------- build stage
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+# Manifests first: this layer stays cached as long as dependencies don't change.
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+
+# The Prisma client is generated into ./generated/prisma (see the `output` in
+# prisma/schema.prisma) and the Nest sources import it — so `prisma generate`
+# has to run before `nest build`, otherwise the type-check fails.
+RUN npx prisma generate
+RUN npm run build
+
+# -------------------------------------------------------------- runtime stage
+FROM node:22-alpine AS runner
+
+WORKDIR /app
+ENV NODE_ENV=development
+
+# Drop to the unprivileged user before anything writes to /app, so no later
+# layer has to `chown -R` node_modules back (that duplicates the whole tree).
+RUN chown node:node /app
+USER node
+
+# Runtime dependencies only (no @nestjs/cli, no prisma CLI, no jest).
+COPY --chown=node:node package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+# Compiled app. `generated/prisma` is plain TypeScript, so the Prisma client is
+# compiled into dist/generated as well — nothing else to copy for it.
+COPY --from=builder --chown=node:node /app/dist ./dist
+
+# Runtime assets that are NOT part of the build output: both the i18n
+# dictionaries (src/app.module.ts) and the mail templates (src/mail/mail.module.ts)
+# are loaded from `process.cwd() + '/src/...'` at runtime, so they must exist
+# next to dist/ in the image.
+COPY --from=builder --chown=node:node /app/src/i18n ./src/i18n
+COPY --from=builder --chown=node:node /app/src/mail/templates ./src/mail/templates
+
+EXPOSE 5000
+
+CMD ["node", "dist/src/main"]

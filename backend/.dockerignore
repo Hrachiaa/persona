@@ -1,0 +1,14 @@
+node_modules
+dist
+generated
+coverage
+
+# Never bake secrets into an image — env vars come from compose `env_file`.
+.env
+.env.*
+
+.git
+.github
+*.log
+.vscode
+.idea

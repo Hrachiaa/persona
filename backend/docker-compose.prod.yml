@@ -1,0 +1,67 @@
+# Production compose — meant for the server, not for local dev.
+# (Local dev stays on docker-compose.yml, which also runs a Postgres container.)
+#
+# The database is external here: DATABASE_URL in the env file points at the
+# already-running Postgres, and nothing in this file starts a database.
+#
+#   cd backend
+#   docker compose -f docker-compose.prod.yml up -d --build
+#   docker compose -f docker-compose.prod.yml logs -f api
+#
+# Requires a .env.development next to this file (it's gitignored — create it on
+# the server). Every variable listed in backend/CLAUDE.md § "Config & env" has
+# to be there; DATABASE_URL must be the remote one, and FRONTEND_URL /
+# GOOGLE_CALLBACK_URL must be the real domains, not localhost.
+
+services:
+  # One-shot: applies pending Prisma migrations, then exits. Reuses the build
+  # stage of Dockerfile.prod because that's the layer that still has the Prisma
+  # CLI (a devDependency) — the runtime image doesn't ship it.
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      target: builder
+    image: persona-api-build
+    container_name: persona-migrate
+    env_file:
+      - .env.development
+    command: npx prisma migrate deploy
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: persona-api
+    container_name: persona-api
+    env_file:
+      - .env.development
+    environment:
+      # Pinned so the published port below is predictable regardless of what
+      # PORT says in the env file (`environment` wins over `env_file`).
+      PORT: 5000
+      # Uncomment ONLY if a reverse proxy fronts the API, set to the number of
+      # hops (nginx = 1). Without a proxy it lets clients spoof X-Forwarded-For
+      # past the rate limiter — see src/main.ts.
+      # TRUST_PROXY: 1
+    ports:
+      # Behind nginx/Caddy, prefer "127.0.0.1:${APP_PORT:-5000}:5000" so the API
+      # isn't reachable from the internet directly.
+      - "${APP_PORT:-5000}:5000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      # No dedicated /health route yet; the Swagger page is a cheap 200.
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5000/api/docs').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 40s
+      retries: 3
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
