@@ -1,0 +1,1 @@
+const a={bigFive:30,shcwartz:29,cope:30,ecr:18,pid:25};function p(o,n){return(o||[]).reduce((e,t)=>{if(n(t))return e;const r=a[t.testType];if(!r||!t.partsCompleted||!t.totalQuestions)return e;const i=Math.ceil(t.totalQuestions/r);return e+Math.min(t.partsCompleted,i)/i},0)}export{a as P,p};
