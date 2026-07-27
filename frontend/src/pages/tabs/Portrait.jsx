@@ -214,12 +214,27 @@ function PortraitConstellation({ basedOn, nextTest, onSelectSigil, selectedSigil
                   role={clickable ? 'button' : undefined}
                   tabIndex={clickable ? 0 : undefined}
                   onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectSigil(s.type); } } : undefined}
+                  className={clickable ? 'orb-focusable' : undefined}
                   style={clickable ? { cursor: 'pointer' } : undefined}
                 >
                   <title>{t(`sigils.${s.type}`)} — {lit ? t('orbStatus.revealed') : isNext ? t('orbStatus.next') : t('orbStatus.notTaken')}</title>
 
                   {/* Transparent hit target so the whole orb (incl. the halo gap) is tappable */}
                   {clickable && <circle r="36" fill="transparent" />}
+
+                  {/* Keyboard focus ring — shown by `.orb-focusable:focus-visible`
+                      (see index.css), which replaces the UA outline a tap would
+                      otherwise draw as a box around the orb. */}
+                  {clickable && (
+                    <circle
+                      className="orb-focus-ring"
+                      r="40"
+                      fill="none"
+                      stroke="#1A1A1A"
+                      strokeWidth="2"
+                      pointerEvents="none"
+                    />
+                  )}
 
                   {/* Halo — steady when revealed, gently pulsing on the next-up test */}
                   <motion.circle

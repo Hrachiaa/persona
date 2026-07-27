@@ -107,6 +107,25 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
+
+  /* Focusable constellation orb (an SVG <g role="button">). The usual button
+     focus styles don't work here: Tailwind's `ring-*` is a box-shadow, which
+     SVG ignores, and Chromium paints its default outline on a plain `:focus`
+     for SVG elements — so a *tap* leaves a black box around the orb (blue on
+     desktop). Kill the UA outline and draw our own ring (the .orb-focus-ring
+     circle inside the group) for keyboard users only. */
+  .orb-focusable:focus {
+    outline: none;
+  }
+
+  .orb-focusable .orb-focus-ring {
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+
+  .orb-focusable:focus-visible .orb-focus-ring {
+    opacity: 1;
+  }
 }
 
 /* Grain overlay — fixed full-viewport noise for warmth/texture */
