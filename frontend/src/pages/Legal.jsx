@@ -74,7 +74,7 @@ export default function Legal({ doc }) {
       transition={{ duration: 0.25 }}
       className="min-h-dvh"
     >
-      <div className="mx-auto max-w-3xl px-5 pb-20 pt-24 sm:px-8">
+      <div className="mx-auto max-w-3xl px-5 pb-20 pt-6 sm:px-8 sm:pt-10">
         <div className="flex items-center justify-between gap-4">
           <Link to="/welcome" className="btn-ghost -ml-2 inline-flex items-center gap-2 text-sm">
             <HiArrowLeft className="h-4 w-4" aria-hidden="true" />

@@ -28,6 +28,10 @@ const DASHBOARD_PREFIXES = ['/tests', '/portrait', '/match', '/reads', '/chat', 
 const DASHBOARD_ROUTES = ['/tests/*', '/portrait', '/match/*', '/reads', '/chat/*', '/profile/*'];
 const isDashboardPath = (p) => DASHBOARD_PREFIXES.some((base) => p === base || p.startsWith(base + '/'));
 
+// Non-dashboard routes that bring their own top chrome and must not get the
+// app-level progressive blur (it would only add empty space above their header).
+const CHROMELESS_PATHS = new Set(['/welcome', '/terms', '/privacy', '/refunds']);
+
 /** Check whether the user's profile fields are already populated */
 function isProfileComplete(user) {
   return user && user.name && user.gender && user.birthDate;
@@ -157,8 +161,9 @@ export default function App() {
       <main id="main" className="relative">
         {/* Top progressive blur — matches the Dashboard. Dashboard renders its own
             (immersive-aware) instance, so skip it on dashboard routes; the landing
-            has its own sticky glass header instead. */}
-        {!isDashboardRoute && location.pathname !== '/welcome' && (
+            has its own sticky glass header instead, and the legal pages are plain
+            documents that would just gain dead space above the title. */}
+        {!isDashboardRoute && !CHROMELESS_PATHS.has(location.pathname) && (
           <ProgressiveBlur direction="down" className="fixed top-0 inset-x-0 h-28 z-40" />
         )}
         <Suspense
