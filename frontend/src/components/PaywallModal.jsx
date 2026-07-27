@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineXMark, HiOutlineCheckCircle, HiOutlineLockClosed } from 'react-icons/hi2';
 import { getProConfig } from '../utils/paddle';
@@ -9,6 +9,20 @@ import { writeResource } from '../utils/resourceCache';
 import { SUBSCRIPTION_KEY } from '../utils/resourceKeys';
 import { showToast } from './Toast';
 import { PlanPicker, ProBadge, ProBenefits } from './ProPlans';
+
+/** Underlined link inside the paywall fine print — opens the policy in a new tab. */
+function LegalLink({ href, children }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="underline underline-offset-2 hover:text-persona-dark"
+    >
+      {children}
+    </a>
+  );
+}
 
 /**
  * The Persona Pro paywall. Raised by the chat when the third message is
@@ -204,6 +218,18 @@ export default function PaywallModal({ user, onClose, onSubscribed }) {
                   {t('paywall.messageSaved')}
                 </p>
                 <p className="text-[11px] text-persona-muted/80 text-center mt-2">{t('finePrint')}</p>
+                {/* Paddle requires the purchase terms to be reachable at the point
+                    of sale. New tab — the modal holds the pending chat message. */}
+                <p className="text-[11px] text-persona-muted/80 text-center mt-1.5 leading-relaxed">
+                  <Trans
+                    t={t}
+                    i18nKey="legalNote"
+                    components={{
+                      terms: <LegalLink href="/terms" />,
+                      refunds: <LegalLink href="/refunds" />,
+                    }}
+                  />
+                </p>
               </motion.div>
             )}
           </AnimatePresence>

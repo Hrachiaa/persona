@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   motion,
@@ -21,7 +21,7 @@ import posthog from 'posthog-js';
 import { useAuth } from '../context/AuthContext';
 import { SIGILS } from '../components/testSigils';
 import { ProBadge } from '../components/ProPlans';
-import i18n, { setLanguage, SUPPORTED_LANGUAGES } from '../i18n';
+import LangToggle from '../components/LangToggle';
 
 /* ------------------------------------------------------------------ */
 /* The public marketing page at /welcome — the front door for new      */
@@ -161,34 +161,6 @@ function SectionHead({ chip, chipTint, title, subtitle, center = false, classNam
         <p className="mt-4 text-base leading-relaxed text-persona-muted sm:text-lg">{subtitle}</p>
       )}
     </Reveal>
-  );
-}
-
-function LangToggle({ className = '' }) {
-  const { t } = useTranslation('common');
-  return (
-    <div
-      role="group"
-      aria-label={t('language')}
-      className={`flex items-center rounded-full border border-persona-line bg-white/70 p-0.5 ${className}`}
-    >
-      {SUPPORTED_LANGUAGES.map((l) => {
-        const active = i18n.language === l.code;
-        return (
-          <button
-            key={l.code}
-            type="button"
-            onClick={() => setLanguage(l.code)}
-            aria-pressed={active}
-            className={`rounded-full px-2.5 py-1 text-xs font-semibold uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-persona-accent-peach ${
-              active ? 'bg-persona-dark text-white' : 'text-persona-muted hover:text-persona-dark'
-            }`}
-          >
-            {l.code}
-          </button>
-        );
-      })}
-    </div>
   );
 }
 
@@ -940,6 +912,7 @@ function FinalCta({ onCta }) {
 
 function Footer({ onLogin, onRegister }) {
   const { t } = useTranslation('landing');
+  const { t: tLegal } = useTranslation('legal');
   return (
     <footer className="border-t border-persona-line">
       <div className="mx-auto flex max-w-shell flex-col gap-8 px-5 py-10 sm:flex-row sm:items-start sm:justify-between sm:px-8">
@@ -957,6 +930,18 @@ function Footer({ onLogin, onRegister }) {
             <button type="button" onClick={onRegister} className="btn-ghost text-sm">
               {t('footer.register')}
             </button>
+          </nav>
+          {/* Paddle's verification checks that the site links to all three. */}
+          <nav className="flex flex-wrap gap-1 sm:justify-end" aria-label={tLegal('alsoRead')}>
+            <Link to="/terms" className="btn-ghost text-sm">
+              {tLegal('docs.terms')}
+            </Link>
+            <Link to="/privacy" className="btn-ghost text-sm">
+              {tLegal('docs.privacy')}
+            </Link>
+            <Link to="/refunds" className="btn-ghost text-sm">
+              {tLegal('docs.refunds')}
+            </Link>
           </nav>
           <div className="flex items-center gap-4">
             <LangToggle />

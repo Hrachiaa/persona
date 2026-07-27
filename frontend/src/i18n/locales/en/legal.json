@@ -1,0 +1,309 @@
+{
+  "back": "Back",
+  "home": "Home",
+  "updated": "Last updated 27 July 2026",
+  "alsoRead": "Also read",
+  "docs": {
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "refunds": "Refund Policy"
+  },
+  "operator": {
+    "name": "Rachia Asasian",
+    "form": "individual entrepreneur, Ukraine",
+    "email": "app.persona.ai@gmail.com"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "intro": "These Terms are a binding agreement between you and Rachia Asasian, an individual entrepreneur registered in Ukraine (\"Persona\", \"we\", \"us\"), who operates the Persona application. By creating an account or using Persona you accept these Terms. If you do not accept them, please do not use the service.",
+    "sections": [
+      {
+        "h": "1. What Persona is",
+        "p": [
+          "Persona is a self-knowledge product. It offers six psychological and cognitive assessments (logic, personality, values, attachment, coping under stress and personality traits), an AI-written portrait built from your results, compatibility comparisons with friends who also use Persona, AI conversations about your results, and book and film recommendations.",
+          "Persona is an educational and entertainment product. It is not a medical device, not a diagnosis, not therapy, and not a substitute for professional care. Results and AI text must not be used to make medical, psychiatric, employment, legal, financial or safety decisions. If you are in distress, contact a qualified professional or your local emergency services.",
+          "The assessments are adaptations of publicly documented instruments. We are not affiliated with, and claim no endorsement by, their original authors or publishers."
+        ]
+      },
+      {
+        "h": "2. Eligibility and your account",
+        "p": [
+          "You must be at least 16 years old, or the minimum age of digital consent in your country if that age is higher."
+        ],
+        "list": [
+          "Register with an email address and password, or sign in with Google.",
+          "Give accurate profile information — your name, gender and date of birth affect how some results are scored.",
+          "Keep your credentials secret. You are responsible for activity on your account; tell us immediately if you suspect unauthorised access.",
+          "One account per person. Do not share, sell or transfer it."
+        ]
+      },
+      {
+        "h": "3. Free plan and Persona Pro",
+        "list": [
+          "The free plan includes all six assessments with full results, the AI portrait, compatibility with friends, recommendations, and a limited number of AI chat messages (currently 2 in total across all chats).",
+          "Persona Pro removes the message limit. It is an auto-renewing subscription: weekly (currently $5, with a 3-day free trial for first-time subscribers) or monthly (currently $10).",
+          "The price shown at checkout is the one that applies; local taxes may be added. We may change prices for future billing periods with reasonable notice, and you can cancel before a change takes effect.",
+          "We may adjust what sits on each side of the free/paid line, but we will not withdraw a feature you have already paid for during a period you have paid for."
+        ]
+      },
+      {
+        "h": "4. Payments, renewal and cancellation",
+        "list": [
+          "Payments are processed by Paddle.com Market Ltd, our authorised reseller and Merchant of Record. Your purchase contract for the subscription is with Paddle and Paddle's buyer terms also apply. Paddle issues your receipt and handles sales tax and VAT.",
+          "We never see or store your full card details.",
+          "Subscriptions renew automatically at the end of each billing period until cancelled. If a free trial ends and you have not cancelled, the first charge is taken automatically.",
+          "You can cancel at any time in the app under Profile → Persona Pro, or from the link in your Paddle receipt. Cancelling stops future renewals; Pro stays active until the end of the period you have already paid for.",
+          "If a payment fails, Paddle may retry it and Pro access may be suspended until it succeeds.",
+          "Refunds are governed by our Refund Policy."
+        ]
+      },
+      {
+        "h": "5. AI-generated content",
+        "p": [
+          "Your portrait, compatibility reports, chat replies and recommendations are produced by third-party large language models from your answers and messages.",
+          "AI output can be wrong, incomplete, biased or invented. Treat it as a prompt for reflection, not as fact, diagnosis or advice. We do not guarantee any particular result, quality or tone, and we may change the underlying models at any time.",
+          "Do not rely on the AI chat for crisis support."
+        ]
+      },
+      {
+        "h": "6. Acceptable use",
+        "p": ["You agree not to:"],
+        "list": [
+          "use Persona for anything unlawful, abusive, harassing, hateful or sexually exploitative;",
+          "submit other people's personal data without their consent, or impersonate anyone;",
+          "attempt to break, overload, scrape or reverse-engineer the service, or bypass access controls such as chat limits and paywalls;",
+          "resell, sublicense or commercialise the service or the material in it;",
+          "use automated means to create accounts or send messages.",
+          "We may suspend or close an account that breaks these rules."
+        ]
+      },
+      {
+        "h": "7. Your content and ours",
+        "list": [
+          "You keep ownership of what you submit — answers, chat messages and profile information. You grant us a limited licence to store, process and transmit it in order to run the service, including sending the relevant parts to our AI provider, for as long as your account exists.",
+          "Persona's design, code, texts and visual identity belong to us or our licensors. You receive a personal, non-exclusive, non-transferable right to use the service.",
+          "Content the AI produces for you is yours to use for personal, non-commercial purposes. Comparable output may be produced for other users.",
+          "If you create a share link for a result, anyone holding that link can view it. Creating one is always your choice."
+        ]
+      },
+      {
+        "h": "8. Friends and compatibility",
+        "p": [
+          "Adding a friend and running a compatibility comparison builds a report from both profiles and shows it to both of you. Only add people who are happy for their results to be compared with yours. Removing a friend stops future comparisons."
+        ]
+      },
+      {
+        "h": "9. Availability and changes to the service",
+        "p": [
+          "Persona is provided \"as is\" and \"as available\". We do not guarantee uninterrupted or error-free operation.",
+          "We may add, change or discontinue features. If we discontinue a paid feature, we will give notice and refund the unused part of any prepaid period on a pro-rata basis."
+        ]
+      },
+      {
+        "h": "10. Ending the agreement",
+        "list": [
+          "You can delete your account at any time by writing to us. Your data is then erased or anonymised as described in the Privacy Policy. Deleting an account does not by itself refund a period already paid for.",
+          "We may suspend or close an account that breaches these Terms, or where the law requires it."
+        ]
+      },
+      {
+        "h": "11. Liability",
+        "p": [
+          "Nothing in these Terms limits liability that cannot be limited by law — including death or personal injury caused by negligence, fraud, and your mandatory rights as a consumer.",
+          "Subject to that, we are not liable for indirect or consequential loss, lost data, lost profits, or decisions you take on the basis of results or AI output. Our total liability for any claim is limited to the greater of the amount you paid us in the 12 months before the claim and USD 50."
+        ]
+      },
+      {
+        "h": "12. Governing law and disputes",
+        "p": [
+          "These Terms are governed by the law of Ukraine. If you are a consumer resident in the European Union, the United Kingdom or the EEA, you keep the protection of the mandatory consumer law of your country of residence and may bring proceedings there.",
+          "Please contact us first — almost everything is resolved by email."
+        ]
+      },
+      {
+        "h": "13. Changes to these Terms",
+        "p": [
+          "We may update these Terms. Material changes are announced in the app or by email at least 14 days before they take effect for existing subscribers. Continuing to use Persona after that date means you accept the updated Terms."
+        ]
+      },
+      {
+        "h": "14. Contact",
+        "p": [
+          "Rachia Asasian, individual entrepreneur, Ukraine. Email: app.persona.ai@gmail.com. We reply within 5 business days."
+        ]
+      }
+    ]
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": "This policy explains what personal data Persona collects, why we use it, who we share it with and what rights you have. The data controller is Rachia Asasian, an individual entrepreneur registered in Ukraine, reachable at app.persona.ai@gmail.com.",
+    "sections": [
+      {
+        "h": "1. What we collect",
+        "list": [
+          "Account data — your email address and a hashed password (we never store passwords in readable form). If you sign in with Google, your Google account identifier and the email address on it.",
+          "Profile data — name, gender, date of birth and interface language. Age and gender affect the scoring of some assessments.",
+          "Assessment data — your answers to the six tests, partially completed attempts, computed scores and result payloads. Some of this reveals information about your personality and emotional life. We treat it as sensitive and process it only with your explicit consent, which you give when you start a test.",
+          "Generated content — your AI portrait, compatibility reports, chat conversations, and your recommendation swipes and ratings.",
+          "Social data — friend requests and friendships, invite links you create, and share tokens you generate for results.",
+          "Subscription data — your plan, status, trial and renewal dates, and the customer and subscription identifiers Paddle gives us. We never receive your card number.",
+          "Technical and usage data — IP address, browser and device information, pages viewed and in-app events, collected through PostHog analytics, plus ordinary server logs."
+        ]
+      },
+      {
+        "h": "2. Why we use it, and our legal basis",
+        "list": [
+          "To create and operate your account and deliver the tests, portrait, chats and recommendations — performance of our contract with you.",
+          "To process your assessment answers and produce psychological results — your explicit consent (Article 9(2)(a) GDPR). You can withdraw it at any time by deleting your results or your account; withdrawal does not affect processing already carried out.",
+          "To take payment, manage subscriptions and prevent payment fraud — performance of our contract and our legitimate interests.",
+          "To send service email such as password resets and account notices — performance of our contract.",
+          "To keep the service secure, debug it and improve it — our legitimate interests in running a working product.",
+          "To meet accounting and tax obligations — legal obligation."
+        ]
+      },
+      {
+        "h": "3. Who we share it with",
+        "p": ["We do not sell your data and we do not use it for advertising. We share it only with the providers we need to run the service:"],
+        "list": [
+          "Paddle.com Market Ltd — Merchant of Record: payments, invoices, subscription management. Receives your email address and purchase data, and acts as its own controller for the payment.",
+          "OpenRouter and, through it, the AI model providers that generate your portrait, compatibility reports and chat replies. They receive the content of the relevant prompt: your scores, basic profile facts and the messages you write. Please do not type anything into the chat that you would not want a third-party model provider to process.",
+          "PostHog (EU hosting) — product analytics and error reporting.",
+          "Google — only if you choose to sign in with Google.",
+          "Our email delivery provider — to send password-reset and account email.",
+          "Our hosting and database provider — where the application and database run."
+        ]
+      },
+      {
+        "h": "4. How AI processing works",
+        "p": [
+          "When you request a portrait, a compatibility report or send a chat message, we assemble a prompt from your test results, basic profile facts and the conversation so far, send it to the model provider over an encrypted connection, and store the reply in your account so you can read it again. Your content is not used to train our own models."
+        ]
+      },
+      {
+        "h": "5. International transfers",
+        "p": [
+          "Persona is operated from Ukraine and some of our providers are located in the European Union, the United Kingdom and the United States. Where personal data leaves the EEA or the UK, we rely on the European Commission's Standard Contractual Clauses or an adequacy decision, as applicable."
+        ]
+      },
+      {
+        "h": "6. How long we keep it",
+        "list": [
+          "Account, profile, assessment results, portrait and chats — for as long as your account exists.",
+          "After you delete your account — erased or irreversibly anonymised within 30 days, except records we must retain by law (payment and tax records, kept for the statutory period).",
+          "Analytics events — up to 12 months.",
+          "Server logs — up to 90 days."
+        ]
+      },
+      {
+        "h": "7. Your rights",
+        "p": ["If the GDPR or UK GDPR applies to you, you have the right to:"],
+        "list": [
+          "access the personal data we hold about you, and receive a copy;",
+          "have inaccurate data corrected;",
+          "have your data erased;",
+          "restrict or object to processing based on our legitimate interests;",
+          "receive your data in a portable, machine-readable format;",
+          "withdraw a consent you have given, at any time;",
+          "lodge a complaint with your national data protection authority.",
+          "To exercise any of these, email app.persona.ai@gmail.com from the address on your account. We respond within 30 days. We do not make decisions with legal or similarly significant effects about you by automated means."
+        ]
+      },
+      {
+        "h": "8. Cookies and browser storage",
+        "p": [
+          "Persona does not use advertising cookies. We store your access and refresh tokens and your language preference in your browser's local storage so that you stay signed in — clearing browser storage signs you out. PostHog sets analytics identifiers to count sessions and understand which features are used."
+        ]
+      },
+      {
+        "h": "9. Security",
+        "p": [
+          "We serve everything over HTTPS, store passwords hashed, issue short-lived access tokens, and restrict database access. No system is perfectly secure; if a breach affects your data we will notify you and the relevant supervisory authority where the law requires it."
+        ]
+      },
+      {
+        "h": "10. Children",
+        "p": [
+          "Persona is not intended for anyone under 16, or under the higher minimum age of digital consent where that applies. We do not knowingly collect data from children. If you believe a child has created an account, write to us and we will delete it."
+        ]
+      },
+      {
+        "h": "11. Changes to this policy",
+        "p": [
+          "We may update this policy. The date at the top always shows the current version, and material changes are announced in the app or by email."
+        ]
+      },
+      {
+        "h": "12. Contact",
+        "p": [
+          "Rachia Asasian, individual entrepreneur, Ukraine. Email: app.persona.ai@gmail.com."
+        ]
+      }
+    ]
+  },
+  "refunds": {
+    "title": "Refund Policy",
+    "intro": "Persona Pro is sold through Paddle.com Market Ltd, our authorised reseller and Merchant of Record. This policy explains when a payment can be returned and how to ask for it.",
+    "sections": [
+      {
+        "h": "1. Try before you pay",
+        "list": [
+          "Everything except unlimited AI chat is free indefinitely — all six assessments, the portrait, compatibility and recommendations — and the free plan includes AI messages so you can sample the chat before subscribing.",
+          "The weekly plan starts with a 3-day free trial for first-time subscribers. Cancel before the trial ends and nothing is ever charged. This is the simplest way to avoid an unwanted payment."
+        ]
+      },
+      {
+        "h": "2. Your statutory right of withdrawal (EU, UK, EEA)",
+        "p": [
+          "As a consumer resident in the European Union, the United Kingdom or the EEA, you normally have 14 days to withdraw from a distance contract without giving a reason.",
+          "Persona Pro is digital content supplied immediately. When you subscribe, you expressly ask us to begin supplying it at once and acknowledge that the right of withdrawal is lost once supply has begun. In practice: once you have used Pro — sent a chat message beyond the free limit — the 14-day right no longer applies.",
+          "If you subscribed and have not used any Pro feature, contact us within 14 days of the charge and we will refund it in full."
+        ]
+      },
+      {
+        "h": "3. Refunds we grant beyond that",
+        "p": ["Outside the withdrawal period we will still refund, at our discretion, where:"],
+        "list": [
+          "you were charged twice for the same period, or charged after cancelling;",
+          "a fault on our side made Pro unusable for a meaningful part of a paid period and we could not fix it;",
+          "a charge was made to your payment method without authorisation — tell us and Paddle immediately;",
+          "a renewal was taken, you had not used Pro at all in the new period, and you tell us within 14 days of that charge."
+        ]
+      },
+      {
+        "h": "4. What we normally cannot refund",
+        "list": [
+          "a billing period you have already used;",
+          "a subscription you kept and used but forgot to cancel;",
+          "dissatisfaction with the content, tone or accuracy of AI output — it is exploratory by nature, and the free plan exists so you can judge it before paying."
+        ]
+      },
+      {
+        "h": "5. Cancelling is not the same as a refund",
+        "p": [
+          "Cancelling stops the next renewal; your Pro access continues until the end of the period you have already paid for. Cancel in the app under Profile → Persona Pro, or from the link in your Paddle receipt. If you want the current period returned as well, ask us — cancelling alone does not trigger a refund."
+        ]
+      },
+      {
+        "h": "6. How to request a refund",
+        "list": [
+          "Email app.persona.ai@gmail.com from the address on your account, with your Paddle order or receipt number and a short reason. You can also contact Paddle directly through paddle.com/help.",
+          "We reply within 5 business days.",
+          "Approved refunds are issued by Paddle to the original payment method and usually appear within 3–10 business days, depending on your bank.",
+          "Refunds are made in the currency you were charged. We are not responsible for exchange-rate differences or fees charged by your bank."
+        ]
+      },
+      {
+        "h": "7. Chargebacks",
+        "p": [
+          "Please contact us before opening a dispute with your bank — it is almost always faster to resolve directly. An account with an unresolved chargeback may be suspended until the matter is settled."
+        ]
+      },
+      {
+        "h": "8. Contact",
+        "p": [
+          "Rachia Asasian, individual entrepreneur, Ukraine. Email: app.persona.ai@gmail.com."
+        ]
+      }
+    ]
+  }
+}

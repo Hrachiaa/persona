@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { subscriptionsApi } from '../api/subscriptions';
@@ -60,6 +61,15 @@ export default function SubscriptionView({ sub, error, onChanged }) {
 }
 
 /* ------------------------------------------------------------- free / pitch */
+
+/** Underlined inline link for the fine print under the checkout CTA. */
+function LegalLink({ to, children }) {
+  return (
+    <Link to={to} className="underline underline-offset-2 hover:text-persona-dark">
+      {children}
+    </Link>
+  );
+}
 
 function UpgradeView({ onChanged }) {
   const { t } = useTranslation('subscription');
@@ -147,6 +157,17 @@ function UpgradeView({ onChanged }) {
             </span>
           </button>
           <p className="text-[11px] text-persona-muted/80 text-center mt-3">{t('finePrint')}</p>
+          {/* Purchase terms at the point of sale — same line as the chat paywall. */}
+          <p className="text-[11px] text-persona-muted/80 text-center mt-1.5 leading-relaxed">
+            <Trans
+              t={t}
+              i18nKey="legalNote"
+              components={{
+                terms: <LegalLink to="/terms" />,
+                refunds: <LegalLink to="/refunds" />,
+              }}
+            />
+          </p>
         </>
       )}
     </div>
@@ -167,6 +188,7 @@ function statusPill(t, sub) {
 
 function ManageView({ sub, onChanged }) {
   const { t } = useTranslation('subscription');
+  const { t: tLegal } = useTranslation('legal');
   const [config, setConfig] = useState(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -270,6 +292,21 @@ function ManageView({ sub, onChanged }) {
           </button>
         )}
         <p className="text-[11px] text-persona-muted/80 text-center">{t('profile.paddleNote')}</p>
+        {/* The billing screen is where people look for the purchase terms. */}
+        <nav
+          aria-label={tLegal('alsoRead')}
+          className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-persona-muted/80"
+        >
+          <Link to="/terms" className="underline underline-offset-2 hover:text-persona-dark">
+            {tLegal('docs.terms')}
+          </Link>
+          <Link to="/refunds" className="underline underline-offset-2 hover:text-persona-dark">
+            {tLegal('docs.refunds')}
+          </Link>
+          <Link to="/privacy" className="underline underline-offset-2 hover:text-persona-dark">
+            {tLegal('docs.privacy')}
+          </Link>
+        </nav>
       </div>
 
       <AnimatePresence>

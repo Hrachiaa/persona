@@ -17,6 +17,7 @@ import Toaster from './components/Toast';
 // whole result-screen suite, which anonymous visitors of / never need).
 const SharePage = lazy(() => import('./pages/SharePage'));
 const InvitePage = lazy(() => import('./pages/InvitePage'));
+const Legal = lazy(() => import('./pages/Legal'));
 
 // Dashboard tab routes (+ the profile overlay) all render the same Dashboard
 // layout. They share a single AnimatePresence key so switching tabs doesn't
@@ -172,6 +173,11 @@ export default function App() {
             <Route path="/" element={<Navigate to={getInitialPath(user)} replace />} />
             {/* Public marketing page — the front door for new anonymous visitors. */}
             <Route path="/welcome" element={<Landing />} />
+            {/* Legal documents. Public and un-gated on purpose — Paddle's
+                verification crawls them anonymously, and the paywall links here. */}
+            <Route path="/terms" element={<Legal doc="terms" />} />
+            <Route path="/privacy" element={<Legal doc="privacy" />} />
+            <Route path="/refunds" element={<Legal doc="refunds" />} />
             {/* Public shared result — viewable without an account. */}
             <Route path="/share/:token" element={<SharePage />} />
             {/* Personal invite link — adds the opener as a friend (auth-gated inside). */}
