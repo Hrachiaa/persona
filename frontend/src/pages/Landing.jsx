@@ -931,8 +931,12 @@ function Footer({ onLogin, onRegister }) {
               {t('footer.register')}
             </button>
           </nav>
-          {/* Paddle's verification checks that the site links to all three. */}
+          {/* Paddle's verification checks that the site links to the pricing
+              page and all three policies. */}
           <nav className="flex flex-wrap gap-1 sm:justify-end" aria-label={tLegal('alsoRead')}>
+            <Link to="/pricing" className="btn-ghost text-sm">
+              {t('footer.pricing')}
+            </Link>
             <Link to="/terms" className="btn-ghost text-sm">
               {tLegal('docs.terms')}
             </Link>

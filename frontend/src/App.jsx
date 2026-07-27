@@ -18,6 +18,7 @@ import Toaster from './components/Toast';
 const SharePage = lazy(() => import('./pages/SharePage'));
 const InvitePage = lazy(() => import('./pages/InvitePage'));
 const Legal = lazy(() => import('./pages/Legal'));
+const Pricing = lazy(() => import('./pages/Pricing'));
 
 // Dashboard tab routes (+ the profile overlay) all render the same Dashboard
 // layout. They share a single AnimatePresence key so switching tabs doesn't
@@ -30,7 +31,7 @@ const isDashboardPath = (p) => DASHBOARD_PREFIXES.some((base) => p === base || p
 
 // Non-dashboard routes that bring their own top chrome and must not get the
 // app-level progressive blur (it would only add empty space above their header).
-const CHROMELESS_PATHS = new Set(['/welcome', '/terms', '/privacy', '/refunds']);
+const CHROMELESS_PATHS = new Set(['/welcome', '/pricing', '/terms', '/privacy', '/refunds']);
 
 /** Check whether the user's profile fields are already populated */
 function isProfileComplete(user) {
@@ -178,8 +179,10 @@ export default function App() {
             <Route path="/" element={<Navigate to={getInitialPath(user)} replace />} />
             {/* Public marketing page — the front door for new anonymous visitors. */}
             <Route path="/welcome" element={<Landing />} />
-            {/* Legal documents. Public and un-gated on purpose — Paddle's
-                verification crawls them anonymously, and the paywall links here. */}
+            {/* Pricing + legal documents. Public and un-gated on purpose —
+                Paddle's verification crawls them anonymously, and the paywall
+                links here. */}
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/terms" element={<Legal doc="terms" />} />
             <Route path="/privacy" element={<Legal doc="privacy" />} />
             <Route path="/refunds" element={<Legal doc="refunds" />} />

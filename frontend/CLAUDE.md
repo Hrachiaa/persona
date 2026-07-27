@@ -33,6 +33,7 @@ Navigation uses **`react-router-dom` v7** (`BrowserRouter` is mounted in [src/ma
 | --- | --- |
 | `/` | redirect — `getInitialPath(user)` picks the landing route |
 | `/onboarding` `/register` `/login` `/forgot-password` `/survey` | top-level screens |
+| `/pricing` | public pricing page ([pages/Pricing.jsx](src/pages/Pricing.jsx)) — Paddle's verification wants a pricing URL it can open anonymously. Reuses the `landing:pricing.*` keys as the landing's own pricing section so the two can't quote different prices; both CTAs go to sign-up, since checkout only happens in-app |
 | `/terms` `/privacy` `/refunds` | public legal documents — all three render [pages/Legal.jsx](src/pages/Legal.jsx) with a `doc` prop. **Keep them un-gated**: Paddle's merchant verification crawls them anonymously, and the checkout fine print links to them. Content is data, not JSX — arrays of `{ h, p[], list[] }` in the `legal` i18n namespace |
 | `/tests` `/portrait` `/match` `/reads` `/chat` | Dashboard tabs (all render `Dashboard`) |
 | `/tests/:slug` · `/tests/:slug/result` | test runner / result (`:slug` is a friendly name — `logic`, `personality`, `values`, `attachment`, `stress`, `shadows`, … via `TYPE_SLUGS` in [tabs/Tests.jsx](src/pages/tabs/Tests.jsx), not the raw cuid) |

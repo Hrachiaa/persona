@@ -40,12 +40,36 @@
     "title": "What the portrait is made of",
     "subtitle": "Not \"which color are you\" — instruments backed by decades of research.",
     "items": {
-      "iq": { "name": "Logic", "tag": "IQ", "desc": "Patterns, abstractions, and how fast you think." },
-      "bigFive": { "name": "Personality", "tag": "Big Five", "desc": "The five traits your character is built from." },
-      "shcwartz": { "name": "Values", "tag": "Schwartz values", "desc": "What actually drives you." },
-      "ecr": { "name": "Attachment", "tag": "ECR-R", "desc": "How you build closeness — and what scares you in it." },
-      "cope": { "name": "Stress", "tag": "COPE", "desc": "What you do when things go sideways." },
-      "pid": { "name": "Shadows", "tag": "PID-5", "desc": "The sharp edges people usually keep quiet about." }
+      "iq": {
+        "name": "Logic",
+        "tag": "IQ",
+        "desc": "Patterns, abstractions, and how fast you think."
+      },
+      "bigFive": {
+        "name": "Personality",
+        "tag": "Big Five",
+        "desc": "The five traits your character is built from."
+      },
+      "shcwartz": {
+        "name": "Values",
+        "tag": "Schwartz values",
+        "desc": "What actually drives you."
+      },
+      "ecr": {
+        "name": "Attachment",
+        "tag": "ECR-R",
+        "desc": "How you build closeness — and what scares you in it."
+      },
+      "cope": {
+        "name": "Stress",
+        "tag": "COPE",
+        "desc": "What you do when things go sideways."
+      },
+      "pid": {
+        "name": "Shadows",
+        "tag": "PID-5",
+        "desc": "The sharp edges people usually keep quiet about."
+      }
     }
   },
   "portrait": {
@@ -110,6 +134,19 @@
       "monthlyPer": "mo",
       "cta": "Try 3 days free",
       "note": "Activated inside the app · payments by Paddle · cancel anytime"
+    },
+    "page": {
+      "title": "Pricing",
+      "subtitle": "Everything essential in Persona is free. Persona Pro exists for one thing: unlimited conversation with an AI that knows your results.",
+      "billingTitle": "How billing works",
+      "billing": [
+        "Prices are in US dollars. Local sales tax or VAT may be added at checkout depending on where you are; the total you will be charged is always shown before you confirm.",
+        "Both plans renew automatically — the weekly plan every 7 days, the monthly plan on the same date each month — until you cancel.",
+        "The weekly plan starts with a 3-day free trial for first-time subscribers. Cancel before the trial ends and nothing is charged.",
+        "Cancel at any time under Profile → Persona Pro, or from the link in your Paddle receipt. Pro stays active until the end of the period you have already paid for.",
+        "Payments, invoices and tax are handled by Paddle.com Market Ltd, our authorised reseller and Merchant of Record. Persona never sees your card details.",
+        "Persona Pro is bought inside the app: create a free account, and the plan picker with secure Paddle checkout is under Profile → Persona Pro."
+      ]
     }
   },
   "final": {
@@ -121,6 +158,7 @@
     "tagline": "Six real assessments, an AI portrait, and conversations about you.",
     "login": "Sign in",
     "register": "Create account",
-    "rights": "© 2026 Persona"
+    "rights": "© 2026 Persona",
+    "pricing": "Pricing"
   }
 }
